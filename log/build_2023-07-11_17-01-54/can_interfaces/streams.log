@@ -1,0 +1,248 @@
+[0.051s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_interfaces -- -j6 -l6
+[0.237s] -- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+[0.292s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[0.293s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.724s] -- Found rosidl_default_generators: 1.0.1 (/opt/ros/foxy/share/rosidl_default_generators/cmake)
+[0.731s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.739s] -- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+[1.047s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.140s] -- Found PythonInterp: /usr/bin/python3 (found version "3.8.10") 
+[1.419s] -- Found ament_cmake_ros: 0.9.2 (/opt/ros/foxy/share/ament_cmake_ros/cmake)
+[1.634s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.653s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.703s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3.5") 
+[1.704s] -- Found python_cmake_module: 0.8.1 (/opt/ros/foxy/share/python_cmake_module/cmake)
+[1.755s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[1.756s] -- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.8
+[1.756s] -- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.8.so
+[1.783s] -- Found ament_lint_auto: 0.9.8 (/opt/ros/foxy/share/ament_lint_auto/cmake)
+[1.814s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.819s] -- Added test 'lint_cmake' to check CMake code style
+[1.821s] -- Added test 'xmllint' to check XML markup files
+[1.832s] -- Configuring done
+[1.933s] -- Generating done
+[1.940s] -- Build files have been written to: /home/xinchen/Dev/Meta-ROS/build/can_interfaces
+[2.006s] [  2%] [34m[1mGenerating C code for ROS interfaces[0m
+[2.040s] [  4%] [34m[1mGenerating C++ code for ROS interfaces[0m
+[2.741s] [  4%] Built target can_interfaces__cpp
+[2.770s] [  8%] [34m[1mGenerating C++ introspection for ROS interfaces[0m
+[2.771s] [  8%] [34m[1mGenerating C++ type support for eProsima Fast-RTPS[0m
+[2.776s] [35m[1mScanning dependencies of target can_interfaces__rosidl_generator_c[0m
+[2.783s] [ 10%] [34m[1mGenerating C++ type support dispatch for ROS interfaces[0m
+[2.839s] [ 12%] [32mBuilding C object CMakeFiles/can_interfaces__rosidl_generator_c.dir/rosidl_generator_c/can_interfaces/msg/detail/pos_vel_data__functions.c.o[0m
+[2.848s] [ 14%] [32mBuilding C object CMakeFiles/can_interfaces__rosidl_generator_c.dir/rosidl_generator_c/can_interfaces/msg/detail/mit_data__functions.c.o[0m
+[2.865s] [ 17%] [32mBuilding C object CMakeFiles/can_interfaces__rosidl_generator_c.dir/rosidl_generator_c/can_interfaces/msg/detail/vel_data__functions.c.o[0m
+[3.170s] [ 19%] [32m[1mLinking C shared library libcan_interfaces__rosidl_generator_c.so[0m
+[3.263s] [ 19%] Built target can_interfaces__rosidl_generator_c
+[3.290s] [ 21%] [34m[1mGenerating C introspection for ROS interfaces[0m
+[3.318s] [ 23%] [34m[1mGenerating C type support dispatch for ROS interfaces[0m
+[3.488s] [35m[1mScanning dependencies of target can_interfaces__rosidl_typesupport_cpp[0m
+[3.559s] [35m[1mScanning dependencies of target can_interfaces__rosidl_typesupport_introspection_cpp[0m
+[3.578s] [ 25%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/can_interfaces/msg/mit_data__type_support.cpp.o[0m
+[3.630s] [ 27%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/can_interfaces/msg/pos_vel_data__type_support.cpp.o[0m
+[3.647s] [ 29%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/mit_data__type_support.cpp.o[0m
+[3.660s] [35m[1mScanning dependencies of target can_interfaces__rosidl_typesupport_fastrtps_cpp[0m
+[3.751s] [ 31%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/can_interfaces/msg/detail/dds_fastrtps/mit_data__type_support.cpp.o[0m
+[4.060s] [35m[1mScanning dependencies of target can_interfaces__rosidl_typesupport_c[0m
+[4.120s] [ 34%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/can_interfaces/msg/mit_data__type_support.cpp.o[0m
+[4.282s] [ 36%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/can_interfaces/msg/pos_vel_data__type_support.cpp.o[0m
+[4.418s] [35m[1mScanning dependencies of target can_interfaces__rosidl_typesupport_introspection_c[0m
+[4.467s] [ 38%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/can_interfaces/msg/vel_data__type_support.cpp.o[0m
+[4.499s] [ 40%] [32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/can_interfaces/msg/detail/mit_data__type_support.c.o[0m
+[4.691s] [ 42%] [32m[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_c.so[0m
+[4.702s] [ 44%] [32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/can_interfaces/msg/detail/pos_vel_data__type_support.c.o[0m
+[4.733s] [ 46%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/can_interfaces/msg/vel_data__type_support.cpp.o[0m
+[4.856s] [ 48%] [32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/can_interfaces/msg/detail/vel_data__type_support.c.o[0m
+[4.868s] [ 51%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/can_interfaces/msg/detail/dds_fastrtps/pos_vel_data__type_support.cpp.o[0m
+[4.904s] [ 51%] Built target can_interfaces__rosidl_typesupport_c
+[4.947s] [ 53%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/can_interfaces/msg/detail/dds_fastrtps/vel_data__type_support.cpp.o[0m
+[4.983s] [ 55%] [32m[1mLinking C shared library libcan_interfaces__rosidl_typesupport_introspection_c.so[0m
+[5.038s] [ 57%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/pos_vel_data__type_support.cpp.o[0m
+[5.125s] [ 57%] Built target can_interfaces__rosidl_typesupport_introspection_c
+[5.178s] [ 59%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/vel_data__type_support.cpp.o[0m
+[5.830s] [ 61%] [32m[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_cpp.so[0m
+[6.007s] [ 61%] Built target can_interfaces__rosidl_typesupport_cpp
+[6.024s] [ 63%] [32m[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_introspection_cpp.so[0m
+[6.106s] [ 65%] [32m[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_fastrtps_cpp.so[0m
+[6.107s] [ 65%] Built target can_interfaces__rosidl_typesupport_introspection_cpp
+[6.291s] [ 65%] Built target can_interfaces__rosidl_typesupport_fastrtps_cpp
+[6.314s] [ 68%] [34m[1mGenerating C type support for eProsima Fast-RTPS[0m
+[6.902s] [35m[1mScanning dependencies of target can_interfaces__rosidl_typesupport_fastrtps_c[0m
+[6.930s] [ 72%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/can_interfaces/msg/detail/mit_data__type_support_c.cpp.o[0m
+[6.931s] [ 72%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/can_interfaces/msg/detail/pos_vel_data__type_support_c.cpp.o[0m
+[6.939s] [ 74%] [32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/can_interfaces/msg/detail/vel_data__type_support_c.cpp.o[0m
+[7.749s] [ 76%] [32m[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_fastrtps_c.so[0m
+[7.925s] [ 76%] Built target can_interfaces__rosidl_typesupport_fastrtps_c
+[7.969s] [ 76%] Built target can_interfaces
+[8.013s] [ 78%] [34m[1mGenerating Python code for ROS interfaces[0m
+[9.133s] [ 78%] Built target can_interfaces__py
+[9.160s] [35m[1mScanning dependencies of target can_interfaces__python[0m
+[9.202s] [ 80%] [32mBuilding C object CMakeFiles/can_interfaces__python.dir/rosidl_generator_py/can_interfaces/msg/_vel_data_s.c.o[0m
+[9.204s] [ 82%] [32mBuilding C object CMakeFiles/can_interfaces__python.dir/rosidl_generator_py/can_interfaces/msg/_mit_data_s.c.o[0m
+[9.216s] [ 85%] [32mBuilding C object CMakeFiles/can_interfaces__python.dir/rosidl_generator_py/can_interfaces/msg/_pos_vel_data_s.c.o[0m
+[9.452s] [ 87%] [32m[1mLinking C shared library rosidl_generator_py/can_interfaces/libcan_interfaces__python.so[0m
+[9.530s] [ 87%] Built target can_interfaces__python
+[9.556s] [35m[1mScanning dependencies of target can_interfaces__rosidl_typesupport_fastrtps_c__pyext[0m
+[9.557s] [35m[1mScanning dependencies of target can_interfaces__rosidl_typesupport_introspection_c__pyext[0m
+[9.560s] [35m[1mScanning dependencies of target can_interfaces__rosidl_typesupport_c__pyext[0m
+[9.600s] [ 91%] [32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/can_interfaces/_can_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c.o[0m
+[9.600s] [ 91%] [32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/can_interfaces/_can_interfaces_s.ep.rosidl_typesupport_c.c.o[0m
+[9.620s] [ 93%] [32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/can_interfaces/_can_interfaces_s.ep.rosidl_typesupport_introspection_c.c.o[0m
+[9.780s] [ 95%] [32m[1mLinking C shared library rosidl_generator_py/can_interfaces/can_interfaces_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so[0m
+[9.838s] [ 97%] [32m[1mLinking C shared library rosidl_generator_py/can_interfaces/can_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so[0m
+[9.845s] [100%] [32m[1mLinking CXX shared library rosidl_generator_py/can_interfaces/can_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so[0m
+[9.853s] [100%] Built target can_interfaces__rosidl_typesupport_c__pyext
+[9.911s] [100%] Built target can_interfaces__rosidl_typesupport_introspection_c__pyext
+[9.966s] [100%] Built target can_interfaces__rosidl_typesupport_fastrtps_c__pyext
+[9.995s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_interfaces -- -j6 -l6
+[10.171s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/can_interfaces
+[10.197s] -- Install configuration: ""
+[10.198s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/rosidl_interfaces/can_interfaces
+[10.198s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces
+[10.198s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg
+[10.199s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/vel_data.h
+[10.199s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail
+[10.199s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__functions.c
+[10.200s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__functions.h
+[10.200s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__struct.h
+[10.200s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__functions.h
+[10.200s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__struct.h
+[10.200s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.h
+[10.201s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__functions.h
+[10.201s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__struct.h
+[10.201s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__functions.c
+[10.201s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.h
+[10.201s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.h
+[10.202s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__functions.c
+[10.202s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/mit_data.h
+[10.202s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_generator_c__visibility_control.h
+[10.202s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/pos_vel_data.h
+[10.203s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/library_path.sh
+[10.203s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/library_path.dsv
+[10.204s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_generator_c.so
+[10.206s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_generator_c.so" to ""
+[10.206s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces
+[10.207s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg
+[10.207s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail
+[10.207s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_fastrtps_c.h
+[10.207s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_fastrtps_c.h
+[10.207s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_fastrtps_c.h
+[10.207s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[10.208s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_c.so
+[10.208s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_c.so" to ""
+[10.208s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces
+[10.209s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg
+[10.209s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail
+[10.209s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_fastrtps_cpp.hpp
+[10.209s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_fastrtps_cpp.hpp
+[10.209s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/dds_fastrtps
+[10.209s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_fastrtps_cpp.hpp
+[10.210s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[10.210s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_cpp.so
+[10.211s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_cpp.so" to ""
+[10.211s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces
+[10.211s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg
+[10.211s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail
+[10.212s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.c
+[10.212s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_introspection_c.h
+[10.212s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.c
+[10.212s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_introspection_c.h
+[10.212s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.c
+[10.212s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_introspection_c.h
+[10.213s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[10.213s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_c.so
+[10.214s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_c.so" to ""
+[10.214s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_c.so
+[10.215s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_c.so" to ""
+[10.215s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces
+[10.216s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg
+[10.216s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail
+[10.216s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__builder.hpp
+[10.216s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.hpp
+[10.216s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__struct.hpp
+[10.216s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__builder.hpp
+[10.217s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__traits.hpp
+[10.217s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__builder.hpp
+[10.217s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__traits.hpp
+[10.218s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.hpp
+[10.218s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__struct.hpp
+[10.218s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__traits.hpp
+[10.219s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__struct.hpp
+[10.219s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.hpp
+[10.219s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp
+[10.220s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/pos_vel_data.hpp
+[10.220s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/mit_data.hpp
+[10.220s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/vel_data.hpp
+[10.221s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces
+[10.221s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg
+[10.221s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail
+[10.221s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_introspection_cpp.hpp
+[10.221s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_introspection_cpp.hpp
+[10.222s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.cpp
+[10.222s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.cpp
+[10.222s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.cpp
+[10.223s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_introspection_cpp.hpp
+[10.224s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_cpp.so
+[10.224s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_cpp.so" to ""
+[10.225s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_cpp.so
+[10.226s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_cpp.so" to ""
+[10.226s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/pythonpath.sh
+[10.226s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/pythonpath.dsv
+[10.227s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/__init__.py
+[10.289s] Compiling '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/__init__.py'...
+[10.300s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg
+[10.300s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_mit_data.py
+[10.300s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_pos_vel_data.py
+[10.301s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_vel_data.py
+[10.301s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_pos_vel_data_s.c
+[10.301s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_vel_data_s.c
+[10.301s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/__init__.py
+[10.302s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_mit_data_s.c
+[10.303s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so
+[10.304s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so" to ""
+[10.305s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so
+[10.306s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so" to ""
+[10.306s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so
+[10.307s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so" to ""
+[10.308s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__python.so
+[10.309s] -- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__python.so" to ""
+[10.309s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/MITData.idl
+[10.309s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/PosVelData.idl
+[10.310s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/VelData.idl
+[10.310s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/MITData.msg
+[10.310s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/PosVelData.msg
+[10.311s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/VelData.msg
+[10.311s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/package_run_dependencies/can_interfaces
+[10.312s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/parent_prefix_path/can_interfaces
+[10.312s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/ament_prefix_path.sh
+[10.312s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/ament_prefix_path.dsv
+[10.312s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/path.sh
+[10.313s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/path.dsv
+[10.313s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.bash
+[10.313s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.sh
+[10.313s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.zsh
+[10.314s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.dsv
+[10.314s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.dsv
+[10.314s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/packages/can_interfaces
+[10.315s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_generator_cExport.cmake
+[10.315s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_generator_cExport-noconfig.cmake
+[10.316s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cExport.cmake
+[10.316s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[10.317s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cExport.cmake
+[10.317s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cExport-noconfig.cmake
+[10.318s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_generator_cppExport.cmake
+[10.319s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cppExport.cmake
+[10.319s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[10.320s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cppExport.cmake
+[10.320s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cppExport-noconfig.cmake
+[10.321s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/rosidl_cmake-extras.cmake
+[10.321s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake
+[10.321s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_libraries-extras.cmake
+[10.321s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_targets-extras.cmake
+[10.321s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake
+[10.321s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[10.322s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[10.322s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfacesConfig.cmake
+[10.322s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfacesConfig-version.cmake
+[10.322s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.xml
+[10.329s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/can_interfaces

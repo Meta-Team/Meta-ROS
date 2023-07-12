@@ -1,0 +1,5 @@
+-- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+-- Using PYTHON_EXECUTABLE: /usr/bin/python3
+-- Found can_interfaces: 0.0.0 (/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake)
+-- Configuring incomplete, errors occurred!
+See also "/home/xinchen/Dev/Meta-ROS/build/can_driver/CMakeFiles/CMakeOutput.log".

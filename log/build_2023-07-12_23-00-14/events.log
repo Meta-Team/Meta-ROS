@@ -1,0 +1,394 @@
+[0.000000] (-) TimerEvent: {}
+[0.000495] (-) JobUnselected: {'identifier': 'can_driver'}
+[0.000857] (can_interfaces) JobQueued: {'identifier': 'can_interfaces', 'dependencies': OrderedDict()}
+[0.001510] (can_interfaces) JobStarted: {'identifier': 'can_interfaces'}
+[0.033934] (can_interfaces) JobProgress: {'identifier': 'can_interfaces', 'progress': 'cmake'}
+[0.035688] (can_interfaces) JobProgress: {'identifier': 'can_interfaces', 'progress': 'build'}
+[0.037312] (can_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/xinchen/Dev/Meta-ROS/build/can_interfaces', '--', '-j6', '-l6'], 'cwd': '/home/xinchen/Dev/Meta-ROS/build/can_interfaces', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'xinchen'), ('LC_TIME', 'zh_CN.UTF-8'), ('SSH_AGENT_PID', '2502'), ('XDG_SESSION_TYPE', 'x11'), ('GIT_ASKPASS', '/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/aarch64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/aarch64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/xinchen'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('TERM_PROGRAM_VERSION', '1.80.0'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('VSCODE_GIT_ASKPASS_MAIN', '/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('LC_MONETARY', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_NODE', '/usr/share/code/code'), ('MANAGERPID', '2330'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '2877'), ('IM_CONFIG_PHASE', '1'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'xinchen'), ('JOURNAL_STREAM', '7:58179'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'xinchen'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/foxy/bin:/home/xinchen/.local/bin:/home/xinchen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('SESSION_MANAGER', 'local/xinchen-orin:@/tmp/.ICE-unix/2537,unix/xinchen-orin:/tmp/.ICE-unix/2537'), ('INVOCATION_ID', '86d8dacd9c254275b6e3cb29bb641ff1'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'zh_CN.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':1'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('LC_TELEPHONE', 'zh_CN.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-6b8cb1e2f4.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/opt/ros/foxy'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('LC_NAME', 'zh_CN.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'zh_CN.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/xinchen/Dev/Meta-ROS/build/can_interfaces'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/foxy/lib/python3.8/site-packages'), ('LC_NUMERIC', 'zh_CN.UTF-8'), ('LC_PAPER', 'zh_CN.UTF-8'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/foxy')]), 'shell': False}
+[0.099365] (-) TimerEvent: {}
+[0.102971] (can_interfaces) StdoutLine: {'line': b'-- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)\n'}
+[0.147147] (can_interfaces) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[0.199489] (-) TimerEvent: {}
+[0.300177] (-) TimerEvent: {}
+[0.400836] (-) TimerEvent: {}
+[0.501505] (-) TimerEvent: {}
+[0.565845] (can_interfaces) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.0.1 (/opt/ros/foxy/share/rosidl_default_generators/cmake)\n'}
+[0.570730] (can_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.578437] (can_interfaces) StdoutLine: {'line': b'-- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)\n'}
+[0.601627] (-) TimerEvent: {}
+[0.702363] (-) TimerEvent: {}
+[0.803168] (-) TimerEvent: {}
+[0.884211] (can_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.903277] (-) TimerEvent: {}
+[0.975190] (can_interfaces) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found version "3.8.10") \n'}
+[1.003442] (-) TimerEvent: {}
+[1.104047] (-) TimerEvent: {}
+[1.204661] (-) TimerEvent: {}
+[1.253161] (can_interfaces) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.9.2 (/opt/ros/foxy/share/ament_cmake_ros/cmake)\n'}
+[1.304837] (-) TimerEvent: {}
+[1.405479] (-) TimerEvent: {}
+[1.458909] (can_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.478633] (can_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.505617] (-) TimerEvent: {}
+[1.524311] (can_interfaces) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3.5") \n'}
+[1.525250] (can_interfaces) StdoutLine: {'line': b'-- Found python_cmake_module: 0.8.1 (/opt/ros/foxy/share/python_cmake_module/cmake)\n'}
+[1.577689] (can_interfaces) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[1.578422] (can_interfaces) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.8\n'}
+[1.578773] (can_interfaces) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.8.so\n'}
+[1.605758] (-) TimerEvent: {}
+[1.606806] (can_interfaces) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.9.8 (/opt/ros/foxy/share/ament_lint_auto/cmake)\n'}
+[1.640698] (can_interfaces) StdoutLine: {'line': b"-- Added test 'copyright' to check source files copyright and LICENSE\n"}
+[1.645075] (can_interfaces) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[1.647520] (can_interfaces) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[1.657484] (can_interfaces) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.705905] (-) TimerEvent: {}
+[1.747285] (can_interfaces) StdoutLine: {'line': b'-- Generating done\n'}
+[1.754050] (can_interfaces) StdoutLine: {'line': b'-- Build files have been written to: /home/xinchen/Dev/Meta-ROS/build/can_interfaces\n'}
+[1.806092] (-) TimerEvent: {}
+[1.809783] (can_interfaces) StdoutLine: {'line': b'[  1%] \x1b[34m\x1b[1mGenerating C code for ROS interfaces\x1b[0m\n'}
+[1.810727] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__cpp\x1b[0m\n'}
+[1.835809] (can_interfaces) StdoutLine: {'line': b'[  3%] \x1b[34m\x1b[1mGenerating C++ code for ROS interfaces\x1b[0m\n'}
+[1.906302] (-) TimerEvent: {}
+[2.007046] (-) TimerEvent: {}
+[2.107683] (-) TimerEvent: {}
+[2.208317] (-) TimerEvent: {}
+[2.308887] (-) TimerEvent: {}
+[2.409480] (-) TimerEvent: {}
+[2.510169] (-) TimerEvent: {}
+[2.604825] (can_interfaces) StdoutLine: {'line': b'[  3%] Built target can_interfaces__cpp\n'}
+[2.610428] (-) TimerEvent: {}
+[2.627238] (can_interfaces) StdoutLine: {'line': b'[  5%] \x1b[34m\x1b[1mGenerating C++ introspection for ROS interfaces\x1b[0m\n'}
+[2.641813] (can_interfaces) StdoutLine: {'line': b'[  9%] \x1b[34m\x1b[1mGenerating C++ type support for eProsima Fast-RTPS\x1b[0m\n'}
+[2.642425] (can_interfaces) StdoutLine: {'line': b'[  9%] \x1b[34m\x1b[1mGenerating C++ type support dispatch for ROS interfaces\x1b[0m\n'}
+[2.659084] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_generator_c\x1b[0m\n'}
+[2.682823] (can_interfaces) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_generator_c.dir/rosidl_generator_c/can_interfaces/msg/detail/vel_data__functions.c.o\x1b[0m\n'}
+[2.686165] (can_interfaces) StdoutLine: {'line': b'[ 12%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_generator_c.dir/rosidl_generator_c/can_interfaces/msg/detail/mit_data__functions.c.o\x1b[0m\n'}
+[2.691348] (can_interfaces) StdoutLine: {'line': b'[ 14%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_generator_c.dir/rosidl_generator_c/can_interfaces/msg/detail/pos_vel_data__functions.c.o\x1b[0m\n'}
+[2.710571] (-) TimerEvent: {}
+[2.811210] (-) TimerEvent: {}
+[2.911893] (-) TimerEvent: {}
+[2.964705] (can_interfaces) StdoutLine: {'line': b'[ 16%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_generator_c.dir/rosidl_generator_c/can_interfaces/msg/detail/feedback__functions.c.o\x1b[0m\n'}
+[3.012056] (-) TimerEvent: {}
+[3.062436] (can_interfaces) StdoutLine: {'line': b'[ 18%] \x1b[32m\x1b[1mLinking C shared library libcan_interfaces__rosidl_generator_c.so\x1b[0m\n'}
+[3.112210] (-) TimerEvent: {}
+[3.143496] (can_interfaces) StdoutLine: {'line': b'[ 18%] Built target can_interfaces__rosidl_generator_c\n'}
+[3.167967] (can_interfaces) StdoutLine: {'line': b'[ 20%] \x1b[34m\x1b[1mGenerating C type support dispatch for ROS interfaces\x1b[0m\n'}
+[3.170807] (can_interfaces) StdoutLine: {'line': b'[ 21%] \x1b[34m\x1b[1mGenerating C introspection for ROS interfaces\x1b[0m\n'}
+[3.212374] (-) TimerEvent: {}
+[3.257998] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_typesupport_cpp\x1b[0m\n'}
+[3.311383] (can_interfaces) StdoutLine: {'line': b'[ 23%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/can_interfaces/msg/mit_data__type_support.cpp.o\x1b[0m\n'}
+[3.312460] (-) TimerEvent: {}
+[3.315288] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_typesupport_introspection_cpp\x1b[0m\n'}
+[3.345703] (can_interfaces) StdoutLine: {'line': b'[ 25%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/can_interfaces/msg/pos_vel_data__type_support.cpp.o\x1b[0m\n'}
+[3.378068] (can_interfaces) StdoutLine: {'line': b'[ 27%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/mit_data__type_support.cpp.o\x1b[0m\n'}
+[3.412665] (-) TimerEvent: {}
+[3.446923] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_typesupport_fastrtps_cpp\x1b[0m\n'}
+[3.491092] (can_interfaces) StdoutLine: {'line': b'[ 29%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/can_interfaces/msg/detail/dds_fastrtps/mit_data__type_support.cpp.o\x1b[0m\n'}
+[3.512864] (-) TimerEvent: {}
+[3.613548] (-) TimerEvent: {}
+[3.714292] (-) TimerEvent: {}
+[3.815013] (-) TimerEvent: {}
+[3.915735] (-) TimerEvent: {}
+[4.016648] (-) TimerEvent: {}
+[4.018910] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_typesupport_c\x1b[0m\n'}
+[4.078919] (can_interfaces) StdoutLine: {'line': b'[ 30%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/can_interfaces/msg/mit_data__type_support.cpp.o\x1b[0m\n'}
+[4.116862] (-) TimerEvent: {}
+[4.217626] (-) TimerEvent: {}
+[4.279505] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_typesupport_introspection_c\x1b[0m\n'}
+[4.280230] (can_interfaces) StdoutLine: {'line': b'[ 32%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/can_interfaces/msg/pos_vel_data__type_support.cpp.o\x1b[0m\n'}
+[4.316505] (can_interfaces) StdoutLine: {'line': b'[ 34%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/can_interfaces/msg/vel_data__type_support.cpp.o\x1b[0m\n'}
+[4.317725] (-) TimerEvent: {}
+[4.341321] (can_interfaces) StdoutLine: {'line': b'[ 36%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/can_interfaces/msg/detail/mit_data__type_support.c.o\x1b[0m\n'}
+[4.380809] (can_interfaces) StdoutLine: {'line': b'[ 38%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/can_interfaces/msg/feedback__type_support.cpp.o\x1b[0m\n'}
+[4.383305] (can_interfaces) StdoutLine: {'line': b'[ 40%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/can_interfaces/msg/vel_data__type_support.cpp.o\x1b[0m\n'}
+[4.401771] (can_interfaces) StdoutLine: {'line': b'[ 41%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/can_interfaces/msg/detail/pos_vel_data__type_support.c.o\x1b[0m\n'}
+[4.417964] (-) TimerEvent: {}
+[4.421401] (can_interfaces) StdoutLine: {'line': b'[ 43%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/pos_vel_data__type_support.cpp.o\x1b[0m\n'}
+[4.469492] (can_interfaces) StdoutLine: {'line': b'[ 45%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/can_interfaces/msg/detail/vel_data__type_support.c.o\x1b[0m\n'}
+[4.518165] (-) TimerEvent: {}
+[4.520893] (can_interfaces) StdoutLine: {'line': b'[ 49%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/can_interfaces/msg/detail/feedback__type_support.c.o\x1b[0m\n'}
+[4.521961] (can_interfaces) StdoutLine: {'line': b'[ 49%] \x1b[32m\x1b[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_c.so\x1b[0m\n'}
+[4.574647] (can_interfaces) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/vel_data__type_support.cpp.o\x1b[0m\n'}
+[4.618399] (-) TimerEvent: {}
+[4.622085] (can_interfaces) StdoutLine: {'line': b'[ 52%] \x1b[32m\x1b[1mLinking C shared library libcan_interfaces__rosidl_typesupport_introspection_c.so\x1b[0m\n'}
+[4.661397] (can_interfaces) StdoutLine: {'line': b'[ 52%] Built target can_interfaces__rosidl_typesupport_c\n'}
+[4.685006] (can_interfaces) StdoutLine: {'line': b'[ 54%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/feedback__type_support.cpp.o\x1b[0m\n'}
+[4.694086] (can_interfaces) StdoutLine: {'line': b'[ 54%] Built target can_interfaces__rosidl_typesupport_introspection_c\n'}
+[4.705986] (can_interfaces) StdoutLine: {'line': b'[ 56%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/can_interfaces/msg/detail/dds_fastrtps/pos_vel_data__type_support.cpp.o\x1b[0m\n'}
+[4.718680] (-) TimerEvent: {}
+[4.721813] (can_interfaces) StdoutLine: {'line': b'[ 58%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/can_interfaces/msg/feedback__type_support.cpp.o\x1b[0m\n'}
+[4.818890] (-) TimerEvent: {}
+[4.919674] (-) TimerEvent: {}
+[5.020464] (-) TimerEvent: {}
+[5.121267] (-) TimerEvent: {}
+[5.199358] (can_interfaces) StdoutLine: {'line': b'[ 60%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/can_interfaces/msg/detail/dds_fastrtps/vel_data__type_support.cpp.o\x1b[0m\n'}
+[5.221483] (-) TimerEvent: {}
+[5.277340] (can_interfaces) StdoutLine: {'line': b'[ 61%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/can_interfaces/msg/detail/dds_fastrtps/feedback__type_support.cpp.o\x1b[0m\n'}
+[5.321708] (-) TimerEvent: {}
+[5.422440] (-) TimerEvent: {}
+[5.482362] (can_interfaces) StdoutLine: {'line': b'[ 63%] \x1b[32m\x1b[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_introspection_cpp.so\x1b[0m\n'}
+[5.499187] (can_interfaces) StdoutLine: {'line': b'[ 65%] \x1b[32m\x1b[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_cpp.so\x1b[0m\n'}
+[5.522717] (-) TimerEvent: {}
+[5.567865] (can_interfaces) StdoutLine: {'line': b'[ 65%] Built target can_interfaces__rosidl_typesupport_introspection_cpp\n'}
+[5.585549] (can_interfaces) StdoutLine: {'line': b'[ 65%] Built target can_interfaces__rosidl_typesupport_cpp\n'}
+[5.622893] (-) TimerEvent: {}
+[5.723605] (-) TimerEvent: {}
+[5.824332] (-) TimerEvent: {}
+[5.925045] (-) TimerEvent: {}
+[6.025753] (-) TimerEvent: {}
+[6.126489] (-) TimerEvent: {}
+[6.227204] (-) TimerEvent: {}
+[6.271974] (can_interfaces) StdoutLine: {'line': b'[ 67%] \x1b[32m\x1b[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_fastrtps_cpp.so\x1b[0m\n'}
+[6.327381] (-) TimerEvent: {}
+[6.428148] (-) TimerEvent: {}
+[6.447989] (can_interfaces) StdoutLine: {'line': b'[ 67%] Built target can_interfaces__rosidl_typesupport_fastrtps_cpp\n'}
+[6.472000] (can_interfaces) StdoutLine: {'line': b'[ 69%] \x1b[34m\x1b[1mGenerating C type support for eProsima Fast-RTPS\x1b[0m\n'}
+[6.528261] (-) TimerEvent: {}
+[6.628992] (-) TimerEvent: {}
+[6.729786] (-) TimerEvent: {}
+[6.830612] (-) TimerEvent: {}
+[6.931396] (-) TimerEvent: {}
+[7.032184] (-) TimerEvent: {}
+[7.106571] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_typesupport_fastrtps_c\x1b[0m\n'}
+[7.132385] (-) TimerEvent: {}
+[7.139688] (can_interfaces) StdoutLine: {'line': b'[ 76%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/can_interfaces/msg/detail/vel_data__type_support_c.cpp.o\x1b[0m\n'}
+[7.140306] (can_interfaces) StdoutLine: {'line': b'[ 76%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/can_interfaces/msg/detail/pos_vel_data__type_support_c.cpp.o\x1b[0m\n'}
+[7.140519] (can_interfaces) StdoutLine: {'line': b'[ 76%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/can_interfaces/msg/detail/mit_data__type_support_c.cpp.o\x1b[0m\n'}
+[7.140695] (can_interfaces) StdoutLine: {'line': b'[ 76%] \x1b[32mBuilding CXX object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/can_interfaces/msg/detail/feedback__type_support_c.cpp.o\x1b[0m\n'}
+[7.232586] (-) TimerEvent: {}
+[7.333311] (-) TimerEvent: {}
+[7.434053] (-) TimerEvent: {}
+[7.534795] (-) TimerEvent: {}
+[7.635538] (-) TimerEvent: {}
+[7.736324] (-) TimerEvent: {}
+[7.837117] (-) TimerEvent: {}
+[7.937863] (-) TimerEvent: {}
+[7.987367] (can_interfaces) StdoutLine: {'line': b'[ 78%] \x1b[32m\x1b[1mLinking CXX shared library libcan_interfaces__rosidl_typesupport_fastrtps_c.so\x1b[0m\n'}
+[8.038061] (-) TimerEvent: {}
+[8.138958] (-) TimerEvent: {}
+[8.160071] (can_interfaces) StdoutLine: {'line': b'[ 78%] Built target can_interfaces__rosidl_typesupport_fastrtps_c\n'}
+[8.202704] (can_interfaces) StdoutLine: {'line': b'[ 78%] Built target can_interfaces\n'}
+[8.224395] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__py\x1b[0m\n'}
+[8.239041] (-) TimerEvent: {}
+[8.247813] (can_interfaces) StdoutLine: {'line': b'[ 80%] \x1b[34m\x1b[1mGenerating Python code for ROS interfaces\x1b[0m\n'}
+[8.339212] (-) TimerEvent: {}
+[8.439814] (-) TimerEvent: {}
+[8.540426] (-) TimerEvent: {}
+[8.641038] (-) TimerEvent: {}
+[8.741663] (-) TimerEvent: {}
+[8.842433] (-) TimerEvent: {}
+[8.943195] (-) TimerEvent: {}
+[9.043936] (-) TimerEvent: {}
+[9.144668] (-) TimerEvent: {}
+[9.245455] (-) TimerEvent: {}
+[9.346231] (-) TimerEvent: {}
+[9.447034] (-) TimerEvent: {}
+[9.464977] (can_interfaces) StdoutLine: {'line': b'[ 80%] Built target can_interfaces__py\n'}
+[9.494890] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__python\x1b[0m\n'}
+[9.536181] (can_interfaces) StdoutLine: {'line': b'[ 87%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__python.dir/rosidl_generator_py/can_interfaces/msg/_vel_data_s.c.o\x1b[0m\n'}
+[9.536700] (can_interfaces) StdoutLine: {'line': b'[ 87%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__python.dir/rosidl_generator_py/can_interfaces/msg/_feedback_s.c.o\x1b[0m\n'}
+[9.536884] (can_interfaces) StdoutLine: {'line': b'[ 87%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__python.dir/rosidl_generator_py/can_interfaces/msg/_pos_vel_data_s.c.o\x1b[0m\n'}
+[9.537048] (can_interfaces) StdoutLine: {'line': b'[ 87%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__python.dir/rosidl_generator_py/can_interfaces/msg/_mit_data_s.c.o\x1b[0m\n'}
+[9.547212] (-) TimerEvent: {}
+[9.647951] (-) TimerEvent: {}
+[9.748726] (-) TimerEvent: {}
+[9.758584] (can_interfaces) StdoutLine: {'line': b'[ 89%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/can_interfaces/libcan_interfaces__python.so\x1b[0m\n'}
+[9.834626] (can_interfaces) StdoutLine: {'line': b'[ 89%] Built target can_interfaces__python\n'}
+[9.848915] (-) TimerEvent: {}
+[9.860094] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_typesupport_introspection_c__pyext\x1b[0m\n'}
+[9.860627] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_typesupport_fastrtps_c__pyext\x1b[0m\n'}
+[9.860808] (can_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_interfaces__rosidl_typesupport_c__pyext\x1b[0m\n'}
+[9.897178] (can_interfaces) StdoutLine: {'line': b'[ 90%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/can_interfaces/_can_interfaces_s.ep.rosidl_typesupport_c.c.o\x1b[0m\n'}
+[9.898029] (can_interfaces) StdoutLine: {'line': b'[ 92%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/can_interfaces/_can_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c.o\x1b[0m\n'}
+[9.898844] (can_interfaces) StdoutLine: {'line': b'[ 94%] \x1b[32mBuilding C object CMakeFiles/can_interfaces__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/can_interfaces/_can_interfaces_s.ep.rosidl_typesupport_introspection_c.c.o\x1b[0m\n'}
+[9.949098] (-) TimerEvent: {}
+[10.049845] (-) TimerEvent: {}
+[10.078693] (can_interfaces) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX shared library rosidl_generator_py/can_interfaces/can_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so\x1b[0m\n'}
+[10.079259] (can_interfaces) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/can_interfaces/can_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so\x1b[0m\n'}
+[10.079447] (can_interfaces) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/can_interfaces/can_interfaces_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so\x1b[0m\n'}
+[10.147211] (can_interfaces) StdoutLine: {'line': b'[100%] Built target can_interfaces__rosidl_typesupport_c__pyext\n'}
+[10.147747] (can_interfaces) StdoutLine: {'line': b'[100%] Built target can_interfaces__rosidl_typesupport_introspection_c__pyext\n'}
+[10.149910] (-) TimerEvent: {}
+[10.195815] (can_interfaces) StdoutLine: {'line': b'[100%] Built target can_interfaces__rosidl_typesupport_fastrtps_c__pyext\n'}
+[10.220985] (can_interfaces) CommandEnded: {'returncode': 0}
+[10.250192] (-) TimerEvent: {}
+[10.350994] (-) TimerEvent: {}
+[10.396155] (can_interfaces) JobProgress: {'identifier': 'can_interfaces', 'progress': 'install'}
+[10.420354] (can_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/xinchen/Dev/Meta-ROS/build/can_interfaces'], 'cwd': '/home/xinchen/Dev/Meta-ROS/build/can_interfaces', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'xinchen'), ('LC_TIME', 'zh_CN.UTF-8'), ('SSH_AGENT_PID', '2502'), ('XDG_SESSION_TYPE', 'x11'), ('GIT_ASKPASS', '/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/aarch64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/aarch64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/xinchen'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('TERM_PROGRAM_VERSION', '1.80.0'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('VSCODE_GIT_ASKPASS_MAIN', '/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('LC_MONETARY', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_NODE', '/usr/share/code/code'), ('MANAGERPID', '2330'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '2877'), ('IM_CONFIG_PHASE', '1'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'xinchen'), ('JOURNAL_STREAM', '7:58179'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'xinchen'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/foxy/bin:/home/xinchen/.local/bin:/home/xinchen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('SESSION_MANAGER', 'local/xinchen-orin:@/tmp/.ICE-unix/2537,unix/xinchen-orin:/tmp/.ICE-unix/2537'), ('INVOCATION_ID', '86d8dacd9c254275b6e3cb29bb641ff1'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'zh_CN.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':1'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('LC_TELEPHONE', 'zh_CN.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-6b8cb1e2f4.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/opt/ros/foxy'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('LC_NAME', 'zh_CN.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'zh_CN.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/xinchen/Dev/Meta-ROS/build/can_interfaces'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/foxy/lib/python3.8/site-packages'), ('LC_NUMERIC', 'zh_CN.UTF-8'), ('LC_PAPER', 'zh_CN.UTF-8'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/foxy')]), 'shell': False}
+[10.444185] (can_interfaces) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[10.445001] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/rosidl_interfaces/can_interfaces\n'}
+[10.445292] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[10.445507] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[10.445662] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/vel_data.h\n'}
+[10.445901] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[10.446058] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__functions.c\n'}
+[10.446277] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__functions.h\n'}
+[10.446529] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__struct.h\n'}
+[10.446767] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__functions.h\n'}
+[10.446989] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__functions.h\n'}
+[10.447318] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__struct.h\n'}
+[10.447605] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.h\n'}
+[10.447840] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__functions.h\n'}
+[10.448073] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__struct.h\n'}
+[10.448289] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__struct.h\n'}
+[10.448549] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__functions.c\n'}
+[10.448767] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.h\n'}
+[10.448971] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__functions.c\n'}
+[10.449231] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.h\n'}
+[10.449472] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__type_support.h\n'}
+[10.449705] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__functions.c\n'}
+[10.449990] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/mit_data.h\n'}
+[10.450486] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_generator_c__visibility_control.h\n'}
+[10.450670] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/feedback.h\n'}
+[10.450874] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/pos_vel_data.h\n'}
+[10.451021] (-) TimerEvent: {}
+[10.451396] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/library_path.sh\n'}
+[10.451596] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/library_path.dsv\n'}
+[10.453012] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_generator_c.so\n'}
+[10.453858] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_generator_c.so" to ""\n'}
+[10.454267] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[10.454532] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[10.454750] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[10.454962] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_fastrtps_c.h\n'}
+[10.455113] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__rosidl_typesupport_fastrtps_c.h\n'}
+[10.455312] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_fastrtps_c.h\n'}
+[10.455505] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_fastrtps_c.h\n'}
+[10.455654] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[10.456197] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_c.so\n'}
+[10.456946] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_c.so" to ""\n'}
+[10.457186] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[10.457890] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[10.458054] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[10.458464] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[10.458681] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[10.458829] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[10.459079] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/dds_fastrtps\n'}
+[10.459252] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[10.459396] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[10.459622] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_cpp.so\n'}
+[10.460302] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_cpp.so" to ""\n'}
+[10.460594] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[10.460789] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[10.460969] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[10.461111] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.c\n'}
+[10.461298] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_introspection_c.h\n'}
+[10.461503] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__rosidl_typesupport_introspection_c.h\n'}
+[10.461642] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.c\n'}
+[10.461832] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_introspection_c.h\n'}
+[10.462029] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__type_support.c\n'}
+[10.462208] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.c\n'}
+[10.462521] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_introspection_c.h\n'}
+[10.462765] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[10.463423] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_c.so\n'}
+[10.464173] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_c.so" to ""\n'}
+[10.464758] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_c.so\n'}
+[10.465556] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_c.so" to ""\n'}
+[10.465799] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[10.466038] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[10.466179] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[10.466334] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__builder.hpp\n'}
+[10.466533] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__type_support.hpp\n'}
+[10.466742] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.hpp\n'}
+[10.467081] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__struct.hpp\n'}
+[10.467717] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__builder.hpp\n'}
+[10.468087] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__traits.hpp\n'}
+[10.468689] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__builder.hpp\n'}
+[10.469230] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__builder.hpp\n'}
+[10.470175] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__struct.hpp\n'}
+[10.470652] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__traits.hpp\n'}
+[10.470950] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__traits.hpp\n'}
+[10.471660] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.hpp\n'}
+[10.472025] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__struct.hpp\n'}
+[10.472317] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__traits.hpp\n'}
+[10.472683] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__struct.hpp\n'}
+[10.474783] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.hpp\n'}
+[10.475064] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp\n'}
+[10.475329] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/pos_vel_data.hpp\n'}
+[10.475640] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/feedback.hpp\n'}
+[10.475848] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/mit_data.hpp\n'}
+[10.476015] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/vel_data.hpp\n'}
+[10.476258] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[10.476411] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[10.476606] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[10.477166] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_introspection_cpp.hpp\n'}
+[10.477741] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_introspection_cpp.hpp\n'}
+[10.477910] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.cpp\n'}
+[10.478427] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.cpp\n'}
+[10.478618] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.cpp\n'}
+[10.478768] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__type_support.cpp\n'}
+[10.479318] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__rosidl_typesupport_introspection_cpp.hpp\n'}
+[10.479752] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_introspection_cpp.hpp\n'}
+[10.479993] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_cpp.so\n'}
+[10.481159] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_cpp.so" to ""\n'}
+[10.482896] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_cpp.so\n'}
+[10.490577] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_cpp.so" to ""\n'}
+[10.491071] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/pythonpath.sh\n'}
+[10.491251] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/pythonpath.dsv\n'}
+[10.491491] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/__init__.py\n'}
+[10.548270] (can_interfaces) StdoutLine: {'line': b"Compiling '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/__init__.py'...\n"}
+[10.551158] (-) TimerEvent: {}
+[10.560505] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg\n'}
+[10.561086] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_mit_data.py\n'}
+[10.561376] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_pos_vel_data.py\n'}
+[10.561837] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_feedback_s.c\n'}
+[10.562152] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_vel_data.py\n'}
+[10.562403] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_feedback.py\n'}
+[10.562633] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_pos_vel_data_s.c\n'}
+[10.562849] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_vel_data_s.c\n'}
+[10.563009] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/__init__.py\n'}
+[10.563213] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_mit_data_s.c\n'}
+[10.564167] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so\n'}
+[10.566356] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so" to ""\n'}
+[10.569434] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so\n'}
+[10.570092] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so" to ""\n'}
+[10.570316] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so\n'}
+[10.571009] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so" to ""\n'}
+[10.574399] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__python.so\n'}
+[10.574999] (can_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__python.so" to ""\n'}
+[10.575288] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/MITData.idl\n'}
+[10.575457] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/PosVelData.idl\n'}
+[10.575692] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/VelData.idl\n'}
+[10.575984] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/Feedback.idl\n'}
+[10.576139] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/MITData.msg\n'}
+[10.576413] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/PosVelData.msg\n'}
+[10.576634] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/VelData.msg\n'}
+[10.576827] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/Feedback.msg\n'}
+[10.577039] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/package_run_dependencies/can_interfaces\n'}
+[10.577184] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/parent_prefix_path/can_interfaces\n'}
+[10.577325] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/ament_prefix_path.sh\n'}
+[10.577479] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/ament_prefix_path.dsv\n'}
+[10.577703] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/path.sh\n'}
+[10.577926] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/path.dsv\n'}
+[10.578185] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.bash\n'}
+[10.578436] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.sh\n'}
+[10.578678] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.zsh\n'}
+[10.578827] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.dsv\n'}
+[10.579131] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.dsv\n'}
+[10.579875] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/packages/can_interfaces\n'}
+[10.580268] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_generator_cExport.cmake\n'}
+[10.580627] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_generator_cExport-noconfig.cmake\n'}
+[10.581740] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cExport.cmake\n'}
+[10.582149] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[10.582756] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cExport.cmake\n'}
+[10.583052] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[10.583829] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_generator_cppExport.cmake\n'}
+[10.584695] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[10.584904] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[10.585742] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cppExport.cmake\n'}
+[10.585948] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[10.586403] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/rosidl_cmake-extras.cmake\n'}
+[10.587007] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[10.587198] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[10.587378] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[10.587551] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[10.587732] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[10.587886] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[10.588125] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfacesConfig.cmake\n'}
+[10.588287] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfacesConfig-version.cmake\n'}
+[10.588424] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.xml\n'}
+[10.594754] (can_interfaces) CommandEnded: {'returncode': 0}
+[10.651344] (-) TimerEvent: {}
+[10.752151] (-) TimerEvent: {}
+[10.852959] (-) TimerEvent: {}
+[10.911981] (can_interfaces) JobEnded: {'identifier': 'can_interfaces', 'rc': 0}
+[10.913917] (-) EventReactorShutdown: {}

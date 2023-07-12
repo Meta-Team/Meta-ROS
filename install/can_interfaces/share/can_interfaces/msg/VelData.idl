@@ -1,0 +1,14 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from can_interfaces/msg/VelData.msg
+// generated code does not contain a copyright notice
+
+
+module can_interfaces {
+  module msg {
+    struct VelData {
+      uint8 id;
+
+      float v_des;
+    };
+  };
+};

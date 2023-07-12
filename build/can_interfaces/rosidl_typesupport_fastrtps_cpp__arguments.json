@@ -1,0 +1,25 @@
+{
+  "package_name": "can_interfaces",
+  "output_dir": "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_typesupport_fastrtps_cpp/can_interfaces",
+  "template_dir": "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource",
+  "idl_tuples": [
+    "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_adapter/can_interfaces:msg/MITData.idl",
+    "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_adapter/can_interfaces:msg/PosVelData.idl",
+    "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_adapter/can_interfaces:msg/VelData.idl",
+    "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_adapter/can_interfaces:msg/Feedback.idl"
+  ],
+  "target_dependencies": [
+    "/opt/ros/foxy/lib/rosidl_typesupport_fastrtps_cpp/rosidl_typesupport_fastrtps_cpp",
+    "/opt/ros/foxy/lib/python3.8/site-packages/rosidl_typesupport_fastrtps_cpp/__init__.py",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/idl__rosidl_typesupport_fastrtps_cpp.hpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/idl__type_support.cpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/msg__rosidl_typesupport_fastrtps_cpp.hpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/msg__type_support.cpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/srv__rosidl_typesupport_fastrtps_cpp.hpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/srv__type_support.cpp.em",
+    "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_adapter/can_interfaces/msg/MITData.idl",
+    "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_adapter/can_interfaces/msg/PosVelData.idl",
+    "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_adapter/can_interfaces/msg/VelData.idl",
+    "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_adapter/can_interfaces/msg/Feedback.idl"
+  ]
+}

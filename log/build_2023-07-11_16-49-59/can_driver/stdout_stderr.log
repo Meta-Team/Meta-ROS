@@ -1,0 +1,13 @@
+-- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+-- Using PYTHON_EXECUTABLE: /usr/bin/python3
+-- Found can_interfaces: 0.0.0 (/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake)
+CMake Error at /opt/ros/foxy/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:77 (message):
+  ament_target_dependencies() the passed package name 'rclcpp' was not found
+  before
+Call Stack (most recent call first):
+  CMakeLists.txt:26 (ament_target_dependencies)
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/xinchen/Dev/Meta-ROS/build/can_driver/CMakeFiles/CMakeOutput.log".
+make: *** [Makefile:222: cmake_check_build_system] Error 1

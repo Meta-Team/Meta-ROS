@@ -1,0 +1,51 @@
+[0.030s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_driver': AMENT_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy LD_LIBRARY_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_driver -- -j6 -l6
+[0.103s] -- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+[0.150s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.610s] -- Found can_interfaces: 0.0.0 (/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake)
+[0.660s] -- Found rclcpp: 2.4.3 (/opt/ros/foxy/share/rclcpp/cmake)
+[0.705s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.713s] -- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+[0.990s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.095s] -- Found rmw_implementation_cmake: 1.0.4 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+[1.098s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.385s] -- Found ament_lint_auto: 0.9.8 (/opt/ros/foxy/share/ament_lint_auto/cmake)
+[1.535s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.537s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[1.537s] -- Configured cppcheck include dirs: 
+[1.537s] -- Configured cppcheck exclude dirs and/or files: 
+[1.538s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[1.539s] -- Configured cpplint exclude dirs and/or files: 
+[1.540s] -- Added test 'lint_cmake' to check CMake code style
+[1.542s] -- Added test 'uncrustify' to check C / C++ code style
+[1.542s] -- Configured uncrustify additional arguments: 
+[1.542s] -- Added test 'xmllint' to check XML markup files
+[1.549s] -- Configuring done
+[1.570s] -- Generating done
+[1.573s] -- Build files have been written to: /home/xinchen/Dev/Meta-ROS/build/can_driver
+[1.641s] [35m[1mScanning dependencies of target can_driver[0m
+[1.708s] [ 66%] [32mBuilding CXX object CMakeFiles/can_driver.dir/src/can_driver.cpp.o[0m
+[1.708s] [ 66%] [32mBuilding CXX object CMakeFiles/can_driver.dir/src/can_data.cpp.o[0m
+[5.072s] [01m[K/home/xinchen/Dev/Meta-ROS/src/can_driver/src/can_driver.cpp:38:2:[m[K [01;35m[Kwarning: [m[Kextra ‘[01m[K;[m[K’ [[01;35m[K-Wpedantic[m[K]
+[5.078s]    38 | }[01;35m[K;[m[K
+[5.078s]       |  [01;35m[K^[m[K
+[18.917s] [100%] [32m[1mLinking CXX executable can_driver[0m
+[19.688s] [100%] Built target can_driver
+[19.730s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_driver' returned '0': AMENT_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy LD_LIBRARY_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_driver -- -j6 -l6
+[19.792s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_driver': AMENT_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy LD_LIBRARY_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/can_driver
+[19.814s] -- Install configuration: ""
+[19.817s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/ament_index/resource_index/package_run_dependencies/can_driver
+[19.817s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/ament_index/resource_index/parent_prefix_path/can_driver
+[19.825s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/environment/ament_prefix_path.sh
+[19.826s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/environment/ament_prefix_path.dsv
+[19.826s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/environment/path.sh
+[19.826s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/environment/path.dsv
+[19.826s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/local_setup.bash
+[19.830s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/local_setup.sh
+[19.831s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/local_setup.zsh
+[19.832s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/local_setup.dsv
+[19.835s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.dsv
+[19.846s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/ament_index/resource_index/packages/can_driver
+[19.847s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/cmake/can_driverConfig.cmake
+[19.847s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/cmake/can_driverConfig-version.cmake
+[19.847s] -- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.xml
+[19.848s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_driver' returned '0': AMENT_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy LD_LIBRARY_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/can_driver

@@ -1,0 +1,24 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from can_interfaces/msg/Feedback.msg
+// generated code does not contain a copyright notice
+
+
+module can_interfaces {
+  module msg {
+    struct Feedback {
+      int8 mst_id;
+
+      int8 id;
+
+      float pos;
+
+      float vel;
+
+      float tor;
+
+      float t_mos;
+
+      float t_rotor;
+    };
+  };
+};

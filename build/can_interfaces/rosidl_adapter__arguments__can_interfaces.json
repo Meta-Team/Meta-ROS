@@ -1,0 +1,9 @@
+{
+  "package_name": "can_interfaces",
+  "non_idl_tuples": [
+    "/home/xinchen/Dev/Meta-ROS/src/can_interfaces:msg/MITData.msg",
+    "/home/xinchen/Dev/Meta-ROS/src/can_interfaces:msg/PosVelData.msg",
+    "/home/xinchen/Dev/Meta-ROS/src/can_interfaces:msg/VelData.msg",
+    "/home/xinchen/Dev/Meta-ROS/src/can_interfaces:msg/Feedback.msg"
+  ]
+}

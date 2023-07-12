@@ -1,0 +1,407 @@
+[0.000000] (-) TimerEvent: {}
+[0.000744] (can_interfaces) JobQueued: {'identifier': 'can_interfaces', 'dependencies': OrderedDict()}
+[0.000972] (can_driver) JobQueued: {'identifier': 'can_driver', 'dependencies': OrderedDict([('can_interfaces', '/home/xinchen/Dev/Meta-ROS/install/can_interfaces')])}
+[0.001506] (can_interfaces) JobStarted: {'identifier': 'can_interfaces'}
+[0.039413] (can_interfaces) JobProgress: {'identifier': 'can_interfaces', 'progress': 'cmake'}
+[0.041921] (can_interfaces) JobProgress: {'identifier': 'can_interfaces', 'progress': 'build'}
+[0.043373] (can_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/xinchen/Dev/Meta-ROS/build/can_interfaces', '--', '-j6', '-l6'], 'cwd': '/home/xinchen/Dev/Meta-ROS/build/can_interfaces', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'xinchen'), ('LC_TIME', 'zh_CN.UTF-8'), ('SSH_AGENT_PID', '2502'), ('XDG_SESSION_TYPE', 'x11'), ('GIT_ASKPASS', '/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/aarch64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/aarch64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/xinchen'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('TERM_PROGRAM_VERSION', '1.80.0'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('VSCODE_GIT_ASKPASS_MAIN', '/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('LC_MONETARY', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_NODE', '/usr/share/code/code'), ('MANAGERPID', '2330'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '2877'), ('IM_CONFIG_PHASE', '1'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'xinchen'), ('JOURNAL_STREAM', '7:58179'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'xinchen'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/foxy/bin:/home/xinchen/.local/bin:/home/xinchen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('SESSION_MANAGER', 'local/xinchen-orin:@/tmp/.ICE-unix/2537,unix/xinchen-orin:/tmp/.ICE-unix/2537'), ('INVOCATION_ID', '86d8dacd9c254275b6e3cb29bb641ff1'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'zh_CN.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':1'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('LC_TELEPHONE', 'zh_CN.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-6b8cb1e2f4.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/opt/ros/foxy'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('LC_NAME', 'zh_CN.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'zh_CN.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/xinchen/Dev/Meta-ROS/build/can_interfaces'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/foxy/lib/python3.8/site-packages'), ('LC_NUMERIC', 'zh_CN.UTF-8'), ('LC_PAPER', 'zh_CN.UTF-8'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/foxy')]), 'shell': False}
+[0.099373] (-) TimerEvent: {}
+[0.195881] (can_interfaces) StdoutLine: {'line': b'[  5%] Built target can_interfaces__cpp\n'}
+[0.196682] (can_interfaces) StdoutLine: {'line': b'[ 12%] Built target can_interfaces__rosidl_generator_c\n'}
+[0.199483] (-) TimerEvent: {}
+[0.255962] (can_interfaces) StdoutLine: {'line': b'[ 25%] Built target can_interfaces__rosidl_typesupport_cpp\n'}
+[0.256947] (can_interfaces) StdoutLine: {'line': b'[ 34%] Built target can_interfaces__rosidl_typesupport_c\n'}
+[0.258886] (can_interfaces) StdoutLine: {'line': b'[ 45%] Built target can_interfaces__rosidl_typesupport_introspection_c\n'}
+[0.274724] (can_interfaces) StdoutLine: {'line': b'[ 67%] Built target can_interfaces__rosidl_typesupport_introspection_cpp\n'}
+[0.276154] (can_interfaces) StdoutLine: {'line': b'[ 67%] Built target can_interfaces__rosidl_typesupport_fastrtps_cpp\n'}
+[0.299687] (-) TimerEvent: {}
+[0.334949] (can_interfaces) StdoutLine: {'line': b'[ 78%] Built target can_interfaces__rosidl_typesupport_fastrtps_c\n'}
+[0.378932] (can_interfaces) StdoutLine: {'line': b'[ 78%] Built target can_interfaces\n'}
+[0.399846] (-) TimerEvent: {}
+[0.427551] (can_interfaces) StdoutLine: {'line': b'[ 80%] Built target can_interfaces__py\n'}
+[0.490758] (can_interfaces) StdoutLine: {'line': b'[ 89%] Built target can_interfaces__python\n'}
+[0.500021] (-) TimerEvent: {}
+[0.547622] (can_interfaces) StdoutLine: {'line': b'[100%] Built target can_interfaces__rosidl_typesupport_introspection_c__pyext\n'}
+[0.548200] (can_interfaces) StdoutLine: {'line': b'[100%] Built target can_interfaces__rosidl_typesupport_c__pyext\n'}
+[0.548411] (can_interfaces) StdoutLine: {'line': b'[100%] Built target can_interfaces__rosidl_typesupport_fastrtps_c__pyext\n'}
+[0.575358] (can_interfaces) CommandEnded: {'returncode': 0}
+[0.600293] (-) TimerEvent: {}
+[0.701161] (-) TimerEvent: {}
+[0.764602] (can_interfaces) JobProgress: {'identifier': 'can_interfaces', 'progress': 'install'}
+[0.790544] (can_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/xinchen/Dev/Meta-ROS/build/can_interfaces'], 'cwd': '/home/xinchen/Dev/Meta-ROS/build/can_interfaces', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'xinchen'), ('LC_TIME', 'zh_CN.UTF-8'), ('SSH_AGENT_PID', '2502'), ('XDG_SESSION_TYPE', 'x11'), ('GIT_ASKPASS', '/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/aarch64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/aarch64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/xinchen'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('TERM_PROGRAM_VERSION', '1.80.0'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('VSCODE_GIT_ASKPASS_MAIN', '/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('LC_MONETARY', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_NODE', '/usr/share/code/code'), ('MANAGERPID', '2330'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '2877'), ('IM_CONFIG_PHASE', '1'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'xinchen'), ('JOURNAL_STREAM', '7:58179'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'xinchen'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/foxy/bin:/home/xinchen/.local/bin:/home/xinchen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('SESSION_MANAGER', 'local/xinchen-orin:@/tmp/.ICE-unix/2537,unix/xinchen-orin:/tmp/.ICE-unix/2537'), ('INVOCATION_ID', '86d8dacd9c254275b6e3cb29bb641ff1'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'zh_CN.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':1'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('LC_TELEPHONE', 'zh_CN.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-6b8cb1e2f4.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/opt/ros/foxy'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('LC_NAME', 'zh_CN.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'zh_CN.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/xinchen/Dev/Meta-ROS/build/can_interfaces'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/foxy/lib/python3.8/site-packages'), ('LC_NUMERIC', 'zh_CN.UTF-8'), ('LC_PAPER', 'zh_CN.UTF-8'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/foxy')]), 'shell': False}
+[0.801266] (-) TimerEvent: {}
+[0.815481] (can_interfaces) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[0.816259] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/rosidl_interfaces/can_interfaces\n'}
+[0.816598] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[0.816884] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[0.817123] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/vel_data.h\n'}
+[0.817356] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[0.817578] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__functions.c\n'}
+[0.817728] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__functions.h\n'}
+[0.817911] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__struct.h\n'}
+[0.818179] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__functions.h\n'}
+[0.818329] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__functions.h\n'}
+[0.818467] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__struct.h\n'}
+[0.818749] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.h\n'}
+[0.818991] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__functions.h\n'}
+[0.819267] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__struct.h\n'}
+[0.819603] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__struct.h\n'}
+[0.819796] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__functions.c\n'}
+[0.819981] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.h\n'}
+[0.820166] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__functions.c\n'}
+[0.820368] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.h\n'}
+[0.820512] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__type_support.h\n'}
+[0.820854] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__functions.c\n'}
+[0.821256] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/mit_data.h\n'}
+[0.821440] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_generator_c__visibility_control.h\n'}
+[0.821619] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/feedback.h\n'}
+[0.821774] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/pos_vel_data.h\n'}
+[0.821920] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/library_path.sh\n'}
+[0.822115] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/library_path.dsv\n'}
+[0.822261] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_generator_c.so\n'}
+[0.822431] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[0.822755] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[0.823057] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[0.823300] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_fastrtps_c.h\n'}
+[0.823453] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__rosidl_typesupport_fastrtps_c.h\n'}
+[0.823647] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_fastrtps_c.h\n'}
+[0.823794] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_fastrtps_c.h\n'}
+[0.823941] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[0.824081] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_c.so\n'}
+[0.824250] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[0.824443] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[0.824589] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[0.824836] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.825230] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.825924] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.826326] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/dds_fastrtps\n'}
+[0.826764] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.826945] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[0.827141] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_fastrtps_cpp.so\n'}
+[0.827291] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[0.827431] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[0.827567] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[0.827703] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.c\n'}
+[0.827925] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_introspection_c.h\n'}
+[0.828090] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__rosidl_typesupport_introspection_c.h\n'}
+[0.828363] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.c\n'}
+[0.828514] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_introspection_c.h\n'}
+[0.828654] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__type_support.c\n'}
+[0.828791] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.c\n'}
+[0.828926] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_introspection_c.h\n'}
+[0.829064] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[0.829197] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_c.so\n'}
+[0.829332] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_c.so\n'}
+[0.829501] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[0.829636] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[0.829770] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[0.829905] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__builder.hpp\n'}
+[0.830041] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__type_support.hpp\n'}
+[0.830276] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.hpp\n'}
+[0.830420] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__struct.hpp\n'}
+[0.830554] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__builder.hpp\n'}
+[0.830719] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__traits.hpp\n'}
+[0.830854] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__builder.hpp\n'}
+[0.830985] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__builder.hpp\n'}
+[0.831119] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__struct.hpp\n'}
+[0.831254] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__traits.hpp\n'}
+[0.831389] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__traits.hpp\n'}
+[0.831522] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.hpp\n'}
+[0.831654] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__struct.hpp\n'}
+[0.831788] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__traits.hpp\n'}
+[0.831919] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__struct.hpp\n'}
+[0.832049] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.hpp\n'}
+[0.832238] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp\n'}
+[0.832385] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/pos_vel_data.hpp\n'}
+[0.832521] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/feedback.hpp\n'}
+[0.832651] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/mit_data.hpp\n'}
+[0.832802] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/vel_data.hpp\n'}
+[0.832937] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces\n'}
+[0.833071] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg\n'}
+[0.833205] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail\n'}
+[0.833336] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.833466] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.833605] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__type_support.cpp\n'}
+[0.833738] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/pos_vel_data__type_support.cpp\n'}
+[0.833867] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/vel_data__type_support.cpp\n'}
+[0.834014] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__type_support.cpp\n'}
+[0.834145] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/feedback__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.834276] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/include/can_interfaces/msg/detail/mit_data__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.834431] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_introspection_cpp.so\n'}
+[0.834562] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__rosidl_typesupport_cpp.so\n'}
+[0.834693] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/pythonpath.sh\n'}
+[0.834824] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/pythonpath.dsv\n'}
+[0.834953] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/__init__.py\n'}
+[0.894881] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg\n'}
+[0.895436] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_mit_data.py\n'}
+[0.895699] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_pos_vel_data.py\n'}
+[0.895912] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_feedback_s.c\n'}
+[0.896096] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_vel_data.py\n'}
+[0.896277] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_feedback.py\n'}
+[0.896426] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_pos_vel_data_s.c\n'}
+[0.896570] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_vel_data_s.c\n'}
+[0.896708] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/__init__.py\n'}
+[0.896844] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/msg/_mit_data_s.c\n'}
+[0.897790] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so\n'}
+[0.900493] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so\n'}
+[0.901318] (-) TimerEvent: {}
+[0.903005] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages/can_interfaces/can_interfaces_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so\n'}
+[0.904605] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/libcan_interfaces__python.so\n'}
+[0.905263] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/MITData.idl\n'}
+[0.905630] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/PosVelData.idl\n'}
+[0.905948] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/VelData.idl\n'}
+[0.906234] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/Feedback.idl\n'}
+[0.906505] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/MITData.msg\n'}
+[0.906814] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/PosVelData.msg\n'}
+[0.907047] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/VelData.msg\n'}
+[0.907304] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/msg/Feedback.msg\n'}
+[0.907552] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/package_run_dependencies/can_interfaces\n'}
+[0.907798] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/parent_prefix_path/can_interfaces\n'}
+[0.908096] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/ament_prefix_path.sh\n'}
+[0.908410] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/ament_prefix_path.dsv\n'}
+[0.908651] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/path.sh\n'}
+[0.910138] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/environment/path.dsv\n'}
+[0.910673] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.bash\n'}
+[0.910848] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.sh\n'}
+[0.910995] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.zsh\n'}
+[0.911136] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/local_setup.dsv\n'}
+[0.911284] (can_interfaces) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.dsv\n'}
+[0.911550] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/ament_index/resource_index/packages/can_interfaces\n'}
+[0.912858] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_generator_cExport.cmake\n'}
+[0.913243] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_generator_cExport-noconfig.cmake\n'}
+[0.913514] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cExport.cmake\n'}
+[0.913667] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[0.914061] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cExport.cmake\n'}
+[0.914478] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[0.914785] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_generator_cppExport.cmake\n'}
+[0.915353] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[0.915581] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[0.916144] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cppExport.cmake\n'}
+[0.916374] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfaces__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[0.916573] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/rosidl_cmake-extras.cmake\n'}
+[0.916773] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[0.916966] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[0.917152] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[0.917337] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[0.917556] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[0.917768] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[0.917958] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfacesConfig.cmake\n'}
+[0.918096] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/cmake/can_interfacesConfig-version.cmake\n'}
+[0.918232] (can_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.xml\n'}
+[0.924602] (can_interfaces) CommandEnded: {'returncode': 0}
+[1.001503] (-) TimerEvent: {}
+[1.102130] (-) TimerEvent: {}
+[1.202926] (-) TimerEvent: {}
+[1.250440] (can_interfaces) JobEnded: {'identifier': 'can_interfaces', 'rc': 0}
+[1.261281] (can_driver) JobStarted: {'identifier': 'can_driver'}
+[1.280958] (can_driver) JobProgress: {'identifier': 'can_driver', 'progress': 'cmake'}
+[1.282969] (can_driver) JobProgress: {'identifier': 'can_driver', 'progress': 'build'}
+[1.283571] (can_driver) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/xinchen/Dev/Meta-ROS/build/can_driver', '--', '-j6', '-l6'], 'cwd': '/home/xinchen/Dev/Meta-ROS/build/can_driver', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'xinchen'), ('LC_TIME', 'zh_CN.UTF-8'), ('SSH_AGENT_PID', '2502'), ('XDG_SESSION_TYPE', 'x11'), ('GIT_ASKPASS', '/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:/usr/lib/aarch64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/aarch64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/xinchen'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('TERM_PROGRAM_VERSION', '1.80.0'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('VSCODE_GIT_ASKPASS_MAIN', '/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('LC_MONETARY', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_NODE', '/usr/share/code/code'), ('MANAGERPID', '2330'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '2877'), ('IM_CONFIG_PHASE', '1'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'xinchen'), ('JOURNAL_STREAM', '7:58179'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'xinchen'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/foxy/bin:/home/xinchen/.local/bin:/home/xinchen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('SESSION_MANAGER', 'local/xinchen-orin:@/tmp/.ICE-unix/2537,unix/xinchen-orin:/tmp/.ICE-unix/2537'), ('INVOCATION_ID', '86d8dacd9c254275b6e3cb29bb641ff1'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'zh_CN.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':1'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('LC_TELEPHONE', 'zh_CN.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-6b8cb1e2f4.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('LC_NAME', 'zh_CN.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'zh_CN.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/xinchen/Dev/Meta-ROS/build/can_driver'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages'), ('LC_NUMERIC', 'zh_CN.UTF-8'), ('LC_PAPER', 'zh_CN.UTF-8'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy')]), 'shell': False}
+[1.303173] (-) TimerEvent: {}
+[1.393579] (can_driver) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target can_driver\x1b[0m\n'}
+[1.403236] (-) TimerEvent: {}
+[1.457257] (can_driver) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/can_driver.dir/src/can_driver.cpp.o\x1b[0m\n'}
+[1.503443] (-) TimerEvent: {}
+[1.604204] (-) TimerEvent: {}
+[1.704918] (-) TimerEvent: {}
+[1.805635] (-) TimerEvent: {}
+[1.906346] (-) TimerEvent: {}
+[2.007059] (-) TimerEvent: {}
+[2.107773] (-) TimerEvent: {}
+[2.208517] (-) TimerEvent: {}
+[2.309238] (-) TimerEvent: {}
+[2.409952] (-) TimerEvent: {}
+[2.510674] (-) TimerEvent: {}
+[2.611370] (-) TimerEvent: {}
+[2.712093] (-) TimerEvent: {}
+[2.812841] (-) TimerEvent: {}
+[2.913557] (-) TimerEvent: {}
+[3.014266] (-) TimerEvent: {}
+[3.114978] (-) TimerEvent: {}
+[3.215686] (-) TimerEvent: {}
+[3.316413] (-) TimerEvent: {}
+[3.417125] (-) TimerEvent: {}
+[3.517828] (-) TimerEvent: {}
+[3.618531] (-) TimerEvent: {}
+[3.719264] (-) TimerEvent: {}
+[3.819991] (-) TimerEvent: {}
+[3.920732] (-) TimerEvent: {}
+[4.021447] (-) TimerEvent: {}
+[4.122168] (-) TimerEvent: {}
+[4.222879] (-) TimerEvent: {}
+[4.323588] (-) TimerEvent: {}
+[4.424323] (-) TimerEvent: {}
+[4.525036] (-) TimerEvent: {}
+[4.625744] (-) TimerEvent: {}
+[4.726462] (-) TimerEvent: {}
+[4.827191] (-) TimerEvent: {}
+[4.927915] (-) TimerEvent: {}
+[5.028652] (-) TimerEvent: {}
+[5.129370] (-) TimerEvent: {}
+[5.230079] (-) TimerEvent: {}
+[5.330799] (-) TimerEvent: {}
+[5.431516] (-) TimerEvent: {}
+[5.532252] (-) TimerEvent: {}
+[5.632973] (-) TimerEvent: {}
+[5.733688] (-) TimerEvent: {}
+[5.834428] (-) TimerEvent: {}
+[5.935145] (-) TimerEvent: {}
+[6.035887] (-) TimerEvent: {}
+[6.136676] (-) TimerEvent: {}
+[6.237403] (-) TimerEvent: {}
+[6.338120] (-) TimerEvent: {}
+[6.438818] (-) TimerEvent: {}
+[6.539507] (-) TimerEvent: {}
+[6.640245] (-) TimerEvent: {}
+[6.740950] (-) TimerEvent: {}
+[6.841659] (-) TimerEvent: {}
+[6.942383] (-) TimerEvent: {}
+[7.043107] (-) TimerEvent: {}
+[7.143830] (-) TimerEvent: {}
+[7.244583] (-) TimerEvent: {}
+[7.345297] (-) TimerEvent: {}
+[7.445995] (-) TimerEvent: {}
+[7.546703] (-) TimerEvent: {}
+[7.647415] (-) TimerEvent: {}
+[7.748130] (-) TimerEvent: {}
+[7.848848] (-) TimerEvent: {}
+[7.949583] (-) TimerEvent: {}
+[8.050360] (-) TimerEvent: {}
+[8.151089] (-) TimerEvent: {}
+[8.251801] (-) TimerEvent: {}
+[8.352520] (-) TimerEvent: {}
+[8.453196] (-) TimerEvent: {}
+[8.553892] (-) TimerEvent: {}
+[8.654990] (-) TimerEvent: {}
+[8.755877] (-) TimerEvent: {}
+[8.856764] (-) TimerEvent: {}
+[8.957636] (-) TimerEvent: {}
+[9.058516] (-) TimerEvent: {}
+[9.159374] (-) TimerEvent: {}
+[9.260343] (-) TimerEvent: {}
+[9.361186] (-) TimerEvent: {}
+[9.462000] (-) TimerEvent: {}
+[9.562865] (-) TimerEvent: {}
+[9.663741] (-) TimerEvent: {}
+[9.764636] (-) TimerEvent: {}
+[9.865504] (-) TimerEvent: {}
+[9.966358] (-) TimerEvent: {}
+[10.067223] (-) TimerEvent: {}
+[10.168070] (-) TimerEvent: {}
+[10.268931] (-) TimerEvent: {}
+[10.369790] (-) TimerEvent: {}
+[10.470635] (-) TimerEvent: {}
+[10.571498] (-) TimerEvent: {}
+[10.672329] (-) TimerEvent: {}
+[10.773069] (-) TimerEvent: {}
+[10.873795] (-) TimerEvent: {}
+[10.974550] (-) TimerEvent: {}
+[11.075267] (-) TimerEvent: {}
+[11.175972] (-) TimerEvent: {}
+[11.276704] (-) TimerEvent: {}
+[11.377443] (-) TimerEvent: {}
+[11.478193] (-) TimerEvent: {}
+[11.578926] (-) TimerEvent: {}
+[11.679656] (-) TimerEvent: {}
+[11.780352] (-) TimerEvent: {}
+[11.881040] (-) TimerEvent: {}
+[11.981720] (-) TimerEvent: {}
+[12.082406] (-) TimerEvent: {}
+[12.183082] (-) TimerEvent: {}
+[12.283762] (-) TimerEvent: {}
+[12.384560] (-) TimerEvent: {}
+[12.485228] (-) TimerEvent: {}
+[12.585903] (-) TimerEvent: {}
+[12.686602] (-) TimerEvent: {}
+[12.787289] (-) TimerEvent: {}
+[12.887969] (-) TimerEvent: {}
+[12.988715] (-) TimerEvent: {}
+[13.089484] (-) TimerEvent: {}
+[13.190174] (-) TimerEvent: {}
+[13.290861] (-) TimerEvent: {}
+[13.391549] (-) TimerEvent: {}
+[13.492235] (-) TimerEvent: {}
+[13.592901] (-) TimerEvent: {}
+[13.693603] (-) TimerEvent: {}
+[13.794281] (-) TimerEvent: {}
+[13.894970] (-) TimerEvent: {}
+[13.995661] (-) TimerEvent: {}
+[14.096356] (-) TimerEvent: {}
+[14.197047] (-) TimerEvent: {}
+[14.297785] (-) TimerEvent: {}
+[14.398469] (-) TimerEvent: {}
+[14.499161] (-) TimerEvent: {}
+[14.599843] (-) TimerEvent: {}
+[14.700559] (-) TimerEvent: {}
+[14.801233] (-) TimerEvent: {}
+[14.901917] (-) TimerEvent: {}
+[15.002626] (-) TimerEvent: {}
+[15.103342] (-) TimerEvent: {}
+[15.204050] (-) TimerEvent: {}
+[15.304776] (-) TimerEvent: {}
+[15.405466] (-) TimerEvent: {}
+[15.506159] (-) TimerEvent: {}
+[15.606848] (-) TimerEvent: {}
+[15.707547] (-) TimerEvent: {}
+[15.808257] (-) TimerEvent: {}
+[15.908936] (-) TimerEvent: {}
+[16.009629] (-) TimerEvent: {}
+[16.110314] (-) TimerEvent: {}
+[16.211009] (-) TimerEvent: {}
+[16.311719] (-) TimerEvent: {}
+[16.412457] (-) TimerEvent: {}
+[16.513152] (-) TimerEvent: {}
+[16.613844] (-) TimerEvent: {}
+[16.714534] (-) TimerEvent: {}
+[16.815218] (-) TimerEvent: {}
+[16.915911] (-) TimerEvent: {}
+[17.016629] (-) TimerEvent: {}
+[17.117305] (-) TimerEvent: {}
+[17.218004] (-) TimerEvent: {}
+[17.318718] (-) TimerEvent: {}
+[17.419421] (-) TimerEvent: {}
+[17.520125] (-) TimerEvent: {}
+[17.620848] (-) TimerEvent: {}
+[17.721552] (-) TimerEvent: {}
+[17.822248] (-) TimerEvent: {}
+[17.922961] (-) TimerEvent: {}
+[18.023660] (-) TimerEvent: {}
+[18.124383] (-) TimerEvent: {}
+[18.225090] (-) TimerEvent: {}
+[18.325821] (-) TimerEvent: {}
+[18.426595] (-) TimerEvent: {}
+[18.526510] (can_driver) StdoutLine: {'line': b'[ 66%] \x1b[32m\x1b[1mLinking CXX executable can_driver\x1b[0m\n'}
+[18.527887] (-) TimerEvent: {}
+[18.628398] (-) TimerEvent: {}
+[18.729140] (-) TimerEvent: {}
+[18.829988] (-) TimerEvent: {}
+[18.930731] (-) TimerEvent: {}
+[19.031600] (-) TimerEvent: {}
+[19.132478] (-) TimerEvent: {}
+[19.233322] (-) TimerEvent: {}
+[19.276827] (can_driver) StdoutLine: {'line': b'[100%] Built target can_driver\n'}
+[19.305439] (can_driver) CommandEnded: {'returncode': 0}
+[19.333519] (-) TimerEvent: {}
+[19.361375] (can_driver) JobProgress: {'identifier': 'can_driver', 'progress': 'install'}
+[19.362375] (can_driver) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/xinchen/Dev/Meta-ROS/build/can_driver'], 'cwd': '/home/xinchen/Dev/Meta-ROS/build/can_driver', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'xinchen'), ('LC_TIME', 'zh_CN.UTF-8'), ('SSH_AGENT_PID', '2502'), ('XDG_SESSION_TYPE', 'x11'), ('GIT_ASKPASS', '/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:/usr/lib/aarch64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/aarch64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/xinchen'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('TERM_PROGRAM_VERSION', '1.80.0'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('VSCODE_GIT_ASKPASS_MAIN', '/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('LC_MONETARY', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_NODE', '/usr/share/code/code'), ('MANAGERPID', '2330'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '2877'), ('IM_CONFIG_PHASE', '1'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'xinchen'), ('JOURNAL_STREAM', '7:58179'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'xinchen'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/foxy/bin:/home/xinchen/.local/bin:/home/xinchen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('SESSION_MANAGER', 'local/xinchen-orin:@/tmp/.ICE-unix/2537,unix/xinchen-orin:/tmp/.ICE-unix/2537'), ('INVOCATION_ID', '86d8dacd9c254275b6e3cb29bb641ff1'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'zh_CN.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':1'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('LC_TELEPHONE', 'zh_CN.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-6b8cb1e2f4.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('LC_NAME', 'zh_CN.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'zh_CN.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/xinchen/Dev/Meta-ROS/build/can_driver'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages'), ('LC_NUMERIC', 'zh_CN.UTF-8'), ('LC_PAPER', 'zh_CN.UTF-8'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy')]), 'shell': False}
+[19.389094] (can_driver) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[19.390368] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/ament_index/resource_index/package_run_dependencies/can_driver\n'}
+[19.390772] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/ament_index/resource_index/parent_prefix_path/can_driver\n'}
+[19.392726] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/environment/ament_prefix_path.sh\n'}
+[19.392976] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/environment/ament_prefix_path.dsv\n'}
+[19.393186] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/environment/path.sh\n'}
+[19.393418] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/environment/path.dsv\n'}
+[19.393619] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/local_setup.bash\n'}
+[19.393842] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/local_setup.sh\n'}
+[19.394025] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/local_setup.zsh\n'}
+[19.394163] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/local_setup.dsv\n'}
+[19.394295] (can_driver) StdoutLine: {'line': b'-- Installing: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.dsv\n'}
+[19.394801] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/ament_index/resource_index/packages/can_driver\n'}
+[19.395138] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/cmake/can_driverConfig.cmake\n'}
+[19.395321] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/cmake/can_driverConfig-version.cmake\n'}
+[19.395510] (can_driver) StdoutLine: {'line': b'-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.xml\n'}
+[19.400280] (can_driver) CommandEnded: {'returncode': 0}
+[19.438256] (-) TimerEvent: {}
+[19.540183] (-) TimerEvent: {}
+[19.543188] (can_driver) JobEnded: {'identifier': 'can_driver', 'rc': 0}
+[19.545203] (-) EventReactorShutdown: {}
