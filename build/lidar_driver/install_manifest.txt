@@ -1,0 +1,15 @@
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/ament_index/resource_index/package_run_dependencies/lidar_driver
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/ament_index/resource_index/parent_prefix_path/lidar_driver
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/ament_prefix_path.sh
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/ament_prefix_path.dsv
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/path.sh
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/path.dsv
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.bash
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.sh
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.zsh
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.dsv
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.dsv
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/ament_index/resource_index/packages/lidar_driver
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/cmake/lidar_driverConfig.cmake
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/cmake/lidar_driverConfig-version.cmake
+/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.xml

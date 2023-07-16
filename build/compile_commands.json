@@ -184,5 +184,11 @@
   "directory": "/home/xinchen/Dev/Meta-ROS/build/can_interfaces",
   "command": "/usr/bin/c++  -DRCUTILS_ENABLE_FAULT_INJECTION -DROS_PACKAGE_NAME=\\\"can_interfaces\\\" -Dcan_interfaces__rosidl_typesupport_introspection_cpp_EXPORTS -I/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_generator_cpp -isystem /opt/ros/foxy/include  -fPIC   -Wall -std=gnu++14 -o CMakeFiles/can_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/feedback__type_support.cpp.o -c /home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/feedback__type_support.cpp",
   "file": "/home/xinchen/Dev/Meta-ROS/build/can_interfaces/rosidl_typesupport_introspection_cpp/can_interfaces/msg/detail/feedback__type_support.cpp"
+},
+
+{
+  "directory": "/home/xinchen/Dev/Meta-ROS/build/lidar_driver",
+  "command": "/usr/bin/c++  -DDEFAULT_RMW_IMPLEMENTATION=rmw_fastrtps_cpp -DRCUTILS_ENABLE_FAULT_INJECTION -DSPDLOG_COMPILED_LIB -isystem /opt/ros/foxy/include    -Wall -Wextra -Wpedantic -std=gnu++14 -o CMakeFiles/lidar_driver.dir/src/lidar_driver.cpp.o -c /home/xinchen/Dev/Meta-ROS/src/lidar_driver/src/lidar_driver.cpp",
+  "file": "/home/xinchen/Dev/Meta-ROS/src/lidar_driver/src/lidar_driver.cpp"
 }
 ]

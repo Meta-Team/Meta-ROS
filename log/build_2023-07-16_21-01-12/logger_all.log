@@ -1,0 +1,280 @@
+[0.720s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--cmake-args', '-DCMAKE_EXPORT_COMPILE_COMMANDS=On']
+[0.720s] DEBUG:colcon:Parsed command line arguments: Namespace(allow_overriding=[], ament_cmake_args=None, base_paths=['.'], build_base='build', catkin_cmake_args=None, catkin_skip_building_tests=False, cmake_args=['-DCMAKE_EXPORT_COMPILE_COMMANDS=On'], cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, cmake_target=None, cmake_target_skip_unavailable=False, continue_on_error=False, event_handlers=None, executor='parallel', ignore_user_meta=False, install_base='install', log_base=None, log_level=None, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffffa5711940>>, merge_install=False, metas=['./colcon.meta'], packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_end=None, packages_ignore=None, packages_ignore_regex=None, packages_select=None, packages_select_build_failed=False, packages_select_by_dep=None, packages_select_regex=None, packages_select_test_failures=False, packages_skip=None, packages_skip_build_finished=False, packages_skip_by_dep=None, packages_skip_regex=None, packages_skip_test_passed=False, packages_skip_up_to=None, packages_start=None, packages_up_to=None, packages_up_to_regex=None, parallel_workers=6, paths=None, symlink_install=False, test_result_base=None, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffffa5711940>, verb_name='build', verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0xffffa5711eb0>)
+[0.804s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.805s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.805s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.805s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.805s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.805s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.805s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/xinchen/Dev/Meta-ROS'
+[0.805s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.828s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.828s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.828s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.829s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.829s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.829s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.829s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.829s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.830s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.830s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.830s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.830s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.830s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.831s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.831s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.831s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.831s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.831s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.831s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.831s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.831s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.832s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.832s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.832s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.832s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.832s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.832s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.832s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.832s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_driver) by extensions ['ignore', 'ignore_ament_install']
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_driver) by extension 'ignore'
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_driver) by extension 'ignore_ament_install'
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_driver) by extensions ['colcon_pkg']
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_driver) by extension 'colcon_pkg'
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_driver) by extensions ['colcon_meta']
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_driver) by extension 'colcon_meta'
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_driver) by extensions ['ros']
+[0.833s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_driver) by extension 'ros'
+[0.838s] DEBUG:colcon.colcon_core.package_identification:Package 'src/can_driver' with type 'ros.ament_cmake' and name 'can_driver'
+[0.839s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_interfaces) by extensions ['ignore', 'ignore_ament_install']
+[0.839s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_interfaces) by extension 'ignore'
+[0.839s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_interfaces) by extension 'ignore_ament_install'
+[0.839s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_interfaces) by extensions ['colcon_pkg']
+[0.839s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_interfaces) by extension 'colcon_pkg'
+[0.839s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_interfaces) by extensions ['colcon_meta']
+[0.839s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_interfaces) by extension 'colcon_meta'
+[0.840s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_interfaces) by extensions ['ros']
+[0.840s] Level 1:colcon.colcon_core.package_identification:_identify(src/can_interfaces) by extension 'ros'
+[0.841s] DEBUG:colcon.colcon_core.package_identification:Package 'src/can_interfaces' with type 'ros.ament_cmake' and name 'can_interfaces'
+[0.841s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_driver) by extensions ['ignore', 'ignore_ament_install']
+[0.841s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_driver) by extension 'ignore'
+[0.842s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_driver) by extension 'ignore_ament_install'
+[0.842s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_driver) by extensions ['colcon_pkg']
+[0.842s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_driver) by extension 'colcon_pkg'
+[0.842s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_driver) by extensions ['colcon_meta']
+[0.842s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_driver) by extension 'colcon_meta'
+[0.842s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_driver) by extensions ['ros']
+[0.842s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_driver) by extension 'ros'
+[0.843s] DEBUG:colcon.colcon_core.package_identification:Package 'src/lidar_driver' with type 'ros.ament_cmake' and name 'lidar_driver'
+[0.844s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.844s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.844s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.844s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.844s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.893s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.893s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.902s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 311 installed packages in /opt/ros/foxy
+[0.905s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[1.064s] Level 5:colcon.colcon_core.verb:set package 'can_interfaces' build argument 'cmake_args' from command line to '['-DCMAKE_EXPORT_COMPILE_COMMANDS=On']'
+[1.064s] Level 5:colcon.colcon_core.verb:set package 'can_interfaces' build argument 'cmake_target' from command line to 'None'
+[1.065s] Level 5:colcon.colcon_core.verb:set package 'can_interfaces' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.065s] Level 5:colcon.colcon_core.verb:set package 'can_interfaces' build argument 'cmake_clean_cache' from command line to 'False'
+[1.065s] Level 5:colcon.colcon_core.verb:set package 'can_interfaces' build argument 'cmake_clean_first' from command line to 'False'
+[1.065s] Level 5:colcon.colcon_core.verb:set package 'can_interfaces' build argument 'cmake_force_configure' from command line to 'False'
+[1.065s] Level 5:colcon.colcon_core.verb:set package 'can_interfaces' build argument 'ament_cmake_args' from command line to 'None'
+[1.065s] Level 5:colcon.colcon_core.verb:set package 'can_interfaces' build argument 'catkin_cmake_args' from command line to 'None'
+[1.065s] Level 5:colcon.colcon_core.verb:set package 'can_interfaces' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.065s] DEBUG:colcon.colcon_core.verb:Building package 'can_interfaces' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/xinchen/Dev/Meta-ROS/build/can_interfaces', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DCMAKE_EXPORT_COMPILE_COMMANDS=On'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/xinchen/Dev/Meta-ROS/install/can_interfaces', 'merge_install': False, 'path': '/home/xinchen/Dev/Meta-ROS/src/can_interfaces', 'symlink_install': False, 'test_result_base': None}
+[1.068s] Level 5:colcon.colcon_core.verb:set package 'lidar_driver' build argument 'cmake_args' from command line to '['-DCMAKE_EXPORT_COMPILE_COMMANDS=On']'
+[1.068s] Level 5:colcon.colcon_core.verb:set package 'lidar_driver' build argument 'cmake_target' from command line to 'None'
+[1.068s] Level 5:colcon.colcon_core.verb:set package 'lidar_driver' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.068s] Level 5:colcon.colcon_core.verb:set package 'lidar_driver' build argument 'cmake_clean_cache' from command line to 'False'
+[1.068s] Level 5:colcon.colcon_core.verb:set package 'lidar_driver' build argument 'cmake_clean_first' from command line to 'False'
+[1.068s] Level 5:colcon.colcon_core.verb:set package 'lidar_driver' build argument 'cmake_force_configure' from command line to 'False'
+[1.068s] Level 5:colcon.colcon_core.verb:set package 'lidar_driver' build argument 'ament_cmake_args' from command line to 'None'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'lidar_driver' build argument 'catkin_cmake_args' from command line to 'None'
+[1.069s] Level 5:colcon.colcon_core.verb:set package 'lidar_driver' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.069s] DEBUG:colcon.colcon_core.verb:Building package 'lidar_driver' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/xinchen/Dev/Meta-ROS/build/lidar_driver', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DCMAKE_EXPORT_COMPILE_COMMANDS=On'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/xinchen/Dev/Meta-ROS/install/lidar_driver', 'merge_install': False, 'path': '/home/xinchen/Dev/Meta-ROS/src/lidar_driver', 'symlink_install': False, 'test_result_base': None}
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'can_driver' build argument 'cmake_args' from command line to '['-DCMAKE_EXPORT_COMPILE_COMMANDS=On']'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'can_driver' build argument 'cmake_target' from command line to 'None'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'can_driver' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'can_driver' build argument 'cmake_clean_cache' from command line to 'False'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'can_driver' build argument 'cmake_clean_first' from command line to 'False'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'can_driver' build argument 'cmake_force_configure' from command line to 'False'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'can_driver' build argument 'ament_cmake_args' from command line to 'None'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'can_driver' build argument 'catkin_cmake_args' from command line to 'None'
+[1.072s] Level 5:colcon.colcon_core.verb:set package 'can_driver' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.072s] DEBUG:colcon.colcon_core.verb:Building package 'can_driver' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/xinchen/Dev/Meta-ROS/build/can_driver', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DCMAKE_EXPORT_COMPILE_COMMANDS=On'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/xinchen/Dev/Meta-ROS/install/can_driver', 'merge_install': False, 'path': '/home/xinchen/Dev/Meta-ROS/src/can_driver', 'symlink_install': False, 'test_result_base': None}
+[1.075s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[1.086s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[1.087s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/xinchen/Dev/Meta-ROS/src/can_interfaces' with build type 'ament_cmake'
+[1.087s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/xinchen/Dev/Meta-ROS/src/can_interfaces'
+[1.101s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[1.102s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.102s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.119s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/xinchen/Dev/Meta-ROS/src/lidar_driver' with build type 'ament_cmake'
+[1.120s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/xinchen/Dev/Meta-ROS/src/lidar_driver'
+[1.128s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.129s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.162s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_interfaces -- -j6 -l6
+[1.177s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
+[1.648s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_interfaces -- -j6 -l6
+[1.863s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/can_interfaces
+[1.982s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(can_interfaces)
+[1.984s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/can_interfaces
+[2.002s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces' for CMake module files
+[2.003s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces' for CMake config files
+[2.005s] Level 1:colcon.colcon_core.shell:create_environment_hook('can_interfaces', 'cmake_prefix_path')
+[2.010s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/cmake_prefix_path.ps1'
+[2.012s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/cmake_prefix_path.dsv'
+[2.013s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/cmake_prefix_path.sh'
+[2.016s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib'
+[2.016s] Level 1:colcon.colcon_core.shell:create_environment_hook('can_interfaces', 'ld_library_path_lib')
+[2.021s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/ld_library_path_lib.ps1'
+[2.023s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/ld_library_path_lib.dsv'
+[2.023s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/ld_library_path_lib.sh'
+[2.024s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/bin'
+[2.025s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/pkgconfig/can_interfaces.pc'
+[2.025s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages'
+[2.025s] Level 1:colcon.colcon_core.shell:create_environment_hook('can_interfaces', 'pythonpath')
+[2.031s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/pythonpath.ps1'
+[2.032s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/pythonpath.dsv'
+[2.032s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/pythonpath.sh'
+[2.034s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/bin'
+[2.039s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.ps1'
+[2.042s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.dsv'
+[2.043s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.sh'
+[2.045s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.bash'
+[2.046s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.zsh'
+[2.048s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/colcon-core/packages/can_interfaces)
+[2.257s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(can_interfaces)
+[2.264s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces' for CMake module files
+[2.266s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces' for CMake config files
+[2.267s] Level 1:colcon.colcon_core.shell:create_environment_hook('can_interfaces', 'cmake_prefix_path')
+[2.272s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/cmake_prefix_path.ps1'
+[2.274s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/cmake_prefix_path.dsv'
+[2.274s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/cmake_prefix_path.sh'
+[2.276s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib'
+[2.276s] Level 1:colcon.colcon_core.shell:create_environment_hook('can_interfaces', 'ld_library_path_lib')
+[2.281s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/ld_library_path_lib.ps1'
+[2.282s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/ld_library_path_lib.dsv'
+[2.282s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/ld_library_path_lib.sh'
+[2.283s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/bin'
+[2.283s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/pkgconfig/can_interfaces.pc'
+[2.284s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages'
+[2.284s] Level 1:colcon.colcon_core.shell:create_environment_hook('can_interfaces', 'pythonpath')
+[2.289s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/pythonpath.ps1'
+[2.290s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/pythonpath.dsv'
+[2.291s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/hook/pythonpath.sh'
+[2.292s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/bin'
+[2.298s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.ps1'
+[2.301s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.dsv'
+[2.303s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.sh'
+[2.304s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.bash'
+[2.306s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/can_interfaces/package.zsh'
+[2.307s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/xinchen/Dev/Meta-ROS/install/can_interfaces/share/colcon-core/packages/can_interfaces)
+[2.308s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/xinchen/Dev/Meta-ROS/src/can_driver' with build type 'ament_cmake'
+[2.309s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/xinchen/Dev/Meta-ROS/src/can_driver'
+[2.316s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.317s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.356s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_driver': AMENT_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy LD_LIBRARY_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_driver -- -j6 -l6
+[2.534s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_driver' returned '0': AMENT_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy LD_LIBRARY_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_driver -- -j6 -l6
+[2.592s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_driver': AMENT_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy LD_LIBRARY_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/can_driver
+[2.619s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(can_driver)
+[2.628s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver' for CMake module files
+[2.631s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver' for CMake config files
+[2.633s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_driver' returned '0': AMENT_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces:/opt/ros/foxy LD_LIBRARY_PATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/xinchen/Dev/Meta-ROS/install/can_interfaces/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/can_driver
+[2.633s] Level 1:colcon.colcon_core.shell:create_environment_hook('can_driver', 'cmake_prefix_path')
+[2.639s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/hook/cmake_prefix_path.ps1'
+[2.641s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/hook/cmake_prefix_path.dsv'
+[2.642s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/hook/cmake_prefix_path.sh'
+[2.643s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver/bin'
+[2.643s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver/lib/pkgconfig/can_driver.pc'
+[2.644s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver/lib/python3.8/site-packages'
+[2.644s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver/bin'
+[2.650s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.ps1'
+[2.651s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.dsv'
+[2.652s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.sh'
+[2.653s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.bash'
+[2.654s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.zsh'
+[2.655s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/xinchen/Dev/Meta-ROS/install/can_driver/share/colcon-core/packages/can_driver)
+[2.712s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(can_driver)
+[2.720s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver' for CMake module files
+[2.721s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver' for CMake config files
+[2.722s] Level 1:colcon.colcon_core.shell:create_environment_hook('can_driver', 'cmake_prefix_path')
+[2.726s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/hook/cmake_prefix_path.ps1'
+[2.728s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/hook/cmake_prefix_path.dsv'
+[2.729s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/hook/cmake_prefix_path.sh'
+[2.730s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver/bin'
+[2.730s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver/lib/pkgconfig/can_driver.pc'
+[2.730s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver/lib/python3.8/site-packages'
+[2.731s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/can_driver/bin'
+[2.736s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.ps1'
+[2.737s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.dsv'
+[2.738s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.sh'
+[2.739s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.bash'
+[2.740s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/can_driver/share/can_driver/package.zsh'
+[2.741s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/xinchen/Dev/Meta-ROS/install/can_driver/share/colcon-core/packages/can_driver)
+[5.767s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
+[5.819s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/lidar_driver
+[5.850s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(lidar_driver)
+[5.862s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver' for CMake module files
+[5.862s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/lidar_driver
+[5.864s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver' for CMake config files
+[5.865s] Level 1:colcon.colcon_core.shell:create_environment_hook('lidar_driver', 'cmake_prefix_path')
+[5.870s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/hook/cmake_prefix_path.ps1'
+[5.873s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/hook/cmake_prefix_path.dsv'
+[5.875s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/hook/cmake_prefix_path.sh'
+[5.876s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/bin'
+[5.877s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/lib/pkgconfig/lidar_driver.pc'
+[5.877s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/lib/python3.8/site-packages'
+[5.878s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/bin'
+[5.884s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.ps1'
+[5.885s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.dsv'
+[5.886s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.sh'
+[5.887s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.bash'
+[5.888s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.zsh'
+[5.890s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/colcon-core/packages/lidar_driver)
+[5.946s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(lidar_driver)
+[5.955s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver' for CMake module files
+[5.956s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver' for CMake config files
+[5.957s] Level 1:colcon.colcon_core.shell:create_environment_hook('lidar_driver', 'cmake_prefix_path')
+[5.962s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/hook/cmake_prefix_path.ps1'
+[5.963s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/hook/cmake_prefix_path.dsv'
+[5.964s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/hook/cmake_prefix_path.sh'
+[5.965s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/bin'
+[5.965s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/lib/pkgconfig/lidar_driver.pc'
+[5.966s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/lib/python3.8/site-packages'
+[5.966s] Level 1:colcon.colcon_core.environment:checking '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/bin'
+[5.971s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.ps1'
+[5.972s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.dsv'
+[5.973s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.sh'
+[5.974s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.bash'
+[5.975s] INFO:colcon.colcon_core.shell:Creating package script '/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.zsh'
+[5.976s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/colcon-core/packages/lidar_driver)
+[5.977s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[5.978s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[5.978s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[5.978s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[6.032s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[6.032s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[6.032s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[6.086s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[6.093s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/xinchen/Dev/Meta-ROS/install/local_setup.ps1'
+[6.104s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/xinchen/Dev/Meta-ROS/install/_local_setup_util_ps1.py'
+[6.109s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/xinchen/Dev/Meta-ROS/install/setup.ps1'
+[6.114s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/xinchen/Dev/Meta-ROS/install/local_setup.sh'
+[6.116s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/xinchen/Dev/Meta-ROS/install/_local_setup_util_sh.py'
+[6.118s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/xinchen/Dev/Meta-ROS/install/setup.sh'
+[6.125s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/xinchen/Dev/Meta-ROS/install/local_setup.bash'
+[6.128s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/xinchen/Dev/Meta-ROS/install/setup.bash'
+[6.133s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/xinchen/Dev/Meta-ROS/install/local_setup.zsh'
+[6.136s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/xinchen/Dev/Meta-ROS/install/setup.zsh'

@@ -1,0 +1,70 @@
+[0.048s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/lidar_driver -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/lidar_driver
+[0.280s] -- The C compiler identification is GNU 9.4.0
+[0.453s] -- The CXX compiler identification is GNU 9.4.0
+[0.465s] -- Check for working C compiler: /usr/bin/cc
+[0.607s] -- Check for working C compiler: /usr/bin/cc -- works
+[0.609s] -- Detecting C compiler ABI info
+[0.747s] -- Detecting C compiler ABI info - done
+[0.772s] -- Detecting C compile features
+[0.773s] -- Detecting C compile features - done
+[0.787s] -- Check for working CXX compiler: /usr/bin/c++
+[0.959s] -- Check for working CXX compiler: /usr/bin/c++ -- works
+[0.959s] -- Detecting CXX compiler ABI info
+[1.122s] -- Detecting CXX compiler ABI info - done
+[1.143s] -- Detecting CXX compile features
+[1.144s] -- Detecting CXX compile features - done
+[1.150s] -- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+[1.216s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[1.217s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[1.679s] -- Found std_msgs: 2.0.5 (/opt/ros/foxy/share/std_msgs/cmake)
+[1.744s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.757s] -- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+[1.960s] -- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "1.1.1f")  
+[2.024s] -- Found FastRTPS: /opt/ros/foxy/include  
+[2.188s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[2.279s] CMake Error at CMakeLists.txt:24 (find_package):
+[2.280s]   find_package called with incorrect number of arguments
+[2.280s] 
+[2.280s] 
+[2.282s] -- Found ament_lint_auto: 0.9.8 (/opt/ros/foxy/share/ament_lint_auto/cmake)
+[2.377s] Error parsing '/home/xinchen/Dev/Meta-ROS/src/lidar_driver/package.xml':
+[2.679s] Traceback (most recent call last):
+[2.680s]   File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 610, in parse_package_string
+[2.680s]     root = dom.parseString(data)
+[2.680s]   File "/usr/lib/python3.8/xml/dom/minidom.py", line 1969, in parseString
+[2.680s]     return expatbuilder.parseString(string)
+[2.680s]   File "/usr/lib/python3.8/xml/dom/expatbuilder.py", line 925, in parseString
+[2.681s]     return builder.parseString(string)
+[2.681s]   File "/usr/lib/python3.8/xml/dom/expatbuilder.py", line 223, in parseString
+[2.681s]     parser.Parse(string, True)
+[2.681s] xml.parsers.expat.ExpatError: mismatched tag: line 20, column 2
+[2.681s] 
+[2.681s] During handling of the above exception, another exception occurred:
+[2.681s] 
+[2.682s] Traceback (most recent call last):
+[2.682s]   File "/opt/ros/foxy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 143, in <module>
+[2.682s]     main()
+[2.682s]   File "/opt/ros/foxy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 52, in main
+[2.682s]     raise e
+[2.682s]   File "/opt/ros/foxy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 48, in main
+[2.682s]     package = parse_package_string(
+[2.682s]   File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 612, in parse_package_string
+[2.683s]     raise InvalidPackage('The manifest contains invalid XML:\n%s' % ex, filename)
+[2.683s] catkin_pkg.package.InvalidPackage: Error(s) in package '/home/xinchen/Dev/Meta-ROS/src/lidar_driver/package.xml':
+[2.683s] The manifest contains invalid XML:
+[2.683s] mismatched tag: line 20, column 2
+[2.751s] CMake Error at /opt/ros/foxy/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:94 (message):
+[2.751s]   execute_process(/usr/bin/python3
+[2.752s]   /opt/ros/foxy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py
+[2.752s]   /home/xinchen/Dev/Meta-ROS/src/lidar_driver/package.xml
+[2.752s]   /home/xinchen/Dev/Meta-ROS/build/lidar_driver/ament_cmake_core/package.cmake)
+[2.752s]   returned error code 1
+[2.752s] Call Stack (most recent call first):
+[2.752s]   /opt/ros/foxy/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:49 (_ament_package_xml)
+[2.753s]   /opt/ros/foxy/share/ament_lint_auto/cmake/ament_lint_auto_find_test_dependencies.cmake:31 (ament_package_xml)
+[2.753s]   CMakeLists.txt:34 (ament_lint_auto_find_test_dependencies)
+[2.753s] 
+[2.753s] 
+[2.754s] -- Configuring incomplete, errors occurred!
+[2.754s] See also "/home/xinchen/Dev/Meta-ROS/build/lidar_driver/CMakeFiles/CMakeOutput.log".
+[2.776s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '1': /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/lidar_driver -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/lidar_driver

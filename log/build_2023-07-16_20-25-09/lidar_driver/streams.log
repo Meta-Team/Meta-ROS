@@ -1,0 +1,42 @@
+[0.060s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/lidar_driver -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/lidar_driver
+[0.090s] -- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+[0.137s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.561s] -- Found std_msgs: 2.0.5 (/opt/ros/foxy/share/std_msgs/cmake)
+[0.609s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.609s] -- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+[0.861s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.955s] -- Found ament_lint_auto: 0.9.8 (/opt/ros/foxy/share/ament_lint_auto/cmake)
+[1.079s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.080s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[1.081s] -- Configured cppcheck include dirs: 
+[1.081s] -- Configured cppcheck exclude dirs and/or files: 
+[1.082s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[1.082s] -- Configured cpplint exclude dirs and/or files: 
+[1.083s] -- Added test 'lint_cmake' to check CMake code style
+[1.085s] -- Added test 'uncrustify' to check C / C++ code style
+[1.085s] -- Configured uncrustify additional arguments: 
+[1.086s] -- Added test 'xmllint' to check XML markup files
+[1.091s] -- Configuring done
+[1.096s] -- Generating done
+[1.098s] -- Build files have been written to: /home/xinchen/Dev/Meta-ROS/build/lidar_driver
+[1.115s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/lidar_driver -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/lidar_driver
+[1.122s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
+[1.246s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
+[1.310s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/lidar_driver
+[1.331s] -- Install configuration: ""
+[1.331s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/ament_index/resource_index/package_run_dependencies/lidar_driver
+[1.331s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/ament_index/resource_index/parent_prefix_path/lidar_driver
+[1.332s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/ament_prefix_path.sh
+[1.332s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/ament_prefix_path.dsv
+[1.332s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/path.sh
+[1.333s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/path.dsv
+[1.333s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.bash
+[1.334s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.sh
+[1.334s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.zsh
+[1.334s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.dsv
+[1.335s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.dsv
+[1.335s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/ament_index/resource_index/packages/lidar_driver
+[1.335s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/cmake/lidar_driverConfig.cmake
+[1.335s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/cmake/lidar_driverConfig-version.cmake
+[1.336s] -- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.xml
+[1.348s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/lidar_driver

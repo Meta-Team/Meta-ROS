@@ -1,0 +1,32 @@
+[0.057s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
+[0.113s] -- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+[0.160s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.589s] -- Found std_msgs: 2.0.5 (/opt/ros/foxy/share/std_msgs/cmake)
+[0.629s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.635s] -- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+[0.891s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.972s] -- Found rclcpp: 2.4.3 (/opt/ros/foxy/share/rclcpp/cmake)
+[1.043s] -- Found rmw_implementation_cmake: 1.0.4 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+[1.045s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.325s] CMake Error at CMakeLists.txt:25 (find_package):
+[1.326s]   By not providing "Findserial.cmake" in CMAKE_MODULE_PATH this project has
+[1.326s]   asked CMake to find a package configuration file provided by "serial", but
+[1.326s]   CMake did not find one.
+[1.326s] 
+[1.326s]   Could not find a package configuration file provided by "serial" with any
+[1.326s]   of the following names:
+[1.327s] 
+[1.327s]     serialConfig.cmake
+[1.327s]     serial-config.cmake
+[1.327s] 
+[1.327s]   Add the installation prefix of "serial" to CMAKE_PREFIX_PATH or set
+[1.327s]   "serial_DIR" to a directory containing one of the above files.  If "serial"
+[1.327s]   provides a separate development package or SDK, be sure it has been
+[1.327s]   installed.
+[1.328s] 
+[1.328s] 
+[1.329s] -- Configuring incomplete, errors occurred!
+[1.329s] See also "/home/xinchen/Dev/Meta-ROS/build/lidar_driver/CMakeFiles/CMakeOutput.log".
+[1.329s] See also "/home/xinchen/Dev/Meta-ROS/build/lidar_driver/CMakeFiles/CMakeError.log".
+[1.345s] make: *** [Makefile:266: cmake_check_build_system] Error 1
+[1.351s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '2': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6

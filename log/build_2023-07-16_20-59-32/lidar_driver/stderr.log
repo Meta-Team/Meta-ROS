@@ -1,0 +1,7 @@
+/usr/bin/ld: /usr/lib/gcc/aarch64-linux-gnu/9/../../../aarch64-linux-gnu/Scrt1.o: in function `_start':
+(.text+0x18): undefined reference to `main'
+/usr/bin/ld: (.text+0x1c): undefined reference to `main'
+collect2: error: ld returned 1 exit status
+make[2]: *** [CMakeFiles/lidar_driver.dir/build.make:131: lidar_driver] Error 1
+make[1]: *** [CMakeFiles/Makefile2:105: CMakeFiles/lidar_driver.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

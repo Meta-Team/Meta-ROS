@@ -1,0 +1,20 @@
+[35m[1mScanning dependencies of target lidar_driver[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/lidar_driver.dir/src/lidar_driver.cpp.o[0m
+[100%] [32m[1mLinking CXX executable lidar_driver[0m
+[100%] Built target lidar_driver
+-- Install configuration: ""
+-- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/ament_index/resource_index/package_run_dependencies/lidar_driver
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/ament_index/resource_index/parent_prefix_path/lidar_driver
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/ament_prefix_path.sh
+-- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/ament_prefix_path.dsv
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/path.sh
+-- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/environment/path.dsv
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.bash
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.sh
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.zsh
+-- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/local_setup.dsv
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.dsv
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/ament_index/resource_index/packages/lidar_driver
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/cmake/lidar_driverConfig.cmake
+-- Up-to-date: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/cmake/lidar_driverConfig-version.cmake
+-- Installing: /home/xinchen/Dev/Meta-ROS/install/lidar_driver/share/lidar_driver/package.xml

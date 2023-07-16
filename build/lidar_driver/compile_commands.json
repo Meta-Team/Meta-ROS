@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/xinchen/Dev/Meta-ROS/build/lidar_driver",
+  "command": "/usr/bin/c++  -DDEFAULT_RMW_IMPLEMENTATION=rmw_fastrtps_cpp -DRCUTILS_ENABLE_FAULT_INJECTION -DSPDLOG_COMPILED_LIB -isystem /opt/ros/foxy/include    -Wall -Wextra -Wpedantic -std=gnu++14 -o CMakeFiles/lidar_driver.dir/src/lidar_driver.cpp.o -c /home/xinchen/Dev/Meta-ROS/src/lidar_driver/src/lidar_driver.cpp",
+  "file": "/home/xinchen/Dev/Meta-ROS/src/lidar_driver/src/lidar_driver.cpp"
+}
+]

@@ -1,0 +1,30 @@
+-- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+-- Using PYTHON_EXECUTABLE: /usr/bin/python3
+-- Found std_msgs: 2.0.5 (/opt/ros/foxy/share/std_msgs/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rclcpp: 2.4.3 (/opt/ros/foxy/share/rclcpp/cmake)
+-- Found rmw_implementation_cmake: 1.0.4 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+CMake Error at CMakeLists.txt:25 (find_package):
+  By not providing "Findserial.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "serial", but
+  CMake did not find one.
+
+  Could not find a package configuration file provided by "serial" with any
+  of the following names:
+
+    serialConfig.cmake
+    serial-config.cmake
+
+  Add the installation prefix of "serial" to CMAKE_PREFIX_PATH or set
+  "serial_DIR" to a directory containing one of the above files.  If "serial"
+  provides a separate development package or SDK, be sure it has been
+  installed.
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/xinchen/Dev/Meta-ROS/build/lidar_driver/CMakeFiles/CMakeOutput.log".
+See also "/home/xinchen/Dev/Meta-ROS/build/lidar_driver/CMakeFiles/CMakeError.log".
+make: *** [Makefile:266: cmake_check_build_system] Error 1

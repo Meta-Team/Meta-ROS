@@ -20,6 +20,19 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+# find_package(serial_driver REQUIRED)
+
+# include_directories(/usr/include/serial/)
+
+add_executable(lidar_driver
+  src/lidar_driver.cpp)
+ament_target_dependencies(lidar_driver
+  std_msgs
+  rclcpp
+  # serial_driver
+  )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

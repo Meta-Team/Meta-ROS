@@ -1,0 +1,30 @@
+[0.056s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
+[0.121s] -- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+[0.173s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.646s] -- Found std_msgs: 2.0.5 (/opt/ros/foxy/share/std_msgs/cmake)
+[0.697s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.705s] -- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+[0.983s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.072s] -- Found rclcpp: 2.4.3 (/opt/ros/foxy/share/rclcpp/cmake)
+[1.175s] -- Found rmw_implementation_cmake: 1.0.4 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+[1.176s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.177s] -- Looking for pthread.h
+[1.401s] -- Looking for pthread.h - found
+[1.403s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.557s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+[1.557s] -- Looking for pthread_create in pthreads
+[1.690s] -- Looking for pthread_create in pthreads - not found
+[1.691s] -- Looking for pthread_create in pthread
+[1.834s] -- Looking for pthread_create in pthread - found
+[1.836s] -- Found Threads: TRUE  
+[2.113s] CMake Error at /opt/ros/foxy/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:42 (message):
+[2.113s]   ament_target_dependencies() the first argument must be a valid target name
+[2.113s] Call Stack (most recent call first):
+[2.113s]   CMakeLists.txt:28 (ament_target_dependencies)
+[2.113s] 
+[2.113s] 
+[2.116s] -- Configuring incomplete, errors occurred!
+[2.116s] See also "/home/xinchen/Dev/Meta-ROS/build/lidar_driver/CMakeFiles/CMakeOutput.log".
+[2.116s] See also "/home/xinchen/Dev/Meta-ROS/build/lidar_driver/CMakeFiles/CMakeError.log".
+[2.136s] make: *** [Makefile:222: cmake_check_build_system] Error 1
+[2.141s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '2': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6

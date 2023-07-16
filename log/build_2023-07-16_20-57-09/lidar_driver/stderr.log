@@ -1,0 +1,7 @@
+[01m[K/home/xinchen/Dev/Meta-ROS/src/lidar_driver/src/lidar_driver.cpp:2:10:[m[K [01;31m[Kfatal error: [m[Kserial_driver: No such file or directory
+    2 | #include [01;31m[K<serial_driver>[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~[m[K
+compilation terminated.
+make[2]: *** [CMakeFiles/lidar_driver.dir/build.make:63: CMakeFiles/lidar_driver.dir/src/lidar_driver.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:105: CMakeFiles/lidar_driver.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

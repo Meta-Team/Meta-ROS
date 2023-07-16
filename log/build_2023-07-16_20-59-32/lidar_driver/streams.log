@@ -1,0 +1,33 @@
+[0.057s] Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
+[0.113s] -- Found ament_cmake: 0.9.12 (/opt/ros/foxy/share/ament_cmake/cmake)
+[0.162s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.606s] -- Found std_msgs: 2.0.5 (/opt/ros/foxy/share/std_msgs/cmake)
+[0.646s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.652s] -- Found rosidl_adapter: 1.3.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+[0.906s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.982s] -- Found rclcpp: 2.4.3 (/opt/ros/foxy/share/rclcpp/cmake)
+[1.048s] -- Found rmw_implementation_cmake: 1.0.4 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+[1.051s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.298s] -- Found ament_lint_auto: 0.9.8 (/opt/ros/foxy/share/ament_lint_auto/cmake)
+[1.443s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.443s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[1.444s] -- Configured cppcheck include dirs: 
+[1.444s] -- Configured cppcheck exclude dirs and/or files: 
+[1.444s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[1.444s] -- Configured cpplint exclude dirs and/or files: 
+[1.444s] -- Added test 'lint_cmake' to check CMake code style
+[1.444s] -- Added test 'uncrustify' to check C / C++ code style
+[1.444s] -- Configured uncrustify additional arguments: 
+[1.445s] -- Added test 'xmllint' to check XML markup files
+[1.452s] -- Configuring done
+[1.463s] -- Generating done
+[1.465s] -- Build files have been written to: /home/xinchen/Dev/Meta-ROS/build/lidar_driver
+[1.570s] [ 50%] [32m[1mLinking CXX executable lidar_driver[0m
+[1.753s] /usr/bin/ld: /usr/lib/gcc/aarch64-linux-gnu/9/../../../aarch64-linux-gnu/Scrt1.o: in function `_start':
+[1.753s] (.text+0x18): undefined reference to `main'
+[1.753s] /usr/bin/ld: (.text+0x1c): undefined reference to `main'
+[1.754s] collect2: error: ld returned 1 exit status
+[1.757s] make[2]: *** [CMakeFiles/lidar_driver.dir/build.make:131: lidar_driver] Error 1
+[1.757s] make[1]: *** [CMakeFiles/Makefile2:105: CMakeFiles/lidar_driver.dir/all] Error 2
+[1.758s] make: *** [Makefile:141: all] Error 2
+[1.763s] Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '2': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6

@@ -1,0 +1,2 @@
+Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/lidar_driver -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/lidar_driver
+Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '1': /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/lidar_driver -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/lidar_driver
