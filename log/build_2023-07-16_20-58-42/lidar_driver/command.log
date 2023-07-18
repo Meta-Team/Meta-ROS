@@ -1,2 +1,0 @@
-Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
-Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '2': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6

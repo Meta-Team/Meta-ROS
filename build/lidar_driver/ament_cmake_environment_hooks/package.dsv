@@ -1,4 +1,0 @@
-source;share/lidar_driver/local_setup.bash
-source;share/lidar_driver/local_setup.dsv
-source;share/lidar_driver/local_setup.sh
-source;share/lidar_driver/local_setup.zsh

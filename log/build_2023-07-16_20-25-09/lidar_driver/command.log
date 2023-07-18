@@ -1,6 +1,0 @@
-Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/lidar_driver -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/lidar_driver
-Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/lidar_driver -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/lidar_driver
-Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
-Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/lidar_driver -- -j6 -l6
-Invoking command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/lidar_driver
-Invoked command in '/home/xinchen/Dev/Meta-ROS/build/lidar_driver' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/xinchen/Dev/Meta-ROS/build/lidar_driver

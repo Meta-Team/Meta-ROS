@@ -1,2 +1,0 @@
-Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces': /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_interfaces -- -j6 -l6
-Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces' returned '2': /usr/bin/cmake --build /home/xinchen/Dev/Meta-ROS/build/can_interfaces -- -j6 -l6

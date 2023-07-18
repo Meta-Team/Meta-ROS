@@ -1,2 +1,0 @@
-Invoking command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/can_interfaces -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/can_interfaces
-Invoked command in '/home/xinchen/Dev/Meta-ROS/build/can_interfaces' returned '1': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/xinchen/Dev/Meta-ROS/src/can_interfaces -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCMAKE_INSTALL_PREFIX=/home/xinchen/Dev/Meta-ROS/install/can_interfaces

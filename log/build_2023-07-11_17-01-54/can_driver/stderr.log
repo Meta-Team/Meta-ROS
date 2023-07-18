@@ -1,7 +1,0 @@
-[01m[K/home/xinchen/Dev/Meta-ROS/src/can_driver/src/can_data.cpp:[m[K In function ‘[01m[Kvoid mit_interpreter(can_frame&, can_interfaces::msg::MITData&)[m[K’:
-[01m[K/home/xinchen/Dev/Meta-ROS/src/can_driver/src/can_data.cpp:4:33:[m[K [01;35m[Kwarning: [m[Kunused parameter ‘[01m[Kframe[m[K’ [[01;35m[K-Wunused-parameter[m[K]
-    4 | void mit_interpreter([01;35m[Kcan_frame &frame[m[K, can_interfaces::msg::MITData &data)
-      |                      [01;35m[K~~~~~~~~~~~^~~~~[m[K
-[01m[K/home/xinchen/Dev/Meta-ROS/src/can_driver/src/can_data.cpp:4:70:[m[K [01;35m[Kwarning: [m[Kunused parameter ‘[01m[Kdata[m[K’ [[01;35m[K-Wunused-parameter[m[K]
-    4 | void mit_interpreter(can_frame &frame, [01;35m[Kcan_interfaces::msg::MITData &data[m[K)
-      |                                        [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~[m[K
