@@ -1,8 +1,9 @@
 #include "rclcpp/rclcpp.hpp"
+#include <rclcpp/publisher.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <iostream>
-#include "serial_driver/serial_driver.hpp"
+#include "lidar_serial_driver.h"
 // #include <sensor_msgs/LaserScan.h>
 #include <map>
 #include "termios.h"
@@ -12,8 +13,6 @@
 #define             RANGES_MAX          10.0
 #define             RANGES_MIN          0.2
 #define             PI                  3.1415926535
-
-// serial::Serial ser;
 
 // void write_callback(const std_msgs::String::ConstPtr& msg){
 //     ROS_INFO_STREAM("Writing to serial port" << msg->data);
@@ -127,7 +126,15 @@
 //     }
 // }
 
+class LidarDriver : public rclcpp::Node
+{
+public:
+
+private:
+};
+
 int main()
 {
+    rclcpp::init(0, nullptr);
     return 0;
 }
