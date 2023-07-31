@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(can_driver)
+project(dji_motor_feedback)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -20,13 +20,6 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-find_package(can_interfaces REQUIRED)
-find_package(rclcpp REQUIRED)
-
-add_executable(can_driver src/can_driver.cpp src/can_data.cpp)
-ament_target_dependencies(can_driver
-  rclcpp
-  can_interfaces)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
