@@ -20,7 +20,7 @@ public:
     int motor_id;
     int motor_type;
     can_frame tx_frame;
-    CanDriver* can_0;
+    static CanDriver* can_0;
 
     virtual void set_mode(int mode) = 0;
     virtual void turn_on() = 0;
@@ -70,6 +70,7 @@ public:
             can_0->send_frame(tx_frame);
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+        can_0->send_frame(tx_frame);
         tx_frame.can_dlc = dlc_temp;
     }
     void turn_off() override
@@ -81,10 +82,11 @@ public:
             can_0->send_frame(tx_frame);
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+        can_0->send_frame(tx_frame);
         tx_frame.can_dlc = dlc_temp;
     }
 
-    ~DmMotorDriver()
+    ~DmMotorDriver() override
     {
         turn_off();
     }
@@ -105,7 +107,14 @@ public:
         motor_type = type;
         set_mode(VEL_MODE);
     }
-    void set_velocity(float goal_vel) override;
+    void set_velocity(float goal_vel) override
+    {
+        float temp_vel = goal_vel;
+        uint32_t* pvel;
+        pvel = (uint32_t*) &temp_vel;
+        memcpy(&tx_frame.data[0], pvel, sizeof(uint32_t));
+        can_0->send_frame(tx_frame);
+    }
 };
 
 class DmMitMotorDriver : public DmMotorDriver
@@ -128,9 +137,31 @@ public:
         tx_frame.data[6] &= 0x0f;
         tx_frame.data[6] |= (uint_kd & 0x0f) << 4;
         tx_frame.data[5] = uint_kd >> 4;
+        can_0->send_frame(tx_frame);
     }
-    void set_velocity(float goal_vel) override; // TODO
-    void set_position(float goal_pos);
+    void set_velocity(float goal_vel) override // TODO
+    {
+        uint32_t uint_vel = float_to_uint(goal_vel,-100,100,12); // TODO: values to be changed
+        tx_frame.data[3] &= 0x0f;
+        tx_frame.data[3] |= (uint_vel & 0x0f) << 4;
+        tx_frame.data[2] = uint_vel >> 4;
+        can_0->send_frame(tx_frame);
+    }
+    void set_position(float goal_pos)
+    {
+        uint32_t  uint_pos = float_to_uint(goal_pos,-3.14,3.14,16);
+        tx_frame.data[1] =uint_pos & 0x0ff;
+        tx_frame.data[0] =uint_pos >> 8;
+        can_0->send_frame(tx_frame);
+    }
+    void set_torque(float goal_torque)
+    {
+        uint32_t uint_torq = float_to_uint(goal_torque,-10,10,12);
+        tx_frame.data[7] = uint_torq & 0x0ff;
+        tx_frame.data[6] &= 0xf0;
+        tx_frame.data[6] |= uint_torq >> 8;
+        can_0->send_frame(tx_frame);
+    }
 };
 
 // ---------------------DJI-----------------------
@@ -158,7 +189,7 @@ public:
     {
         // TODO
     }
-    ~DjiMotorDriver()
+    ~DjiMotorDriver() override
     {
         turn_off();
     }
