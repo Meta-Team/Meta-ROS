@@ -11,11 +11,11 @@ class DmMotorDriver
 {
 public:
 
-    static motor_mode motors_mode[DmMotorCFG::MotorName::MOTOR_COUNT];
+    motor_mode motors_mode[DmMotorCFG::MotorName::MOTOR_COUNT];
 
-    static CanDriver *can_0;
+    CanDriver *can_0;
 
-    static can_frame tx_frame[DmMotorCFG::MotorName::MOTOR_COUNT];
+    can_frame tx_frame[DmMotorCFG::MotorName::MOTOR_COUNT];
 
     // static constexpr uint64_t start_cmd = 0xfcffffffffffffff;
     static constexpr uint8_t start_cmd[8] = {0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
@@ -43,21 +43,21 @@ public:
         return (int) ((x-offset)*((float)((1<<bits)-1))/span);
     }
 
-    static void init(CanDriver *can);
+    void init(CanDriver *can);
 
-    static void start(DmMotorCFG::MotorName motorProfile);
+    void start(DmMotorCFG::MotorName motorProfile);
 
-    static void stop(DmMotorCFG::MotorName motorProfile);
+    void stop(DmMotorCFG::MotorName motorProfile);
 
-    static void set_mode(DmMotorCFG::MotorName motorProfile, motor_mode mode);
+    void set_mode(DmMotorCFG::MotorName motorProfile, motor_mode mode);
 
-    static void set_velocity(DmMotorCFG::MotorName motorProfile, float vel);
+    void set_velocity(DmMotorCFG::MotorName motorProfile, float vel);
 
-    static void set_position(DmMotorCFG::MotorName motorProfile, float pos);
+    void set_position(DmMotorCFG::MotorName motorProfile, float pos);
 
-    static void set_torque(DmMotorCFG::MotorName motorProfile, float torque);
+    void set_torque(DmMotorCFG::MotorName motorProfile, float torque);
 
-    static void set_param_mit(DmMotorCFG::MotorName motorProfile, float kp, float kd);
+    void set_param_mit(DmMotorCFG::MotorName motorProfile, float kp, float kd);
 
 };
 

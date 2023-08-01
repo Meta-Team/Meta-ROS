@@ -1,0 +1,6 @@
+/dm_motor_controller:
+  ros__parameters:
+    #             0            1            2           3
+    motor_name:   ["LeftFore", "RightFore", "LeftHind", "RightHind"]
+    motor_type:   [0,          0,           0,          0]
+

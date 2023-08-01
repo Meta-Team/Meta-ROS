@@ -28,9 +28,7 @@ include_directories(include/dm_motor_controller)
 add_executable(dm_motor_controller
   src/dm_motor_controller.cpp
   src/dm_motor_driver.cpp
-  src/can_driver.cpp
-  include/dm_motor_controller/dm_motor_driver.h
-  include/dm_motor_controller/dm_motor_config.h)
+  src/can_driver.cpp)
 
 ament_target_dependencies(dm_motor_controller
   rclcpp

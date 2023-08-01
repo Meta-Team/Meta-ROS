@@ -1,0 +1,7 @@
+/dm_motor_controller:
+  ros__parameters:
+    motor_name:   ["YAW", "PITCH"]
+    motor_sid:    [0,     1]
+    motor_mode:   [0,     0] # 0 MIT_MODE, 1 POS_VEL_MODE, 2 VEL_MODE
+    motor_mitKp:  [1.0,   1.0]
+    motor_mitKi:  [0.3,   0.3]

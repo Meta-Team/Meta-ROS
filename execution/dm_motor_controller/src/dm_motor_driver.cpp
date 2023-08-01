@@ -2,14 +2,9 @@
 #include <bits/stdint-uintn.h>
 #include <cstring>
 
-motor_mode DmMotorDriver::motors_mode[DmMotorCFG::MotorName::MOTOR_COUNT];
-CanDriver * DmMotorDriver::can_0;
-can_frame DmMotorDriver::tx_frame[DmMotorCFG::MotorName::MOTOR_COUNT];
 constexpr DmMotorBase DmMotorCFG::motorCfg[DmMotorCFG::MotorName::MOTOR_COUNT];
 constexpr uint8_t DmMotorDriver::start_cmd[8];
 constexpr uint8_t DmMotorDriver::stop_cmd[8];
-constexpr uint8_t DmMotorDriver::save_zero_cmd[8];
-constexpr uint8_t DmMotorDriver::clear_error_cmd[8];
 
 void DmMotorDriver::init(CanDriver *can){
 
