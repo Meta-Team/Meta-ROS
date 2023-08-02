@@ -14,6 +14,11 @@
 
 // TODO: add other motor params
 
+uint8_t start_cmd[8] = {0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+uint8_t stop_cmd[8] = {0xfd, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+uint8_t save_zero_cmd[8] = {0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+uint8_t clear_error_cmd[8] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+
 class MotorDriver
 {
 public:
@@ -92,10 +97,6 @@ public:
     }
 
 private:
-    static constexpr uint8_t start_cmd[8] = {0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-    static constexpr uint8_t stop_cmd[8] = {0xfd, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-    static constexpr uint8_t save_zero_cmd[8] = {0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-    static constexpr uint8_t clear_error_cmd[8] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 };
 
 class DmVelMotorDriver : public DmMotorDriver
@@ -114,6 +115,10 @@ public:
         pvel = (uint32_t*) &temp_vel;
         memcpy(&tx_frame.data[0], pvel, sizeof(uint32_t));
         can_0->send_frame(tx_frame);
+    }
+    ~DmVelMotorDriver() override
+    {
+        turn_off();
     }
 };
 
@@ -162,6 +167,10 @@ public:
         tx_frame.data[6] |= uint_torq >> 8;
         can_0->send_frame(tx_frame);
     }
+    ~DmMitMotorDriver() override
+    {
+        turn_off();
+    }
 };
 
 // ---------------------DJI-----------------------
@@ -189,16 +198,13 @@ public:
     {
         // TODO
     }
+    virtual void set_velocity(float goal_vel) override = 0;
     ~DjiMotorDriver() override
     {
         turn_off();
     }
 
 private:
-    static constexpr uint8_t start_cmd[8] = {0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-    static constexpr uint8_t stop_cmd[8] = {0xfd, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-    static constexpr uint8_t save_zero_cmd[8] = {0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-    static constexpr uint8_t clear_error_cmd[8] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 };
 
 class DjiVelMotorDriver : public DjiMotorDriver
@@ -210,7 +216,14 @@ public:
         motor_type = type;
         set_mode(VEL_MODE);
     }
-    void set_velocity(float goal_vel) override;
+    ~DjiVelMotorDriver() override
+    {
+        turn_off();
+    }
+    void set_velocity(float goal_vel) override
+    {
+
+    }
 };
 
 class DjiPosMotorDriver : public DjiMotorDriver
@@ -222,8 +235,15 @@ public:
         motor_type = type;
         set_mode(POS_MODE);
     }
+    ~DjiPosMotorDriver() override
+    {
+        turn_off();
+    }
     void set_position(float goal_pos);
-    void set_velocity(float goal_vel) override;
+    void set_velocity(float goal_vel) override
+    {
+
+    }
 };
 
 #endif // MOTOR_DRIVER_HPP

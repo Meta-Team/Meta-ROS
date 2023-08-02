@@ -1,10 +1,14 @@
 #include "rclcpp/rclcpp.hpp"
+#include <bits/stdint-intn.h>
 #include <rclcpp/duration.hpp>
 
 #include "../include/motor_controller/motor_driver.hpp"
 
 #define DaMiao 0
 #define DJI 1
+
+CanDriver* MotorDriver::can_0 = new CanDriver();
+
 
 class MotorController : public rclcpp::Node
 {
@@ -31,17 +35,13 @@ public:
         this->get_parameter("motor_count", motor_count);
 
         std::vector<std::string> motor_names;
-        std::vector<int> motor_brands;
-        std::vector<int> motor_modes;
-        std::vector<int> motor_types;
-        this->declare_parameter("motor_names");
-        this->declare_parameter("motor_brands");
-        this->declare_parameter("motor_modes");
-        this->declare_parameter("motor_types");
-        this->get_parameter("motor_names", motor_names);
-        this->get_parameter("motor_brands", motor_brands);
-        this->get_parameter("motor_modes", motor_modes);
-        this->get_parameter("motor_types", motor_types);
+        std::vector<int64_t> motor_brands;
+        std::vector<int64_t> motor_modes;
+        std::vector<int64_t> motor_types;
+        motor_names = this->declare_parameter("motor_names", motor_names);
+        motor_brands = this->declare_parameter("motor_brands", motor_brands);
+        motor_modes = this->declare_parameter("motor_modes", motor_modes);
+        motor_types = this->declare_parameter("motor_types", motor_types);
 
         for (int i = 0; i < motor_count; i++)
         {
