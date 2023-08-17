@@ -31,8 +31,7 @@ public:
 
     void motor_init()
     {
-        this->declare_parameter("motor_count");
-        this->get_parameter("motor_count", motor_count);
+        motor_count = this->declare_parameter("motor_count", motor_count);
 
         std::vector<std::string> motor_names;
         std::vector<int64_t> motor_brands;
@@ -52,8 +51,8 @@ public:
                 }
                 else if (motor_modes[i] == MIT_MODE) {
                     std::vector<float> kp, ki;
-                    this->declare_parameter("mit_kp");
-                    this->declare_parameter("mit_ki");
+                    // kp = this->declare_parameter("mit_kp", kp);
+                    // ki = this->declare_parameter("mit_ki", ki);
                     motor_drivers_[i] = new DmMitMotorDriver(i, motor_types[i], kp[i], ki[i]);
                 }
             }
