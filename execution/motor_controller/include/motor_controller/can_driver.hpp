@@ -23,7 +23,7 @@ private:
 public:
     CanDriver()
     {
-        s = socket(PF_CAN, SOCK_RAW, CAN_RAW); // open the CAN socke
+        s = socket(PF_CAN, SOCK_RAW, CAN_RAW); // open the CAN socket
 
         strcpy(ifr.ifr_name, "can0");
         ioctl(s, SIOCGIFINDEX, &ifr); // set the interface name
@@ -31,7 +31,10 @@ public:
         addr.can_family = AF_CAN;
         addr.can_ifindex = ifr.ifr_ifindex; // set the socket address
 
-        bind(s, (struct sockaddr *)&addr, sizeof(addr)); // bind the socket to the CAN interface
+        int bind_result = bind(s, (struct sockaddr *)&addr, sizeof(addr)); // bind the socket to the CAN interface
+        if (bind_result == -1) {
+            perror("Error binding socket to CAN interface");
+        }
     }
 
     ~CanDriver()

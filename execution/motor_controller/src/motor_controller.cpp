@@ -51,8 +51,10 @@ public:
                 }
                 else if (motor_modes[i] == MIT_MODE) {
                     std::vector<float> kp, ki;
-                    // kp = this->declare_parameter("mit_kp", kp);
-                    // ki = this->declare_parameter("mit_ki", ki);
+                    kp.clear();
+                    kp.push_back(this->declare_parameter<float>("mit_kp", 0.0));
+                    ki.clear();
+                    ki.push_back(this->declare_parameter<float>("mit_ki", 0.0));
                     motor_drivers_[i] = new DmMitMotorDriver(i, motor_types[i], kp[i], ki[i]);
                 }
             }
