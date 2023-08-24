@@ -16,12 +16,12 @@ ROS2 foxy
 
 ### Structure
 
-4 main layers: Perception, Decision, Decomposition, and Execution
-
-Information is gotten by the Perception. Perception would transmit it to Decision, which would decide what behavior the robots should make. Decomposition then receive Decision's commands and decompose them to basic behaviors of hardwares. Finally, these information would be sent to the Execution and it would control the hardwares accordingly.
+4 main layers: Perception -> Decision -> Decomposition -> Execution
 
 ### To Compile
 
 Build with ```colcon build --cmake-args '-DCMAKE_EXPORT_COMPILE_COMMANDS=On'``` in the workspace
 
-Update compile_commands with ```cp build/compile_commands.json compile_commands.json```
+Update ROS extension with ctrl+shift+p -> ROS: Update C++ Properties -> ROS: Update Python Path
+
+Update clangd with ctrl+shift+p -> clangd: Restart language server
