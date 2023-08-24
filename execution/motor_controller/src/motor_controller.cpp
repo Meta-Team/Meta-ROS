@@ -7,8 +7,7 @@
 #define DaMiao 0
 #define DJI 1
 
-CanDriver* MotorDriver::can_0 = new CanDriver();
-
+CanDriver* MotorDriver::can_0 = new CanDriver(0);
 
 class MotorController : public rclcpp::Node
 {

@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
+#include <string>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -21,11 +22,12 @@ private:
     struct ifreq ifr;
 
 public:
-    CanDriver()
+    CanDriver(int port = 0)
     {
         s = socket(PF_CAN, SOCK_RAW, CAN_RAW); // open the CAN socket
 
-        strcpy(ifr.ifr_name, "can0");
+        std::string name = "can" + std::to_string(port); 
+        strcpy(ifr.ifr_name, name.c_str());
         ioctl(s, SIOCGIFINDEX, &ifr); // set the interface name
 
         addr.can_family = AF_CAN;
