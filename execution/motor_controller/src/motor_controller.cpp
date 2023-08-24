@@ -14,7 +14,7 @@ class MotorController : public rclcpp::Node
 {
 public:
     int motor_count;
-    MotorDriver* motor_drivers_[16];
+    MotorDriver* motor_drivers_[16]; // not fully used, up to 16 motors
 
     MotorController(): Node("MotorController")
     {
@@ -25,6 +25,7 @@ public:
     {
         for (int i = 0; i < motor_count; i++)
         {
+            motor_drivers_[i]->turn_off();
             delete motor_drivers_[i];
         }
     }
