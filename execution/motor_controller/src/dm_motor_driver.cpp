@@ -73,12 +73,12 @@ DmVelMotorDriver::~DmVelMotorDriver()
 
 // --------------------------------------------
 
-DmMitMotorDriver::DmMitMotorDriver(int name, int type, float kp, float ki)
+DmMitMotorDriver::DmMitMotorDriver(int name, int type, float kp, float kd)
 {
     motor_id = name;
     motor_type = type;
     set_mode();
-    set_param_mit(kp, ki);
+    set_param_mit(kp, kd);
 }
 
 void DmMitMotorDriver::set_mode()
