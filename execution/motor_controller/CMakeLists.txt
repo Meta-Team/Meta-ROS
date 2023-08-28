@@ -23,7 +23,9 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 
 add_executable(motor_controller
-  src/motor_controller.cpp)
+  src/motor_controller.cpp
+  src/dji_motor_driver.cpp
+  src/dm_motor_driver.cpp)
 ament_target_dependencies(motor_controller
   rclcpp) # TODO: interface
 

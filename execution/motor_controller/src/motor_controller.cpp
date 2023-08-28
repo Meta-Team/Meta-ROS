@@ -3,6 +3,8 @@
 #include <rclcpp/duration.hpp>
 
 #include "../include/motor_controller/motor_driver.hpp"
+#include "../include/motor_controller/dm_motor_driver.h"
+#include "../include/motor_controller/dji_motor_driver.h"
 
 #define DaMiao 0
 #define DJI 1
@@ -42,6 +44,7 @@ public:
         motor_modes = this->declare_parameter("motor_modes", motor_modes);
         motor_types = this->declare_parameter("motor_types", motor_types);
 
+        // create corresponding drivers
         for (int i = 0; i < motor_count; i++)
         {
             if (motor_brands[i] == DaMiao)
