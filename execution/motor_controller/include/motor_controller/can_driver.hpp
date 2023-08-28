@@ -3,15 +3,12 @@
 
 #include <linux/can.h>
 #include <linux/can/raw.h>
-// #include <rclcpp/parameter.hpp>
-// #include <rclcpp/subscription.hpp>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <string>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
 #include <unistd.h>
 
 class CanDriver
@@ -22,12 +19,14 @@ private:
     struct ifreq ifr;
 
 public:
+    
+
     CanDriver(int port = 0)
     {
         s = socket(PF_CAN, SOCK_RAW, CAN_RAW); // open the CAN socket
 
         std::string name = "can" + std::to_string(port); 
-        strcpy(ifr.ifr_name, name.c_str());
+        std::strcpy(ifr.ifr_name, name.c_str());
         ioctl(s, SIOCGIFINDEX, &ifr); // set the interface name
 
         addr.can_family = AF_CAN;

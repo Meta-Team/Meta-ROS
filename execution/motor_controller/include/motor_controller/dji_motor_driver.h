@@ -1,3 +1,6 @@
+#ifndef DJI_MOTOR_DRIVER_H
+#define DJI_MOTOR_DRIVER_H
+
 #include "motor_driver.hpp"
 
 class DjiMotorDriver : public MotorDriver
@@ -41,3 +44,5 @@ public:
     
     void set_velocity(float goal_vel) override;
 };
+
+#endif // DJI_MOTOR_DRIVER_H
