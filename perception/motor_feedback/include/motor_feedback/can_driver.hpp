@@ -42,9 +42,9 @@ public:
         close(s);
     }
 
-    void send_frame(can_frame frame)
+    void get_frame(can_frame &frame)
     {
-        write(s, &frame, sizeof(frame));
+        read(s, &frame, sizeof(frame));
     }
 };
 
