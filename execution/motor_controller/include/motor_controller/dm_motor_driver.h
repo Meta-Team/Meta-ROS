@@ -25,6 +25,8 @@ public:
 
     void set_velocity(float goal_vel) override;
 
+    void set_position(float goal_pos) override;
+
     ~DmVelMotorDriver() override;
 };
 
@@ -39,7 +41,7 @@ public:
 
     void set_velocity(float goal_vel) override;
 
-    void set_position(float goal_pos);
+    void set_position(float goal_pos) override;
 
     void set_torque(float goal_torque);
 

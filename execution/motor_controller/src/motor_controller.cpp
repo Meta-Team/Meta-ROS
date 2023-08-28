@@ -1,10 +1,14 @@
 #include "rclcpp/rclcpp.hpp"
 #include <bits/stdint-intn.h>
+#include <motor_interface/msg/detail/motor_goal__struct.hpp>
 #include <rclcpp/duration.hpp>
+#include <rclcpp/subscription.hpp>
 
 #include "../include/motor_controller/motor_driver.hpp"
 #include "../include/motor_controller/dm_motor_driver.h"
 #include "../include/motor_controller/dji_motor_driver.h"
+
+#include "motor_interface/msg/motor_goal.hpp"
 
 #define DaMiao 0
 #define DJI 1
@@ -13,6 +17,18 @@ CanDriver* MotorDriver::can_0 = new CanDriver(0);
 
 class MotorController : public rclcpp::Node
 {
+private:
+    rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr sub_;
+
+    void msg_callback(motor_interface::msg::MotorGoal msg)
+    {
+        for (int i = 0; i < motor_count; i++)
+        {
+            motor_drivers_[i]->set_velocity(msg.goal_vel[i]);
+            motor_drivers_[i]->set_position(msg.goal_pos[i]);
+        }
+    }
+
 public:
     int motor_count;
     MotorDriver* motor_drivers_[16]; // not fully used, up to 16 motors
@@ -20,6 +36,10 @@ public:
     MotorController(): Node("MotorController")
     {
         motor_init();
+        sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
+            "motor_goal", 10, [this](motor_interface::msg::MotorGoal::SharedPtr msg){
+                this->msg_callback(*msg);
+            });
     }
 
     ~MotorController()

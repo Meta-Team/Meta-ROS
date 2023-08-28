@@ -1,2 +1,2 @@
-# can be velocity(rad/s) or position(rad)
-float32[] present
+float32[] present_vel
+float32[] present_pos

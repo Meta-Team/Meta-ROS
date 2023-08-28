@@ -25,6 +25,7 @@ public:
     virtual void set_mode() = 0;
     virtual void turn_on() = 0;
     virtual void set_velocity(float goal_vel) = 0;
+    virtual void set_position(float goal_pos) = 0;
     virtual void turn_off() = 0;
 
     virtual ~MotorDriver() = default;

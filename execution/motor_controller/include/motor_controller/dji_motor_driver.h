@@ -24,6 +24,8 @@ public:
     void set_mode() override;
 
     void set_velocity(float goal_vel) override;
+
+    void set_position(float goal_pos) override;
 };
 
 class DjiPosMotorDriver : public DjiMotorDriver
@@ -35,7 +37,7 @@ public:
 
     void set_mode() override;
 
-    void set_position(float goal_pos);
+    void set_position(float goal_pos) override;
     
     void set_velocity(float goal_vel) override;
 };

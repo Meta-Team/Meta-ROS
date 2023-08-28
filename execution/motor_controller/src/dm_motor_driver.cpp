@@ -60,6 +60,12 @@ void DmVelMotorDriver::set_velocity(float goal_vel)
     can_0->send_frame(tx_frame);
 }
 
+void DmVelMotorDriver::set_position(float goal_pos)
+{
+    // set_position invalid for velocity mode, do nothing
+    return;
+}
+
 DmVelMotorDriver::~DmVelMotorDriver()
 {
     turn_off();

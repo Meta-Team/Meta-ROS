@@ -39,6 +39,12 @@ void DjiVelMotorDriver::set_velocity(float goal_vel)
     // TODO
 }
 
+void DjiVelMotorDriver::set_position(float goal_pos)
+{
+    // set_position invalid for velocity mode, do nothing
+    return;
+}
+
 // --------------------------------------------
 
 DjiPosMotorDriver::DjiPosMotorDriver(int name, int type)
