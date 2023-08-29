@@ -3,6 +3,7 @@
 #include <motor_interface/msg/detail/motor_goal__struct.hpp>
 #include <rclcpp/duration.hpp>
 #include <rclcpp/subscription.hpp>
+#include <vector>
 
 #include "../include/motor_controller/motor_driver.hpp"
 #include "../include/motor_controller/dm_motor_driver.h"
@@ -22,10 +23,11 @@ private:
 
     void msg_callback(motor_interface::msg::MotorGoal msg)
     {
-        for (int i = 0; i < motor_count; i++)
+        int goal_count = msg.motor_id.size();
+        for (int i = 0; i < goal_count; i++)
         {
-            motor_drivers_[i]->set_velocity(msg.goal_vel[i]);
-            motor_drivers_[i]->set_position(msg.goal_pos[i]);
+            motor_drivers_[msg.motor_id[i]]->set_velocity(msg.goal_vel[i]);
+            motor_drivers_[msg.motor_id[i]]->set_position(msg.goal_pos[i]);
         }
     }
 
