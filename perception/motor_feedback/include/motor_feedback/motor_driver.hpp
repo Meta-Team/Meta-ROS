@@ -10,6 +10,7 @@
 
 class MotorDriver
 {
+public:
     int motor_id;
     int motor_type;
     can_frame rx_frame;
