@@ -31,9 +31,7 @@ public:
         addr.can_ifindex = ifr.ifr_ifindex; // set the socket address
 
         int bind_result = bind(s, (struct sockaddr *)&addr, sizeof(addr)); // bind the socket to the CAN interface
-        if (bind_result == -1) {
-            perror("Error binding socket to CAN interface");
-        }
+        if (bind_result == -1) perror("Error binding socket to CAN interface");
     }
 
     ~CanDriver()
