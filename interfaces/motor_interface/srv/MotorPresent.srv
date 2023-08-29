@@ -1,2 +1,4 @@
+int32[] motor_id
+---
 float32[] present_vel
 float32[] present_pos

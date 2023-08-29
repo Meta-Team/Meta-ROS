@@ -23,7 +23,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/MotorGoal.msg"
-  "msg/MotorPresent.msg"
+  "srv/MotorPresent.srv"
 )
 
 if(BUILD_TESTING)
