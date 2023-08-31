@@ -25,3 +25,5 @@ Build with ```colcon build --cmake-args '-DCMAKE_EXPORT_COMPILE_COMMANDS=On'``` 
 Update ROS extension with ctrl+shift+p -> ROS: Update C++ Properties -> ROS: Update Python Path
 
 Update clangd with ctrl+shift+p -> clangd: Restart language server
+
+If clangd is not activated, use ```cp build/compile_commands.json compile_commands.json```
