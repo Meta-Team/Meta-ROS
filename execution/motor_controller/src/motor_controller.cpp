@@ -5,9 +5,9 @@
 #include <rclcpp/subscription.hpp>
 #include <vector>
 
-#include "../include/motor_controller/motor_driver.hpp"
-#include "../include/motor_controller/dm_motor_driver.h"
-#include "../include/motor_controller/dji_motor_driver.h"
+#include "motor_controller/motor_driver.hpp"
+#include "motor_controller/dm_motor_driver.h"
+#include "motor_controller/dji_motor_driver.h"
 
 #include "motor_interface/msg/motor_goal.hpp"
 

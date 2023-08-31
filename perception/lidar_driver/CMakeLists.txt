@@ -24,6 +24,8 @@ find_package(std_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(serial_driver REQUIRED)
 
+include_directories(include)
+
 add_executable(lidar_driver
   src/lidar_driver.cpp)
 ament_target_dependencies(lidar_driver

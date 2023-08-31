@@ -5,9 +5,9 @@
 #include <rclcpp/service.hpp>
 #include <vector>
 
-#include "../include/motor_feedback/motor_driver.hpp"
-#include "../include/motor_feedback/dm_motor_driver.h"
-#include "../include/motor_feedback/dji_motor_driver.h"
+#include "motor_feedback/motor_driver.hpp"
+#include "motor_feedback/dm_motor_driver.h"
+#include "motor_feedback/dji_motor_driver.h"
 
 #include "motor_interface/srv/motor_present.hpp"
 

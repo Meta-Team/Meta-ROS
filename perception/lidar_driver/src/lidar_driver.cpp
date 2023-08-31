@@ -3,10 +3,11 @@
 #include <std_msgs/msg/string.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <iostream>
-#include "lidar_serial_driver.h"
 // #include <sensor_msgs/LaserScan.h>
 #include <map>
 #include "termios.h"
+
+#include "lidar_driver/lidar_serial_driver.h"
 
 #define             ANGLES_SCAN_HALF    180
 #define             RANGES_LEN          (240 * 2 * ANGLES_SCAN_HALF / 360)

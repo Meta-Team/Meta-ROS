@@ -1,4 +1,4 @@
-#include "../include/motor_controller/dji_motor_driver.h"
+#include "motor_controller/dji_motor_driver.h"
 
 void DjiMotorDriver::turn_on()
 {

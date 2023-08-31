@@ -23,6 +23,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(motor_interface REQUIRED)
 
+include_directories(include)
+
 add_executable(motor_controller
   src/motor_controller.cpp
   src/dji_motor_driver.cpp
