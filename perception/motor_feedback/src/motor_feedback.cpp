@@ -16,12 +16,23 @@ CanDriver* MotorDriver::can_0 = new CanDriver(0);
 class MotorFeedback : public rclcpp::Node
 {
 private:
+    float present_position[16]; // not fully used, up to 16 motors
+    float present_velocity[16];
+    float present_torque[16];
+
     rclcpp::Service<motor_interface::srv::MotorPresent>::SharedPtr srv_;
 
     void srv_callback(const motor_interface::srv::MotorPresent::Request::SharedPtr request,
                       motor_interface::srv::MotorPresent::Response::SharedPtr response)
     {
-        
+        int feedback_count = request->motor_id.size();
+        for (int i = 0; i < feedback_count; i++)
+        {
+            // int id = request->motor_id[i];
+            response->present_pos[i] = present_position[request->motor_id[i]];
+            response->present_vel[i] = present_velocity[request->motor_id[i]];
+            response->present_tor[i] = present_torque[request->motor_id[i]];
+        }
     }
 
 public:
