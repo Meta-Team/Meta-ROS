@@ -2,7 +2,9 @@
 #include <bits/stdint-intn.h>
 #include <motor_interface/srv/detail/motor_present__struct.hpp>
 #include <rclcpp/duration.hpp>
+#include <rclcpp/executors.hpp>
 #include <rclcpp/service.hpp>
+#include <rclcpp/utilities.hpp>
 #include <vector>
 
 #include "motor_feedback/motor_driver.hpp"
@@ -10,6 +12,9 @@
 #include "motor_feedback/dji_motor_driver.h"
 
 #include "motor_interface/srv/motor_present.hpp"
+
+#define DaMiao 0
+#define DJI 1
 
 CanDriver* MotorDriver::can_0 = new CanDriver(0);
 
@@ -69,38 +74,35 @@ public:
         motor_types = this->declare_parameter("motor_types", motor_types);
 
         // create corresponding drivers
-        // for (int i = 0; i < motor_count; i++)
-        // {
-        //     if (motor_brands[i] == DaMiao)
-        //     {
-        //         if (motor_modes[i] == VEL_MODE) {
-        //             motor_drivers_[i] = new DmVelMotorDriver(i, motor_types[i]);
-        //         }
-        //         else if (motor_modes[i] == MIT_MODE) {
-        //             std::vector<float> kp, ki;
-        //             kp.clear();
-        //             kp.push_back(this->declare_parameter<float>("mit_kp", 0.0));
-        //             ki.clear();
-        //             ki.push_back(this->declare_parameter<float>("mit_ki", 0.0));
-        //             motor_drivers_[i] = new DmMitMotorDriver(i, motor_types[i], kp[i], ki[i]);
-        //         }
-        //     }
-        //     else if (motor_brands[i] == DJI)
-        //     {
-        //         if (motor_modes[i] == VEL_MODE) {
-        //             motor_drivers_[i] = new DjiPosMotorDriver(i, motor_types[i]);
-        //         }
-        //         else if (motor_modes[i] == POS_MODE) {
-        //             motor_drivers_[i] = new DjiVelMotorDriver(i, motor_types[i]);
-        //         }
-        //     }
-        // }
+        for (int i = 0; i < motor_count; i++)
+        {
+            if (motor_brands[i] == DaMiao)
+            {
+                motor_drivers_[i] = new DmMotorDriver(i);
+            }
+            else if (motor_brands[i] == DJI)
+            {
+                motor_drivers_[i] = new DjiMotorDriver(i);
+            }
+        }
     }
+
+    // void update()
+    // {
+
+    // }
 };
 
 int main(int argc, char** argv)
 {
     rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<MotorFeedback>());
 
+    while(rclcpp::ok())
+    {
+
+    }
+
+    rclcpp::shutdown();
     return 0;
 }
