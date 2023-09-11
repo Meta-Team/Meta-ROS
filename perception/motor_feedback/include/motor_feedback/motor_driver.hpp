@@ -8,18 +8,21 @@
 #include <chrono>
 #include <thread>
 
+#include "motor_data.hpp"
+
 class MotorDriver
 {
 public:
-    int motor_id;
-    int motor_type;
-    can_frame rx_frame;
+    static can_frame rx_frame;
     static CanDriver* can_0;
 
-    virtual float get_velocity() = 0;
-    virtual float get_position() = 0;
+    static void update_rx(int &id)
+    {
+        can_0->get_frame(rx_frame);
+        id = rx_frame.can_id;
+    }
 
-    virtual ~MotorDriver() = default;
+    virtual MotorData process_rx();
 };
 
 #endif // MOTOR_DRIVER_HPP

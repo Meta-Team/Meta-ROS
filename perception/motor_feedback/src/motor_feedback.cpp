@@ -1,3 +1,4 @@
+#include "motor_feedback/motor_data.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include <bits/stdint-intn.h>
 #include <motor_interface/srv/detail/motor_present__struct.hpp>
@@ -16,14 +17,13 @@
 #define DaMiao 0
 #define DJI 1
 
+can_frame MotorDriver::rx_frame;
 CanDriver* MotorDriver::can_0 = new CanDriver(0);
 
 class MotorFeedback : public rclcpp::Node
 {
 private:
-    float present_position[16]; // not fully used, up to 16 motors
-    float present_velocity[16];
-    float present_torque[16];
+    MotorData present_data[16]; // not fully used, up to 16 motors
 
     rclcpp::Service<motor_interface::srv::MotorPresent>::SharedPtr srv_;
 
@@ -34,9 +34,9 @@ private:
         for (int i = 0; i < feedback_count; i++)
         {
             // int id = request->motor_id[i];
-            response->present_pos[i] = present_position[request->motor_id[i]];
-            response->present_vel[i] = present_velocity[request->motor_id[i]];
-            response->present_tor[i] = present_torque[request->motor_id[i]];
+            response->present_pos[i] = present_data[request->motor_id[i]].position;
+            response->present_vel[i] = present_data[request->motor_id[i]].velocity;
+            response->present_tor[i] = present_data[request->motor_id[i]].torque;
         }
     }
 
@@ -78,29 +78,34 @@ public:
         {
             if (motor_brands[i] == DaMiao)
             {
-                motor_drivers_[i] = new DmMotorDriver(i);
+                motor_drivers_[i] = new DmMotorDriver();
             }
             else if (motor_brands[i] == DJI)
             {
-                motor_drivers_[i] = new DjiMotorDriver(i);
+                motor_drivers_[i] = new DjiMotorDriver();
             }
         }
     }
 
-    // void update()
-    // {
+    void update_data()
+    {
+        int rx_id; // received id
+        MotorDriver::update_rx(rx_id);
 
-    // }
+        present_data[rx_id] = motor_drivers_[rx_id]->process_rx();
+    }
 };
 
 int main(int argc, char** argv)
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<MotorFeedback>());
+
+    auto motor_feedback_ = std::make_shared<MotorFeedback>();
+    rclcpp::spin(motor_feedback_);
 
     while(rclcpp::ok())
     {
-
+        motor_feedback_->update_data();
     }
 
     rclcpp::shutdown();
