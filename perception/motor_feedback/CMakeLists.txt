@@ -17,6 +17,8 @@ include_directories(include)
 
 add_executable(motor_feedback
   src/motor_feedback.cpp
+  src/dm_motor_driver.cpp
+  src/dji_motor_driver.cpp
 )
 ament_target_dependencies(motor_feedback
   rclcpp

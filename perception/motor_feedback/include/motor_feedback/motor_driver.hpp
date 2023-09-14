@@ -22,7 +22,7 @@ public:
         id = rx_frame.can_id;
     }
 
-    virtual MotorData process_rx();
+    virtual MotorData process_rx() = 0;
 };
 
 #endif // MOTOR_DRIVER_HPP
