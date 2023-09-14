@@ -101,12 +101,21 @@ int main(int argc, char** argv)
     rclcpp::init(argc, argv);
 
     auto motor_feedback_ = std::make_shared<MotorFeedback>();
+
+    // Start a new thread to run the update_data function
+    std::thread update_thread([&motor_feedback_](){
+        while(rclcpp::ok())
+        {
+            motor_feedback_->update_data();
+            rclcpp::sleep_for(std::chrono::milliseconds(1));
+        }
+    });
+
+    // Run the ROS 2 event loop in the main thread
     rclcpp::spin(motor_feedback_);
 
-    while(rclcpp::ok())
-    {
-        motor_feedback_->update_data();
-    }
+    // Wait for the update thread to finish
+    update_thread.join();
 
     rclcpp::shutdown();
     return 0;
