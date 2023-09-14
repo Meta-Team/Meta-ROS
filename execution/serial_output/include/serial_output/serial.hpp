@@ -10,12 +10,12 @@ using drivers::serial_driver::SerialPort;
 using drivers::serial_driver::StopBits;
 using drivers::serial_driver::SerialPortConfig;
 
-class LidarSerialDriver
+class Serial
 {
 public:
-    LidarSerialDriver();
+    Serial();
 
-    ~LidarSerialDriver();
+    ~Serial();
 
     void send(const std::string & data);
 

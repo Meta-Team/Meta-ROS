@@ -13,7 +13,7 @@ LidarSerialDriver::~LidarSerialDriver()
     port_->close();
 }
 
-void LidarSerialDriver::send(const std::string & data)
-{
-    asio::write(*port_, asio::buffer(data));
-};
+// void LidarSerialDriver::send(const std::string & data)
+// {
+//     asio::write(*port_, asio::buffer(data));
+// };

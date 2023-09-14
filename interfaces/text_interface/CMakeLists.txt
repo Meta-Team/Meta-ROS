@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(serial_output)
+project(text_interface)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -11,20 +11,10 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-find_package(serial_driver REQUIRED)
-find_package(text_interface REQUIRED)
-
-include_directories(include)
-
-add_executable(serial_output
-  src/serial_output.cpp
-  src/serial.cpp)
-ament_target_dependencies(serial_output
-  std_msgs
-  rclcpp
-  serial_driver
-  text_interface
-  )
+find_package(rosidl_default_generators REQUIRED)
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/OutputText.msg"
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
