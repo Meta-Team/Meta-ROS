@@ -1,4 +1,5 @@
 #include "rclcpp/rclcpp.hpp"
+#include <lidar_interface/msg/detail/lidar_dist__struct.hpp>
 #include <rclcpp/publisher.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <std_msgs/msg/float32.hpp>
@@ -8,6 +9,7 @@
 #include "termios.h"
 
 #include "lidar_driver/lidar_serial_driver.h"
+#include "lidar_interface/msg/lidar_dist.hpp"
 
 #define             ANGLES_SCAN_HALF    180
 #define             RANGES_LEN          (240 * 2 * ANGLES_SCAN_HALF / 360)
@@ -134,8 +136,16 @@ public:
 private:
 };
 
-int main()
+int main(int argc, char * argv[])
 {
     rclcpp::init(0, nullptr);
+
+    int StrengthThreshold = 0;
+    int QualityThreshold = 0;
+    int BitRate = 460800;
+    std::string COM = "/dev/ttyUSB0";
+
+    rclcpp::Publisher<lidar_interface::msg::LidarDist>::SharedPtr pub_;
+
     return 0;
 }

@@ -23,6 +23,7 @@ find_package(ament_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(serial_driver REQUIRED)
+find_package(lidar_interface REQUIRED)
 
 include_directories(include)
 
@@ -32,6 +33,7 @@ ament_target_dependencies(lidar_driver
   std_msgs
   rclcpp
   serial_driver
+  lidar_interface
   # libserial
   )
 
