@@ -1,3 +1,6 @@
+#ifndef LIDAR_SERIAL_DRIVER_H
+#define LIDAR_SERIAL_DRIVER_H
+
 #include "serial_driver/serial_driver.hpp"
 #include <serial_driver/serial_port.hpp>
 #include <string>
@@ -28,3 +31,5 @@ private:
     std::unique_ptr<SerialPort> port_;
     std::vector<uint8_t> send_recv_buff;
 };
+
+#endif // LIDAR_SERIAL_DRIVER_H
