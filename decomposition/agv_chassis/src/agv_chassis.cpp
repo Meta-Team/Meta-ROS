@@ -1,5 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 
+#include "agv_chassis/agv_kinematics.hpp"
+
 #include "movement_interface/msg/natural_move.hpp"
 #include "movement_interface/msg/absolute_move.hpp"
 
@@ -8,13 +10,16 @@ class AgvChassis : public rclcpp::Node
 private:
     rclcpp::Subscription<movement_interface::msg::NaturalMove>::SharedPtr nat_sub_;
     rclcpp::Subscription<movement_interface::msg::AbsoluteMove>::SharedPtr abs_sub_;
+    rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
 
     void nat_callback(const movement_interface::msg::NaturalMove::SharedPtr nat_msg)
     {
+        motor_pub_->publish(AgvKinematics::natural_decompo(nat_msg));
     }
 
     void abs_callback(const movement_interface::msg::AbsoluteMove::SharedPtr abs_msg)
     {
+        motor_pub_->publish(AgvKinematics::absolute_decompo(abs_msg));
     }
 public:
     AgvChassis() : Node("AgvChassis")
