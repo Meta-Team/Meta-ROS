@@ -13,14 +13,13 @@ using drivers::serial_driver::SerialPortConfig;
 class LidarSerialDriver
 {
 public:
-    LidarSerialDriver();
+    LidarSerialDriver(int port);
 
     ~LidarSerialDriver();
 
-    void send(const std::string & data);
+    void receive(float & data);
 
 private:
-    static constexpr const char * dev_name = "/dev/ttyS0";
     static constexpr const char * dev_null = "/dev/null";
     static constexpr uint32_t baud = 115200;
     static constexpr FlowControl fc = FlowControl::NONE;

@@ -28,7 +28,8 @@ find_package(lidar_interface REQUIRED)
 include_directories(include)
 
 add_executable(lidar_driver
-  src/lidar_driver.cpp)
+  src/lidar_driver.cpp
+  src/lidar_serial_driver.cpp)
 ament_target_dependencies(lidar_driver
   std_msgs
   rclcpp
