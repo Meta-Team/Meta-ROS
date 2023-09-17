@@ -19,7 +19,7 @@ private:
 
     void abs_callback(const movement_interface::msg::AbsoluteMove::SharedPtr abs_msg)
     {
-        motor_pub_->publish(AgvKinematics::absolute_decompo(abs_msg));
+        motor_pub_->publish(AgvKinematics::absolute_decompo(abs_msg,0));
     }
 public:
     AgvChassis() : Node("AgvChassis")

@@ -10,6 +10,20 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(movement_interface REQUIRED)
+find_package(motor_interface REQUIRED)
+
+include_directories(include)
+
+add_executable(mecanum_chassis
+  src/mecanum_chassis.cpp
+  src/mecanum_kinematics.cpp)
+
+ament_target_dependencies(mecanum_chassis
+  rclcpp
+  movement_interface
+  motor_interface)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
