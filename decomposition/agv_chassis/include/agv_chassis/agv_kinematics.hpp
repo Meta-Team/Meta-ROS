@@ -21,12 +21,12 @@
 #define RB1 7
 
 
-#define ROT_COMP (nat_msg->omega * RADIUS / std::sqrt(2)) // component velocity caused by rotation
+#define ROT_COMP (msg->omega * RADIUS / std::sqrt(2)) // component velocity caused by rotation
 
 namespace AgvKinematics
 {
-    motor_interface::msg::MotorGoal natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr nat_msg);
-    motor_interface::msg::MotorGoal absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr abs_msg, float current_theta);
+    motor_interface::msg::MotorGoal natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg);
+    motor_interface::msg::MotorGoal absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg);
     void add_goal(motor_interface::msg::MotorGoal &motor_goals, const int motor_id, const float goal_vel, const float goal_pos);
     float rss(float x, float y); // root sum square
 };
