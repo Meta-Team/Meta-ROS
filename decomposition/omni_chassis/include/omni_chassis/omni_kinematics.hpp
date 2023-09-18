@@ -1,5 +1,5 @@
-#ifndef AGV_KINEMATICS_HPP
-#define AGV_KINEMATICS_HPP
+#ifndef OMNI_KINEMATICS_HPP
+#define OMNI_KINEMATICS_HPP
 
 #include <cmath>
 #include <vector>
@@ -21,7 +21,7 @@
 #define LB1 6
 #define RB1 7
 
-namespace AgvKinematics
+namespace OmniKinematics
 {
     motor_interface::msg::MotorGoal natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg,
                                                     float chassis_yaw, float gimbal_yaw);
@@ -36,4 +36,4 @@ namespace AgvKinematics
     float rss(float x, float y); // root sum square
 };
 
-#endif // AGV_KINEMATICS_HPP
+#endif // OMNI_KINEMATICS_HPP

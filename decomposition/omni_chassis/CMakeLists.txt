@@ -10,6 +10,26 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(movement_interface REQUIRED)
+find_package(motor_interface REQUIRED)
+find_package(gyro_interface REQUIRED)
+
+include_directories(include)
+
+add_executable(omni_chassis
+  src/omni_chassis.cpp
+  src/omni_kinematics.cpp)
+
+ament_target_dependencies(omni_chassis
+  rclcpp
+  movement_interface
+  motor_interface
+  gyro_interface)
+
+install(TARGETS
+  omni_chassis
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
