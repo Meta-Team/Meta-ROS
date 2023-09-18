@@ -1,6 +1,4 @@
 #include "agv_chassis/agv_kinematics.hpp"
-#include <cmath>
-#include <math.h>
 
 motor_interface::msg::MotorGoal AgvKinematics::natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg, float chassis_yaw, float gimbal_pos)
 {
