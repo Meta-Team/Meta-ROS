@@ -15,12 +15,14 @@ TeleopKeyboard::~TeleopKeyboard()
 
 void TeleopKeyboard::display_menu()
 {
-    RCLCPP_INFO(this->get_logger(), "Press a key to move the chassis:");
-    RCLCPP_INFO(this->get_logger(), "w: forward");
-    RCLCPP_INFO(this->get_logger(), "a: left");
-    RCLCPP_INFO(this->get_logger(), "s: backward");
-    RCLCPP_INFO(this->get_logger(), "d: right");
-    RCLCPP_INFO(this->get_logger(), "q: quit");
+    printf("Press a key to move the chassis:\n");
+    printf("w: forward\n");
+    printf("a: left\n");
+    printf("s: backward\n");
+    printf("d: right\n");
+    printf("q: rotate counterclockwise\n");
+    printf("e: rotate clockwise\n");
+    printf("z: quit\n");
 }
 
 void TeleopKeyboard::disableWaitingForEnter()
@@ -63,12 +65,13 @@ int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<TeleopKeyboard>();
-
+    node->display_menu();
     char ch;
+
     while (rclcpp::ok() && (ch = std::getchar()) != 'z' && ch != 'Z')
     {
-        node->display_menu();
         node->set_goal(ch);
     }
+    
     return 0;
 }
