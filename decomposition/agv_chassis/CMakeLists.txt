@@ -12,6 +12,7 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(movement_interface REQUIRED)
 find_package(motor_interface REQUIRED)
+find_package(gyro_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 
 include_directories(include)
@@ -23,7 +24,8 @@ add_executable(agv_chassis
 ament_target_dependencies(agv_chassis
   rclcpp
   movement_interface
-  motor_interface)
+  motor_interface
+  gyro_interface)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
