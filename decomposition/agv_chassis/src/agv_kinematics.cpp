@@ -1,8 +1,19 @@
 #include "agv_chassis/agv_kinematics.hpp"
 
-motor_interface::msg::MotorGoal AgvKinematics::natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg, float chassis_yaw, float gimbal_pos)
+motor_interface::msg::MotorGoal AgvKinematics::natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg, float chassis_yaw, float gimbal_yaw)
 {
     motor_interface::msg::MotorGoal motor_goals;
+    float yaw_diff = chassis_yaw - gimbal_yaw;
+    float rot_sin = msg->omega * RADIUS * sin(PI/4 - yaw_diff);
+    float rot_cos = msg->omega * RADIUS * cos(PI/4 - yaw_diff);
+    add_goal(motor_goals, LF0, 0, atan((msg->vel_n + rot_sin) / (msg->vel_tau - rot_cos)) + gimbal_yaw);
+    add_goal(motor_goals, RF0, 0, atan((msg->vel_n + rot_cos) / (msg->vel_tau + rot_sin)) + gimbal_yaw);
+    add_goal(motor_goals, LB0, 0, atan((msg->vel_n - rot_cos) / (msg->vel_tau - rot_sin)) + gimbal_yaw);
+    add_goal(motor_goals, RB0, 0, atan((msg->vel_n - rot_sin) / (msg->vel_tau + rot_cos)) + gimbal_yaw);
+    add_goal(motor_goals, LF1, rss(msg->vel_n + rot_sin, msg->vel_tau - rot_cos), 0);
+    add_goal(motor_goals, RF1, rss(msg->vel_n + rot_cos, msg->vel_tau + rot_sin), 0);
+    add_goal(motor_goals, LB1, rss(msg->vel_n - rot_cos, msg->vel_tau - rot_sin), 0);
+    add_goal(motor_goals, RB1, rss(msg->vel_n - rot_sin, msg->vel_tau + rot_cos), 0);
     return motor_goals;
 }
 

@@ -25,7 +25,7 @@
 namespace AgvKinematics
 {
     motor_interface::msg::MotorGoal natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg,
-                                                    float chassis_yaw, float gimabal_yaw);
+                                                    float chassis_yaw, float gimbal_yaw);
     motor_interface::msg::MotorGoal absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg,
                                                      float chassis_yaw);
 

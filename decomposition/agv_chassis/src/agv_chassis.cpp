@@ -13,8 +13,13 @@ private:
 
     void nat_callback(const movement_interface::msg::NaturalMove::SharedPtr nat_msg)
     {
-        
-        // motor_pub_->publish(AgvKinematics::natural_decompo(nat_msg));
+        auto request_chassis = std::make_shared<gyro_interface::srv::ChassisPosition::Request>();
+        auto result_chassis = chassis_cli_->async_send_request(request_chassis);
+        float chassis_yaw = result_chassis.get()->yaw;
+        auto request_gimbal = std::make_shared<gyro_interface::srv::GimbalPosition::Request>();
+        auto result_gimbal = gimbal_cli_->async_send_request(request_gimbal);
+        float gimbal_yaw = result_gimbal.get()->yaw;
+        motor_pub_->publish(AgvKinematics::natural_decompo(nat_msg, chassis_yaw, gimbal_yaw));
     }
 
     void abs_callback(const movement_interface::msg::AbsoluteMove::SharedPtr abs_msg)
