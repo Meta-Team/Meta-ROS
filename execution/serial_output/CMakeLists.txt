@@ -26,6 +26,10 @@ ament_target_dependencies(serial_output
   text_interface
   )
 
+install(TARGETS
+  serial_output
+  DESTINATION lib/${PROJECT_NAME})
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

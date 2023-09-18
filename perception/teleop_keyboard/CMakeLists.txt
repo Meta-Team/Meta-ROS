@@ -22,6 +22,10 @@ ament_target_dependencies(teleop_keyboard
   rclcpp
   movement_interface)
 
+install(TARGETS
+  teleop_keyboard
+  DESTINATION lib/${PROJECT_NAME})
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

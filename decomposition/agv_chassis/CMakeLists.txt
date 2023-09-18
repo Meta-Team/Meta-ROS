@@ -27,6 +27,10 @@ ament_target_dependencies(agv_chassis
   motor_interface
   gyro_interface)
 
+install(TARGETS
+  agv_chassis
+  DESTINATION lib/${PROJECT_NAME})
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
