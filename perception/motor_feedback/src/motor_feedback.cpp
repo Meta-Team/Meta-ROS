@@ -1,11 +1,6 @@
 #include "motor_feedback/motor_data.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include <bits/stdint-intn.h>
-#include <motor_interface/srv/detail/motor_present__struct.hpp>
-#include <rclcpp/duration.hpp>
-#include <rclcpp/executors.hpp>
-#include <rclcpp/service.hpp>
-#include <rclcpp/utilities.hpp>
 #include <vector>
 
 #include "motor_feedback/motor_driver.hpp"

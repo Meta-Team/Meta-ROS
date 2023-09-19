@@ -19,7 +19,7 @@ public:
 
 private:
     rclcpp::Publisher<movement_interface::msg::NaturalMove>::SharedPtr pub_;
-    movement_interface::msg::NaturalMove move_goal;
+    movement_interface::msg::NaturalMove nat_goal;
     termios oldt_;
 };
 

@@ -42,23 +42,23 @@ void TeleopKeyboard::restoreTerminalSettings()
 
 void TeleopKeyboard::set_goal(const char &ch)
 {
-    move_goal.vel_n = 0.0;
-    move_goal.vel_tau = 0.0;
-    move_goal.omega = 0.0;
-    if (ch == 'w' || ch == 'W') move_goal.vel_tau = 1.0;
-    else if (ch == 'a' || ch == 'A') move_goal.vel_n = 0.5;
-    else if (ch == 's' || ch == 'S') move_goal.vel_tau = -1.0;
-    else if (ch == 'd' || ch == 'D') move_goal.vel_n = -0.5;
-    else if (ch == 'q' || ch == 'Q') move_goal.omega = 1.0;
-    else if (ch == 'e' || ch == 'E') move_goal.omega = -1.0;
+    nat_goal.vel_n = 0.0;
+    nat_goal.vel_tau = 0.0;
+    nat_goal.omega = 0.0;
+    if (ch == 'w' || ch == 'W') nat_goal.vel_tau = 1.0;
+    else if (ch == 'a' || ch == 'A') nat_goal.vel_n = 0.5;
+    else if (ch == 's' || ch == 'S') nat_goal.vel_tau = -1.0;
+    else if (ch == 'd' || ch == 'D') nat_goal.vel_n = -0.5;
+    else if (ch == 'q' || ch == 'Q') nat_goal.omega = 1.0;
+    else if (ch == 'e' || ch == 'E') nat_goal.omega = -1.0;
     else RCLCPP_INFO(this->get_logger(), "Invalid key input");
     publish_goal();
 }
 
 void TeleopKeyboard::publish_goal()
 {
-    RCLCPP_INFO(this->get_logger(), "Publishing: vel_n: %f, vel_tau: %f, omega: %f", move_goal.vel_n, move_goal.vel_tau, move_goal.omega);
-    pub_->publish(move_goal);
+    RCLCPP_INFO(this->get_logger(), "Publishing: vel_n: %f, vel_tau: %f, omega: %f", nat_goal.vel_n, nat_goal.vel_tau, nat_goal.omega);
+    pub_->publish(nat_goal);
 }
 
 int main(int argc, char **argv)
