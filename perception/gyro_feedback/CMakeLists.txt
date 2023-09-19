@@ -10,6 +10,22 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(gyro_interface REQUIRED)
+
+include_directories(include)
+
+add_executable(gyro_feedback
+  src/gyro_feedback.cpp
+  src/gyro_driver.cpp)
+
+ament_target_dependencies(gyro_feedback
+  rclcpp
+  gyro_interface)
+
+install(TARGETS
+  gyro_feedback
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
