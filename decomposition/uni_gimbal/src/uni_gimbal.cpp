@@ -40,6 +40,8 @@ float UniGimbal::velocity_pid(float error)
     error_sum += error;
     error_last = error;
     return P * error + I * error_sum + D * error_diff;
+    // when error is positive, goal is more counter-clockwise
+    // thereor, velocity should be positive, which means gimbal rotates counter-clockwise
 }
 
 void UniGimbal::aiming_callback(const aiming_interface::msg::UniAiming::SharedPtr msg)
@@ -47,7 +49,8 @@ void UniGimbal::aiming_callback(const aiming_interface::msg::UniAiming::SharedPt
     float current_yaw = get_current_gimbal_yaw();
     float goal_yaw = msg->yaw;
     float error = goal_yaw - current_yaw;
-    float velocity = velocity_pid(error) + chassis_omega;
+    float velocity = velocity_pid(error) - chassis_omega;
+    // gimbal should rotate in reverse direction of chassis
 
     motor_interface::msg::MotorGoal motor_goal;
     motor_goal.motor_id.push_back(motor_id);
