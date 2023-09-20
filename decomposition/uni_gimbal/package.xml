@@ -16,6 +16,7 @@
   <depend>aiming_interface</depend>
   <depend>movement_interface</depend>
   <depend>gyro_interface</depend>
+  <depend>motor_interface</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

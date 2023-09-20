@@ -15,6 +15,7 @@ find_package(rclcpp REQUIRED)
 find_package(aiming_interface REQUIRED)
 find_package(gyro_interface REQUIRED)
 find_package(movement_interface REQUIRED)
+find_package(motor_interface REQUIRED)
 
 include_directories(include)
 
@@ -25,7 +26,8 @@ ament_target_dependencies(uni_gimbal_node
   rclcpp
   aiming_interface
   gyro_interface
-  movement_interface)
+  movement_interface
+  motor_interface)
 
 install(TARGETS uni_gimbal_node
   DESTINATION lib/${PROJECT_NAME})
