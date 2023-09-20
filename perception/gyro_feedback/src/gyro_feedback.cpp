@@ -1,7 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "gyro_feedback/gyro_driver.h"
 
-#include "gyro_interface/srv/chassis_position.hpp"
 #include "gyro_interface/srv/gimbal_position.hpp"
 
 class GyroFeedback : public rclcpp::Node
@@ -9,15 +8,9 @@ class GyroFeedback : public rclcpp::Node
 private:
     GyroDriver* gyro_driver_;
     rclcpp::Service<gyro_interface::srv::GimbalPosition>::SharedPtr gimbal_srv_;
-    rclcpp::Service<gyro_interface::srv::ChassisPosition>::SharedPtr chassis_srv_;
 
     void gimbal_callback(const gyro_interface::srv::GimbalPosition::Request::SharedPtr request,
                          gyro_interface::srv::GimbalPosition::Response::SharedPtr response)
-    {
-    }
-
-    void chassis_callback(const gyro_interface::srv::ChassisPosition::Request::SharedPtr request,
-                          gyro_interface::srv::ChassisPosition::Response::SharedPtr response)
     {
     }
 
@@ -25,7 +18,6 @@ public:
     GyroFeedback() : Node("gyro_feedback")
     {
         gimbal_srv_ = this->create_service<gyro_interface::srv::GimbalPosition>("gimbal_position", std::bind(&GyroFeedback::gimbal_callback, this, std::placeholders::_1, std::placeholders::_2));
-        chassis_srv_ = this->create_service<gyro_interface::srv::ChassisPosition>("chassis_position", std::bind(&GyroFeedback::chassis_callback, this, std::placeholders::_1, std::placeholders::_2));
     }
 };
 

@@ -12,6 +12,7 @@
   <depend>movement_interface</depend>
   <depend>motor_interface</depend>
   <depend>gyro_interface</depend> 
+  <depend>motor_feedback</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
