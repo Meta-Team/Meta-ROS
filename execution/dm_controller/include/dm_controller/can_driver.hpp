@@ -1,5 +1,5 @@
-#ifndef CAN_DRIVER_H
-#define CAN_DRIVER_H
+#ifndef CAN_DRIVER_HPP
+#define CAN_DRIVER_HPP
 
 #include <linux/can.h>
 #include <linux/can/raw.h>
@@ -46,4 +46,4 @@ public:
     }
 };
 
-#endif // CAN_DRIVER_H
+#endif // CAN_DRIVER_HPP

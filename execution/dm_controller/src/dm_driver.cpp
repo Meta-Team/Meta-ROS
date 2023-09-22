@@ -1,11 +1,23 @@
-#include "motor_controller/dm_motor_driver.h"
+#include "dm_controller/dm_driver.h"
 
-#define START_CMD {0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
-#define STOP_CMD {0xfd, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
-#define SAVE_ZERO_CMD {0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
-#define CLEAR_ERROR_CMD {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
+CanDriver* DmDriver::can_0 = new CanDriver(0);
 
-void DmMotorDriver::turn_on()
+float DmDriver::uint_to_float(int x_int, float x_min, float x_max, int bits)
+{
+    /// Converts an unsigned int to a float, given range and number of bits
+    float span = x_max - x_min;
+    float offset = x_min;
+    return (float) x_int * span / (float) ((1<<bits)-1) + offset;
+}
+
+int DmDriver::float_to_uint(float x, float x_min, float x_max, int bits){
+    /// Converts a float to an unsigned int, given range and number of bits
+    float span = x_max - x_min;
+    float offset = x_min;
+    return (int) ((x-offset)*((float)((1<<bits)-1))/span);
+}
+
+void DmDriver::turn_on()
 {
     uint8_t dlc_temp = tx_frame.can_dlc;
     for (int i = 10; i > 0; i --) {
@@ -19,7 +31,7 @@ void DmMotorDriver::turn_on()
     tx_frame.can_dlc = dlc_temp;
 }
 
-void DmMotorDriver::turn_off()
+void DmDriver::turn_off()
 {
     uint8_t dlc_temp = tx_frame.can_dlc;
     for (int i = 10; i > 0; i --) {
@@ -33,63 +45,27 @@ void DmMotorDriver::turn_off()
     tx_frame.can_dlc = dlc_temp;
 }
 
-DmMotorDriver::~DmMotorDriver()
+DmDriver::~DmDriver()
 {
     turn_off();
 }
 
-// --------------------------------------------
+// ----------------------------------------------------------
 
-void DmVelMotorDriver::set_mode()
+DmMitDriver::DmMitDriver(int name, float kp, float kd)
 {
-    tx_frame.can_dlc = 0x04;
-    tx_frame.can_id = motor_id + 0x200;
-}
-
-DmVelMotorDriver::DmVelMotorDriver(int name, int type)
-{
-    motor_id = name;
-    motor_type = type;
-    set_mode();
-}
-
-void DmVelMotorDriver::set_velocity(float goal_vel)
-{
-    float temp_vel = goal_vel;
-    uint32_t* pvel;
-    pvel = (uint32_t*) &temp_vel;
-    memcpy(&tx_frame.data[0], pvel, sizeof(uint32_t));
-    can_0->send_frame(tx_frame);
-}
-
-void DmVelMotorDriver::set_position(float goal_pos)
-{
-    // set_position invalid for velocity mode, do nothing
-    return;
-}
-
-DmVelMotorDriver::~DmVelMotorDriver()
-{
-    turn_off();
-}
-
-// --------------------------------------------
-
-DmMitMotorDriver::DmMitMotorDriver(int name, int type, float kp, float kd)
-{
-    motor_id = name;
-    motor_type = type;
+    this->motor_id = name;
     set_mode();
     set_param_mit(kp, kd);
 }
 
-void DmMitMotorDriver::set_mode()
+void DmMitDriver::set_mode()
 {
     tx_frame.can_dlc = 0x08;
     tx_frame.can_id = motor_id;
 }
 
-void DmMitMotorDriver::set_param_mit(float kp, float kd)
+void DmMitDriver::set_param_mit(float kp, float kd)
 {
     uint32_t uint_kp = float_to_uint(kp, 0, 100, 12); // TODO
     uint32_t uint_kd = float_to_uint(kd, 0, 100, 12);
@@ -102,7 +78,7 @@ void DmMitMotorDriver::set_param_mit(float kp, float kd)
     can_0->send_frame(tx_frame);
 }
 
-void DmMitMotorDriver::set_velocity(float goal_vel)
+void DmMitDriver::set_velocity(float goal_vel)
 {
     uint32_t uint_vel = float_to_uint(goal_vel,-100,100,12); // TODO: values to be changed
     tx_frame.data[3] &= 0x0f;
@@ -111,7 +87,7 @@ void DmMitMotorDriver::set_velocity(float goal_vel)
     can_0->send_frame(tx_frame);
 }
 
-void DmMitMotorDriver::set_position(float goal_pos)
+void DmMitDriver::set_position(float goal_pos)
 {
     uint32_t  uint_pos = float_to_uint(goal_pos,-3.14,3.14,16);
     tx_frame.data[1] =uint_pos & 0x0ff;
@@ -119,16 +95,31 @@ void DmMitMotorDriver::set_position(float goal_pos)
     can_0->send_frame(tx_frame);
 }
 
-void DmMitMotorDriver::set_torque(float goal_torque)
+// ----------------------------------------------------------
+
+DmVelDriver::DmVelDriver(int name)
 {
-    uint32_t uint_torq = float_to_uint(goal_torque,-10,10,12);
-    tx_frame.data[7] = uint_torq & 0x0ff;
-    tx_frame.data[6] &= 0xf0;
-    tx_frame.data[6] |= uint_torq >> 8;
+    this->motor_id = name;
+    set_mode();
+}
+
+void DmVelDriver::set_mode()
+{
+    tx_frame.can_dlc = 0x08;
+    tx_frame.can_id = motor_id;
+}
+
+void DmVelDriver::set_velocity(float goal_vel)
+{
+    float temp_vel = goal_vel;
+    uint32_t* pvel;
+    pvel = (uint32_t*) &temp_vel;
+    memcpy(&tx_frame.data[0], pvel, sizeof(uint32_t));
     can_0->send_frame(tx_frame);
 }
 
-DmMitMotorDriver::~DmMitMotorDriver()
+void DmVelDriver::set_position(float goal_pos)
 {
-    turn_off();
+    // set_position invalid for velocity mode, do nothing
+    return;
 }

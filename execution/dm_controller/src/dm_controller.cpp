@@ -1,0 +1,78 @@
+#include "rclcpp/rclcpp.hpp"
+
+#include "dm_controller/can_driver.hpp"
+#include "dm_controller/dm_driver.h"
+
+#include "motor_interface/msg/motor_goal.hpp"
+
+#define VEL_MODE 0
+#define MIT_MODE 1
+
+class DmController : public rclcpp::Node
+{
+public:
+    DmController() : Node("dm_controller")
+    {
+        sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
+            "motor_goal", 10, [this](motor_interface::msg::MotorGoal::SharedPtr msg){
+                this->msg_callback(*msg);
+            });
+    }
+
+    ~DmController()
+    {
+        for (int i = 0; i < motor_count; i++)
+        {
+            dm_driver_[i]->turn_off();
+            delete dm_driver_[i];
+        }
+    }
+
+private:
+    int motor_count;
+    rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr sub_;
+    DmDriver* dm_driver_[8]; // not fully used
+
+    void motor_init()
+    {
+        motor_count = this->declare_parameter("motor_count", motor_count);
+        std::vector<int64_t> motor_modes;
+        motor_modes = this->declare_parameter("motor_types", motor_modes);
+
+        for (int i = 0; i < motor_count; i++)
+        {
+            if (motor_modes[i] == VEL_MODE)
+            {
+                dm_driver_[i] = new DmVelDriver(i);
+            }
+            else if (motor_modes[i] == MIT_MODE)
+            {
+                std::vector<float> kp, ki;
+                kp.clear();
+                kp.push_back(this->declare_parameter<float>("mit_kp", 0.0));
+                ki.clear();
+                ki.push_back(this->declare_parameter<float>("mit_ki", 0.0));
+                dm_driver_[i] = new DmMitDriver(i, kp[i], ki[i]);
+            }
+            dm_driver_[i]->turn_on();
+        }
+    }
+
+    void msg_callback(motor_interface::msg::MotorGoal msg)
+    {
+        int goal_count = msg.motor_id.size();
+        for (int i = 0; i < goal_count; i++)
+        {
+            dm_driver_[msg.motor_id[i]]->set_velocity(msg.goal_vel[i]);
+            dm_driver_[msg.motor_id[i]]->set_position(msg.goal_pos[i]);
+        }
+    }
+};
+
+int main(int argc, char *argv[])
+{
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<DmController>());
+    rclcpp::shutdown();
+    return 0;
+}
