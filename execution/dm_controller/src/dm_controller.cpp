@@ -3,7 +3,7 @@
 #include "dm_controller/can_driver.hpp"
 #include "dm_controller/dm_driver.h"
 
-#include "motor_interface/msg/motor_goal.hpp"
+#include "motor_interface/msg/dm_goal.hpp"
 
 #define VEL_MODE 0
 #define MIT_MODE 1
@@ -13,8 +13,8 @@ class DmController : public rclcpp::Node
 public:
     DmController() : Node("dm_controller")
     {
-        sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
-            "motor_goal", 10, [this](motor_interface::msg::MotorGoal::SharedPtr msg){
+        sub_ = this->create_subscription<motor_interface::msg::DmGoal>(
+            "dm_goal", 10, [this](motor_interface::msg::DmGoal::SharedPtr msg){
                 this->msg_callback(*msg);
             });
     }
@@ -30,7 +30,7 @@ public:
 
 private:
     int motor_count;
-    rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr sub_;
+    rclcpp::Subscription<motor_interface::msg::DmGoal>::SharedPtr sub_;
     DmDriver* dm_driver_[8]; // not fully used
 
     void motor_init()
@@ -58,7 +58,7 @@ private:
         }
     }
 
-    void msg_callback(motor_interface::msg::MotorGoal msg)
+    void msg_callback(motor_interface::msg::DmGoal msg)
     {
         int goal_count = msg.motor_id.size();
         for (int i = 0; i < goal_count; i++)

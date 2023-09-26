@@ -1,6 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 
-#include "omni_chassis/omni_kinematics.hpp"
+#include "../include/omni_chassis/omni_kinematics.hpp"
 #include <motor_interface/srv/detail/motor_present__struct.hpp>
 
 #define YAW 4
@@ -10,7 +10,7 @@ class OmniChassis : public rclcpp::Node
 private:
     rclcpp::Subscription<movement_interface::msg::NaturalMove>::SharedPtr nat_sub_;
     rclcpp::Subscription<movement_interface::msg::AbsoluteMove>::SharedPtr abs_sub_;
-    rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
+    rclcpp::Publisher<motor_interface::msg::DjiGoal>::SharedPtr motor_pub_;
     rclcpp::Client<gyro_interface::srv::GimbalPosition>::SharedPtr gimbal_cli_;
     rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr motor_cli_;
 
@@ -37,7 +37,7 @@ public:
                 this->abs_callback(msg);
             });
             
-        motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
+        motor_pub_ = this->create_publisher<motor_interface::msg::DjiGoal>("motor_goal", 10);
 
         gimbal_cli_ = this->create_client<gyro_interface::srv::GimbalPosition>("gimbal_position");
         gimbal_cli_->wait_for_service(std::chrono::seconds(2));

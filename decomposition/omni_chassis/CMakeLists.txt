@@ -25,7 +25,8 @@ ament_target_dependencies(omni_chassis
   rclcpp
   movement_interface
   motor_interface
-  gyro_interface)
+  gyro_interface
+  )
 
 install(TARGETS
   omni_chassis
