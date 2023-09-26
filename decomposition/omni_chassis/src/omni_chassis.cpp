@@ -1,6 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 
-#include "../include/omni_chassis/omni_kinematics.hpp"
+#include "omni_chassis/omni_kinematics.hpp"
 #include <motor_interface/srv/detail/motor_present__struct.hpp>
 
 #define YAW 4

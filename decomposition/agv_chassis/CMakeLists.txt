@@ -27,7 +27,8 @@ ament_target_dependencies(agv_chassis
   movement_interface
   motor_interface
   gyro_interface
-  motor_feedback)
+  motor_feedback
+  )
 
 install(TARGETS
   agv_chassis

@@ -15,7 +15,6 @@ motor_interface::msg::DjiGoal OmniKinematics::absolute_decompo(const movement_in
 
 void OmniKinematics::set_goal(motor_interface::msg::DjiGoal &motor_goals, const WheelId wheel_id, const float goal_vel, const float goal_pos)
 {
-    motor_goals.motor_id[wheel_id] = wheel_id;
     motor_goals.goal_vel[wheel_id] = goal_vel;
     motor_goals.goal_pos[wheel_id] = goal_pos;
 }

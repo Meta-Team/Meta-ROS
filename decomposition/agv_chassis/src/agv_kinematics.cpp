@@ -60,3 +60,10 @@ float AgvKinematics::rss(float x, float y)
 {
     return std::sqrt(x * x + y * y);
 }
+
+void AgvKinematics::set_dji_goal(motor_interface::msg::DjiGoal &motor_goals, const VelocityMotor motor_id, const float goal_pos)
+{
+    motor_goals.motor_id[motor_id] = motor_id;
+    motor_goals.goal_pos[motor_id] = goal_pos;
+    motor_goals.goal_vel[motor_id] = 0;
+}
