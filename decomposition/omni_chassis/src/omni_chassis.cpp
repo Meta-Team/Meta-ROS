@@ -1,15 +1,15 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "omni_chassis/omni_kinematics.hpp"
-#include <motor_interface/srv/detail/motor_present__struct.hpp>
+#include "motor_interface/srv/motor_present.hpp"
 
 #define YAW 4
 
 class OmniChassis : public rclcpp::Node
 {
 private:
-    rclcpp::Subscription<movement_interface::msg::NaturalMove>::SharedPtr nat_sub_;
     rclcpp::Subscription<movement_interface::msg::AbsoluteMove>::SharedPtr abs_sub_;
+    rclcpp::Subscription<movement_interface::msg::ChassisMove>::SharedPtr cha_sub_;
     rclcpp::Publisher<motor_interface::msg::DjiGoal>::SharedPtr motor_pub_;
     rclcpp::Client<gyro_interface::srv::GimbalPosition>::SharedPtr gimbal_cli_;
     rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr motor_cli_;
@@ -29,12 +29,21 @@ private:
         motor_pub_->publish(OmniKinematics::absolute_decompo(abs_msg, gimbal_yaw + motor_pos));
     }
 
+    void cha_callback(const movement_interface::msg::ChassisMove::SharedPtr cha_msg)
+    {
+        motor_pub_->publish(OmniKinematics::chassis_decompo(cha_msg));
+    }
+
 public:
     OmniChassis() : Node("OmniChassis")
     {
         abs_sub_ = this->create_subscription<movement_interface::msg::AbsoluteMove>(
             "absolute_move", 10, [this](const movement_interface::msg::AbsoluteMove::SharedPtr msg){
                 this->abs_callback(msg);
+            });
+        cha_sub_ = this->create_subscription<movement_interface::msg::ChassisMove>(
+            "chassis_move", 10, [this](const movement_interface::msg::ChassisMove::SharedPtr msg){
+                this->cha_callback(msg);
             });
             
         motor_pub_ = this->create_publisher<motor_interface::msg::DjiGoal>("motor_goal", 10);
