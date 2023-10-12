@@ -13,6 +13,7 @@ class DmController : public rclcpp::Node
 public:
     DmController() : Node("dm_controller")
     {
+        motor_init();
         sub_ = this->create_subscription<motor_interface::msg::DmGoal>(
             "dm_goal", 10, [this](motor_interface::msg::DmGoal::SharedPtr msg){
                 this->msg_callback(*msg);
