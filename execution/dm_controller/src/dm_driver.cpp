@@ -67,8 +67,8 @@ void DmMitDriver::set_mode()
 
 void DmMitDriver::set_param_mit(float kp, float kd)
 {
-    uint32_t uint_kp = float_to_uint(kp, 0, 100, 12); // TODO
-    uint32_t uint_kd = float_to_uint(kd, 0, 100, 12);
+    uint32_t uint_kp = float_to_uint(kp, -P_MAX, P_MAX, 12); // TODO
+    uint32_t uint_kd = float_to_uint(kd, -P_MAX, P_MAX, 12);
     tx_frame.data[3] &= 0xf0;
     tx_frame.data[3] |= (uint_kp >> 8) & 0x0f;
     tx_frame.data[4] = uint_kp & 0x0ff;
