@@ -1,8 +1,18 @@
 # dm_controller
 
-similar to dji_controller
+this package is used to control the DM motors
+
+the motors are controlled by CAN communication
+
+each can_frame controlls a single motor
+
+motors have 3 modes: mit, vel, pos_vel
+
+each has different can_frame protocol
 
 ## requirements
+
+similar to dji_controller
 
 to enable CAN communication on Orin Nano,
 

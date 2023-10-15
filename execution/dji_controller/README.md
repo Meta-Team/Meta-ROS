@@ -1,8 +1,18 @@
 # dji_controller
 
-similar to dm_controller
+## description
+
+this package is used to control the DJI motors
+
+the motors are controlled by CAN communication
+
+each can_frame delivers 4 values (id from 1 to 4, or from 5 to 8). each value is a 16-bit integer, taking 2 bytes
+
+so, 4 motors should be controlled at a time
 
 ## requirements
+
+similar to dm_controller
 
 to enable CAN communication on Orin Nano,
 
