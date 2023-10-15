@@ -23,6 +23,20 @@ void DjiDriver::set_current(float &current, float goal)
     }
 }
 
+void DjiDriver::set_p2v_pid(float kp, float ki, float kd)
+{
+    p2v_kp = kp;
+    p2v_ki = ki;
+    p2v_kd = kd;
+}
+
+void DjiDriver::set_v2c_pid(float kp, float ki, float kd)
+{
+    v2c_kp = kp;
+    v2c_ki = ki;
+    v2c_kd = kd;
+}
+
 float DjiDriver::vel2current(float goal_vel)
 {
     float current = 0;

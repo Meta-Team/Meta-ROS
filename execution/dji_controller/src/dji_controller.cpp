@@ -26,6 +26,8 @@ private:
     int motor_count;
     DjiDriver* driver_[8];
     can_frame tx_frame_;
+    std::vector<double> p2v_kps, p2v_kis, p2v_kds;
+    std::vector<double> v2c_kps, v2c_kis, v2c_kds;
 
     void goal_callback(const motor_interface::msg::DjiGoal::SharedPtr msg)
     {
@@ -57,22 +59,26 @@ private:
         motor_count = this->declare_parameter("motor_count", motor_count);
         std::vector<int64_t> motor_modes;
         motor_modes = this->declare_parameter("motor_types", motor_modes);
-        // for (int i = 0, i < motor_count, i++)
-        // {
-        //     if (motor_modes[i] == M3508)
-        //     {
-        //         driver_[i] = new Dji3508Driver(i);
-        //     }
-        //     else if (motor_modes[i] == M2006)
-        //     {
-        //         driver_[i] = new Dji2006Driver(i);
-        //     }
-        //     else if (motor_modes[i] == M6020)
-        //     {
-        //         driver_[i] = new Dji6020Driver(i);
-        //     }
-        //     driver_[i]->turn_on();
-        // }
+
+        p2v_kps = this->declare_parameter("p2v_kps", p2v_kps);
+        p2v_kis = this->declare_parameter("p2v_kis", p2v_kis);
+        p2v_kds = this->declare_parameter("p2v_kds", p2v_kds);
+
+        v2c_kps = this->declare_parameter("v2c_kps", v2c_kps);
+        v2c_kis = this->declare_parameter("v2c_kis", v2c_kis);
+        v2c_kds = this->declare_parameter("v2c_kds", v2c_kds);
+    }
+
+    void update_pid()
+    {
+        p2v_kps = this->get_parameter("kps").as_double_array();
+        p2v_kis = this->get_parameter("kis").as_double_array();
+        p2v_kds = this->get_parameter("kds").as_double_array();
+        for (int i = 0; i < motor_count; i++)
+        {
+            driver_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
+            driver_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
+        }
     }
 };
 
