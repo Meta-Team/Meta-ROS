@@ -16,6 +16,8 @@
 #define CLEAR_ERROR_CMD {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
 
 #define P_MAX 3.14159265358979323846
+#define V_MAX 30.0
+#define T_MAX 10.0
 
 class DmDriver
 {

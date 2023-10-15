@@ -67,8 +67,8 @@ void DmMitDriver::set_mode()
 
 void DmMitDriver::set_param_mit(float kp, float kd)
 {
-    uint32_t uint_kp = float_to_uint(kp, -P_MAX, P_MAX, 12); // TODO
-    uint32_t uint_kd = float_to_uint(kd, -P_MAX, P_MAX, 12);
+    uint32_t uint_kp = float_to_uint(kp, -P_MAX, P_MAX, 16);
+    uint32_t uint_kd = float_to_uint(kd, -P_MAX, P_MAX, 16);
     tx_frame.data[3] &= 0xf0;
     tx_frame.data[3] |= (uint_kp >> 8) & 0x0f;
     tx_frame.data[4] = uint_kp & 0x0ff;
@@ -80,7 +80,7 @@ void DmMitDriver::set_param_mit(float kp, float kd)
 
 void DmMitDriver::set_velocity(float goal_vel)
 {
-    uint32_t uint_vel = float_to_uint(goal_vel,-100,100,12); // TODO: values to be changed
+    uint32_t uint_vel = float_to_uint(goal_vel, -V_MAX, V_MAX, 12);
     tx_frame.data[3] &= 0x0f;
     tx_frame.data[3] |= (uint_vel & 0x0f) << 4;
     tx_frame.data[2] = uint_vel >> 4;
@@ -89,7 +89,7 @@ void DmMitDriver::set_velocity(float goal_vel)
 
 void DmMitDriver::set_position(float goal_pos)
 {
-    uint32_t  uint_pos = float_to_uint(goal_pos,-3.14,3.14,16);
+    uint32_t  uint_pos = float_to_uint(goal_pos, P_MAX, P_MAX, 16);
     tx_frame.data[1] =uint_pos & 0x0ff;
     tx_frame.data[0] =uint_pos >> 8;
     can_0->send_frame(tx_frame);
