@@ -5,6 +5,8 @@
 
 #define I_MAX 16384
 
+#define DT 0.01
+
 enum MotorType
 {
     M3508,
@@ -20,17 +22,19 @@ private:
 
     float p2v_kp, p2v_ki, p2v_kd;
     float v2c_kp, v2c_ki, v2c_kd;
+    float proportional, integral, derivative;
 
     float present_pos;
-    float former_pos;
     float present_vel;
-    float former_vel;
     float current;
+    float vel_error;
+    float pos_error;
 
 public:
     void update_pos(float pos);
     void update_vel(float vel);
     float vel2current(float goal_vel);
+    float pos2velocity(float goal_pos);
     float pos2current(float goal_pos);
     static void set_current(float &current, float goal);
     void set_p2v_pid(float kp, float ki, float kd);

@@ -3,13 +3,11 @@
 void DjiDriver::update_pos(float pos)
 {
     present_pos = pos;
-    former_pos = present_pos;
 }
 
 void DjiDriver::update_vel(float vel)
 {
     present_vel = vel;
-    former_vel = present_vel;
 }
 
 void DjiDriver::set_current(float &current, float goal)
@@ -39,16 +37,38 @@ void DjiDriver::set_v2c_pid(float kp, float ki, float kd)
 
 float DjiDriver::vel2current(float goal_vel)
 {
-    float current = 0;
+    float last_vel_error = vel_error;
+    vel_error = goal_vel - present_vel;
+
+    proportional = v2c_kp * vel_error;
+    integral += v2c_ki * vel_error * DT;
+    derivative = v2c_kd * (vel_error - last_vel_error) / DT;
+
+    current += proportional + integral + derivative;
 
     return current;
 }
 
+float DjiDriver::pos2velocity(float goal_pos)
+{
+    float velocity = 0;
+
+    float last_pos_error = pos_error;
+    pos_error = goal_pos - present_pos;
+
+    proportional = p2v_kp * pos_error;
+    integral += p2v_ki * pos_error * DT;
+    derivative = p2v_kd * (pos_error - last_pos_error) / DT;
+
+    velocity += proportional + integral + derivative;
+
+    return velocity;
+}
+
 float DjiDriver::pos2current(float goal_pos)
 {
-    float current = 0;
-
-    return current;
+    float velocity = pos2velocity(goal_pos);
+    return vel2current(velocity);
 }
 
 float DjiDriver::uint_to_float(int x_int, float x_min, float x_max, int bits)
