@@ -32,32 +32,24 @@ private:
         auto request = std::make_shared<motor_interface::srv::MotorPresent::Request>();
         for (int i = 0; i < 4; i++) request->motor_id.push_back(msg->motor_id[i]);
         auto result = cli_->async_send_request(request);
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) // update 4 present pos and vel
         {
             driver_[msg->motor_id[i]]->update_pos(result.get()->present_pos[i]);
             driver_[msg->motor_id[i]]->update_vel(result.get()->present_vel[i]);
         }
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) // set 4 goal current
         {
             float current;
             DjiDriver::set_current(current, driver_[msg->motor_id[i]]->vel2current(msg->goal_vel[i]));
             DjiDriver::set_current(current, driver_[msg->motor_id[i]]->pos2current(msg->goal_pos[i]));
-            union {
-                float f;
-                uint8_t b[2];
-            } current_data;
-            current_data.f = current;
-            uint8_t data_high = current_data.b[1];
-            uint8_t data_low = current_data.b[0]; // to be tested
+            std::uint16_t current_data = DjiDriver::float_to_uint(current, -I_MAX, I_MAX, 16);
 
             int id = msg->motor_id[i];
-            if (id <= 4)
-            {
-                tx_frame_.can_id = 0x200;
-                tx_frame_.data[2 * id - 2] = data_high;
-                tx_frame_.data[2 * id - 1] = data_low;
-            }
+            if (id > 4) id -= 4; // id 5 is the same as id 1, etc.
+            tx_frame_.data[2*id-2] = current_data >> 8; // id 1 is at index 0, id 2 is at index 2, etc.
+            tx_frame_.data[2*id-1] = current_data & 0xff; // id 1 is at index 1, id 2 is at index 3, etc.
         }
+        tx_frame_.can_id = 0x200;
     }
 
     void motor_init()

@@ -1,3 +1,10 @@
+#ifndef DJI_DRIVER_H
+#define DJI_DRIVER_H
+
+#include "can_driver.hpp"
+
+#define I_MAX 16384
+
 enum MotorType
 {
     M3508,
@@ -23,4 +30,10 @@ public:
     float vel2current(float goal_vel);
     float pos2current(float goal_pos);
     static void set_current(float &current, float goal);
+
+    // linear mapping
+    static float uint_to_float(int x_int, float x_min, float x_max, int bits);
+    static int float_to_uint(float x, float x_min, float x_max, int bits);
 };
+
+#endif // DJI_DRIVER_H
