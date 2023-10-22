@@ -12,13 +12,8 @@ void DjiDriver::update_vel(float vel)
 
 void DjiDriver::set_current(float &current, float goal)
 {
-    if (goal != 0)
-    {
-        current = goal;
-    }
-    else {
-        return;
-    }
+    if (goal != 0) current = goal;
+    else return;
 }
 
 void DjiDriver::set_p2v_pid(float kp, float ki, float kd)
