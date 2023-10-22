@@ -25,7 +25,7 @@ private:
     rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr cli_;
     int motor_count;
     DjiDriver* driver_[8];
-    can_frame tx_frame_;
+    can_frame tx_frame;
     std::vector<double> p2v_kps, p2v_kis, p2v_kds;
     std::vector<double> v2c_kps, v2c_kis, v2c_kds;
 
@@ -34,24 +34,18 @@ private:
         auto request = std::make_shared<motor_interface::srv::MotorPresent::Request>();
         for (int i = 0; i < 4; i++) request->motor_id.push_back(msg->motor_id[i]);
         auto result = cli_->async_send_request(request);
-        for (int i = 0; i < 4; i++) // update 4 present pos and vel
+        for (int i = 0; i < 4; i++)
         {
-            driver_[msg->motor_id[i]]->update_pos(result.get()->present_pos[i]);
-            driver_[msg->motor_id[i]]->update_vel(result.get()->present_vel[i]);
-        }
-        for (int i = 0; i < 4; i++) // set 4 goal current
-        {
-            float current;
-            DjiDriver::set_current(current, driver_[msg->motor_id[i]]->vel2current(msg->goal_vel[i]));
-            DjiDriver::set_current(current, driver_[msg->motor_id[i]]->pos2current(msg->goal_pos[i]));
-            std::uint16_t current_data = DjiDriver::float_to_uint(current, -I_MAX, I_MAX, 16);
-
             int id = msg->motor_id[i];
-            if (id > 4) id -= 4; // id 5 is the same as id 1, etc.
-            tx_frame_.data[2*id-2] = current_data >> 8; // id 1 is at index 0, id 2 is at index 2, etc.
-            tx_frame_.data[2*id-1] = current_data & 0xff; // id 1 is at index 1, id 2 is at index 3, etc.
+            // update pos and vel info
+            driver_[id]->update_pos(result.get()->present_pos[i]);
+            driver_[id]->update_vel(result.get()->present_vel[i]);
+            driver_[id]->set_goal(msg->goal_pos[i], msg->goal_vel[i]);
+            // write the tx_frame
+            driver_[id]->write_frame(tx_frame);
         }
-        tx_frame_.can_id = 0x200;
+        // send the tx_frame
+        DjiDriver::send_frame(tx_frame);
     }
 
     void motor_init()
@@ -67,6 +61,8 @@ private:
         v2c_kps = this->declare_parameter("v2c_kps", v2c_kps);
         v2c_kis = this->declare_parameter("v2c_kis", v2c_kis);
         v2c_kds = this->declare_parameter("v2c_kds", v2c_kds);
+
+        // initialize the drivers
     }
 
     void update_pid()

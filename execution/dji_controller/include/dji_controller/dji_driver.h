@@ -2,6 +2,7 @@
 #define DJI_DRIVER_H
 
 #include "can_driver.hpp"
+#include <linux/can.h>
 
 #define I_MAX 16384
 
@@ -14,9 +15,11 @@ enum MotorType
     M6020,
 };
 
-class DjiDriver
+class DjiDriver // TODO: constructor and destructor
 {
 private:
+    static CanDriver* can_0;
+
     int motor_id;
     MotorType motor_type;
 
@@ -26,19 +29,24 @@ private:
 
     float present_pos;
     float present_vel;
+    float goal_pos;
+    float goal_vel;
     float current;
     float vel_error;
     float pos_error;
 
 public:
+    void set_goal(float goal_pos, float goal_vel);
     void update_pos(float pos);
     void update_vel(float vel);
     float vel2current(float goal_vel);
     float pos2velocity(float goal_pos);
     float pos2current(float goal_pos);
-    static void set_current(float &current, float goal);
     void set_p2v_pid(float kp, float ki, float kd);
     void set_v2c_pid(float kp, float ki, float kd);
+
+    void write_frame(can_frame &tx_frame);
+    static void send_frame(can_frame &tx_frame);
 
     // linear mapping
     static float uint_to_float(int x_int, float x_min, float x_max, int bits);
