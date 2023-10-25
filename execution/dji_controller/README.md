@@ -12,6 +12,8 @@ so, 4 motors should be controlled at a time
 
 the bitrate of the CAN communication should be 1M
 
+CAN frames should be continuously sent to the motors to keep them running. in this case, frames are sent at 1000Hz
+
 ## requirements
 
 similar to dm_controller

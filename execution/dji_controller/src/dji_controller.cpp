@@ -18,11 +18,15 @@ public:
                 goal_callback(msg);
             });
         cli_ = this->create_client<motor_interface::srv::MotorPresent>("motor_present");
+        timer_ = this->create_wall_timer(std::chrono::milliseconds(10), [this](){
+            DjiDriver::send_frame(tx_frame);
+        });
     }
 
 private:
     rclcpp::Subscription<motor_interface::msg::DjiGoal>::SharedPtr sub_;
     rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr cli_;
+    rclcpp::TimerBase::SharedPtr timer_;
     int motor_count;
     DjiDriver* driver_[8];
     can_frame tx_frame;
@@ -44,8 +48,8 @@ private:
             // write the tx_frame
             driver_[id]->write_frame(tx_frame);
         }
-        // send the tx_frame
-        DjiDriver::send_frame(tx_frame);
+        // // send the tx_frame
+        // DjiDriver::send_frame(tx_frame);
     }
 
     void motor_init()

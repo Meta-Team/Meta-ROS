@@ -6,7 +6,7 @@
 
 #define I_MAX 16384
 
-#define DT 0.01
+#define DT 0.001
 
 enum MotorType
 {
