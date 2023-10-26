@@ -1,7 +1,14 @@
 #include "dji_controller/dji_driver.h"
 #include <cstdint>
+#include <linux/can.h>
 
 CanDriver* DjiDriver::can_0 = new CanDriver(0);
+
+DjiDriver::DjiDriver(int motor_id, MotorType motor_type)
+{
+    this->motor_id = motor_id;
+    this->motor_type = motor_type;
+}
 
 void DjiDriver::set_goal(float goal_pos, float goal_vel)
 {
@@ -69,7 +76,7 @@ float DjiDriver::pos2current(float goal_pos)
     return vel2current(velocity);
 }
 
-void DjiDriver::write_frame(can_frame &tx_frame)
+void DjiDriver::write_frame(can_frame &tx_frame1, can_frame &tx_frame2)
 {
     if (goal_pos != 0.0) goal_vel = pos2velocity(goal_pos);
     current = vel2current(goal_vel);
@@ -77,19 +84,18 @@ void DjiDriver::write_frame(can_frame &tx_frame)
 
     if (motor_id <= 4)
     {
-        tx_frame.data[2*motor_id - 2] = current_data >> 8;
-        tx_frame.data[2*motor_id - 1] = current_data & 0xff;
-        tx_frame.can_id = 0x200;
+        tx_frame1.data[2*motor_id - 2] = current_data >> 8;
+        tx_frame1.data[2*motor_id - 1] = current_data & 0xff;
     } else {
-        tx_frame.data[2*(motor_id-4) - 2] = current_data >> 8;
-        tx_frame.data[2*(motor_id-4) - 1] = current_data & 0xff;
-        tx_frame.can_id = 0x1ff;
+        tx_frame2.data[2*(motor_id-4) - 2] = current_data >> 8;
+        tx_frame2.data[2*(motor_id-4) - 1] = current_data & 0xff;
     }
 }
 
-void DjiDriver::send_frame(can_frame &tx_frame)
+void DjiDriver::send_frame(can_frame &tx_frame1, can_frame &tx_frame2)
 {
-    can_0->send_frame(tx_frame);
+    can_0->send_frame(tx_frame1);
+    can_0->send_frame(tx_frame2);
 }
 
 float DjiDriver::uint_to_float(int x_int, float x_min, float x_max, int bits)

@@ -6,12 +6,17 @@
 #include <cmath>
 #include <cstdint>
 #include <linux/can.h>
+#include <vector>
 
 class DjiController : public rclcpp::Node
 {
 public:
     DjiController() : Node("DjiController")
     {
+        tx_frame1.can_id = 0x200;
+        tx_frame1.can_dlc = 8;
+        tx_frame2.can_id = 0x1ff;
+        tx_frame2.can_dlc = 8;
         motor_init();
         sub_ = this->create_subscription<motor_interface::msg::DjiGoal>(
             "motor_goal", 10, [this](const motor_interface::msg::DjiGoal::SharedPtr msg){
@@ -19,7 +24,7 @@ public:
             });
         cli_ = this->create_client<motor_interface::srv::MotorPresent>("motor_present");
         timer_ = this->create_wall_timer(std::chrono::milliseconds(10), [this](){
-            DjiDriver::send_frame(tx_frame);
+            timer_callback();
         });
     }
 
@@ -29,32 +34,41 @@ private:
     rclcpp::TimerBase::SharedPtr timer_;
     int motor_count;
     DjiDriver* driver_[8];
-    can_frame tx_frame;
+    can_frame tx_frame1, tx_frame2;
     std::vector<double> p2v_kps, p2v_kis, p2v_kds;
     std::vector<double> v2c_kps, v2c_kis, v2c_kds;
 
-    void goal_callback(const motor_interface::msg::DjiGoal::SharedPtr msg)
+    void timer_callback()
     {
         auto request = std::make_shared<motor_interface::srv::MotorPresent::Request>();
-        for (int i = 0; i < 4; i++) request->motor_id.push_back(msg->motor_id[i]);
+        request->motor_id.clear();
+        for (int i = 0; i < motor_count; i++) request->motor_id.push_back(driver_[i]->motor_id);
         auto result = cli_->async_send_request(request);
+
         for (int i = 0; i < 4; i++)
         {
-            int id = msg->motor_id[i];
             // update pos and vel info
-            driver_[id]->update_pos(result.get()->present_pos[i]);
-            driver_[id]->update_vel(result.get()->present_vel[i]);
-            driver_[id]->set_goal(msg->goal_pos[i], msg->goal_vel[i]);
-            // write the tx_frame
-            driver_[id]->write_frame(tx_frame);
+            driver_[i]->update_pos(result.get()->present_pos[i]);
+            driver_[i]->update_vel(result.get()->present_vel[i]);
         }
-        // // send the tx_frame
-        // DjiDriver::send_frame(tx_frame);
+    }
+    
+    void goal_callback(const motor_interface::msg::DjiGoal::SharedPtr msg)
+    {
+        update_pid();
+        for (int i = 0; i < motor_count; i++)
+        {
+            driver_[i]->set_goal(msg->goal_pos[i], msg->goal_vel[i]);
+            driver_[i]->write_frame(tx_frame1, tx_frame2);
+        }
+        DjiDriver::send_frame(tx_frame1, tx_frame2);
     }
 
     void motor_init()
     {
         motor_count = this->declare_parameter("motor_count", motor_count);
+        std::vector<int64_t> motor_ids;
+        motor_ids = this->declare_parameter("motor_ids", motor_ids);
         std::vector<int64_t> motor_modes;
         motor_modes = this->declare_parameter("motor_types", motor_modes);
 
@@ -67,6 +81,14 @@ private:
         v2c_kds = this->declare_parameter("v2c_kds", v2c_kds);
 
         // initialize the drivers
+        for (int i = 0; i < motor_count; i++)
+        {
+            MotorType type = static_cast<MotorType>(motor_modes[i]);
+            int id = motor_ids[i];
+            driver_[i] = new DjiDriver(id, type);
+            driver_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
+            driver_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
+        }
     }
 
     void update_pid()
@@ -74,6 +96,11 @@ private:
         p2v_kps = this->get_parameter("kps").as_double_array();
         p2v_kis = this->get_parameter("kis").as_double_array();
         p2v_kds = this->get_parameter("kds").as_double_array();
+
+        v2c_kps = this->get_parameter("kps").as_double_array();
+        v2c_kis = this->get_parameter("kis").as_double_array();
+        v2c_kds = this->get_parameter("kds").as_double_array();
+        
         for (int i = 0; i < motor_count; i++)
         {
             driver_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
