@@ -9,7 +9,6 @@ class DjiMotorDriver: public MotorDriver
 {
 public:
     MotorData process_rx() override;
-
 };
 
 

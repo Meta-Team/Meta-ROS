@@ -13,8 +13,6 @@ class DmMotorDriver : public MotorDriver
 {
 public:
     MotorData process_rx() override;
-    
-    float raw2actual(uint16_t raw,float actual_max, uint8_t bits);
 };
 
 #endif // DM_MOTOR_DRIVER_H

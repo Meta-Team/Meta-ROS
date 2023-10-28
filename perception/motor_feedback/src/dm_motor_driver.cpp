@@ -14,8 +14,3 @@ MotorData DmMotorDriver::process_rx()
 
     return present_data;
 }
-
-float DmMotorDriver::raw2actual(uint16_t raw, float actual_max, uint8_t bits)
-{
-    return ((float)(raw - (2 << (bits - 2))) * 2 * actual_max)/(float)(2 << (bits - 1));
-}

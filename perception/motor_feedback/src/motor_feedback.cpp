@@ -1,6 +1,7 @@
 #include "motor_feedback/motor_data.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include <bits/stdint-intn.h>
+#include <rclcpp/timer.hpp>
 #include <vector>
 
 #include "motor_feedback/motor_driver.hpp"
@@ -12,28 +13,21 @@
 #define DaMiao 0
 #define DJI 1
 
+#define DT 10 // ms
+
 can_frame MotorDriver::rx_frame;
 CanDriver* MotorDriver::can_0 = new CanDriver(0);
+
+// TODO: id and i remain to be distinguished
 
 class MotorFeedback : public rclcpp::Node
 {
 private:
     MotorData present_data[16]; // not fully used, up to 16 motors
+    // in the order of motor_id, based on config file
 
     rclcpp::Service<motor_interface::srv::MotorPresent>::SharedPtr srv_;
-
-    void srv_callback(const motor_interface::srv::MotorPresent::Request::SharedPtr request,
-                      motor_interface::srv::MotorPresent::Response::SharedPtr response)
-    {
-        int feedback_count = request->motor_id.size();
-        for (int i = 0; i < feedback_count; i++)
-        {
-            // int id = request->motor_id[i];
-            response->present_pos[i] = present_data[request->motor_id[i]].position;
-            response->present_vel[i] = present_data[request->motor_id[i]].velocity;
-            response->present_tor[i] = present_data[request->motor_id[i]].torque;
-        }
-    }
+    rclcpp::TimerBase::SharedPtr timer_;
 
 public:
     int motor_count;
@@ -47,6 +41,9 @@ public:
                                     motor_interface::srv::MotorPresent::Response::SharedPtr response){
                 this->srv_callback(request, response);
             });
+        timer_ = this->create_wall_timer(std::chrono::milliseconds(DT), [this](){
+            this->timer_callback();
+        });
     }
 
     ~MotorFeedback()
@@ -55,6 +52,27 @@ public:
         {
             delete motor_drivers_[i];
         }
+    }
+
+    void srv_callback(const motor_interface::srv::MotorPresent::Request::SharedPtr request,
+                      motor_interface::srv::MotorPresent::Response::SharedPtr response)
+    {
+        int feedback_count = request->motor_id.size();
+        for (int i = 0; i < feedback_count; i++)
+        {
+            int id = request->motor_id[i];
+            response->present_pos[i] = present_data[id].position;
+            response->present_vel[i] = present_data[id].velocity;
+            response->present_tor[i] = present_data[id].torque;
+        }
+    }
+
+    void timer_callback()
+    {
+        MotorDriver::can_0->get_frame(MotorDriver::rx_frame);
+        int rx_id = MotorDriver::rx_frame.can_id;
+
+        present_data[rx_id] = motor_drivers_[rx_id]->process_rx();
     }
 
     void motor_init()
@@ -81,14 +99,6 @@ public:
             }
         }
     }
-
-    void update_data()
-    {
-        int rx_id; // received id
-        MotorDriver::update_rx(rx_id);
-
-        present_data[rx_id] = motor_drivers_[rx_id]->process_rx();
-    }
 };
 
 int main(int argc, char** argv)
@@ -97,21 +107,7 @@ int main(int argc, char** argv)
 
     auto motor_feedback_ = std::make_shared<MotorFeedback>();
 
-    // Start a new thread to run the update_data function
-    std::thread update_thread([&motor_feedback_](){
-        while(rclcpp::ok())
-        {
-            motor_feedback_->update_data();
-            rclcpp::sleep_for(std::chrono::milliseconds(1));
-        }
-    });
-
-    // Run the ROS 2 event loop in the main thread
-    rclcpp::spin(motor_feedback_);
-
-    // Wait for the update thread to finish
-    update_thread.join();
-
     rclcpp::shutdown();
+    delete MotorDriver::can_0;
     return 0;
 }
