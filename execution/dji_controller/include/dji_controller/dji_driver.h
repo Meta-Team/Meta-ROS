@@ -35,7 +35,6 @@ private:
 
     float vel2current(float goal_vel);
     float pos2velocity(float goal_pos);
-    float pos2current(float goal_pos);
 
 public:
     int motor_id;

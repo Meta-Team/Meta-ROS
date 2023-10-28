@@ -8,6 +8,7 @@ DjiDriver::DjiDriver(int motor_id, MotorType motor_type)
 {
     this->motor_id = motor_id;
     this->motor_type = motor_type;
+    this->current = 0.0;
 }
 
 void DjiDriver::set_goal(float goal_pos, float goal_vel)
@@ -70,16 +71,10 @@ float DjiDriver::pos2velocity(float goal_pos)
     return velocity;
 }
 
-float DjiDriver::pos2current(float goal_pos)
-{
-    float velocity = pos2velocity(goal_pos);
-    return vel2current(velocity);
-}
-
 void DjiDriver::write_frame(can_frame &tx_frame1, can_frame &tx_frame2)
 {
-    if (goal_pos != 0.0) goal_vel = pos2velocity(goal_pos);
-    current = vel2current(goal_vel);
+    if (goal_pos != 0.0) this->goal_vel = pos2velocity(this->goal_pos);
+    current = vel2current(this->goal_vel);
     std::uint16_t current_data = DjiDriver::float_to_uint(current, -I_MAX, I_MAX, 16);
 
     if (motor_id <= 4)

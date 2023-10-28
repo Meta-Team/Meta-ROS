@@ -13,10 +13,7 @@ class DjiController : public rclcpp::Node
 public:
     DjiController() : Node("DjiController")
     {
-        tx_frame1.can_id = 0x200;
-        tx_frame1.can_dlc = 8;
-        tx_frame2.can_id = 0x1ff;
-        tx_frame2.can_dlc = 8;
+        frame_init();
         motor_init();
         sub_ = this->create_subscription<motor_interface::msg::DjiGoal>(
             "motor_goal", 10, [this](const motor_interface::msg::DjiGoal::SharedPtr msg){
@@ -62,6 +59,16 @@ private:
             driver_[i]->write_frame(tx_frame1, tx_frame2);
         }
         DjiDriver::send_frame(tx_frame1, tx_frame2);
+    }
+
+    void frame_init()
+    {
+        tx_frame1.can_id = 0x200;
+        tx_frame1.can_dlc = 8;
+        for (int i = 0; i < 8; i++) tx_frame1.data[i] = 0x00;
+        tx_frame2.can_id = 0x1ff;
+        tx_frame2.can_dlc = 8;
+        for (int i = 0; i < 8; i++) tx_frame2.data[i] = 0x00;
     }
 
     void motor_init()
