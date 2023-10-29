@@ -15,9 +15,10 @@
 #define SAVE_ZERO_CMD {0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
 #define CLEAR_ERROR_CMD {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
 
-#define P_MAX 3.14159265358979323846
-#define V_MAX 30.0
-#define T_MAX 10.0
+// default params provided by DM
+#define P_MAX 12.5
+#define V_MAX 45
+#define T_MAX 18
 
 class DmDriver
 {
@@ -34,8 +35,8 @@ public:
     virtual void set_velocity(float goal_vel) = 0;
     virtual void set_position(float goal_pos) = 0;
 
+    // data conversion provided by DM
     static float uint_to_float(int x_int, float x_min, float x_max, int bits);
-
     static int float_to_uint(float x, float x_min, float x_max, int bits);
 };
 
