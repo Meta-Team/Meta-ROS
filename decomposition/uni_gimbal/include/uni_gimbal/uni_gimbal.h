@@ -6,7 +6,7 @@
 #include "gyro_interface/srv/gimbal_position.hpp" // get current gimbal yaw
 #include "movement_interface/msg/natural_move.hpp" // get chassis omega
 #include "movement_interface/msg/absolute_move.hpp" // get chassis omega
-#include "motor_interface/msg/motor_goal.hpp" // publish motor goal
+// #include "motor_interface/srv/motor_goal.hpp" // publish motor goal
 
 #define P 0.1
 #define I 0.0

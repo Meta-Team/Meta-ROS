@@ -52,10 +52,10 @@ void UniGimbal::aiming_callback(const aiming_interface::msg::UniAiming::SharedPt
     float velocity = velocity_pid(error) - chassis_omega;
     // gimbal should rotate in reverse direction of chassis
 
-    motor_interface::msg::MotorGoal motor_goal;
-    motor_goal.motor_id.push_back(motor_id);
-    motor_goal.goal_vel.push_back(velocity);
-    motor_goal.goal_pos.push_back(0.0);
+    // motor_interface::msg::MotorGoal motor_goal;
+    // motor_goal.motor_id.push_back(motor_id);
+    // motor_goal.goal_vel.push_back(velocity);
+    // motor_goal.goal_pos.push_back(0.0);
 }
 
 int main(int argc, char **argv)
