@@ -50,7 +50,7 @@ float DjiDriver::vel2current(float goal_vel)
     integral += v2c_ki * vel_error * DT;
     derivative = v2c_kd * (vel_error - last_vel_error) / DT;
 
-    current += proportional + integral + derivative;
+    current = proportional + integral + derivative;
 
     return current;
 }
@@ -66,7 +66,7 @@ float DjiDriver::pos2velocity(float goal_pos)
     integral += p2v_ki * pos_error * DT;
     derivative = p2v_kd * (pos_error - last_pos_error) / DT;
 
-    velocity += proportional + integral + derivative;
+    velocity = proportional + integral + derivative;
 
     return velocity;
 }
