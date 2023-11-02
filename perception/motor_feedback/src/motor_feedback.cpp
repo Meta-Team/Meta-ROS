@@ -70,7 +70,7 @@ public:
     void timer_callback()
     {
         MotorDriver::can_0->get_frame(MotorDriver::rx_frame);
-        int rx_id = MotorDriver::rx_frame.can_id;
+        int rx_id = can2index(MotorDriver::rx_frame.can_id);
 
         present_data[rx_id] = motor_drivers_[rx_id]->process_rx();
     }
@@ -98,6 +98,12 @@ public:
                 motor_drivers_[i] = new DjiMotorDriver();
             }
         }
+    }
+
+    int can2index(int can_id)
+    {
+        // TODO: to be further designed
+        return can_id - 0x200;
     }
 };
 
