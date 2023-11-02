@@ -48,7 +48,10 @@ private:
             // update pos and vel info
             driver_[i]->update_pos(result->present_pos[i]);
             driver_[i]->update_vel(result->present_vel[i]);
+            // calculate current and write frame
+            driver_[i]->write_frame(tx_frame1, tx_frame2);
         }
+        DjiDriver::send_frame(tx_frame1, tx_frame2);
     }
     
     void goal_callback(const motor_interface::msg::DjiGoal::SharedPtr msg)
@@ -57,9 +60,7 @@ private:
         for (int i = 0; i < motor_count; i++)
         {
             driver_[i]->set_goal(msg->goal_pos[i], msg->goal_vel[i]);
-            driver_[i]->write_frame(tx_frame1, tx_frame2);
         }
-        DjiDriver::send_frame(tx_frame1, tx_frame2);
     }
 
     void frame_init()
