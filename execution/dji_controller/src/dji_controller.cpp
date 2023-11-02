@@ -40,13 +40,14 @@ private:
         auto request = std::make_shared<motor_interface::srv::MotorPresent::Request>();
         request->motor_id.clear();
         for (int i = 0; i < motor_count; i++) request->motor_id.push_back(driver_[i]->motor_id);
-        auto result = cli_->async_send_request(request);
+        auto response = cli_->async_send_request(request);
+        auto result = response.get();
 
         for (int i = 0; i < 4; i++)
         {
             // update pos and vel info
-            driver_[i]->update_pos(result.get()->present_pos[i]);
-            driver_[i]->update_vel(result.get()->present_vel[i]);
+            driver_[i]->update_pos(result->present_pos[i]);
+            driver_[i]->update_vel(result->present_vel[i]);
         }
     }
     
