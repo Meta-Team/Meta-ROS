@@ -8,9 +8,9 @@ MotorData DmMotorDriver::process_rx()
     float vel_raw = rx_frame.data[3]<<4 | rx_frame.data[4]>>4;
     float tor_raw = rx_frame.data[5];
 
-    present_data.position = raw2actual(pos_raw, POS_MAX, 12);
-    present_data.velocity = raw2actual(vel_raw, VEL_MAX, 12);
-    present_data.torque = raw2actual(tor_raw, TOR_MAX, 12);
+    present_data.position = raw2actual(pos_raw, P_MAX, 12);
+    present_data.velocity = raw2actual(vel_raw, V_MAX, 12);
+    present_data.torque = raw2actual(tor_raw, T_MAX, 12);
 
     return present_data;
 }

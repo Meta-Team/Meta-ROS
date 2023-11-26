@@ -17,8 +17,8 @@
 
 // default params provided by DM
 #define P_MAX 12.5
-#define V_MAX 45
-#define T_MAX 18
+#define V_MAX 30
+#define T_MAX 10
 
 class DmDriver
 {
