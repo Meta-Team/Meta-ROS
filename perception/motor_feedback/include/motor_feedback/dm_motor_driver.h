@@ -4,7 +4,7 @@
 #include "motor_driver.hpp"
 #include "motor_data.hpp"
 
-#define P_MAX 12.5
+#define P_MAX 3.141593
 #define V_MAX 30
 #define T_MAX 10
 
@@ -13,11 +13,9 @@ class DmMotorDriver : public MotorDriver
 public:
     MotorData process_rx() override;
 
-    // this provided by DM
-    float raw2actual(uint16_t raw, float actual_max, uint8_t bits)
-    {
-        return ((float)(raw - (2 << (bits - 2))) * 2 * actual_max)/(float)(2 << (bits - 1));
-    }
+    float uint_to_float(int x_int, float x_min, float x_max, int bits);
+
+    int float_to_uint(float x, float x_min, float x_max, int bits);
 };
 
 #endif // DM_MOTOR_DRIVER_H

@@ -16,7 +16,7 @@
 #define DT 10 // ms
 
 can_frame MotorDriver::rx_frame;
-CanDriver* MotorDriver::can_0 = new CanDriver(0);
+std::shared_ptr<CanDriver> MotorDriver::can_0 = std::make_shared<CanDriver>(0);
 
 // TODO: id and i remain to be distinguished
 
@@ -110,10 +110,8 @@ public:
 int main(int argc, char** argv)
 {
     rclcpp::init(argc, argv);
-
-    auto motor_feedback_ = std::make_shared<MotorFeedback>();
-
+    auto node = std::make_shared<MotorFeedback>();
+    rclcpp::spin(node);
     rclcpp::shutdown();
-    delete MotorDriver::can_0;
     return 0;
 }

@@ -2,6 +2,12 @@
 #include "motor_feedback/motor_data.hpp"
 #include "motor_feedback/motor_driver.hpp"
 
+// TODO: to be tested
+float DjiMotorDriver::raw2actual(uint16_t raw, float actual_max, uint8_t bits)
+{
+    return ((float)(raw - (2 << (bits - 2))) * 2 * actual_max)/(float)(2 << (bits - 1));
+}
+
 MotorData DjiMotorDriver::process_rx()
 {
     switch (motor_type)

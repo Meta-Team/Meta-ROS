@@ -6,6 +6,7 @@
 #include <bits/stdint-uintn.h>
 #include <linux/can.h>
 #include <chrono>
+#include <memory>
 #include <thread>
 
 #include "motor_data.hpp"
@@ -14,7 +15,7 @@ class MotorDriver
 {
 public:
     static can_frame rx_frame;
-    static CanDriver* can_0;
+    static std::shared_ptr<CanDriver> can_0;
     
     virtual MotorData process_rx() = 0;
     
