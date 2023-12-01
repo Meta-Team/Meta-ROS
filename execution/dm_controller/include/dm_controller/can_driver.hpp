@@ -52,7 +52,6 @@ public:
      */
     ~CanDriver()
     {
-        // close the CAN socket
         close(s);
     }
 
