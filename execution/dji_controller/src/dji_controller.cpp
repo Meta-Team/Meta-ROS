@@ -20,39 +20,39 @@ public:
                 goal_callback(msg);
             });
         cli_ = this->create_client<motor_interface::srv::MotorPresent>("motor_present");
-        timer_ = this->create_wall_timer(std::chrono::milliseconds(10), [this](){
-            timer_callback();
-        });
+        // timer_ = this->create_wall_timer(std::chrono::milliseconds(10), [this](){
+        //     timer_callback();
+        // });
     }
 
 private:
     rclcpp::Subscription<motor_interface::msg::DjiGoal>::SharedPtr sub_;
     rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr cli_;
-    rclcpp::TimerBase::SharedPtr timer_;
+    // rclcpp::TimerBase::SharedPtr timer_;
     int motor_count;
     DjiDriver* driver_[8];
     can_frame tx_frame1, tx_frame2;
     std::vector<double> p2v_kps, p2v_kis, p2v_kds;
     std::vector<double> v2c_kps, v2c_kis, v2c_kds;
 
-    void timer_callback()
-    {
-        auto request = std::make_shared<motor_interface::srv::MotorPresent::Request>();
-        request->motor_id.clear();
-        for (int i = 0; i < motor_count; i++) request->motor_id.push_back(driver_[i]->motor_id);
-        auto response = cli_->async_send_request(request);
-        auto result = response.get();
+    // void timer_callback()
+    // {
+    //     auto request = std::make_shared<motor_interface::srv::MotorPresent::Request>();
+    //     request->motor_id.clear();
+    //     for (int i = 0; i < motor_count; i++) request->motor_id.push_back(driver_[i]->motor_id);
+    //     auto response = cli_->async_send_request(request);
+    //     auto result = response.get();
 
-        for (int i = 0; i < 4; i++)
-        {
-            // update pos and vel info
-            driver_[i]->update_pos(result->present_pos[i]);
-            driver_[i]->update_vel(result->present_vel[i]);
-            // calculate current and write frame
-            driver_[i]->write_frame(tx_frame1, tx_frame2);
-        }
-        DjiDriver::send_frame(tx_frame1, tx_frame2);
-    }
+    //     for (int i = 0; i < 4; i++)
+    //     {
+    //         // update pos and vel info
+    //         driver_[i]->update_pos(result->present_pos[i]);
+    //         driver_[i]->update_vel(result->present_vel[i]);
+    //         // calculate current and write frame
+    //         driver_[i]->write_frame(tx_frame1, tx_frame2);
+    //     }
+    //     DjiDriver::send_frame(tx_frame1, tx_frame2);
+    // }
     
     void goal_callback(const motor_interface::msg::DjiGoal::SharedPtr msg)
     {

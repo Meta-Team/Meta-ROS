@@ -2,55 +2,55 @@
 #define DJI_DRIVER_H
 
 #include "can_driver.hpp"
+#include "dji_controller/motor_data.hpp"
 #include <linux/can.h>
+#include <memory>
 
-#define I_MAX 16384
+#define ENCODER_ANGLE_RATIO 360.0f / 8192.0f
+#define REDUCE_RATIO 36.0f
 
-#define DT 0.001
+#define CONTROL_R 1 // ms
+#define FEEDBACK_R 1 // ms
 
 enum MotorType
 {
     M3508,
-    M2006,
     M6020,
 };
 
-class DjiDriver // TODO: constructor and destructor
+class DjiDriver
 {
 private:
-    static CanDriver* can_0;
+    static std::shared_ptr<CanDriver> can_0;
+    static can_frame tx_frame1, tx_frame2;
     MotorType motor_type;
 
-    float p2v_kp, p2v_ki, p2v_kd;
-    float v2c_kp, v2c_ki, v2c_kd;
-    float proportional, integral, derivative;
+    PidParam p2v_prm, v2c_prm;
+    PidOutput p2v_out, v2c_out;
 
-    float present_pos;
-    float present_vel;
-    float goal_pos;
-    float goal_vel;
+    MotorData present_data;
+
+    float goal_pos, goal_vel;
+    float vel_error, pos_error;
     float current;
-    float vel_error;
-    float pos_error;
 
-    float vel2current(float goal_vel);
-    float pos2velocity(float goal_pos);
+    void vel2current();
+    void pos2velocity();
 
 public:
     int motor_id;
     DjiDriver(int motor_id, MotorType motor_type);
     
     void set_goal(float goal_pos, float goal_vel);
-    void update_pos(float pos);
-    void update_vel(float vel);
+
     void set_p2v_pid(float kp, float ki, float kd);
     void set_v2c_pid(float kp, float ki, float kd);
 
-    void write_frame(can_frame &tx_frame1, can_frame &tx_frame2);
-    static void send_frame(can_frame &tx_frame1, can_frame &tx_frame2);
+    void write_frame();
+    static void send_frame();
 
-    static float uint_to_float(int x_int, float x_min, float x_max, int bits);
-    static int float_to_uint(float x, float x_min, float x_max, int bits);
+    void process_rx();
+
 };
 
 #endif // DJI_DRIVER_H
