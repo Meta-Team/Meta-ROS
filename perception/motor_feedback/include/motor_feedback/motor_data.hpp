@@ -4,7 +4,7 @@
 /**
  * @brief Represents the data of a motor.
  */
-class MotorData
+struct MotorData
 {
 public:
     float torque;

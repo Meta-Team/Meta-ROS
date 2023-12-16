@@ -11,7 +11,6 @@
 enum MotorType
 {
     M3508,
-    M2006,
     M6020,
 };
 
@@ -24,10 +23,7 @@ private:
     MotorType motor_type;
 
     MotorData process_rx_3508();
-    MotorData process_rx_2006();
     MotorData process_rx_6020();
-
-    float raw2actual(uint16_t raw, float actual_max, uint8_t bits);
 };
 
 

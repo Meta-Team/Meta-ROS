@@ -18,8 +18,11 @@ public:
     static std::shared_ptr<CanDriver> can_0;
     
     virtual MotorData process_rx() = 0;
+
+    static void send_frame(const can_frame &tx_frame);
     
 private:
+    MotorData present_data;
 };
 
 #endif // MOTOR_DRIVER_HPP
