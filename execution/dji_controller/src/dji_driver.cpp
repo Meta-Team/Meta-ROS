@@ -4,13 +4,14 @@
 #include <linux/can.h>
 #include <memory>
 
-auto DjiDriver::can_0 = std::make_shared<CanDriver>(0);
+std::unique_ptr<CanDriver> DjiDriver::can_0 = std::make_unique<CanDriver>(0);
 can_frame DjiDriver::tx_frame1;
 can_frame DjiDriver::tx_frame2;
+can_frame DjiDriver::rx_frame;
 
 // TODO: pid params to be further tuned
 DjiDriver::DjiDriver(int motor_id, MotorType motor_type) :
-    p2v_prm(0.0, 0.0, 0.0),
+    p2v_prm(0.1, 0.01, 0.1),
     v2c_prm(0.004, 0.00003, 0.1)
 {
     this->motor_id = motor_id;
@@ -60,10 +61,11 @@ void DjiDriver::vel2current()
     v2c_out.i += v2c_prm.ki * vel_error * CONTROL_R;
     v2c_out.d = v2c_prm.kd * (vel_error - previous_vel_error) / CONTROL_R;
 
-    current = v2c_out.sum();
+    this->current = v2c_out.sum();
 
-    if (current > 20) current = 20;
-    else if (current < -20) current = -20;
+    // restrict the current
+    if (current > I_MAX) this->current = I_MAX;
+    else if (current < -I_MAX) this->current = -I_MAX;
 }
 
 void DjiDriver::pos2velocity()
@@ -77,23 +79,38 @@ void DjiDriver::pos2velocity()
 
     goal_vel = p2v_out.sum();
 
-    if (goal_vel > 20) goal_vel = 20;
-    else if (goal_vel < -20) goal_vel = -20;
+    // restrict the velocity
+    if (goal_vel > V_MAX) this->goal_vel = V_MAX;
+    else if (goal_vel < -V_MAX) this->goal_vel = -V_MAX;
+}
+
+void DjiDriver::process_rx()
+{
+    if ((int)rx_frame.can_id == 0x200 + motor_id)
+    {
+        int16_t pos_raw = rx_frame.data[0]<<8 | rx_frame.data[1];
+        int16_t vel_raw = rx_frame.data[2]<<8 | rx_frame.data[3];
+        int16_t tor_raw = rx_frame.data[4]<<8 | rx_frame.data[5];
+
+        present_data.position = (float)pos_raw * ENCODER_ANGLE_RATIO;
+        present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
+        present_data.torque = (float)tor_raw * 16384 / 20; // actually current, Ampere
+    }
 }
 
 void DjiDriver::write_frame()
 {
     if (goal_pos != 0.0) pos2velocity();
     vel2current();
-    int16_t current_data = static_cast<int16_t>(current / 20 * 16384);
+    int16_t current_data = static_cast<int16_t>(current / I_MAX * 16384);
 
     if (motor_id <= 4)
     {
-        tx_frame1.data[2 * motor_id - 2] = current_data >> 8;
-        tx_frame1.data[2 * motor_id - 1] = current_data & 0xff;
+        tx_frame1.data[2 * motor_id - 2] = (uint8_t)current_data >> 8;
+        tx_frame1.data[2 * motor_id - 1] = (uint8_t)current_data & 0xff;
     } else {
-        tx_frame2.data[2 * (motor_id - 4) - 2] = current_data >> 8;
-        tx_frame2.data[2 * (motor_id - 4) - 1] = current_data & 0xff;
+        tx_frame2.data[2 * (motor_id - 4) - 2] = (uint8_t)current_data >> 8;
+        tx_frame2.data[2 * (motor_id - 4) - 1] = (uint8_t)current_data & 0xff;
     }
 }
 

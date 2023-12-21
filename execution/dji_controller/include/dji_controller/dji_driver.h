@@ -12,6 +12,9 @@
 #define CONTROL_R 1 // ms
 #define FEEDBACK_R 1 // ms
 
+#define I_MAX 20 // Ampere
+#define V_MAX 300 // to be tuned
+
 enum MotorType
 {
     M3508,
@@ -21,8 +24,9 @@ enum MotorType
 class DjiDriver
 {
 private:
-    static std::shared_ptr<CanDriver> can_0;
+    static std::unique_ptr<CanDriver> can_0;
     static can_frame tx_frame1, tx_frame2;
+    static can_frame rx_frame;
     MotorType motor_type;
 
     PidParam p2v_prm, v2c_prm;
