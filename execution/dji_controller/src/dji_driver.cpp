@@ -100,7 +100,7 @@ void DjiDriver::process_rx()
 
 void DjiDriver::write_frame()
 {
-    if (goal_pos != 0.0) pos2velocity();
+    if (goal_pos != 0.0 && goal_vel == 0.0) pos2velocity();
     vel2current();
     int16_t current_data = static_cast<int16_t>(current / I_MAX * 16384);
 
@@ -118,4 +118,9 @@ void DjiDriver::send_frame()
 {
     can_0->send_frame(tx_frame1);
     can_0->send_frame(tx_frame2);
+}
+
+void DjiDriver::get_frame()
+{
+    can_0->get_frame(rx_frame);
 }

@@ -52,9 +52,9 @@ public:
 
     void write_frame();
     static void send_frame();
+    static void get_frame();
 
     void process_rx();
-
 };
 
 #endif // DJI_DRIVER_H
