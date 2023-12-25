@@ -5,7 +5,7 @@
  * DmDriver is the base class for all drivers.
  ***********************************************/
 
-CanDriver* DmDriver::can_0 = new CanDriver(0);
+std::unique_ptr<CanDriver> DmDriver::can_0 = std::make_unique<CanDriver>(0);
 
 float DmDriver::uint_to_float(int x_int, float x_min, float x_max, int bits)
 {
@@ -51,7 +51,6 @@ void DmDriver::turn_off()
 DmDriver::~DmDriver()
 {
     turn_off();
-    delete can_0;
     printf("DmDriver deleted\n");
 }
 

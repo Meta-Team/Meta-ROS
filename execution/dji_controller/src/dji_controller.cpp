@@ -34,7 +34,7 @@ private:
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
     rclcpp::TimerBase::SharedPtr feedback_timer_; // receive feedback frame regularly
     int motor_count;
-    DjiDriver* driver_[8];
+    std::unique_ptr<DjiDriver> driver_[8];
     std::vector<double> p2v_kps, p2v_kis, p2v_kds;
     std::vector<double> v2c_kps, v2c_kis, v2c_kds;
 
@@ -79,7 +79,7 @@ private:
         {
             MotorType type = static_cast<MotorType>(motor_modes[i]);
             int id = motor_ids[i];
-            driver_[i] = new DjiDriver(id, type);
+            driver_[i] = std::make_unique<DjiDriver>(id, type);
         }
 
         // initialize the pid params

@@ -4,6 +4,7 @@
 #include "dm_controller/dm_driver.h"
 
 #include "motor_interface/msg/dm_goal.hpp"
+#include <memory>
 
 #define VEL_MODE 0
 #define MIT_MODE 1
@@ -25,14 +26,13 @@ public:
         for (int i = 0; i < motor_count; i++)
         {
             dm_driver_[i]->turn_off();
-            delete dm_driver_[i];
         }
     }
 
 private:
     int motor_count;
     rclcpp::Subscription<motor_interface::msg::DmGoal>::SharedPtr sub_;
-    DmDriver* dm_driver_[8]; // not fully used
+    std::unique_ptr<DmDriver> dm_driver_[8];
 
     void motor_init()
     {
@@ -44,7 +44,7 @@ private:
         {
             if (motor_modes[i] == VEL_MODE)
             {
-                dm_driver_[i] = new DmVelDriver(i);
+                dm_driver_[i] = std::make_unique<DmVelDriver>(i);
             }
             else if (motor_modes[i] == MIT_MODE)
             {
@@ -53,7 +53,7 @@ private:
                 kp.push_back(this->declare_parameter<float>("mit_kp", 0.0));
                 ki.clear();
                 ki.push_back(this->declare_parameter<float>("mit_ki", 0.0));
-                dm_driver_[i] = new DmMitDriver(i, kp[i], ki[i]);
+                dm_driver_[i] = std::make_unique<DmMitDriver>(i, kp[i], ki[i]);
             }
             dm_driver_[i]->turn_on();
         }

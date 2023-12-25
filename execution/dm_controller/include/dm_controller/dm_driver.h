@@ -8,6 +8,7 @@
 #include <bits/stdint-uintn.h>
 #include <linux/can.h>
 #include <chrono>
+#include <memory>
 #include <thread>
 
 #define START_CMD {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfc}
@@ -61,7 +62,7 @@ public:
      */
     void turn_off();
 
-    static CanDriver* can_0; ///< The CAN driver used for communication.
+    static std::unique_ptr<CanDriver> can_0; ///< The CAN driver used for communication.
 
     /**
      * @brief Sets the mode of the motor.
