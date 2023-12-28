@@ -27,8 +27,8 @@ private:
     static std::unique_ptr<CanDriver> can_0;
     static can_frame tx_frame1, tx_frame2;
     static can_frame rx_frame;
-    MotorType motor_type;
 
+    MotorType motor_type;
     PidParam p2v_prm, v2c_prm;
     PidOutput p2v_out, v2c_out;
 
@@ -40,6 +40,8 @@ private:
 
     void vel2current();
     void pos2velocity();
+
+    void init_frame();
 
 public:
     int motor_id;
@@ -53,7 +55,6 @@ public:
     void write_frame();
     static void send_frame();
     static void get_frame();
-
     void process_rx();
 };
 

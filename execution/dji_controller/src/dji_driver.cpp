@@ -23,13 +23,6 @@ DjiDriver::DjiDriver(int motor_id, MotorType motor_type) :
     this->pos_error = 0.0;
     this->p2v_out = PidOutput();
     this->v2c_out = PidOutput();
-
-    tx_frame1.can_id = 0x200;
-    tx_frame1.can_dlc = 8;
-    for (int i = 0; i < 8; i++) tx_frame1.data[i] = 0x00;
-    tx_frame2.can_id = 0x1ff;
-    tx_frame2.can_dlc = 8;
-    for (int i = 0; i < 8; i++) tx_frame2.data[i] = 0x00;
 }
 
 void DjiDriver::set_goal(float goal_pos, float goal_vel)
@@ -84,6 +77,17 @@ void DjiDriver::pos2velocity()
     else if (goal_vel < -V_MAX) this->goal_vel = -V_MAX;
 }
 
+void DjiDriver::init_frame()
+{
+    tx_frame1.can_id = 0x200;
+    tx_frame1.can_dlc = 8;
+    for (int i = 0; i < 8; i++) tx_frame1.data[i] = 0x00;
+    
+    tx_frame2.can_id = 0x1ff;
+    tx_frame2.can_dlc = 8;
+    for (int i = 0; i < 8; i++) tx_frame2.data[i] = 0x00;
+}
+
 void DjiDriver::process_rx()
 {
     if (motor_type == M3508)
@@ -94,7 +98,7 @@ void DjiDriver::process_rx()
             int16_t vel_raw = rx_frame.data[2]<<8 | rx_frame.data[3];
             int16_t tor_raw = rx_frame.data[4]<<8 | rx_frame.data[5];
 
-            present_data.position = (float)pos_raw * ENCODER_ANGLE_RATIO;
+            present_data.update_pos((float)pos_raw * ENCODER_ANGLE_RATIO);
             present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
             present_data.torque = (float)tor_raw * 16384 / 20; // actually current, Ampere
         }
