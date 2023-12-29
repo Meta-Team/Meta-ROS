@@ -20,6 +20,18 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+
+include_directories(include)
+
+add_executable(capacitor_controller
+  src/capacitor_controller.cpp)
+ament_target_dependencies(capacitor_controller
+  rclcpp)
+
+install(TARGETS
+  capacitor_controller
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
