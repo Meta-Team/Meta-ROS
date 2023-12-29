@@ -10,14 +10,16 @@ using drivers::serial_driver::SerialPort;
 using drivers::serial_driver::StopBits;
 using drivers::serial_driver::SerialPortConfig;
 
-class Serial
+class UartDriver
 {
 public:
-    Serial();
+    UartDriver();
 
-    ~Serial();
+    ~UartDriver();
 
     void send(const std::string & data);
+
+    void read(std::string &data);
 
 private:
     static constexpr const char * dev_name = "/dev/ttyS0";

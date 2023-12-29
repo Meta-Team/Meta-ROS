@@ -1,33 +1,29 @@
 #include "rclcpp/rclcpp.hpp"
+#include <memory>
 #include <rclcpp/subscription.hpp>
 
-#include "serial_output/serial.hpp"
+#include "serial_output/uart_driver.hpp"
 #include "text_interface/msg/output_text.hpp"
 
 class SerialOutput : public rclcpp::Node
 {
 private:
-    Serial* serial_;
+    std::unique_ptr<UartDriver> uart_driver_;
     rclcpp::Subscription<text_interface::msg::OutputText>::SharedPtr sub_;
     
     void msg_callback(text_interface::msg::OutputText msg)
     {
-        serial_->send(msg.text);
+        uart_driver_->send(msg.text);
     }
 
 public:
     SerialOutput() : Node("serial_output")
     {
-        serial_ = new Serial();
+        uart_driver_ = std::make_unique<UartDriver>();
         sub_ = this->create_subscription<text_interface::msg::OutputText>(
             "output_text", 10, [this](text_interface::msg::OutputText::SharedPtr msg){
                 this->msg_callback(*msg);
             });
-    }
-
-    ~SerialOutput()
-    {
-        delete serial_;
     }
 };
 

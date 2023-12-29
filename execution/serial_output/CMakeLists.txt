@@ -18,7 +18,7 @@ include_directories(include)
 
 add_executable(serial_output
   src/serial_output.cpp
-  src/serial.cpp)
+  src/uart_driver.cpp)
 ament_target_dependencies(serial_output
   std_msgs
   rclcpp

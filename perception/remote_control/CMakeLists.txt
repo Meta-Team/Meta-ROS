@@ -21,11 +21,12 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(serial_driver REQUIRED)
 
 include_directories(include)
 
 add_executable(remote_control src/remote_control.cpp src/remote.cpp)
-ament_target_dependencies(remote_control rclcpp)
+ament_target_dependencies(remote_control rclcpp serial_driver)
 
 install(TARGETS
   remote_control
