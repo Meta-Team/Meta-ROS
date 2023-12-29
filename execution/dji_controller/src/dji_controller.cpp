@@ -69,15 +69,20 @@ private:
     void motor_init()
     {
         motor_count = this->declare_parameter("motor_count", motor_count);
-        std::vector<int64_t> motor_ids;
+
+        std::vector<int64_t> motor_brands {};
+        motor_brands = this->declare_parameter("motor_brands", motor_brands);
+        std::vector<int64_t> motor_ids {};
         motor_ids = this->declare_parameter("motor_ids", motor_ids);
-        std::vector<int64_t> motor_modes;
-        motor_modes = this->declare_parameter("motor_types", motor_modes);
+        std::vector<int64_t> motor_types {};
+        motor_types= this->declare_parameter("motor_types", motor_types);
 
         // initialize the drivers
         for (int i = 0; i < motor_count; i++)
         {
-            MotorType type = static_cast<MotorType>(motor_modes[i]);
+            if (motor_brands[i] != 0) continue; // only create drivers for DJI motors
+            
+            MotorType type = static_cast<MotorType>(motor_types[i]);
             int id = motor_ids[i];
             driver_[i] = std::make_unique<DjiDriver>(id, type);
         }

@@ -1,11 +1,18 @@
 /mecanum_chassis:
   /ros__parameters:
 
-    # ids are in the order of motor_names, "LF" is 0
-    motor_count: 8
-    motor_names: ["F", "L", "B", "R"] # only used for labeling, does not appear in code
+    motor_count:  4
+    motor_ids:    [1, 2, 3, 4]
     motor_brands: [0, 0, 0, 0] # 0->dji, 1->dm
-    motor_modes: [0, 0, 0, 0] # 0->vel, 1->pos/mit
-    motor_types: [1, 1, 1, 1]
-    # for dji: 0->3508, 1->6020, 2->2006
+    motor_modes:  [0, 0, 0, 0] # 0->vel, 1->pos/mit, 2->pos_vel
+    motor_types:  [0, 0, 0, 0]
+    # for dji: 0->3508, 1->6020
     # for dm: 0->4310
+
+    p2v_kps: [0.1,     0.1,     0.1,     0.1]
+    p2v_kis: [0.001,   0.001,   0.001,   0.001]
+    p2v_kds: [0.1,     0.1,     0.1,     0.1]
+
+    v2c_kps: [0.004,   0.004,   0.004,   0.004]
+    v2c_kis: [0.00003, 0.00003, 0.00003, 0.00003]
+    v2c_kds: [0.1,     0.1,     0.1,     0.1]
