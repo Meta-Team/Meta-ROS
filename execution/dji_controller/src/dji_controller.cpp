@@ -42,7 +42,7 @@ private:
     {
         for (int i = 0; i < motor_count; i++)
         {
-            driver_[i]->write_frame();
+            driver_[i]->write_tx();
             DjiDriver::send_frame();
         }
     }

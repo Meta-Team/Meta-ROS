@@ -24,7 +24,7 @@ else()
   set(EXTRA_LIBS libUnitreeMotorSDK_Linux64.so)
 endif()
 
-add_executable(unitree_controller src/unitree_controller.cpp)
+add_executable(unitree_controller src/unitree_controller.cpp src/unitree_driver.cpp)
 target_link_libraries(unitree_controller ${EXTRA_LIBS})
 ament_target_dependencies(unitree_controller rclcpp)
 

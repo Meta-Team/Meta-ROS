@@ -52,7 +52,7 @@ public:
     void set_p2v_pid(float kp, float ki, float kd);
     void set_v2c_pid(float kp, float ki, float kd);
 
-    void write_frame();
+    void write_tx();
     static void send_frame();
     static void get_frame();
     void process_rx();

@@ -109,7 +109,7 @@ void DjiDriver::process_rx()
     
 }
 
-void DjiDriver::write_frame()
+void DjiDriver::write_tx()
 {
     if (goal_pos != 0.0 && goal_vel == 0.0) pos2velocity();
     vel2current();
