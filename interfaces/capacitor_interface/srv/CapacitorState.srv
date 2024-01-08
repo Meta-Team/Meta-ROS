@@ -1,0 +1,5 @@
+---
+float32 input_voltage
+float32 capacitor_voltage
+float32 input_current
+float32 output_power

@@ -21,12 +21,14 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(capacitor_interface REQUIRED)
 
 include_directories(include)
 
 add_executable(capacitor_feedback
   src/capacitor_feedback.cpp)
 ament_target_dependencies(capacitor_feedback
+  capacitor_interface
   rclcpp)
 
 install(TARGETS
