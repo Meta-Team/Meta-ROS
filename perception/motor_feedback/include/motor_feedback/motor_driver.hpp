@@ -14,15 +14,15 @@
 class MotorDriver
 {
 public:
+    int motor_id;
+    MotorData present_data{};
+    
+    virtual void process_rx() = 0;
+    static void get_frame();
+    
+protected:
     static can_frame rx_frame;
-    static std::shared_ptr<CanDriver> can_0;
-    
-    virtual MotorData process_rx() = 0;
-
-    static void send_frame(const can_frame &tx_frame);
-    
-private:
-    MotorData present_data;
+    static std::unique_ptr<CanDriver> can_0;
 };
 
 #endif // MOTOR_DRIVER_HPP

@@ -4,9 +4,11 @@
 #include "motor_driver.hpp"
 #include "motor_data.hpp"
 
-#define POS_MAX 360 // degree
-#define VEL_MAX 10000 // rpm, not sure
-#define TOR_MAX 20 // actually current, A
+#define ENCODER_ANGLE_RATIO 360.0f / 8192.0f
+#define REDUCE_RATIO 36.0f
+
+#define I_MAX 20 // Ampere
+#define V_MAX 300 // to be tuned
 
 enum MotorType
 {
@@ -17,13 +19,12 @@ enum MotorType
 class DjiMotorDriver: public MotorDriver
 {
 public:
-    MotorData process_rx() override;
+    void process_rx() override;
 
+    DjiMotorDriver(int id, MotorType motor_type);
+    
 private:
     MotorType motor_type;
-
-    MotorData process_rx_3508();
-    MotorData process_rx_6020();
 };
 
 

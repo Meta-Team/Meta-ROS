@@ -12,8 +12,8 @@
 #define CONTROL_R 1 // ms
 #define FEEDBACK_R 1 // ms
 
-#define I_MAX 20 // Ampere
-#define V_MAX 300 // to be tuned
+#define I_MAX 20 // Ampere, current limit
+#define V_MAX 300 // to be tuned, velocity limit
 
 enum MotorType
 {

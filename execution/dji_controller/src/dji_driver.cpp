@@ -92,7 +92,6 @@ void DjiDriver::init_frame()
 
 void DjiDriver::process_rx()
 {
-
     int16_t pos_raw = rx_frame.data[0]<<8 | rx_frame.data[1];
     int16_t vel_raw = rx_frame.data[2]<<8 | rx_frame.data[3];
     int16_t tor_raw = rx_frame.data[4]<<8 | rx_frame.data[5];
