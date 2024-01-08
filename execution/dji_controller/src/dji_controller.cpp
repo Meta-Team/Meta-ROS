@@ -53,7 +53,7 @@ private:
         {
             DjiDriver::get_frame();
             driver_[i]->process_rx();
-            rclcpp::sleep_for(std::chrono::milliseconds(1)); // sleep for 1 ms
+            // rclcpp::sleep_for(std::chrono::milliseconds(1)); // sleep for 1 ms
         }
     }
     

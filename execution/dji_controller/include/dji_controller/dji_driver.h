@@ -25,18 +25,18 @@ class DjiDriver
 {
 private:
     static std::unique_ptr<CanDriver> can_0;
-    static can_frame tx_frame1, tx_frame2;
+    static can_frame tx_frame_200, tx_frame_1ff, tx_frame_2ff;
     static can_frame rx_frame;
 
     MotorType motor_type;
     PidParam p2v_prm, v2c_prm;
     PidOutput p2v_out, v2c_out;
 
-    MotorData present_data;
+    MotorData present_data{};
 
-    float goal_pos, goal_vel;
-    float vel_error, pos_error;
-    float current;
+    float goal_pos{}, goal_vel{};
+    float vel_error{}, pos_error{};
+    float current{};
 
     void vel2current();
     void pos2velocity();
