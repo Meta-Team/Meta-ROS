@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdint>
 #include <linux/can.h>
+#include <memory>
 #include <vector>
 
 class DjiController : public rclcpp::Node
@@ -14,7 +15,7 @@ public:
     DjiController() : Node("DjiController")
     {
         motor_init();
-        sub_ = this->create_subscription<motor_interface::msg::DjiGoal>(
+        goal_sub_ = this->create_subscription<motor_interface::msg::DjiGoal>(
             "motor_goal", 10, [this](const motor_interface::msg::DjiGoal::SharedPtr msg){
                 goal_callback(msg);
             });
@@ -26,21 +27,30 @@ public:
             std::chrono::milliseconds(FEEDBACK_R), [this](){
                 feedback_timer_callback();
             });
+
+        param_ev_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
+        p2v_kps_cb_ = param_ev_->add_parameter_callback("p2v_kps", std::bind(&DjiController::p2v_kps_callback, this, std::placeholders::_1));
+        p2v_kis_cb_ = param_ev_->add_parameter_callback("p2v_kis", std::bind(&DjiController::p2v_kis_callback, this, std::placeholders::_1));
+        p2v_kds_cb_ = param_ev_->add_parameter_callback("p2v_kds", std::bind(&DjiController::p2v_kds_callback, this, std::placeholders::_1));
+        v2c_kps_cb_ = param_ev_->add_parameter_callback("v2c_kps", std::bind(&DjiController::v2c_kps_callback, this, std::placeholders::_1));
+        v2c_kis_cb_ = param_ev_->add_parameter_callback("v2c_kis", std::bind(&DjiController::v2c_kis_callback, this, std::placeholders::_1));
+        v2c_kds_cb_ = param_ev_->add_parameter_callback("v2c_kds", std::bind(&DjiController::v2c_kds_callback, this, std::placeholders::_1));
     }
 
 private:
-    rclcpp::Subscription<motor_interface::msg::DjiGoal>::SharedPtr sub_;
-    rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr cli_;
+    rclcpp::Subscription<motor_interface::msg::DjiGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
     rclcpp::TimerBase::SharedPtr feedback_timer_; // receive feedback frame regularly
-    int motor_count;
+    std::shared_ptr<rclcpp::ParameterEventHandler> param_ev_;
+    std::shared_ptr<rclcpp::ParameterCallbackHandle> p2v_kps_cb_, p2v_kis_cb_, p2v_kds_cb_, v2c_kps_cb_, v2c_kis_cb_, v2c_kds_cb_;
+    int dji_motor_count;
     std::unique_ptr<DjiDriver> driver_[8];
-    std::vector<double> p2v_kps, p2v_kis, p2v_kds;
-    std::vector<double> v2c_kps, v2c_kis, v2c_kds;
+    std::vector<double> p2v_kps{}, p2v_kis{}, p2v_kds{};
+    std::vector<double> v2c_kps{}, v2c_kis{}, v2c_kds{};
 
     void control_timer_callback()
     {
-        for (int i = 0; i < motor_count; i++)
+        for (int i = 0; i < dji_motor_count; i++)
         {
             driver_[i]->write_tx();
             DjiDriver::send_frame();
@@ -49,7 +59,7 @@ private:
 
     void feedback_timer_callback()
     {
-        for (int i = 0; i < motor_count; i++)
+        for (int i = 0; i < dji_motor_count; i++)
         {
             DjiDriver::get_frame();
             driver_[i]->process_rx();
@@ -59,8 +69,7 @@ private:
     
     void goal_callback(const motor_interface::msg::DjiGoal::SharedPtr msg)
     {
-        update_pid();
-        for (int i = 0; i < motor_count; i++)
+        for (int i = 0; i < dji_motor_count; i++)
         {
             driver_[i]->set_goal(msg->goal_pos[i], msg->goal_vel[i]);
         }
@@ -68,7 +77,7 @@ private:
 
     void motor_init()
     {
-        motor_count = this->declare_parameter("motor_count", motor_count);
+        int motor_count = this->declare_parameter("motor_count", 0);
 
         std::vector<int64_t> motor_brands {};
         motor_brands = this->declare_parameter("motor_brands", motor_brands);
@@ -82,6 +91,7 @@ private:
         {
             if (motor_brands[i] != 0) continue; // only create drivers for DJI motors
             
+            dji_motor_count++;
             MotorType type = static_cast<MotorType>(motor_types[i]);
             int id = motor_ids[i];
             driver_[i] = std::make_unique<DjiDriver>(id, type);
@@ -101,11 +111,49 @@ private:
         v2c_kis = this->declare_parameter("v2c_kis", v2c_kis);
         v2c_kds = this->declare_parameter("v2c_kds", v2c_kds);
         
-        for (int i = 0; i < motor_count; i++)
+        for (int i = 0; i < dji_motor_count; i++)
         {
             driver_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
             driver_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
         }
+    }
+
+    // pid params callback
+    void p2v_kds_callback(const rclcpp::Parameter & p)
+    {
+        p2v_kds.clear();
+        p2v_kds = p.as_double_array();
+        for (int i = 0; i < dji_motor_count; i++) driver_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
+    }
+    void v2c_kds_callback(const rclcpp::Parameter & p)
+    {
+        v2c_kds.clear();
+        v2c_kds = p.as_double_array();
+        for (int i = 0; i < dji_motor_count; i++) driver_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
+    }
+    void p2v_kis_callback(const rclcpp::Parameter & p)
+    {
+        p2v_kis.clear();
+        p2v_kis = p.as_double_array();
+        for (int i = 0; i < dji_motor_count; i++) driver_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
+    }
+    void v2c_kis_callback(const rclcpp::Parameter & p)
+    {
+        v2c_kis.clear();
+        v2c_kis = p.as_double_array();
+        for (int i = 0; i < dji_motor_count; i++) driver_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
+    }
+    void p2v_kps_callback(const rclcpp::Parameter & p)
+    {
+        p2v_kps.clear();
+        p2v_kps = p.as_double_array();
+        for (int i = 0; i < dji_motor_count; i++) driver_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
+    }
+    void v2c_kps_callback(const rclcpp::Parameter & p)
+    {
+        v2c_kps.clear();
+        v2c_kps = p.as_double_array();
+        for (int i = 0; i < dji_motor_count; i++) driver_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
     }
 };
 
