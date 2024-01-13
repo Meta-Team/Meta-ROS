@@ -44,13 +44,15 @@ private:
         motor_cli_->async_send_request(motor_req_, motor_cb);
 
         // calculate and publish
-        motor_pub_->publish(OmniKinematics::absolute_decompo(abs_msg, gimbal_yaw + motor_pos));
+        auto tx_msg = OmniKinematics::absolute_decompo(abs_msg, gimbal_yaw + motor_pos);
+        motor_pub_->publish(tx_msg);
     }
 
     void cha_callback(const movement_interface::msg::ChassisMove::SharedPtr cha_msg)
     {
         // calculate and publish
-        motor_pub_->publish(OmniKinematics::chassis_decompo(cha_msg));
+        auto tx_msg = OmniKinematics::chassis_decompo(cha_msg);
+        motor_pub_->publish(tx_msg);
     }
 
 public:
