@@ -22,10 +22,10 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 
 find_package(rosidl_default_generators REQUIRED)
-
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/LidarDist.msg"
 )
+ament_export_dependencies(rosidl_default_runtime)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
