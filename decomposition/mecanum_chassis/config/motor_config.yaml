@@ -1,4 +1,4 @@
-/mecanum_chassis:
+/**:
   /ros__parameters:
 
     # ids are in the order of motor_names, "LF" is 0

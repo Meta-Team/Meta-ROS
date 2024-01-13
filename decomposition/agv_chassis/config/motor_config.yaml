@@ -1,4 +1,4 @@
-/agv_cBasis:
+/**:
   /ros_parameters:
 
     motor_count: 8

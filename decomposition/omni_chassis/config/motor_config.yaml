@@ -1,4 +1,4 @@
-/mecanum_chassis:
+/**:
   /ros__parameters:
 
     motor_count:  4
