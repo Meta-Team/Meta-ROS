@@ -17,10 +17,10 @@
 
 enum WheelId
 {
-    F = 0,
-    L = 1,
-    B = 2,
-    R = 3
+    F = 1,
+    L = 2,
+    B = 3,
+    R = 4,
 };
 // all mounted counter-clockwise
 

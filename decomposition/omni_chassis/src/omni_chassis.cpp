@@ -3,7 +3,14 @@
 #include "omni_chassis/omni_kinematics.hpp"
 #include "motor_interface/srv/motor_present.hpp"
 
-#define YAW 4
+#define YAW 5
+
+enum ChassisMode
+{
+    ALL = 0,
+    CHASSIS = 1,
+    ABSOLUTE = 2,
+};
 
 class OmniChassis : public rclcpp::Node
 {
@@ -13,46 +20,70 @@ private:
     rclcpp::Publisher<motor_interface::msg::DjiGoal>::SharedPtr motor_pub_;
     rclcpp::Client<gyro_interface::srv::GimbalPosition>::SharedPtr gimbal_cli_;
     rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr motor_cli_;
+    rclcpp::CallbackGroup::SharedPtr gimbal_cbgp_;
+    rclcpp::CallbackGroup::SharedPtr motor_cbgp_;
 
     void abs_callback(const movement_interface::msg::AbsoluteMove::SharedPtr abs_msg)
     {
-        auto request_gimbal = std::make_shared<gyro_interface::srv::GimbalPosition::Request>();
-        auto result_gimbal = gimbal_cli_->async_send_request(request_gimbal);
-        float gimbal_yaw = result_gimbal.get()->yaw;
+        // get gimbal yaw
+        float gimbal_yaw = 0;
+        auto gimbal_cb = [&](rclcpp::Client<gyro_interface::srv::GimbalPosition>::SharedFuture future){
+            gimbal_yaw = future.get()->yaw;
+        };
+        auto gimbal_req_ = std::make_shared<gyro_interface::srv::GimbalPosition::Request>();
+        gimbal_cli_->async_send_request(gimbal_req_, gimbal_cb);
 
-        auto request_motor = std::make_shared<motor_interface::srv::MotorPresent::Request>();
-        request_motor->motor_id.clear();
-        request_motor->motor_id.push_back(YAW);
-        auto result_motor = motor_cli_->async_send_request(request_motor);
-        float motor_pos = result_motor.get()->present_pos[YAW];
+        // get motor position
+        float motor_pos = 0;
+        auto motor_cb = [&](rclcpp::Client<motor_interface::srv::MotorPresent>::SharedFuture future){
+            motor_pos = future.get()->present_pos[0];
+        };
+        auto motor_req_ = std::make_shared<motor_interface::srv::MotorPresent::Request>();
+        motor_req_->motor_id.clear();
+        motor_req_->motor_id.push_back(YAW);
+        motor_cli_->async_send_request(motor_req_, motor_cb);
 
+        // calculate and publish
         motor_pub_->publish(OmniKinematics::absolute_decompo(abs_msg, gimbal_yaw + motor_pos));
     }
 
     void cha_callback(const movement_interface::msg::ChassisMove::SharedPtr cha_msg)
     {
+        // calculate and publish
         motor_pub_->publish(OmniKinematics::chassis_decompo(cha_msg));
     }
 
 public:
     OmniChassis() : Node("OmniChassis")
     {
-        abs_sub_ = this->create_subscription<movement_interface::msg::AbsoluteMove>(
-            "absolute_move", 10, [this](const movement_interface::msg::AbsoluteMove::SharedPtr msg){
-                this->abs_callback(msg);
-            });
-        cha_sub_ = this->create_subscription<movement_interface::msg::ChassisMove>(
-            "chassis_move", 10, [this](const movement_interface::msg::ChassisMove::SharedPtr msg){
-                this->cha_callback(msg);
-            });
-            
+        int chassis_mode = 0;
+        chassis_mode = this->declare_parameter("chassis_mode", chassis_mode);
+        ChassisMode chassis_mode_ = static_cast<ChassisMode>(chassis_mode);
+
+        if (chassis_mode_ == ALL || chassis_mode_ == CHASSIS)
+        {
+            RCLCPP_INFO(this->get_logger(), "chassis movement enabled");
+            cha_sub_ = this->create_subscription<movement_interface::msg::ChassisMove>(
+                "chassis_move", 10, [this](const movement_interface::msg::ChassisMove::SharedPtr msg){
+                    this->cha_callback(msg);
+                });
+        }
+
+        if (chassis_mode_ == ALL || chassis_mode_ == ABSOLUTE)
+        {   abs_sub_ = this->create_subscription<movement_interface::msg::AbsoluteMove>(
+                "absolute_move", 10, [this](const movement_interface::msg::AbsoluteMove::SharedPtr msg){
+                    this->abs_callback(msg);
+                });
+            RCLCPP_INFO(this->get_logger(), "absolute movement enabled");
+            gimbal_cbgp_ = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+            motor_cbgp_ = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+            gimbal_cli_ = this->create_client<gyro_interface::srv::GimbalPosition>("gimbal_position", rmw_qos_profile_services_default, gimbal_cbgp_);
+            // gimbal_cli_->wait_for_service(std::chrono::seconds(2));
+            motor_cli_ = this->create_client<motor_interface::srv::MotorPresent>("motor_present", rmw_qos_profile_services_default, motor_cbgp_);
+            // motor_cli_->wait_for_service(std::chrono::seconds(2));
+        }
+
         motor_pub_ = this->create_publisher<motor_interface::msg::DjiGoal>("motor_goal", 10);
-
-        gimbal_cli_ = this->create_client<gyro_interface::srv::GimbalPosition>("gimbal_position");
-        gimbal_cli_->wait_for_service(std::chrono::seconds(2));
-
-        motor_cli_ = this->create_client<motor_interface::srv::MotorPresent>("motor_present");
-        motor_cli_->wait_for_service(std::chrono::seconds(2));
     }
 };
 

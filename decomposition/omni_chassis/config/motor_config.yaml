@@ -1,5 +1,8 @@
 /**:
-  /ros__parameters:
+  ros__parameters:
+
+    chassis_mode: 1
+    # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
 
     motor_count:  4
     motor_ids:    [1, 2, 3, 4]
