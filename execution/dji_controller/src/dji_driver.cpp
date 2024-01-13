@@ -5,10 +5,9 @@
 #include <memory>
 
 std::unique_ptr<CanDriver> DjiDriver::can_0 = std::make_unique<CanDriver>(0);
-can_frame DjiDriver::tx_frame_200;
-can_frame DjiDriver::tx_frame_1ff;
-can_frame DjiDriver::tx_frame_2ff;
-
+std::unique_ptr<can_frame> DjiDriver::tx_frame_200 = init_frame(0x200);
+std::unique_ptr<can_frame> DjiDriver::tx_frame_1ff = init_frame(0x1ff);
+std::unique_ptr<can_frame> DjiDriver::tx_frame_2ff = init_frame(0x2ff);
 can_frame DjiDriver::rx_frame;
 
 // TODO: pid params to be further tuned
@@ -20,7 +19,6 @@ DjiDriver::DjiDriver(int motor_id, MotorType motor_type) :
     this->motor_type = motor_type;
     this->p2v_out = PidOutput();
     this->v2c_out = PidOutput();
-    init_frame();
 }
 
 void DjiDriver::set_goal(float goal_pos, float goal_vel)
@@ -75,19 +73,13 @@ void DjiDriver::pos2velocity()
     else if (goal_vel < -V_MAX) this->goal_vel = -V_MAX;
 }
 
-void DjiDriver::init_frame()
+std::unique_ptr<can_frame> DjiDriver::init_frame(int frame_id)
 {
-    tx_frame_200.can_id = 0x200;
-    tx_frame_200.can_dlc = 8;
-    for (int i = 0; i < 8; i++) tx_frame_200.data[i] = 0x00;
-    
-    tx_frame_1ff.can_id = 0x1ff;
-    tx_frame_1ff.can_dlc = 8;
-    for (int i = 0; i < 8; i++) tx_frame_1ff.data[i] = 0x00;
-
-    tx_frame_2ff.can_id = 0x2ff;
-    tx_frame_2ff.can_dlc = 8;
-    for (int i = 0; i < 8; i++) tx_frame_2ff.data[i] = 0x00;
+    std::unique_ptr<can_frame> frame = std::make_unique<can_frame>();
+    frame->can_id = frame_id;
+    frame->can_dlc = 8;
+    for (int i = 0; i < 8; i++) frame->data[i] = 0;
+    return frame;
 }
 
 void DjiDriver::process_rx()
@@ -103,8 +95,8 @@ void DjiDriver::process_rx()
         present_data.update_pos((float)pos_raw * ENCODER_ANGLE_RATIO);
         present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
         present_data.torque = (float)tor_raw * 16384 / 20; // actually current, Ampere
-
-    } else if (motor_type == M6020)
+    }
+    else if (motor_type == M6020)
     {
         if ((int)rx_frame.can_id != 0x204 + motor_id) return;
         // update only when the frame is for this motor
@@ -124,22 +116,22 @@ void DjiDriver::write_tx()
     {
         if (motor_id <= 4)
         {
-            tx_frame_200.data[2 * motor_id - 2] = (uint8_t)current_data >> 8;
-            tx_frame_200.data[2 * motor_id - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_200->data[2 * motor_id - 2] = (uint8_t)current_data >> 8;
+            tx_frame_200->data[2 * motor_id - 1] = (uint8_t)current_data & 0xff;
         } else {
-            tx_frame_1ff.data[2 * (motor_id - 4) - 2] = (uint8_t)current_data >> 8;
-            tx_frame_1ff.data[2 * (motor_id - 4) - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_1ff->data[2 * (motor_id - 4) - 2] = (uint8_t)current_data >> 8;
+            tx_frame_1ff->data[2 * (motor_id - 4) - 1] = (uint8_t)current_data & 0xff;
         }
     }
     else if (motor_type == M6020)
     {
         if (motor_id <= 4)
         {
-            tx_frame_1ff.data[2 * motor_id - 2] = (uint8_t)current_data >> 8;
-            tx_frame_1ff.data[2 * motor_id - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_1ff->data[2 * motor_id - 2] = (uint8_t)current_data >> 8;
+            tx_frame_1ff->data[2 * motor_id - 1] = (uint8_t)current_data & 0xff;
         } else {
-            tx_frame_2ff.data[2 * (motor_id - 4) - 2] = (uint8_t)current_data >> 8;
-            tx_frame_2ff.data[2 * (motor_id - 4) - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_2ff->data[2 * (motor_id - 4) - 2] = (uint8_t)current_data >> 8;
+            tx_frame_2ff->data[2 * (motor_id - 4) - 1] = (uint8_t)current_data & 0xff;
         }
     }
 
@@ -148,9 +140,9 @@ void DjiDriver::write_tx()
 
 void DjiDriver::send_frame()
 {
-    can_0->send_frame(tx_frame_200);
-    can_0->send_frame(tx_frame_1ff);
-    can_0->send_frame(tx_frame_2ff);
+    can_0->send_frame(*tx_frame_200);
+    can_0->send_frame(*tx_frame_1ff);
+    can_0->send_frame(*tx_frame_2ff);
 }
 
 void DjiDriver::get_frame()
