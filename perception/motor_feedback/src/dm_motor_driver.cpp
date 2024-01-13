@@ -1,5 +1,10 @@
 #include "motor_feedback/dm_motor_driver.h"
 
+DmMotorDriver::DmMotorDriver(int id)
+{
+    this->motor_id = id;
+}
+
 float DmMotorDriver::uint_to_float(int x_int, float x_min, float x_max, int bits)
 {
     /// Converts an unsigned int to a float, given range and number of bits

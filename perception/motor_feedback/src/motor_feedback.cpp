@@ -22,9 +22,6 @@ std::unique_ptr<CanDriver> MotorDriver::can_0 = std::make_unique<CanDriver>(0);
 class MotorFeedback : public rclcpp::Node
 {
 private:
-    MotorData present_data[16]; // not fully used, up to 16 motors
-    // in the order of motor_id, based on config file
-
     rclcpp::Service<motor_interface::srv::MotorPresent>::SharedPtr srv_;
     rclcpp::TimerBase::SharedPtr timer_;
 
@@ -48,47 +45,48 @@ public:
     void srv_callback(const motor_interface::srv::MotorPresent::Request::SharedPtr request,
                       motor_interface::srv::MotorPresent::Response::SharedPtr response)
     {
-        // int feedback_count = request->motor_id.size();
-        // for (int i = 0; i < feedback_count; i++)
-        // {
-        //     int id = request->motor_id[i];
-        //     response->present_pos[i] = present_data[id].position;
-        //     response->present_vel[i] = present_data[id].velocity;
-        //     response->present_tor[i] = present_data[id].torque;
-        // }
+        int feedback_count = request->motor_id.size();
+        for (int i = 0; i < feedback_count; i++)
+        {
+            int id = request->motor_id[i];
+            response->present_pos[i] = motor_drivers_[id]->present_data.position;
+            response->present_vel[i] = motor_drivers_[id]->present_data.velocity;
+            response->present_tor[i] = motor_drivers_[id]->present_data.torque;
+        }
     }
 
     void timer_callback()
     {
-        // MotorDriver::can_0->get_frame(MotorDriver::rx_frame);
-        // int rx_id = can2index(MotorDriver::rx_frame.can_id);
-
-        // present_data[rx_id] = motor_drivers_[rx_id]->process_rx();
+        MotorDriver::get_frame();
+        for (auto& driver: motor_drivers_) driver->process_rx();
     }
 
     void motor_init()
     {
-        // motor_count = this->declare_parameter("motor_count", motor_count);
+        motor_count = this->declare_parameter("motor_count", motor_count);
 
-        // std::vector<std::string> motor_names;
-        // std::vector<int64_t> motor_brands;
-        // std::vector<int64_t> motor_types;
-        // motor_names = this->declare_parameter("motor_names", motor_names);
-        // motor_brands = this->declare_parameter("motor_brands", motor_brands);
-        // motor_types = this->declare_parameter("motor_types", motor_types);
+        std::vector<int64_t> motor_ids;
+        std::vector<std::string> motor_names;
+        std::vector<int64_t> motor_brands;
+        std::vector<int64_t> motor_types;
+        motor_ids = this->declare_parameter("motor_ids", motor_ids);
+        motor_names = this->declare_parameter("motor_names", motor_names);
+        motor_brands = this->declare_parameter("motor_brands", motor_brands);
+        motor_types = this->declare_parameter("motor_types", motor_types);
 
-        // // create corresponding drivers
-        // for (int i = 0; i < motor_count; i++)
-        // {
-        //     if (motor_brands[i] == DaMiao)
-        //     {
-        //         motor_drivers_[i] = new DmMotorDriver();
-        //     }
-        //     else if (motor_brands[i] == DJI)
-        //     {
-        //         motor_drivers_[i] = new DjiMotorDriver();
-        //     }
-        // }
+        // create corresponding drivers
+        for (int i = 0; i < motor_count; i++)
+        {
+            int id = motor_ids[i];
+            if (motor_brands[i] == DaMiao)
+            {
+                motor_drivers_[i] = std::make_unique<DmMotorDriver>(id);
+            }
+            else if (motor_brands[i] == DJI)
+            {
+                motor_drivers_[i] = std::make_unique<DjiMotorDriver>(id, (MotorType)motor_types[i]);
+            }
+        }
     }
 };
 
