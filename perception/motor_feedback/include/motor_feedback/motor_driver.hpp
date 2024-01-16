@@ -25,7 +25,7 @@ public:
     MotorData present_data{}; /**< The present data of the motor. */
     
     /**
-     * @brief Process the received data.
+     * @brief Process the received frame and update present_data.
      * 
      * This pure virtual function is responsible for processing the received data from the motor driver.
      */

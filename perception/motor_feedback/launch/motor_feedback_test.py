@@ -14,7 +14,7 @@ def generate_launch_description():
             package='motor_feedback',
             executable='motor_feedback',
             name='motor_feedback',
-            namespace='motor_feedback_chassis',
+            namespace='motor_feedback',
             parameters=[config],
         ),
     ])
