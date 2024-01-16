@@ -10,10 +10,10 @@
 
 #include "motor_interface/srv/motor_present.hpp"
 
-#define DaMiao 0
-#define DJI 1
+#define DaMiao 1
+#define DJI 0
 
-#define DT 10 // ms
+#define FEEDBACK_R 10 // ms
 
 // init static members
 can_frame MotorDriver::rx_frame;
@@ -37,7 +37,7 @@ public:
                                     motor_interface::srv::MotorPresent::Response::SharedPtr response){
                 this->srv_callback(request, response);
             });
-        timer_ = this->create_wall_timer(std::chrono::milliseconds(DT), [this](){
+        timer_ = this->create_wall_timer(std::chrono::milliseconds(FEEDBACK_R), [this](){
             this->timer_callback();
         });
     }
@@ -85,6 +85,10 @@ public:
             else if (motor_brands[i] == DJI)
             {
                 motor_drivers_[i] = std::make_unique<DjiMotorDriver>(id, (MotorType)motor_types[i]);
+            }
+            else
+            {
+                RCLCPP_ERROR(this->get_logger(), "invalid motor brand");
             }
         }
     }
