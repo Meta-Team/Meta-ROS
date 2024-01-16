@@ -5,9 +5,9 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory('omni_chassis'),
+        get_package_share_directory('application'),
         'config',
-        'motor_config.yaml'
+        'sentry_config.yaml'
     )
     return LaunchDescription([
         Node(
@@ -23,11 +23,11 @@ def generate_launch_description():
             namespace='dji_controller_chassis',
             parameters=[config],
         ),
-        # Node(
-        #     package='motor_feedback',
-        #     executable='motor_feedback',
-        #     name='motor_feedback',
-        #     namespace='motor_feedback_chassis',
-        #     parameters=[config],
-        # ),
+        Node(
+            package='motor_feedback',
+            executable='motor_feedback',
+            name='motor_feedback',
+            namespace='motor_feedback_chassis',
+            parameters=[config],
+        ),
     ])
