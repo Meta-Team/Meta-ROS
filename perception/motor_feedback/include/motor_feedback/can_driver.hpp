@@ -10,6 +10,7 @@
 #include <string>
 #include <cstring>
 #include <unistd.h>
+#include <iostream>
 
 /**
  * @brief A class for basic CAN bus manipulation.
@@ -41,8 +42,14 @@ public:
         addr.can_family = AF_CAN;
         addr.can_ifindex = ifr.ifr_ifindex; // set the socket address
 
-        int bind_result = bind(s, (struct sockaddr *)&addr, sizeof(addr)); // bind the socket to the CAN interface
-        if (bind_result == -1) perror("Error binding socket to CAN interface");
+        try {
+            int bind_result = bind(s, (struct sockaddr *)&addr, sizeof(addr)); // bind the socket to the CAN interface
+            if (bind_result == -1) {
+                throw std::runtime_error("Error binding socket to CAN interface: " + std::string(strerror(errno)));
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "\033[1;31m" << e.what() << "\033[0m" << std::endl;
+        }
     }
 
     /**
@@ -52,7 +59,6 @@ public:
      */
     ~CanDriver()
     {
-        // close the CAN socket
         close(s);
     }
 

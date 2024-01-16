@@ -1,7 +1,6 @@
 #include "motor_feedback/motor_data.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include <bits/stdint-intn.h>
-#include <rclcpp/timer.hpp>
 #include <vector>
 
 #include "motor_feedback/motor_driver.hpp"
@@ -32,14 +31,17 @@ public:
     MotorFeedback(): Node("MotorFeedback")
     {
         motor_init();
+        RCLCPP_INFO(this->get_logger(), "Motors initialized");
         srv_ = this->create_service<motor_interface::srv::MotorPresent>(
             "motor_present", [this](const motor_interface::srv::MotorPresent::Request::SharedPtr request,
                                     motor_interface::srv::MotorPresent::Response::SharedPtr response){
                 this->srv_callback(request, response);
             });
+        RCLCPP_INFO(this->get_logger(), "Service created");
         timer_ = this->create_wall_timer(std::chrono::milliseconds(FEEDBACK_R), [this](){
             this->timer_callback();
         });
+        RCLCPP_INFO(this->get_logger(), "Timer created");
     }
 
     void srv_callback(const motor_interface::srv::MotorPresent::Request::SharedPtr request,
@@ -57,8 +59,10 @@ public:
 
     void timer_callback()
     {
+        RCLCPP_INFO(this->get_logger(), "Timer callback start");
         MotorDriver::get_frame();
         for (auto& driver: motor_drivers_) driver->process_rx();
+        RCLCPP_INFO(this->get_logger(), "Timer callback end");
     }
 
     void motor_init()
@@ -66,13 +70,12 @@ public:
         motor_count = this->declare_parameter("motor_count", motor_count);
 
         std::vector<int64_t> motor_ids;
-        std::vector<std::string> motor_names;
         std::vector<int64_t> motor_brands;
         std::vector<int64_t> motor_types;
         motor_ids = this->declare_parameter("motor_ids", motor_ids);
-        motor_names = this->declare_parameter("motor_names", motor_names);
         motor_brands = this->declare_parameter("motor_brands", motor_brands);
         motor_types = this->declare_parameter("motor_types", motor_types);
+        RCLCPP_INFO(this->get_logger(), "Parameters loaded");
 
         // create corresponding drivers
         for (int i = 0; i < motor_count; i++)
@@ -91,6 +94,7 @@ public:
                 RCLCPP_ERROR(this->get_logger(), "invalid motor brand");
             }
         }
+        RCLCPP_INFO(this->get_logger(), "Motor drivers created");
     }
 };
 
