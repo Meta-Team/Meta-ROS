@@ -62,6 +62,7 @@ public:
         chassis_mode = this->declare_parameter("chassis_mode", chassis_mode);
         ChassisMode chassis_mode_ = static_cast<ChassisMode>(chassis_mode);
 
+        // initialize subscriber
         if (chassis_mode_ == ALL || chassis_mode_ == CHASSIS)
         {
             RCLCPP_INFO(this->get_logger(), "chassis movement enabled");
@@ -70,21 +71,37 @@ public:
                     this->cha_callback(msg);
                 });
         }
-
         if (chassis_mode_ == ALL || chassis_mode_ == ABSOLUTE)
         {   abs_sub_ = this->create_subscription<movement_interface::msg::AbsoluteMove>(
                 "absolute_move", 10, [this](const movement_interface::msg::AbsoluteMove::SharedPtr msg){
                     this->abs_callback(msg);
                 });
             RCLCPP_INFO(this->get_logger(), "absolute movement enabled");
+
+            // initialize client
             gimbal_cbgp_ = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
             motor_cbgp_ = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
             gimbal_cli_ = this->create_client<gyro_interface::srv::GimbalPosition>("gimbal_position", rmw_qos_profile_services_default, gimbal_cbgp_);
-            // gimbal_cli_->wait_for_service(std::chrono::seconds(2));
             motor_cli_ = this->create_client<motor_interface::srv::MotorPresent>("motor_present", rmw_qos_profile_services_default, motor_cbgp_);
-            // motor_cli_->wait_for_service(std::chrono::seconds(2));
+            rclcpp::executors::SingleThreadedExecutor executor;
+            executor.add_node(this->get_node_base_interface());
+            
+            // wait for services
+            while (!gimbal_cli_->wait_for_service(std::chrono::seconds(1)) ||
+                !motor_cli_->wait_for_service(std::chrono::seconds(1)))
+            {
+                if (!rclcpp::ok())
+                {
+                    RCLCPP_ERROR(this->get_logger(), "Interrupted while waiting for the service. Exiting.");
+                    // rclcpp::shutdown();
+                    return;
+                }
+                RCLCPP_INFO(this->get_logger(), "service not available, waiting again...");
+            }
+            RCLCPP_INFO(this->get_logger(), "service available now");
         }
 
+        // initialize publisher
         motor_pub_ = this->create_publisher<motor_interface::msg::DjiGoal>("motor_goal", 10);
     }
 };
@@ -92,7 +109,9 @@ public:
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<OmniChassis>());
-    rclcpp::shutdown();
+    auto omni_chassis = std::make_shared<OmniChassis>();
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(omni_chassis->get_node_base_interface());
+    executor.spin();
     return 0;
 }
