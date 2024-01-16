@@ -15,12 +15,5 @@ def generate_launch_description():
             executable='omni_chassis',
             name='omni_chassis',
             parameters=[config],
-        ),
-        Node(
-            package='dji_controller',
-            executable='dji_controller',
-            name='dji_controller',
-            namespace='dji_controller_chassis',
-            parameters=[config],
         )
     ])
