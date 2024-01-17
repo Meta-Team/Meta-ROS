@@ -1,7 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "dji_controller/dji_driver.h"
 
-#include "motor_interface/msg/dji_goal.hpp"
+#include "motor_interface/msg/motor_goal.hpp"
 #include "motor_interface/srv/motor_present.hpp"
 #include <cmath>
 #include <cstdint>
@@ -16,8 +16,8 @@ public:
     DjiController() : Node("DjiController")
     {
         motor_init();
-        goal_sub_ = this->create_subscription<motor_interface::msg::DjiGoal>(
-            "motor_goal", 10, [this](const motor_interface::msg::DjiGoal::SharedPtr msg){
+        goal_sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
+            "motor_goal", 10, [this](const motor_interface::msg::MotorGoal::SharedPtr msg){
                 goal_callback(msg);
             });
         control_timer_ = this->create_wall_timer(
@@ -41,7 +41,7 @@ public:
     }
 
 private:
-    rclcpp::Subscription<motor_interface::msg::DjiGoal>::SharedPtr goal_sub_;
+    rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
     rclcpp::TimerBase::SharedPtr feedback_timer_; // receive feedback frame regularly
     // std::shared_ptr<rclcpp::ParameterEventHandler> param_ev_;
@@ -70,7 +70,7 @@ private:
         }
     }
     
-    void goal_callback(const motor_interface::msg::DjiGoal::SharedPtr msg)
+    void goal_callback(const motor_interface::msg::MotorGoal::SharedPtr msg)
     {
         int count = msg->motor_id.size();
         for (int i = 0; i < count; i++)
@@ -92,8 +92,8 @@ private:
                 driver->set_goal(pos, vel);
             }
             else {
-                // not found, do nothing
-                RCLCPP_WARN(this->get_logger(), "Motor %d not found", rid);
+                // not found, may be a dm motor
+                // RCLCPP_WARN(this->get_logger(), "Motor %d not found", rid);
             }
         }
     }

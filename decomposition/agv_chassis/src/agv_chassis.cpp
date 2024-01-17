@@ -3,17 +3,18 @@
 #include "agv_chassis/agv_kinematics.hpp"
 #include <rclcpp/publisher.hpp>
 
-#define YAW 8
+#define YAW 8 // TODO: change
 
 class AgvChassis : public rclcpp::Node
 {
 private:
     rclcpp::Subscription<movement_interface::msg::NaturalMove>::SharedPtr nat_sub_;
     rclcpp::Subscription<movement_interface::msg::AbsoluteMove>::SharedPtr abs_sub_;
-    rclcpp::Publisher<motor_interface::msg::DmGoal>::SharedPtr dm_pub_;
-    rclcpp::Publisher<motor_interface::msg::DjiGoal>::SharedPtr dji_pub_;
+    rclcpp::Subscription<movement_interface::msg::ChassisMove>::SharedPtr cha_sub_;
+    rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
     rclcpp::Client<gyro_interface::srv::GimbalPosition>::SharedPtr gimbal_cli_;
     rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr motor_cli_;
+    // TODO: add callback groups, add chassis mode
 
     void nat_callback(const movement_interface::msg::NaturalMove::SharedPtr nat_msg)
     {
@@ -23,8 +24,7 @@ private:
         auto result_motor = motor_cli_->async_send_request(request_motor);
         float motor_pos = result_motor.get()->present_pos[YAW];
 
-        dm_pub_->publish(AgvKinematics::natural_dm_decompo(nat_msg, motor_pos));
-        dji_pub_->publish(AgvKinematics::natural_dji_decompo(nat_msg, motor_pos));
+        motor_pub_->publish(AgvKinematics::natural_decompo(nat_msg, motor_pos));
     }
 
     void abs_callback(const movement_interface::msg::AbsoluteMove::SharedPtr abs_msg)
@@ -39,9 +39,14 @@ private:
         auto result_motor = motor_cli_->async_send_request(request_motor);
         float motor_pos = result_motor.get()->present_pos[YAW];
         
-        dm_pub_->publish(AgvKinematics::absolute_dm_decompo(abs_msg, gimbal_yaw + motor_pos));
-        dji_pub_->publish(AgvKinematics::absolute_dji_decompo(abs_msg, gimbal_yaw + motor_pos));
+        motor_pub_->publish(AgvKinematics::absolute_decompo(abs_msg, gimbal_yaw + motor_pos));
     }
+
+    void cha_callback(const movement_interface::msg::ChassisMove::SharedPtr cha_msg)
+    {
+        motor_pub_->publish(AgvKinematics::chassis_decompo(cha_msg));
+    }
+
 public:
     AgvChassis() : Node("AgvChassis")
     {
@@ -53,8 +58,12 @@ public:
             "absolute_move", 10, [this](const movement_interface::msg::AbsoluteMove::SharedPtr msg){
                 this->abs_callback(msg);
             });
+        cha_sub_ = this->create_subscription<movement_interface::msg::ChassisMove>(
+            "chassis_move", 10, [this](const movement_interface::msg::ChassisMove::SharedPtr msg){
+                this->cha_callback(msg);
+            });
 
-        // motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
+        motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
 
         gimbal_cli_ = this->create_client<gyro_interface::srv::GimbalPosition>("gimbal_position");
         gimbal_cli_->wait_for_service(std::chrono::seconds(2));

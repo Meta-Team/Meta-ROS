@@ -3,7 +3,7 @@
 #include "dm_controller/can_driver.hpp"
 #include "dm_controller/dm_driver.h"
 
-#include "motor_interface/msg/dm_goal.hpp"
+#include "motor_interface/msg/motor_goal.hpp"
 #include <memory>
 
 #define VEL_MODE 0
@@ -15,8 +15,8 @@ public:
     DmController() : Node("dm_controller")
     {
         motor_init();
-        sub_ = this->create_subscription<motor_interface::msg::DmGoal>(
-            "dm_goal", 10, [this](motor_interface::msg::DmGoal::SharedPtr msg){
+        sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
+            "motor_goal", 10, [this](motor_interface::msg::MotorGoal::SharedPtr msg){
                 this->msg_callback(msg);
             });
     }
@@ -31,7 +31,7 @@ public:
 
 private:
     int dm_motor_count = 0;
-    rclcpp::Subscription<motor_interface::msg::DmGoal>::SharedPtr sub_;
+    rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr sub_;
     std::vector<std::unique_ptr<DmDriver>> dm_driver_; // std::unique_ptr<DmDriver> dm_driver_[8];
     std::vector<double> kps{}, kis{};
 
@@ -74,7 +74,7 @@ private:
         }
     }
 
-    void msg_callback(motor_interface::msg::DmGoal::SharedPtr msg)
+    void msg_callback(motor_interface::msg::MotorGoal::SharedPtr msg)
     {
         int count = msg->motor_id.size();
         for (int i = 0; i < count; i++)
@@ -97,8 +97,8 @@ private:
                 driver->set_velocity(vel);
             }
             else {
-                // not found, do nothing
-                RCLCPP_WARN(this->get_logger(), "Motor %d not found", rid);
+                // not found, may be a dji motor
+                // RCLCPP_WARN(this->get_logger(), "Motor %d not found", rid);
             }
         }
     }

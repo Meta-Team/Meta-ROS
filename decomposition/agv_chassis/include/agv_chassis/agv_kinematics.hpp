@@ -3,32 +3,29 @@
 
 #include <cmath>
 #include <motor_interface/msg/detail/dm_goal__struct.hpp>
+#include <motor_interface/msg/detail/motor_goal__struct.hpp>
 #include <vector>
 
 #include "movement_interface/msg/natural_move.hpp"
 #include "movement_interface/msg/absolute_move.hpp"
-#include "motor_interface/msg/dm_goal.hpp"
-#include "motor_interface/msg/dji_goal.hpp"
+#include "movement_interface/msg/chassis_move.hpp"
+#include "motor_interface/msg/motor_goal.hpp"
 #include "gyro_interface/srv/gimbal_position.hpp"
 #include "motor_interface/srv/motor_present.hpp"
 
 #define PI 3.14159265358979323846
 #define RADIUS 0.1 // meter
 
-enum DirectionMotor
+enum MotorId
 {
-    LF_D,
-    RF_D,
-    LB_D,
-    RB_D
-};
-
-enum VelocityMotor
-{
-    LF_V,
-    RF_V,
-    LB_V,
-    RB_V
+    LF_V = 1,
+    RF_V = 2,
+    LB_V = 3,
+    RB_V = 4,
+    LF_D = 5,
+    RF_D = 6,
+    LB_D = 7,
+    RB_D = 8,
 };
 
 /**
@@ -42,66 +39,52 @@ enum VelocityMotor
 namespace AgvKinematics
 {
     /**
-    * @brief Decomposes a natural move message into DM motor goals.
-    * @param msg The natural move message.
-    * @param yaw_diff The yaw difference.
-    * @return The DM motor goal.
-    */
-    motor_interface::msg::DmGoal natural_dm_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg, float yaw_diff);
+     * @brief Decomposes a natural move message into motor goals.
+     * @param msg The natural move message.
+     * @param yaw_diff The yaw difference.
+     * @return The motor goal.
+     */
+    motor_interface::msg::MotorGoal natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg, float yaw_diff);
 
     /**
-    * @brief Decomposes an absolute move message into DM motor goals.
-    * @param msg The absolute move message.
-    * @param chassis_yaw The chassis yaw.
-    * @return The DM motor goal.
-    */
-    motor_interface::msg::DmGoal absolute_dm_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg, float chassis_yaw);
+     * @brief Decomposes an absolute move message into motor goals.
+     * @param msg The absolute move message.
+     * @param chassis_yaw The chassis yaw.
+     * @return The motor goal.
+     */
+    motor_interface::msg::MotorGoal absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg, float chassis_yaw);
 
     /**
-    * @brief Decomposes a natural move message into DJI motor goals.
-    * @param msg The natural move message.
-    * @param yaw_diff The yaw difference.
-    * @return The DJI motor goal.
-    */
-    motor_interface::msg::DjiGoal natural_dji_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg, float yaw_diff);
+     * @brief Decomposes a chassis move message into motor goals.
+     * @param msg The chassis move message.
+     * @return The motor goal.
+     */
+    motor_interface::msg::MotorGoal chassis_decompo(const movement_interface::msg::ChassisMove::SharedPtr msg);
 
     /**
-    * @brief Decomposes an absolute move message into DJI motor goals.
-    * @param msg The absolute move message.
-    * @param chassis_yaw The chassis yaw.
-    * @return The DJI motor goal.
-    */
-    motor_interface::msg::DjiGoal absolute_dji_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg, float chassis_yaw);
+     * @brief Clear the motor goals.
+     * @param motor_goal The motor goals to be cleared.
+     * @return The DM goal.
+     */
+    void clear_goal(motor_interface::msg::MotorGoal &motor_goal);
 
     /**
-    * @brief Adds a DM motor goal to the existing motor goals.
-    * @param motor_goals The existing motor goals.
-    * @param motor_id The motor ID.
-    * @param goal_vel The goal velocity.
-    * @param goal_pos The goal position.
-    */
-    void add_dm_goal(motor_interface::msg::DmGoal &motor_goals, const DirectionMotor motor_id, const float goal_vel, const float goal_pos);
+     * @brief Add the goal velocity and position of a motor.
+     * Set position to 0 to control the motor in velocity mode.
+     * Set velocity to 0 to control the motor in position mode.
+     * @param[out] motor_goals The motor goals to be set.
+     * @param rid The ROS id of the motor.
+     * @param goal_vel The goal velocity of the motor.
+     * @param goal_pos The goal position of the motor.
+     */
+    void add_goal(motor_interface::msg::MotorGoal &motor_goal, const MotorId rid, const float goal_vel, const float goal_pos);
 
     /**
-    * @brief Sets a DJI motor goal.
-    * @param motor_goals The motor goals.
-    * @param motor_id The motor ID.
-    * @param goal_pos The goal position.
-    */
-    void set_dji_goal(motor_interface::msg::DjiGoal &motor_goals, const VelocityMotor motor_id, const float goal_pos);
-
-    /**
-    * @brief Clears the DM motor goals.
-    * @param motor_goals The motor goals.
-    */
-    void clear_dm_goals(motor_interface::msg::DmGoal &motor_goals);
-
-    /**
-    * @brief Calculates the root sum square of two values.
-    * @param x The first value.
-    * @param y The second value.
-    * @return The root sum square.
-    */
+     * @brief Calculates the root sum square of two values.
+     * @param x The first value.
+     * @param y The second value.
+     * @return The root sum square.
+     */
     float rss(float x, float y);
 }
 

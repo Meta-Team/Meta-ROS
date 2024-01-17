@@ -17,7 +17,7 @@ class OmniChassis : public rclcpp::Node
 private:
     rclcpp::Subscription<movement_interface::msg::AbsoluteMove>::SharedPtr abs_sub_;
     rclcpp::Subscription<movement_interface::msg::ChassisMove>::SharedPtr cha_sub_;
-    rclcpp::Publisher<motor_interface::msg::DjiGoal>::SharedPtr motor_pub_;
+    rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
     rclcpp::Client<gyro_interface::srv::GimbalPosition>::SharedPtr gimbal_cli_;
     rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr motor_cli_;
     rclcpp::CallbackGroup::SharedPtr gimbal_cbgp_;
@@ -72,7 +72,8 @@ public:
                 });
         }
         if (chassis_mode_ == ALL || chassis_mode_ == ABSOLUTE)
-        {   abs_sub_ = this->create_subscription<movement_interface::msg::AbsoluteMove>(
+        {  
+            abs_sub_ = this->create_subscription<movement_interface::msg::AbsoluteMove>(
                 "absolute_move", 10, [this](const movement_interface::msg::AbsoluteMove::SharedPtr msg){
                     this->abs_callback(msg);
                 });
@@ -102,7 +103,7 @@ public:
         }
 
         // initialize publisher
-        motor_pub_ = this->create_publisher<motor_interface::msg::DjiGoal>("motor_goal", 10);
+        motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
 
         RCLCPP_INFO(this->get_logger(), "OmniChassis initialized");
     }
