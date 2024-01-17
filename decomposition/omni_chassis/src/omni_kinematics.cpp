@@ -5,10 +5,10 @@ motor_interface::msg::DjiGoal OmniKinematics::absolute_decompo(const movement_in
     motor_interface::msg::DjiGoal motor_goals;
     float rot = msg->omega * RADIUS;
 
-    set_goal(motor_goals, F, msg->vel_x * cos(chassis_yaw) - msg->vel_y * sin(chassis_yaw) + rot, 0, 0);
+    set_goal(motor_goals, F, + msg->vel_x * cos(chassis_yaw) - msg->vel_y * sin(chassis_yaw) + rot, 0, 0);
     set_goal(motor_goals, L, - msg->vel_x * sin(chassis_yaw) - msg->vel_y * cos(chassis_yaw) + rot, 0, 1);
     set_goal(motor_goals, B, - msg->vel_x * cos(chassis_yaw) + msg->vel_y * sin(chassis_yaw) + rot, 0, 2);
-    set_goal(motor_goals, R, msg->vel_x * sin(chassis_yaw) + msg->vel_y * cos(chassis_yaw) + rot, 0, 3);
+    set_goal(motor_goals, R, + msg->vel_x * sin(chassis_yaw) + msg->vel_y * cos(chassis_yaw) + rot, 0, 3);
 
     return motor_goals;
 }
@@ -18,10 +18,10 @@ motor_interface::msg::DjiGoal OmniKinematics::chassis_decompo(const movement_int
     motor_interface::msg::DjiGoal motor_goals;
     float rot = msg->omega * RADIUS;
 
-    set_goal(motor_goals, F, msg->vel_x + rot, 0, 0);
+    set_goal(motor_goals, F, + msg->vel_x + rot, 0, 0);
     set_goal(motor_goals, L, - msg->vel_y + rot, 0, 1);
     set_goal(motor_goals, B, - msg->vel_x + rot, 0, 2);
-    set_goal(motor_goals, R, msg->vel_y + rot, 0, 3);
+    set_goal(motor_goals, R, + msg->vel_y + rot, 0, 3);
 
     return motor_goals;
 }

@@ -103,6 +103,8 @@ public:
 
         // initialize publisher
         motor_pub_ = this->create_publisher<motor_interface::msg::DjiGoal>("motor_goal", 10);
+
+        RCLCPP_INFO(this->get_logger(), "OmniChassis initialized");
     }
 };
 

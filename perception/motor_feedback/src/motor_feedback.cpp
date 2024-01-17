@@ -67,13 +67,12 @@ public:
                 response->present_vel.push_back(driver->present_data.velocity);
                 response->present_tor.push_back(driver->present_data.torque);
             }
-            else
-            {
+            else {
                 // set response all to 0, so that the length of response is the same as request
                 response->present_pos.push_back(0);
                 response->present_vel.push_back(0);
                 response->present_tor.push_back(0);
-                RCLCPP_ERROR(this->get_logger(), "invalid motor id");
+                RCLCPP_WARN(this->get_logger(), "Motor %d not found", desired_id);
             }
         }
     }
