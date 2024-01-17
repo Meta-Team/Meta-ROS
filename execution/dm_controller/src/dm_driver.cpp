@@ -58,10 +58,11 @@ DmDriver::~DmDriver()
  * DmMitDriver is a subclass of DmDriver that represents a specific type of driver.
  ************************************************************************************/
 
-DmMitDriver::DmMitDriver(int name, float kp, float kd)
+DmMitDriver::DmMitDriver(int rid, float kp, float kd)
 {
     printf("DmMitDriver created\n");
-    this->motor_id = name;
+    this->rid = rid;
+    this->hid = rid;
     set_mode();
     set_param_mit(kp, kd);
 }
@@ -69,7 +70,7 @@ DmMitDriver::DmMitDriver(int name, float kp, float kd)
 void DmMitDriver::set_mode()
 {
     tx_frame.can_dlc = 0x08;
-    tx_frame.can_id = motor_id;
+    tx_frame.can_id = hid;
 }
 
 void DmMitDriver::set_param_mit(float kp, float kd)
@@ -115,16 +116,17 @@ void DmMitDriver::set_position(float goal_pos)
  * DmVelDriver is a subclass of DmDriver that represents a specific type of driver.
  ************************************************************************************/
 
-DmVelDriver::DmVelDriver(int name)
+DmVelDriver::DmVelDriver(int rid)
 {
-    this->motor_id = name;
+    this->hid = rid;
+    this->rid = rid;
     set_mode();
 }
 
 void DmVelDriver::set_mode()
 {
     tx_frame.can_dlc = 0x08;
-    tx_frame.can_id = motor_id;
+    tx_frame.can_id = hid;
 }
 
 void DmVelDriver::set_velocity(float goal_vel)

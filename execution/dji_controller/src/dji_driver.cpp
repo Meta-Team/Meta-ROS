@@ -10,13 +10,15 @@ std::unique_ptr<can_frame> DjiDriver::tx_frame_1ff = init_frame(0x1ff);
 std::unique_ptr<can_frame> DjiDriver::tx_frame_2ff = init_frame(0x2ff);
 can_frame DjiDriver::rx_frame;
 
-// TODO: pid params to be further tuned
-DjiDriver::DjiDriver(int motor_id, MotorType motor_type) :
+DjiDriver::DjiDriver(int rid, MotorType type) :
     p2v_prm(0.1, 0.01, 0.1),
     v2c_prm(0.004, 0.00003, 0.1)
 {
-    this->motor_id = motor_id;
-    this->motor_type = motor_type;
+    if (type == M3508) this->hid = rid;
+    else if (type == M6020) this->hid = rid - 4;
+    
+    this->rid = rid;
+    this->motor_type = type;
     this->p2v_out = PidOutput();
     this->v2c_out = PidOutput();
 }
@@ -90,7 +92,7 @@ void DjiDriver::process_rx()
 
     if (motor_type == M3508)
     {
-        if ((int)rx_frame.can_id != 0x200 + motor_id) return;
+        if ((int)rx_frame.can_id != 0x200 + hid) return;
         // update only when the frame is for this motor
         present_data.update_pos((float)pos_raw * ENCODER_ANGLE_RATIO);
         present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
@@ -98,7 +100,7 @@ void DjiDriver::process_rx()
     }
     else if (motor_type == M6020)
     {
-        if ((int)rx_frame.can_id != 0x204 + motor_id) return;
+        if ((int)rx_frame.can_id != 0x204 + hid) return;
         // update only when the frame is for this motor
         present_data.update_pos((float)pos_raw * ENCODER_ANGLE_RATIO);
         present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
@@ -114,24 +116,24 @@ void DjiDriver::write_tx()
 
     if (motor_type == M3508)
     {
-        if (motor_id <= 4)
+        if (hid <= 4)
         {
-            tx_frame_200->data[2 * motor_id - 2] = (uint8_t)current_data >> 8;
-            tx_frame_200->data[2 * motor_id - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_200->data[2 * hid - 2] = (uint8_t)current_data >> 8;
+            tx_frame_200->data[2 * hid - 1] = (uint8_t)current_data & 0xff;
         } else {
-            tx_frame_1ff->data[2 * (motor_id - 4) - 2] = (uint8_t)current_data >> 8;
-            tx_frame_1ff->data[2 * (motor_id - 4) - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_1ff->data[2 * (hid - 4) - 2] = (uint8_t)current_data >> 8;
+            tx_frame_1ff->data[2 * (hid - 4) - 1] = (uint8_t)current_data & 0xff;
         }
     }
     else if (motor_type == M6020)
     {
-        if (motor_id <= 4)
+        if (hid <= 4)
         {
-            tx_frame_1ff->data[2 * motor_id - 2] = (uint8_t)current_data >> 8;
-            tx_frame_1ff->data[2 * motor_id - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_1ff->data[2 * hid - 2] = (uint8_t)current_data >> 8;
+            tx_frame_1ff->data[2 * hid - 1] = (uint8_t)current_data & 0xff;
         } else {
-            tx_frame_2ff->data[2 * (motor_id - 4) - 2] = (uint8_t)current_data >> 8;
-            tx_frame_2ff->data[2 * (motor_id - 4) - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_2ff->data[2 * (hid - 4) - 2] = (uint8_t)current_data >> 8;
+            tx_frame_2ff->data[2 * (hid - 4) - 1] = (uint8_t)current_data & 0xff;
         }
     }
 

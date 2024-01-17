@@ -9,11 +9,11 @@
     motor_count: 8
     # LF0, RF0, LB0, RB0, LF1, RF1, LB1, RB1
     # 0->direction, 1->speed
+    motor_ids:    [1, 2, 3, 4, 5, 6, 7, 8]
     motor_brands: [0, 0, 0, 0, 0, 0, 0, 0] # 0->dji, 1->dm
-    motor_modes:  [1, 1, 1, 1, 0, 0, 0, 0] # 0->vel, 1->pos/mit
     motor_types:  [1, 1, 1, 1, 0, 0, 0, 0]
     # for dji: 0->3508, 1->6020, 2->2006
-    # for dm: 0->4310
+    # for dm: 0->vel, 1->mit, 2->pos_vel
 
   # for node `dji_controller` and `dm_controller`
     p2v_kps: [0, 0, 0, 0]

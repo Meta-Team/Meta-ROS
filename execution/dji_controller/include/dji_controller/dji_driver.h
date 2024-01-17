@@ -27,7 +27,8 @@ enum MotorType
  * This class provides methods for setting goals, configuring PID parameters, 
  * writing data to the motor, and processing received data.
  */
-class DjiDriver {
+class DjiDriver
+{
 private:
     static std::unique_ptr<CanDriver> can_0; /**< Pointer to the CAN driver instance. */
     static std::unique_ptr<can_frame> tx_frame_200, tx_frame_1ff, tx_frame_2ff; /**< Pointers to CAN frames for transmitting data. */
@@ -68,14 +69,15 @@ private:
     static std::unique_ptr<can_frame> init_frame(int frame_id);
 
 public:
-    int motor_id; /**< ID of the motor. */
+    int hid; /**< Hardware ID of the motor. */
+    int rid; /**< ROS ID of the motor. */
 
     /**
      * @brief Constructor for DjiDriver class.
-     * @param motor_id The ID of the motor.
-     * @param motor_type The type of the motor.
+     * @param rid The ROS ID of the motor.
+     * @param type The type of the motor.
      */
-    DjiDriver(int motor_id, MotorType motor_type);
+    DjiDriver(int rid, MotorType type);
     
     /**
      * @brief Set the desired position and velocity for the motor.

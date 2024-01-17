@@ -43,7 +43,8 @@ class DmDriver
 {
 public:
     can_frame tx_frame; ///< The CAN frame used for transmitting data.
-    int motor_id; ///< The ID of the motor controlled by the driver.
+    int hid; ///< Hardware ID of the motor controlled by the driver.
+    int rid; ///< ROS ID of the motor controlled by the driver.
 
     /**
      * @brief Destructor for the DmDriver class.
@@ -132,11 +133,11 @@ public:
     /**
      * @brief Constructs a DmMitDriver object with the specified ID, kp, and kd values.
      * 
-     * @param id The ID of the DM device.
+     * @param rid The ROS ID of the DM device.
      * @param kp The proportional gain value.
      * @param kd The derivative gain value.
      */
-    DmMitDriver(int id, float kp, float kd);
+    DmMitDriver(int rid, float kp, float kd);
 
     /**
      * @brief Sets the mode of the DM device.
@@ -186,9 +187,9 @@ public:
     /**
      * @brief Constructs a DmVelDriver object with the specified ID.
      * 
-     * @param id The ID of the DM motor.
+     * @param rid The ID of the DM motor.
      */
-    DmVelDriver(int id);
+    DmVelDriver(int rid);
 
     /**
      * @brief Sets the mode of the DM motor.

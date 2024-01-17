@@ -72,19 +72,17 @@ private:
     
     void goal_callback(const motor_interface::msg::DjiGoal::SharedPtr msg)
     {
-        RCLCPP_INFO(this->get_logger(), "msg received");
-
         int count = msg->motor_id.size();
         for (int i = 0; i < count; i++)
         {
-            int id = msg->motor_id[i];
+            int rid = msg->motor_id[i];
             float pos = msg->goal_pos[i];
             float vel = msg->goal_vel[i];
 
             // find corresponding driver
             auto iter = std::find_if(drivers_.begin(), drivers_.end(),
-                [id](const std::unique_ptr<DjiDriver>& driver){
-                    return driver->motor_id == id;
+                [rid](const std::unique_ptr<DjiDriver>& driver){
+                    return driver->rid == rid;
                 });
 
             // set goal
@@ -95,7 +93,7 @@ private:
             }
             else {
                 // not found, do nothing
-                RCLCPP_WARN(this->get_logger(), "Motor %d not found", id);
+                RCLCPP_WARN(this->get_logger(), "Motor %d not found", rid);
             }
         }
     }
@@ -110,6 +108,13 @@ private:
         motor_ids = this->declare_parameter("motor_ids", motor_ids);
         std::vector<int64_t> motor_types {};
         motor_types= this->declare_parameter("motor_types", motor_types);
+        
+        p2v_kps = this->declare_parameter("p2v_kps", p2v_kps);
+        p2v_kis = this->declare_parameter("p2v_kis", p2v_kis);
+        p2v_kds = this->declare_parameter("p2v_kds", p2v_kds);
+        v2c_kps = this->declare_parameter("v2c_kps", v2c_kps);
+        v2c_kis = this->declare_parameter("v2c_kis", v2c_kis);
+        v2c_kds = this->declare_parameter("v2c_kds", v2c_kds);
 
         // initialize the drivers
         for (int i = 0; i < motor_count; i++)
@@ -118,70 +123,12 @@ private:
             
             dji_motor_count++;
             MotorType type = static_cast<MotorType>(motor_types[i]);
-            int id = motor_ids[i];
-            drivers_.push_back(std::make_unique<DjiDriver>(id, type));
-        }
-
-        // initialize the pid params
-        set_pid();
-
-        RCLCPP_INFO(this->get_logger(), "%d DJI motors initialized", dji_motor_count);
-    }
-
-    void set_pid()
-    {
-        p2v_kps = this->declare_parameter("p2v_kps", p2v_kps);
-        p2v_kis = this->declare_parameter("p2v_kis", p2v_kis);
-        p2v_kds = this->declare_parameter("p2v_kds", p2v_kds);
-
-        v2c_kps = this->declare_parameter("v2c_kps", v2c_kps);
-        v2c_kis = this->declare_parameter("v2c_kis", v2c_kis);
-        v2c_kds = this->declare_parameter("v2c_kds", v2c_kds);
-        
-        for (int i = 0; i < dji_motor_count; i++)
-        {
-            drivers_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
-            drivers_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
+            int rid = motor_ids[i];
+            drivers_.push_back(std::make_unique<DjiDriver>(rid, type));
+            drivers_.back()->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
+            drivers_.back()->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
         }
     }
-
-    // // pid params callback
-    // void p2v_kds_callback(const rclcpp::Parameter & p)
-    // {
-    //     p2v_kds.clear();
-    //     p2v_kds = p.as_double_array();
-    //     for (int i = 0; i < dji_motor_count; i++) drivers_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
-    // }
-    // void v2c_kds_callback(const rclcpp::Parameter & p)
-    // {
-    //     v2c_kds.clear();
-    //     v2c_kds = p.as_double_array();
-    //     for (int i = 0; i < dji_motor_count; i++) drivers_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
-    // }
-    // void p2v_kis_callback(const rclcpp::Parameter & p)
-    // {
-    //     p2v_kis.clear();
-    //     p2v_kis = p.as_double_array();
-    //     for (int i = 0; i < dji_motor_count; i++) drivers_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
-    // }
-    // void v2c_kis_callback(const rclcpp::Parameter & p)
-    // {
-    //     v2c_kis.clear();
-    //     v2c_kis = p.as_double_array();
-    //     for (int i = 0; i < dji_motor_count; i++) drivers_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
-    // }
-    // void p2v_kps_callback(const rclcpp::Parameter & p)
-    // {
-    //     p2v_kps.clear();
-    //     p2v_kps = p.as_double_array();
-    //     for (int i = 0; i < dji_motor_count; i++) drivers_[i]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
-    // }
-    // void v2c_kps_callback(const rclcpp::Parameter & p)
-    // {
-    //     v2c_kps.clear();
-    //     v2c_kps = p.as_double_array();
-    //     for (int i = 0; i < dji_motor_count; i++) drivers_[i]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
-    // }
 };
 
 int main(int argc, char *argv[])
