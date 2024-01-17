@@ -7,7 +7,7 @@ def generate_launch_description():
     config = os.path.join(
         get_package_share_directory('omni_chassis'),
         'config',
-        'motor_config.yaml'
+        'omni_chassis_test.yaml'
     )
     return LaunchDescription([
         Node(
