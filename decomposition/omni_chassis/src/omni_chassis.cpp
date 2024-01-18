@@ -3,7 +3,7 @@
 #include "omni_chassis/omni_kinematics.hpp"
 #include "motor_interface/srv/motor_present.hpp"
 
-#define YAW 5
+#define YAW 5 // TODO: change
 
 enum ChassisMode
 {
@@ -88,24 +88,29 @@ public:
             executor.add_node(this->get_node_base_interface());
             
             // wait for services
-            while (!gimbal_cli_->wait_for_service(std::chrono::seconds(1)) ||
-                !motor_cli_->wait_for_service(std::chrono::seconds(1)))
-            {
-                if (!rclcpp::ok())
-                {
-                    RCLCPP_ERROR(this->get_logger(), "Interrupted while waiting for the service. Exiting.");
-                    // rclcpp::shutdown();
-                    return;
-                }
-                RCLCPP_INFO(this->get_logger(), "service not available, waiting again...");
-            }
-            RCLCPP_INFO(this->get_logger(), "service available now");
+            abs_wait();
         }
 
         // initialize publisher
         motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
 
         RCLCPP_INFO(this->get_logger(), "OmniChassis initialized");
+    }
+
+    void abs_wait()
+    {
+        while (!gimbal_cli_->wait_for_service(std::chrono::seconds(1)) ||
+               !motor_cli_->wait_for_service(std::chrono::seconds(1)))
+        {
+            if (!rclcpp::ok())
+            {
+                RCLCPP_ERROR(this->get_logger(), "Interrupted while waiting for the service. Exiting.");
+                // rclcpp::shutdown();
+                return;
+            }
+            RCLCPP_INFO(this->get_logger(), "service not available, waiting again...");
+        }
+        RCLCPP_INFO(this->get_logger(), "service available now");
     }
 };
 

@@ -14,6 +14,7 @@ def generate_launch_description():
             package='agv_chassis',
             executable='agv_chassis',
             name='agv_chassis',
+            parameters=[config],
         ),
         Node(
             package='dji_controller',
@@ -21,10 +22,10 @@ def generate_launch_description():
             name='dji_controller',
             parameters=[config],
         ),
-        Node(
-            package='dm_controller',
-            executable='dm_controller',
-            name='dm_controller',
-            parameters=[config],
-        )
+        # Node(
+        #     package='dm_controller',
+        #     executable='dm_controller',
+        #     name='dm_controller',
+        #     parameters=[config],
+        # )
     ])

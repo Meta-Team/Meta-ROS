@@ -45,12 +45,24 @@ motor_interface::msg::MotorGoal AgvKinematics::absolute_decompo(const movement_i
     return motor_goal;
 }
 
-motor_interface::msg::MotorGoal AgvKinematics::chassis_decompo(const movement_interface::msg::ChassisMove::SharedPtr /*msg*/)
+motor_interface::msg::MotorGoal AgvKinematics::chassis_decompo(const movement_interface::msg::ChassisMove::SharedPtr msg)
 {
     motor_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);
 
-    // TODO: implement this
+    float trans_n = msg->vel_y;
+    float trans_tao = msg->vel_x;
+    float rot_vel = msg->omega * RADIUS / sqrt(2);
+
+    add_goal(motor_goal, LF_D, 0, atan((trans_n + rot_vel) / (trans_tao - rot_vel)));
+    add_goal(motor_goal, RF_D, 0, atan((trans_n + rot_vel) / (trans_tao + rot_vel)));
+    add_goal(motor_goal, LB_D, 0, atan((trans_n - rot_vel) / (trans_tao - rot_vel)));
+    add_goal(motor_goal, RB_D, 0, atan((trans_n - rot_vel) / (trans_tao + rot_vel)));
+
+    add_goal(motor_goal, LF_V, rss(trans_n + rot_vel, trans_tao - rot_vel), 0);
+    add_goal(motor_goal, RF_V, rss(trans_n + rot_vel, trans_tao + rot_vel), 0);
+    add_goal(motor_goal, LB_V, rss(trans_n - rot_vel, trans_tao - rot_vel), 0);
+    add_goal(motor_goal, RB_V, rss(trans_n - rot_vel, trans_tao + rot_vel), 0);
     
     return motor_goal;
 }
