@@ -3,13 +3,14 @@
 #include "omni_chassis/omni_kinematics.hpp"
 #include "motor_interface/srv/motor_present.hpp"
 
-#define YAW 5 // TODO: change
+#define YAW_ID 5 // MY_TODO: change
 
 enum ChassisMode
 {
     ALL = 0,
     CHASSIS = 1,
     ABSOLUTE = 2,
+    NATURAL = 3,
 };
 
 class OmniChassis : public rclcpp::Node
@@ -40,7 +41,7 @@ private:
         };
         auto motor_req_ = std::make_shared<motor_interface::srv::MotorPresent::Request>();
         motor_req_->motor_id.clear();
-        motor_req_->motor_id.push_back(YAW);
+        motor_req_->motor_id.push_back(YAW_ID);
         motor_cli_->async_send_request(motor_req_, motor_cb);
 
         // calculate and publish
@@ -61,6 +62,7 @@ public:
         int chassis_mode = 0;
         chassis_mode = this->declare_parameter("chassis_mode", chassis_mode);
         ChassisMode chassis_mode_ = static_cast<ChassisMode>(chassis_mode);
+        RCLCPP_INFO(this->get_logger(), "chassis mode: %d", chassis_mode_);
 
         // initialize subscriber
         if (chassis_mode_ == ALL || chassis_mode_ == CHASSIS)
@@ -72,7 +74,7 @@ public:
                 });
         }
         if (chassis_mode_ == ALL || chassis_mode_ == ABSOLUTE)
-        {  
+        {
             abs_sub_ = this->create_subscription<movement_interface::msg::AbsoluteMove>(
                 "absolute_move", 10, [this](const movement_interface::msg::AbsoluteMove::SharedPtr msg){
                     this->abs_callback(msg);

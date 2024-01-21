@@ -3,7 +3,7 @@
 #include "agv_chassis/agv_kinematics.hpp"
 #include <rclcpp/publisher.hpp>
 
-#define YAW 8 // TODO: change
+#define YAW_ID 8 // MY_TODO: change
 
 enum ChassisMode
 {
@@ -24,31 +24,45 @@ private:
     rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr motor_cli_; // may change to other feedback
     rclcpp::CallbackGroup::SharedPtr gimbal_cbgp_;
     rclcpp::CallbackGroup::SharedPtr motor_cbgp_;
-    // TODO: add callback groups, add chassis mode
 
     void nat_callback(const movement_interface::msg::NaturalMove::SharedPtr nat_msg)
     {
-        auto request_motor = std::make_shared<motor_interface::srv::MotorPresent::Request>();
-        request_motor->motor_id.clear();
-        request_motor->motor_id.push_back(YAW);
-        auto result_motor = motor_cli_->async_send_request(request_motor);
-        float motor_pos = result_motor.get()->present_pos[YAW];
+        // get motor position
+        float motor_pos = 0;
+        auto motor_cb = [&](rclcpp::Client<motor_interface::srv::MotorPresent>::SharedFuture future){
+            motor_pos = future.get()->present_pos[YAW_ID];
+        };
+        auto motor_req_ = std::make_shared<motor_interface::srv::MotorPresent::Request>();
+        motor_req_->motor_id.clear();
+        motor_req_->motor_id.push_back(YAW_ID);
+        motor_cli_->async_send_request(motor_req_, motor_cb);
 
+        // calculate and publish
         motor_pub_->publish(AgvKinematics::natural_decompo(nat_msg, motor_pos));
     }
 
     void abs_callback(const movement_interface::msg::AbsoluteMove::SharedPtr abs_msg)
     {
-        auto request_gimbal = std::make_shared<gyro_interface::srv::GimbalPosition::Request>();
-        auto result_gimbal = gimbal_cli_->async_send_request(request_gimbal);
-        float gimbal_yaw = result_gimbal.get()->yaw;
+        // get gimbal yaw
+        float gimbal_yaw = 0;
+        auto gimbal_cb = [&](rclcpp::Client<gyro_interface::srv::GimbalPosition>::SharedFuture future){
+            gimbal_yaw = future.get()->yaw;
+        };
+        auto gimbal_req_ = std::make_shared<gyro_interface::srv::GimbalPosition::Request>();
+        gimbal_cli_->async_send_request(gimbal_req_, gimbal_cb);
 
-        auto request_motor = std::make_shared<motor_interface::srv::MotorPresent::Request>();
-        request_motor->motor_id.clear();
-        request_motor->motor_id.push_back(YAW);
-        auto result_motor = motor_cli_->async_send_request(request_motor);
-        float motor_pos = result_motor.get()->present_pos[YAW];
+
+        // get motor position
+        float motor_pos = 0;
+        auto motor_cb = [&](rclcpp::Client<motor_interface::srv::MotorPresent>::SharedFuture future){
+            motor_pos = future.get()->present_pos[YAW_ID];
+        };
+        auto motor_req_ = std::make_shared<motor_interface::srv::MotorPresent::Request>();
+        motor_req_->motor_id.clear();
+        motor_req_->motor_id.push_back(YAW_ID);
+        motor_cli_->async_send_request(motor_req_, motor_cb);
         
+        // calculate and publish
         motor_pub_->publish(AgvKinematics::absolute_decompo(abs_msg, gimbal_yaw + motor_pos));
     }
 
