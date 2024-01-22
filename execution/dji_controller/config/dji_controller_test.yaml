@@ -1,0 +1,23 @@
+/**:
+  ros__parameters:
+
+  # for node `omni_chassis`
+    chassis_mode: 1
+    # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
+
+  # for node `dji_controller` and `motor_feedback`
+    motor_count:  1
+    motor_ids:    [1]
+    motor_brands: [0] # 0->dji, 1->dm
+    motor_types:  [0]
+    # for dji: 0->3508, 1->6020, 2->2006
+    # for dm: 0->vel, 1->mit, 2->pos_vel
+
+  # for node `dji_controller`
+    p2v_kps: [0.1]
+    p2v_kis: [0.001]
+    p2v_kds: [0.1]
+
+    v2c_kps: [0.0025]
+    v2c_kis: [0.00000]
+    v2c_kds: [0.03]
