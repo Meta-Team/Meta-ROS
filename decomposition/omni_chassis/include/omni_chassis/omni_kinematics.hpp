@@ -13,17 +13,17 @@
 #include "gyro_interface/srv/gimbal_position.hpp"
 #include "motor_interface/srv/motor_present.hpp"
 
+#define DIRE -1 // 1 if counter-clockwise, -1 if clockwise
 #define PI 3.14159265358979323846
-#define RADIUS 0.1 // meter
+#define RADIUS 1 // meter
 
 enum MotorId
 {
     F = 1,
-    L = 2,
+    L = 4,
     B = 3,
-    R = 4,
+    R = 2,
 };
-// all mounted counter-clockwise
 
 /**
  * @brief This namespace contains functions to decompose movement commands into motor goals.
@@ -67,6 +67,6 @@ namespace OmniKinematics
      */
     void add_goal(motor_interface::msg::MotorGoal &motor_goals,
                   const MotorId wheel_id, const float goal_vel, const float goal_pos);
-};
+}
 
 #endif // OMNI_KINEMATICS_HPP

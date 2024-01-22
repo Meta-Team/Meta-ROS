@@ -38,6 +38,6 @@ void OmniKinematics::clear_goal(motor_interface::msg::MotorGoal &motor_goal)
 void OmniKinematics::add_goal(motor_interface::msg::MotorGoal &motor_goal, const MotorId rid, const float goal_vel, const float goal_pos)
 {
     motor_goal.motor_id.push_back(rid);
-    motor_goal.goal_vel.push_back(goal_vel);
-    motor_goal.goal_pos.push_back(goal_pos);
+    motor_goal.goal_vel.push_back(DIRE * goal_vel);
+    motor_goal.goal_pos.push_back(DIRE * goal_pos);
 }
