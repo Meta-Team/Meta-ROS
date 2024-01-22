@@ -118,22 +118,22 @@ void DjiDriver::write_tx()
     {
         if (hid <= 4)
         {
-            tx_frame_200->data[2 * hid - 2] = (uint8_t)current_data >> 8;
-            tx_frame_200->data[2 * hid - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_200->data[2 * hid - 2] = (uint8_t)(current_data >> 8);
+            tx_frame_200->data[2 * hid - 1] = (uint8_t)(current_data & 0xff);
         } else {
-            tx_frame_1ff->data[2 * (hid - 4) - 2] = (uint8_t)current_data >> 8;
-            tx_frame_1ff->data[2 * (hid - 4) - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_1ff->data[2 * (hid - 4) - 2] = (uint8_t)(current_data >> 8);
+            tx_frame_1ff->data[2 * (hid - 4) - 1] = (uint8_t)(current_data & 0xff);
         }
     }
     else if (motor_type == M6020)
     {
         if (hid <= 4)
         {
-            tx_frame_1ff->data[2 * hid - 2] = (uint8_t)current_data >> 8;
-            tx_frame_1ff->data[2 * hid - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_1ff->data[2 * hid - 2] = (uint8_t)(current_data >> 8);
+            tx_frame_1ff->data[2 * hid - 1] = (uint8_t)(current_data & 0xff);
         } else {
-            tx_frame_2ff->data[2 * (hid - 4) - 2] = (uint8_t)current_data >> 8;
-            tx_frame_2ff->data[2 * (hid - 4) - 1] = (uint8_t)current_data & 0xff;
+            tx_frame_2ff->data[2 * (hid - 4) - 2] = (uint8_t)(current_data >> 8);
+            tx_frame_2ff->data[2 * (hid - 4) - 1] = (uint8_t)(current_data & 0xff);
         }
     }
 
