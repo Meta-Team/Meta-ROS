@@ -78,7 +78,7 @@ void AgvKinematics::add_goal(motor_interface::msg::MotorGoal &motor_goal, const 
 {
     motor_goal.motor_id.push_back(wheel_id);
     motor_goal.goal_vel.push_back(goal_vel);
-    motor_goal.goal_pos.push_back(goal_pos);
+    motor_goal.goal_pos.push_back(goal_pos + offsets[static_cast<int>(wheel_id)]);
 }
 
 float AgvKinematics::rss(float x, float y)

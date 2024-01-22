@@ -39,6 +39,14 @@ enum MotorId
 namespace AgvKinematics
 {
     /**
+     * @brief The offsets of the motors.
+     * Used to compensate the difference between the actual and the theoretical angles of the motors.
+     * The order should be the same as MotorId.
+     * @note The first four values, which are for vel motors, must be zero.
+     */
+    constexpr float offsets[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+    /**
      * @brief Decomposes a natural move message into motor goals.
      * @param msg The natural move message.
      * @param yaw_diff The yaw difference.
