@@ -4,7 +4,7 @@ UartDriver::UartDriver()
 {
     IoContext ctx;
     SerialPortConfig config(baud, fc, pt, sb);
-    port_.reset(new SerialPort(ctx, dev_name, config));
+    port_ = std::make_unique<SerialPort>(ctx, dev_name, config);
     port_->open();
 }
 
