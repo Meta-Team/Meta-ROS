@@ -1,77 +1,80 @@
-#include "teleop_keyboard/teleop_keyboard.h"
+#include "rclcpp/rclcpp.hpp"
+#include <termios.h>
 
-TeleopKeyboard::TeleopKeyboard() : Node("TeleopKeyboard")
+#include "operation_interface/msg/teleop_key.hpp"
+
+class TeleopKeyboard : public rclcpp::Node
 {
-    pub_ = this->create_publisher<movement_interface::msg::NaturalMove>("natural_move", 10);
-    disableWaitingForEnter();
-}
+public:
+    TeleopKeyboard() : Node("teleop_keyboard")
+    {
+        disableWaitingForEnter();
+        pub_ = this->create_publisher<operation_interface::msg::TeleopKey>("teleop_key", 10);
+    }
 
-TeleopKeyboard::~TeleopKeyboard()
-{
-    restoreTerminalSettings();
-    RCLCPP_INFO(this->get_logger(), "Terminating TeleopKeyboard");
-    rclcpp::shutdown();
-}
+    ~TeleopKeyboard()
+    {
+        restoreTerminalSettings();
+        rclcpp::shutdown();
+    }
 
-void TeleopKeyboard::display_menu()
-{
-    printf("Press a key to move the chassis:\n");
-    printf("w: forward\n");
-    printf("a: left\n");
-    printf("s: backward\n");
-    printf("d: right\n");
-    printf("q: rotate counterclockwise\n");
-    printf("e: rotate clockwise\n");
-    printf("z: quit\n");
-}
+    void disableWaitingForEnter()
+    {
+        termios newt;
+        tcgetattr(0, &oldt_);  /* Save terminal settings */
+        newt = oldt_;  /* Init new settings */
+        newt.c_lflag &= ~(ICANON | ECHO);  /* Change settings */
+        tcsetattr(0, TCSANOW, &newt);  /* Apply settings */
+    }
 
-void TeleopKeyboard::disableWaitingForEnter()
-{
-    termios newt;
+    void restoreTerminalSettings()
+    {
+        tcsetattr(0, TCSANOW, &oldt_);  /* Apply saved settings */
+    }
 
-    tcgetattr(0, &oldt_);  /* Save terminal settings */
-    newt = oldt_;  /* Init new settings */
-    newt.c_lflag &= ~(ICANON | ECHO);  /* Change settings */
-    tcsetattr(0, TCSANOW, &newt);  /* Apply settings */
-}
+    void publish(char ch)
+    {
+        clear_msg();
+        switch (ch)
+        {
+        case 'w': msg_.w = true; break;
+        case 'a': msg_.a = true; break;
+        case 's': msg_.s = true; break;
+        case 'd': msg_.d = true; break;
+        case 'q': msg_.q = true; break;
+        case 'e': msg_.e = true; break;
+        default: break;
+        }
+        pub_->publish(msg_);
+    }
 
-void TeleopKeyboard::restoreTerminalSettings()
-{
-  tcsetattr(0, TCSANOW, &oldt_);  /* Apply saved settings */
-}
+private:
+    termios oldt_;
+    rclcpp::Publisher<operation_interface::msg::TeleopKey>::SharedPtr pub_;
+    operation_interface::msg::TeleopKey msg_;
 
-void TeleopKeyboard::set_goal(const char &ch)
-{
-    nat_goal.vel_n = 0.0;
-    nat_goal.vel_tau = 0.0;
-    nat_goal.omega = 0.0;
-    if (ch == 'w' || ch == 'W') nat_goal.vel_tau = 1.0;
-    else if (ch == 'a' || ch == 'A') nat_goal.vel_n = 0.5;
-    else if (ch == 's' || ch == 'S') nat_goal.vel_tau = -1.0;
-    else if (ch == 'd' || ch == 'D') nat_goal.vel_n = -0.5;
-    else if (ch == 'q' || ch == 'Q') nat_goal.omega = 1.0;
-    else if (ch == 'e' || ch == 'E') nat_goal.omega = -1.0;
-    else RCLCPP_INFO(this->get_logger(), "Invalid key input");
-    publish_goal();
-}
-
-void TeleopKeyboard::publish_goal()
-{
-    RCLCPP_INFO(this->get_logger(), "Publishing: vel_n: %f, vel_tau: %f, omega: %f", nat_goal.vel_n, nat_goal.vel_tau, nat_goal.omega);
-    pub_->publish(nat_goal);
-}
+    void clear_msg()
+    {
+        msg_.w = false;
+        msg_.a = false;
+        msg_.s = false;
+        msg_.d = false;
+        msg_.q = false;
+        msg_.e = false;
+    }
+};
 
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<TeleopKeyboard>();
-    node->display_menu();
     char ch;
+    RCLCPP_INFO(node->get_logger(), "Press z to quit");
 
     while (rclcpp::ok() && (ch = std::getchar()) != 'z' && ch != 'Z')
     {
-        node->set_goal(ch);
+        node->publish(ch);
     }
-    
+
     return 0;
 }

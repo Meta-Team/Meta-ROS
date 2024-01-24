@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>movement_interface</depend>
+  <depend>operation_interface</depend>
   <depend>rclcpp</depend>
 
   <test_depend>ament_lint_auto</test_depend>
