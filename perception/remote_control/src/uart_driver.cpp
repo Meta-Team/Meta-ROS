@@ -1,4 +1,4 @@
-#include "serial_output/uart_driver.hpp"
+#include "remote_control/uart_driver.hpp"
 
 constexpr const char * UartDriver::dev_name;
 constexpr const char * UartDriver::dev_null;

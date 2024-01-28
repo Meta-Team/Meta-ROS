@@ -17,9 +17,9 @@ public:
 
     ~UartDriver();
 
-    void send(const std::string & data);
+    void send(const std::vector<uint8_t> &data);
 
-    void read(std::string &data);
+    void read(std::vector<uint8_t> &data);
 
 private:
     static constexpr const char * dev_name = "/dev/ttyS0";

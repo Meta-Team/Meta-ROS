@@ -1,11 +1,24 @@
 #include "rclcpp/rclcpp.hpp"
+#include "remote_control/remote.hpp"
+#include <memory>
 
 class RemoteControl : public rclcpp::Node
 {
 public: 
     RemoteControl() : Node("remote_control")
     {
-        RCLCPP_INFO(this->get_logger(), "Hello, world!");
+        remote_ = std::make_unique<Remote>();
+        pub_ = this->create_publisher<operation_interface::msg::RemoteControl>("remote_control", 10);
+    }
+
+private:
+    std::unique_ptr<Remote> remote_;
+    rclcpp::Publisher<operation_interface::msg::RemoteControl>::SharedPtr pub_;
+    rclcpp::TimerBase::SharedPtr timer_;
+
+    void timer_callback()
+    {
+        
     }
 };
 

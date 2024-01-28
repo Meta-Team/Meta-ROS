@@ -13,7 +13,8 @@ private:
     
     void msg_callback(text_interface::msg::OutputText::SharedPtr msg)
     {
-        uart_driver_->send(msg->text);
+        std::vector<uint8_t> data(msg->text.begin(), msg->text.end());
+        uart_driver_->send(data);
     }
 
 public:
