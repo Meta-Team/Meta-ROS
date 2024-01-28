@@ -1,5 +1,12 @@
 #include "serial_output/uart_driver.hpp"
 
+constexpr const char * UartDriver::dev_name;
+constexpr const char * UartDriver::dev_null;
+constexpr uint32_t UartDriver::baud;
+constexpr FlowControl UartDriver::fc;
+constexpr Parity UartDriver::pt;
+constexpr StopBits UartDriver::sb;
+
 UartDriver::UartDriver()
 {
     IoContext ctx;

@@ -11,9 +11,9 @@ private:
     std::unique_ptr<UartDriver> uart_driver_;
     rclcpp::Subscription<text_interface::msg::OutputText>::SharedPtr sub_;
     
-    void msg_callback(text_interface::msg::OutputText msg)
+    void msg_callback(text_interface::msg::OutputText::SharedPtr msg)
     {
-        uart_driver_->send(msg.text);
+        uart_driver_->send(msg->text);
     }
 
 public:
@@ -22,7 +22,7 @@ public:
         uart_driver_ = std::make_unique<UartDriver>();
         sub_ = this->create_subscription<text_interface::msg::OutputText>(
             "output_text", 10, [this](text_interface::msg::OutputText::SharedPtr msg){
-                this->msg_callback(*msg);
+                this->msg_callback(msg);
             });
     }
 };
