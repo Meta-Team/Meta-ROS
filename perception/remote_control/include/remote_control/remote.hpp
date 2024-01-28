@@ -48,7 +48,6 @@ private:
 
     static std::unique_ptr<UartDriver> uart_; ///< A pointer to the UART driver.
     std::vector<uint8_t> frame; ///< A vector to store the UART frame.
-    operation_interface::msg::RemoteControl::UniquePtr msg; ///< A pointer to the message to publish to the remote_control topic.
 
     // variables used to store the state of the remote control
     int16_t mouse_x{}; ///< The x-coordinate of the mouse.
@@ -59,13 +58,29 @@ private:
     union {
         uint16_t key_uint{}; // The state of the keys, represented as a 16-bit unsigned integer.
         std::bitset<16> key_bits; // The state of the keys, represented as a bitset.
-    }keyboard{}; ///< The state of the keys.
+    } keyboard{}; ///< The state of the keys.
 
 public:
-    Remote();
+    /**
+     * @brief Reads a frame of data from the UART driver.
+     * This function calls the read method of the UART driver to fill the frame vector with data.
+     */
+    void rx_frame();
 
-    void get_frame();
+    /**
+     * @brief Processes the received frame.
+     * This function checks the start of the frame, the command ID, and the length of the frame.
+     * If these values are as expected, it extracts the state data from the frame.
+     * @note Should be called after get_frame().
+     */
     void process_rx();
+
+    /**
+     * @brief Sets the message based on the current state.
+     * This function copies the current state data into the message object.
+     * @note Should be called before publishing the message.
+     */
+    operation_interface::msg::RemoteControl msg();
 };
 
 #endif // REMOTE_HPP
