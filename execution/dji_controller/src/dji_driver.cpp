@@ -112,10 +112,10 @@ void DjiDriver::write_tx()
 {
     if (goal_pos != 0.0 && goal_vel == 0.0) pos2velocity();
     vel2current();
-    int16_t current_data = static_cast<int16_t>(current / I_MAX * 16384);
 
     if (motor_type == M3508)
     {
+        int16_t current_data = static_cast<int16_t>(current / I_MAX * 16384);
         if (hid <= 4)
         {
             tx_frame_200->data[2 * hid - 2] = (uint8_t)(current_data >> 8);
@@ -127,6 +127,7 @@ void DjiDriver::write_tx()
     }
     else if (motor_type == M6020)
     {
+        int16_t current_data = static_cast<int16_t>(current / I_MAX * 30000);
         if (hid <= 4)
         {
             tx_frame_1ff->data[2 * hid - 2] = (uint8_t)(current_data >> 8);
