@@ -25,10 +25,10 @@ void UartDriver::send(const std::vector<uint8_t> &data)
     // send serial data
     std::vector<uint8_t> buffer(data.begin(), data.end());
     port_->send(buffer);
-};
+}
 
 void UartDriver::read(std::vector<uint8_t> &data)
 {
     // read serial data
     port_->receive(data);
-};
+}
