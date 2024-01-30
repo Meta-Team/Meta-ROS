@@ -1,38 +1,46 @@
-#include "rclcpp/rclcpp.hpp"
+#include "remote_control/remote_control.hpp"
 #include "remote_control/remote.hpp"
-#include <memory>
 
-#define CONTROL_R 20 // 50 Hz
+constexpr const char * RemoteControl::dev_name;
+constexpr const char * RemoteControl::dev_null;
+constexpr uint32_t RemoteControl::baud;
+constexpr FlowControl RemoteControl::fc;
+constexpr Parity RemoteControl::pt;
+constexpr StopBits RemoteControl::sb;
 
-class RemoteControl : public rclcpp::Node
+RemoteControl::RemoteControl()
 {
-public: 
-    RemoteControl() : Node("remote_control")
+    ctx_ = std::make_unique<IoContext>(2);
+    config_ = std::make_unique<SerialPortConfig>(baud, fc, pt, sb);
+    port_ = std::make_unique<SerialPort>(*ctx_, dev_name, *config_);
+    node_ = rclcpp::Node::make_shared("remote_control");
+    
+    if (!port_->is_open())
     {
-        remote_ = std::make_unique<Remote>();
-        pub_ = this->create_publisher<operation_interface::msg::RemoteControl>("remote_control", 10);
-        timer_ = this->create_wall_timer(std::chrono::milliseconds(CONTROL_R), std::bind(&RemoteControl::timer_callback, this));
+        port_->open();
+        receive_thread = std::thread(&RemoteControl::receive, this);
     }
+}
 
-private:
-    std::unique_ptr<Remote> remote_;
-    rclcpp::Publisher<operation_interface::msg::RemoteControl>::SharedPtr pub_;
-    rclcpp::TimerBase::SharedPtr timer_;
-
-    void timer_callback()
-    {
-        remote_->rx_frame();
-        remote_->process_rx();
-        auto msg = remote_->msg();
-        pub_->publish(msg);
-    }
-};
-
-int main(int argc, char **argv)
+RemoteControl::~RemoteControl()
 {
-    rclcpp::init(argc, argv);
-    auto node = std::make_shared<RemoteControl>();
-    rclcpp::spin(node);
-    rclcpp::shutdown();
-    return 0;
+    if (receive_thread.joinable())
+    {
+        receive_thread.join();
+    }
+    if (port_->is_open())
+    {
+        port_->close();
+    }
+    if (ctx_)
+    {
+        ctx_->waitForExit();
+    }
+}
+
+void RemoteControl::receive()
+{
+    std::vector<uint8_t> header(7);
+    std::vector<uint8_t> data;
+    data.reserve(sizeof(Remote::RemoteFrame::Data));
 }

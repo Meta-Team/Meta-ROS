@@ -24,12 +24,18 @@ find_package(rclcpp REQUIRED)
 find_package(serial_driver REQUIRED)
 find_package(operation_interface REQUIRED)
 
-include_directories(include)
-
-add_executable(remote_control
+add_library(remote_control SHARED
   src/remote_control.cpp
-  src/remote.cpp
-  src/uart_driver.cpp)
+  src/remote.cpp)
+
+target_include_directories(remote_control PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+rclcpp_components_register_node(remote_control
+  PLUGIN "RemoteControl"
+  EXECUTABLE remote_control_node)
+
 ament_target_dependencies(remote_control
   rclcpp
   serial_driver
@@ -38,6 +44,20 @@ ament_target_dependencies(remote_control
 install(TARGETS
   remote_control
   DESTINATION lib/${PROJECT_NAME})
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
+install(
+  TARGETS remote_control
+  EXPORT export_${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
