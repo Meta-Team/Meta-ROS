@@ -19,8 +19,6 @@ public:
 
     void send(const std::vector<uint8_t> &data);
 
-    void read(std::vector<uint8_t> &data);
-
 private:
     static constexpr const char * dev_name = "/dev/ttyS0";
     static constexpr const char * dev_null = "/dev/null";
