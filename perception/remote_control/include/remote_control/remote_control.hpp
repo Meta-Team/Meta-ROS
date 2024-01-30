@@ -5,10 +5,13 @@
 
 #include "serial_driver/serial_driver.hpp"
 #include <memory>
+#include <rclcpp/publisher.hpp>
 #include <serial_driver/serial_port.hpp>
 #include <string>
 #include <sys/socket.h>
 #include "rclcpp/rclcpp.hpp"
+
+#include "operation_interface/msg/remote_control.hpp"
 
 using spb = asio::serial_port_base;
 using drivers::serial_driver::FlowControl;
@@ -20,14 +23,16 @@ using drivers::serial_driver::SerialPortConfig;
 class RemoteControl
 {
 public:
-    RemoteControl();
-
+    RemoteControl(const rclcpp::NodeOptions & options);
     ~RemoteControl();
+    rclcpp::node_interfaces::NodeBaseInterface::SharedPtr get_node_base_interface() const;
 
     void receive();
+    void reopen_port();
 
 private:
     rclcpp::Node::SharedPtr node_;
+    rclcpp::Publisher<operation_interface::msg::RemoteControl>::SharedPtr pub_;
 
     std::unique_ptr<IoContext> ctx_;
     std::unique_ptr<SerialPortConfig> config_;

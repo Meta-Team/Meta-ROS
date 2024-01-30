@@ -24,7 +24,7 @@ private:
     /**
      * @enum Keys
      * @brief An enumeration to represent the keys on the remote control.
-     * Can be used to access the bitset "key_bits".
+     * Can be used to interpret the keyboard field of the remote frame.
      */
     enum // Keys
     {
@@ -48,7 +48,7 @@ private:
 
 public:
     /**
-     * @brief Represents a remote frame structure used for communication.
+     * @brief Represents a remote frame structure used for communication. 
      */
     struct __attribute__((packed, aligned(1))) RemoteFrame
     {
@@ -78,31 +78,33 @@ public:
         };
 
         Header header; /**< The header of the remote frame */
-        uint16_t command_id; /**< Command ID */
+        uint16_t cmd_id; /**< Command ID */
         Data data; /**< The data payload of the remote frame */
         uint16_t tail; /**< Tail of the frame */
     };
 
-    // /**
-    //  * @brief Reads a frame of data from the UART driver.
-    //  * This function calls the read method of the UART driver to fill the frame vector with data.
-    //  */
-    // void rx_frame();
+    RemoteFrame interpreted; /**< The interpreted frame */ 
 
-    // /**
-    //  * @brief Processes the received frame.
-    //  * This function checks the start of the frame, the command ID, and the length of the frame.
-    //  * If these values are as expected, it extracts the state data from the frame.
-    //  * @note Should be called after get_frame().
-    //  */
-    // void process_rx();
+    /**
+     * @brief Checks if the prefix is a wanted prefix.
+     * @param prefix The prefix to check.
+     * @return True if the prefix is a wanted prefix, false otherwise.
+     */
+    static bool is_wanted_pre(std::vector<uint8_t> &prefix);
 
-    // /**
-    //  * @brief Sets the message based on the current state.
-    //  * This function copies the current state data into the message object.
-    //  * @note Should be called before publishing the message.
-    //  */
-    // operation_interface::msg::RemoteControl msg();
+    /**
+     * @brief Constructs a Remote object from a frame.
+     * This would interpret the frame by copying the data into the RemoteFrame struct.
+     * @param frame The frame to construct the Remote object from.
+     */
+    Remote(const std::vector<uint8_t> &frame);
+
+    /**
+     * @brief Sets the message based on the current state.
+     * This function copies the current state data into the message object.
+     * @note Should be called before publishing the message.
+     */
+    operation_interface::msg::RemoteControl msg();
 };
 
 #endif // REMOTE_HPP
