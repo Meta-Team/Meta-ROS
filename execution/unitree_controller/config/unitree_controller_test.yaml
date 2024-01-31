@@ -1,0 +1,17 @@
+/**:
+  ros__parameters:
+
+    motor_count:  1
+    motor_ids:    [0x10]
+    motor_brands: [2] # 0->dji, 1->dm, 2->unitree
+    motor_types:  [0]
+    # for dji: 0->3508, 1->6020, 2->2006
+    # for dm: 0->vel, 1->mit, 2->pos_vel
+
+    p2v_kps: [0.006]
+    p2v_kis: [0.0]
+    p2v_kds: [0.002]
+
+    v2c_kps: [0.0]
+    v2c_kis: [0.0]
+    v2c_kds: [0.0]

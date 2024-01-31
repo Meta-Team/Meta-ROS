@@ -45,6 +45,7 @@ private:
             // set goal
             if (iter != drivers_.end())
             {
+                // RCLCPP_INFO(this->get_logger(), "Motor %d set goal", rid);
                 auto driver = iter->get();
                 driver->set_goal(pos, vel);
             }
@@ -77,6 +78,7 @@ private:
             int rid = motor_ids[i];
             drivers_.push_back(std::make_unique<UnitreeDriver>(rid));
             drivers_.back()->set_pid(p2v_kps[i], p2v_kds[i]);
+            // RCLCPP_INFO(this->get_logger(), "Motor hid %d initialized with kp %f kd %f", rid, p2v_kps[i], p2v_kds[i]);
         }
     }
 };

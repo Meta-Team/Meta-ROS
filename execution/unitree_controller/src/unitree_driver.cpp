@@ -1,9 +1,10 @@
 #include "unitree_controller/unitree_driver.hpp"
+#include <rclcpp/logger.hpp>
 
 UnitreeDriver::UnitreeDriver(int rid)
     : rid(rid), serial_port("/dev/ttyUSB0")
 {
-    hid = rid; // can be assigned with other values
+    hid = rid - 0x10; // can be assigned with other values
     goal_cmd.motorType = MotorType::GO_M8010_6;
     feedback_data.motorType = MotorType::GO_M8010_6;
     goal_cmd.mode = queryMotorMode(goal_cmd.motorType, MotorMode::FOC);
