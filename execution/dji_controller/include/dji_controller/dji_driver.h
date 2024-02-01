@@ -19,6 +19,7 @@ enum MotorType
 {
     M3508,
     M6020,
+    M2006,
 };
 
 /**

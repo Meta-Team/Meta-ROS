@@ -16,6 +16,7 @@ DjiDriver::DjiDriver(int rid, MotorType type) :
 {
     if (type == M3508) this->hid = rid;
     else if (type == M6020) this->hid = rid - 4;
+    else if (type == M2006) this->hid = rid;
     
     this->rid = rid;
     this->motor_type = type;
@@ -86,26 +87,26 @@ std::unique_ptr<can_frame> DjiDriver::init_frame(int frame_id)
 
 void DjiDriver::process_rx()
 {
-    int16_t pos_raw = rx_frame.data[0]<<8 | rx_frame.data[1];
-    int16_t vel_raw = rx_frame.data[2]<<8 | rx_frame.data[3];
-    int16_t tor_raw = rx_frame.data[4]<<8 | rx_frame.data[5];
+    int16_t pos_raw = (static_cast<int16_t>(rx_frame.data[0]) << 8) | (rx_frame.data[1] & 0xFF);
+    int16_t vel_raw = (static_cast<int16_t>(rx_frame.data[2]) << 8) | (rx_frame.data[3] & 0xFF);
+    int16_t tor_raw = (static_cast<int16_t>(rx_frame.data[4]) << 8) | (rx_frame.data[5] & 0xFF);
 
     if (motor_type == M3508)
     {
         if ((int)rx_frame.can_id != 0x200 + hid) return;
-        // update only when the frame is for this motor
-        present_data.update_pos((float)pos_raw * ENCODER_ANGLE_RATIO);
-        present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
-        present_data.torque = (float)tor_raw * 16384 / 20; // actually current, Ampere
     }
     else if (motor_type == M6020)
     {
         if ((int)rx_frame.can_id != 0x204 + hid) return;
-        // update only when the frame is for this motor
-        present_data.update_pos((float)pos_raw * ENCODER_ANGLE_RATIO);
-        present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
-        present_data.torque = (float)tor_raw * 16384 / 20; // actually current, Ampere
     }
+    else if (motor_type == M2006)
+    {
+        if ((int)rx_frame.can_id != 0x200 + hid) return;
+    }
+    
+    present_data.update_pos((float)pos_raw * ENCODER_ANGLE_RATIO);
+    present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
+    present_data.torque = (float)tor_raw * 16384 / 20; // actually current, Ampere
 }
 
 void DjiDriver::write_tx()
@@ -137,8 +138,18 @@ void DjiDriver::write_tx()
             tx_frame_2ff->data[2 * (hid - 4) - 1] = (uint8_t)(current_data & 0xff);
         }
     }
-
-    
+    else if (motor_type == M2006)
+    {
+        int16_t current_data = static_cast<int16_t>(current / I_MAX * 16384);
+        if (hid <= 4)
+        {
+            tx_frame_200->data[2 * hid - 2] = (uint8_t)(current_data >> 8);
+            tx_frame_200->data[2 * hid - 1] = (uint8_t)(current_data & 0xff);
+        } else {
+            tx_frame_1ff->data[2 * (hid - 4) - 2] = (uint8_t)(current_data >> 8);
+            tx_frame_1ff->data[2 * (hid - 4) - 1] = (uint8_t)(current_data & 0xff);
+        }
+    }
 }
 
 void DjiDriver::send_frame()
