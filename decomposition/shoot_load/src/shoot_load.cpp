@@ -8,10 +8,10 @@
 
 enum MotorId
 {
-    FRIC1 = 5,
-    FRIC2 = 6,
-    FEED1 = 7,
-    FEED2 = 8,
+    FRIC_U = 5,
+    FRIC_D = 6,
+    FEED_L = 7,
+    FEED_R = 8,
 };
 
 class ShootLoad : public rclcpp::Node
@@ -32,32 +32,23 @@ private:
     void shoot_callback(const shooting_interface::msg::Shoot::SharedPtr msg)
     {
         motor_interface::msg::MotorGoal goal_msg{};
-        if (msg->id == 0)
-        {
-            goal_msg.motor_id.push_back(FEED1);
-            if (msg->feed_state == true) goal_msg.goal_vel.push_back(FEED_VEL);
-            else goal_msg.goal_vel.push_back(0);
-            goal_msg.goal_pos.push_back(0);
 
-            goal_msg.motor_id.push_back(FRIC1);
-            if (msg->fric_state == true) goal_msg.goal_vel.push_back(FRIC_VEL);
-            else goal_msg.goal_vel.push_back(0);
-            goal_msg.goal_pos.push_back(0);
-            motor_pub_->publish(goal_msg);
-        }
-        else if (msg->id == 1)
-        {
-            goal_msg.motor_id.push_back(FEED2);
-            if (msg->feed_state == true) goal_msg.goal_vel.push_back(FEED_VEL);
-            else goal_msg.goal_vel.push_back(0);
-            goal_msg.goal_pos.push_back(0);
+        goal_msg.motor_id.push_back(FEED_L);
+        if (msg->feed_state == true) goal_msg.goal_vel.push_back(FEED_VEL);
+        else goal_msg.goal_vel.push_back(0);
+        goal_msg.goal_pos.push_back(0);
 
-            goal_msg.motor_id.push_back(FRIC2);
-            if (msg->fric_state == true) goal_msg.goal_vel.push_back(FRIC_VEL);
-            else goal_msg.goal_vel.push_back(0);
-            goal_msg.goal_pos.push_back(0);
-            motor_pub_->publish(goal_msg);
-        }
+        goal_msg.motor_id.push_back(FRIC_U);
+        if (msg->fric_state == true) goal_msg.goal_vel.push_back(FRIC_VEL);
+        else goal_msg.goal_vel.push_back(0);
+        goal_msg.goal_pos.push_back(0);
+
+        goal_msg.motor_id.push_back(FRIC_D);
+        if (msg->fric_state == true) goal_msg.goal_vel.push_back(FRIC_VEL);
+        else goal_msg.goal_vel.push_back(0);
+        goal_msg.goal_pos.push_back(0);
+        
+        motor_pub_->publish(goal_msg);
     }
 };
 
