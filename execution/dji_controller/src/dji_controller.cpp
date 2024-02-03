@@ -72,6 +72,7 @@ private:
     
     void goal_callback(const motor_interface::msg::MotorGoal::SharedPtr msg)
     {
+        // RCLCPP_INFO(this->get_logger(), "Received motor goal");
         int count = msg->motor_id.size();
         for (int i = 0; i < count; i++)
         {
@@ -127,6 +128,8 @@ private:
             drivers_.push_back(std::make_unique<DjiDriver>(rid, type));
             drivers_.back()->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
             drivers_.back()->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
+
+            RCLCPP_INFO(this->get_logger(), "Motor rid %d hid %d initialized", drivers_.back()->rid, drivers_.back()->hid);
         }
     }
 };

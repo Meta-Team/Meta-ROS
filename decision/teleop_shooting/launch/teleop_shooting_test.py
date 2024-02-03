@@ -5,19 +5,19 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory('application'),
+        get_package_share_directory('teleop_shooting'),
         'config',
-        'sentry_config.yaml'
+        'teleop_shooting.yaml'
     )
     return LaunchDescription([
-        # perception
+        # # perception
         # Node(
         #     package='teleop_keyboard',
         #     executable='teleop_keyboard',
         #     name='teleop_keyboard',
         #     parameters=[config],
         # ),
-        # decision
+        # # decision
         Node(
             package="teleop_shooting",
             executable="teleop_shooting",
@@ -30,7 +30,7 @@ def generate_launch_description():
         #     name="aiming_demo",
         #     parameters=[config],
         # ),
-        # decomposition
+        # # decomposition
         # Node(
         #     package="uni_gimbal_demo",
         #     executable="uni_gimbal_demo",
@@ -44,10 +44,10 @@ def generate_launch_description():
             parameters=[config],
         ),
         # execution
-        # Node(
-        #     package='dji_controller',
-        #     executable='dji_controller',
-        #     name='dji_controller',
-        #     parameters=[config],
-        # ),
+        Node(
+            package='dji_controller',
+            executable='dji_controller',
+            name='dji_controller',
+            parameters=[config],
+        ),
     ])
