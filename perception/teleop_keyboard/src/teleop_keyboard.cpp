@@ -43,6 +43,9 @@ public:
         case 'd': msg_.d = true; break;
         case 'q': msg_.q = true; break;
         case 'e': msg_.e = true; break;
+        case 'o': msg_.o = true; break;
+        case 'p': msg_.p = true; break;
+        case ' ': msg_.space = true; break;
         default: break;
         }
         pub_->publish(msg_);
@@ -61,6 +64,9 @@ private:
         msg_.d = false;
         msg_.q = false;
         msg_.e = false;
+        msg_.o = false;
+        msg_.p = false;
+        msg_.space = false;
     }
 };
 
