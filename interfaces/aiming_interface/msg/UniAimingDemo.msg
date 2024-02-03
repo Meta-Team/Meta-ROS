@@ -1,2 +1,1 @@
-float32 yaw_pos
 float32 pitch_pos

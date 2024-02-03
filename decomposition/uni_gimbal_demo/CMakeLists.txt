@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(duo_gimbal)
+project(uni_gimbal_demo)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -10,20 +10,21 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-
 find_package(rclcpp REQUIRED)
+find_package(aiming_interface REQUIRED)
+find_package(movement_interface REQUIRED)
 find_package(motor_interface REQUIRED)
 
-include_directories(include)
-
-add_executable(duo_gimbal_node 
-  src/duo_gimbal.cpp)
-
-ament_target_dependencies(duo_gimbal_node
+add_executable(uni_gimbal_demo
+  src/uni_gimbal_demo.cpp)
+ament_target_dependencies(uni_gimbal_demo
   rclcpp
+  aiming_interface
+  movement_interface
   motor_interface)
 
-install(TARGETS duo_gimbal_node
+install(TARGETS
+  uni_gimbal_demo
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

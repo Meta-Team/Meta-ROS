@@ -47,7 +47,7 @@ float UniGimbal::velocity_pid(float error)
 void UniGimbal::aiming_callback(const aiming_interface::msg::UniAiming::SharedPtr msg)
 {
     float current_yaw = get_current_gimbal_yaw();
-    float goal_yaw = msg->yaw;
+    float goal_yaw = msg->yaw_pos;
     float error = goal_yaw - current_yaw;
     float velocity = velocity_pid(error) - chassis_omega;
     // gimbal should rotate in reverse direction of chassis

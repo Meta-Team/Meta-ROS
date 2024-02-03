@@ -14,6 +14,9 @@
 
 class UniGimbal : public rclcpp::Node
 {
+public:
+    UniGimbal();
+
 private:
     rclcpp::Subscription<aiming_interface::msg::UniAiming>::SharedPtr aim_sub_;
     rclcpp::Client<gyro_interface::srv::GimbalPosition>::SharedPtr gyro_cli_;
@@ -30,9 +33,6 @@ private:
     float velocity_pid(float error);
 
     void aiming_callback(const aiming_interface::msg::UniAiming::SharedPtr msg);
-
-public:
-    UniGimbal();
 };
 
 #endif
