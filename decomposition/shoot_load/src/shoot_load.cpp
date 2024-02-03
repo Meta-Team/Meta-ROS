@@ -10,8 +10,8 @@ enum MotorId
 {
     FRIC1 = 5,
     FRIC2 = 6,
-    FEED1 = 9,
-    FEED2 = 10,
+    FEED1 = 7,
+    FEED2 = 8,
 };
 
 class ShootLoad : public rclcpp::Node

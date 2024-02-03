@@ -12,6 +12,9 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
+  <depend>shooting_interface</depend>
+  <depend>motor_interface</depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>
