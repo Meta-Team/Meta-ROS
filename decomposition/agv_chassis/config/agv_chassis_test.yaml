@@ -1,11 +1,9 @@
 /**:
   ros__parameters:
 
-  # for node `agv_chassis`
     chassis_mode: 1
     # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
 
-  # for node `dji_controller` and `dm_controller` and `motor_feedback
     motor_count: 8
     # [LF_V, RF_V, LB_V, RB_V, LF_D, RF_D, LB_D, RB_D]
     motor_ids:    [1, 2, 3, 4, 5, 6, 7, 8]
@@ -14,11 +12,10 @@
     # for dji: 0->3508, 1->6020, 2->2006
     # for dm: 0->vel, 1->mit, 2->pos_vel
 
-  # for node `dji_controller` and `dm_controller`
-    p2v_kps: [0.8, 0.8, 0.8, 0.8, 0.0, 0.0, 0.0, 0.0]
-    p2v_kis: [0.001, 0.001, 0.001, 0.001, 0.0, 0.0, 0.0, 0.0]
-    p2v_kds: [1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+    p2v_kps: [0.0, 0.0, 0.0, 0.0, 0.8, 0.8, 0.8, 0.8]
+    p2v_kis: [0.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001, 0.001]
+    p2v_kds: [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0]
 
-    v2c_kps: [0.1, 0.1, 0.1, 0.1, 0.0025, 0.0025, 0.0025, 0.0025]
-    v2c_kis: [0.00001, 0.00001, 0.00001, 0.00001, 0.0000, 0.0000, 0.0000, 0.0000]
-    v2c_kds: [1.0, 1.0, 1.0, 1.0, 0.03, 0.03, 0.03, 0.03]
+    v2c_kps: [0.0025, 0.0025, 0.0025, 0.0025, 0.1, 0.1, 0.1, 0.1]
+    v2c_kis: [0.0000, 0.0000, 0.0000, 0.0000, 0.00001, 0.00001, 0.00001, 0.00001]
+    v2c_kds: [0.03, 0.03, 0.03, 0.03, 1.0, 1.0, 1.0, 1.0]
