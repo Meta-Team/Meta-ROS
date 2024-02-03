@@ -10,9 +10,12 @@ class AimingDemo : public rclcpp::Node
 public:
     AimingDemo() : Node("aiming_demo")
     {
+        aim_msg.pitch_pos = 0.0; // MY_TODO: to be tuned
         aim_pub_ = this->create_publisher<aiming_interface::msg::UniAimingDemo>("uni_aiming_demo", 10);
         op_sub_ = this->create_subscription<operation_interface::msg::TeleopKey>("teleop_key",
             10, std::bind(&AimingDemo::op_callback, this, std::placeholders::_1));
+        timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_R),
+            std::bind(&AimingDemo::timer_callback, this));
     }
 
 private:

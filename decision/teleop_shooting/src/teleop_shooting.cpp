@@ -16,6 +16,7 @@ public:
             std::bind(&TeleopShooting::send_timer_callback, this));
         recov_timer_ = this->create_wall_timer(std::chrono::milliseconds(200),
             std::bind(&TeleopShooting::recov_callback, this));
+        RCLCPP_INFO(this->get_logger(), "TeleopShooting initialized.");
     }
 
 private:

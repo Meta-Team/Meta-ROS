@@ -3,7 +3,7 @@
 
     chassis_mode: 1
     # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
-    yaw_ratio: 100 # MY_TODO: to be tuned
+    yaw_ratio: 100.0 # MY_TODO: to be tuned
 
     motor_count:  10
     motor_ids:    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]

@@ -43,6 +43,8 @@ public:
         case 'd': msg_.d = true; break;
         case 'q': msg_.q = true; break;
         case 'e': msg_.e = true; break;
+        case 'i': msg_.i = true; break;
+        case 'j': msg_.j = true; break;
         case 'o': msg_.o = true; break;
         case 'p': msg_.p = true; break;
         case ' ': msg_.space = true; break;
@@ -64,6 +66,8 @@ private:
         msg_.d = false;
         msg_.q = false;
         msg_.e = false;
+        msg_.i = false;
+        msg_.j = false;
         msg_.o = false;
         msg_.p = false;
         msg_.space = false;

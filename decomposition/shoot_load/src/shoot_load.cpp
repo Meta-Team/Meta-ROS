@@ -22,6 +22,7 @@ public:
         shoot_sub_ = this->create_subscription<shooting_interface::msg::Shoot>("shoot",
             10, std::bind(&ShootLoad::shoot_callback, this, std::placeholders::_1));
         motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
+        RCLCPP_INFO(this->get_logger(), "ShootLoad initialized.");
     }
 
 private:
