@@ -3,7 +3,7 @@
 #include "shooting_interface/msg/shoot.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
 
-#define FEED_VEL 30
+#define FEED_VEL 300
 #define FRIC_VEL 300
 
 enum MotorId
