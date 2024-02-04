@@ -62,9 +62,9 @@ private:
 
     void feedback_timer_callback()
     {
+        DjiDriver::get_frame();
         for (auto& driver : drivers_)
-        {
-            DjiDriver::get_frame();
+        { 
             driver->process_rx();
             // rclcpp::sleep_for(std::chrono::milliseconds(1)); // sleep for 1 ms
         }

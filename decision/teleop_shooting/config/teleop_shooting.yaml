@@ -5,10 +5,10 @@
     # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
     yaw_ratio: 100.0 # MY_TODO: to be tuned
 
-    motor_count:  2
+    motor_count:  3
     motor_ids:    [5, 6, 7]
     motor_brands: [0, 0, 0] # 0->dji, 1->dm
-    motor_types:  [0, 0, 2]
+    motor_types:  [0, 0, 0]
     # for dji: 0->3508, 1->6020, 2->2006
     # for dm: 0->vel, 1->mit, 2->pos_vel
 
@@ -16,6 +16,6 @@
     p2v_kis: [0.0, 0.0, 0.0]
     p2v_kds: [0.0, 0.0, 0.0]
 
-    v2c_kps: [0.006, 0.006, 15.0]
-    v2c_kis: [0.000002, 0.000002, 0.00001]
-    v2c_kds: [0.0, 0.0, 0.0]
+    v2c_kps: [0.004, 0.004, 0.004]
+    v2c_kis: [0.00001, 0.00001, 0.0001]
+    v2c_kds: [0.1, 0.1, 0.00]
