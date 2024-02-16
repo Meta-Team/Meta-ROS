@@ -1,8 +1,10 @@
 #include "dji_controller/dji_driver.h"
 #include "dji_controller/can_driver.hpp"
 #include <cstdint>
+#include <deque>
 #include <linux/can.h>
 #include <memory>
+#include <queue>
 
 std::unique_ptr<CanDriver> DjiDriver::can_0 = std::make_unique<CanDriver>(0);
 std::unique_ptr<can_frame> DjiDriver::tx_frame_200 = init_frame(0x200);
@@ -22,6 +24,10 @@ DjiDriver::DjiDriver(int rid, MotorType type) :
     this->motor_type = type;
     this->p2v_out = PidOutput();
     this->v2c_out = PidOutput();
+
+    auto zeros = std::deque<float>(Q_SIZE, 0.0);
+    vel_errors = std::queue<float>(zeros);
+    pos_errors = std::queue<float>(zeros);
 }
 
 void DjiDriver::set_goal(float goal_pos, float goal_vel)
@@ -46,12 +52,17 @@ void DjiDriver::set_v2c_pid(float kp, float ki, float kd)
 
 void DjiDriver::vel2current()
 {
-    float previous_vel_error = vel_error;
-    vel_error = goal_vel - present_data.velocity;
+    float prev_in_error = vel_errors.back();
+    // pop out the oldest error
+    float out_error = vel_errors.front();
+    vel_errors.pop();
+    // push in the newest error
+    float in_error = goal_vel - present_data.velocity;
+    vel_errors.push(in_error);
 
-    v2c_out.p = v2c_prm.kp * vel_error;
-    v2c_out.i += v2c_prm.ki * vel_error * CONTROL_R;
-    v2c_out.d = v2c_prm.kd * (vel_error - previous_vel_error) / CONTROL_R;
+    v2c_out.p = v2c_prm.kp * in_error;
+    v2c_out.i += v2c_prm.ki * (in_error - out_error) * CONTROL_R; // the sum of the queue
+    v2c_out.d = v2c_prm.kd * (in_error - prev_in_error) / CONTROL_R;
 
     this->current = v2c_out.sum();
 
@@ -62,14 +73,19 @@ void DjiDriver::vel2current()
 
 void DjiDriver::pos2velocity()
 {
-    float previous_pos_error = pos_error;
-    pos_error = goal_pos - present_data.position;
+    float prev_in_error = pos_errors.back();
+    // pop out the oldest error
+    float out_error = pos_errors.front();
+    pos_errors.pop();
+    // push in the newest error
+    float in_error = goal_pos - present_data.position;
+    pos_errors.push(in_error);
 
-    p2v_out.p = p2v_prm.kp * pos_error;
-    p2v_out.i += p2v_prm.ki * pos_error * CONTROL_R;
-    p2v_out.d = p2v_prm.kd * (pos_error - previous_pos_error) / CONTROL_R;
+    p2v_out.p = p2v_prm.kp * in_error;
+    p2v_out.i += p2v_prm.ki * (in_error - out_error) * CONTROL_R; // the sum of the queue
+    p2v_out.d = p2v_prm.kd * (in_error - prev_in_error) / CONTROL_R;
 
-    goal_vel = p2v_out.sum();
+    this->goal_vel = p2v_out.sum();
 
     // restrict the velocity
     if (goal_vel > V_MAX) this->goal_vel = V_MAX;

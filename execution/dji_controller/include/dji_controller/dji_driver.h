@@ -5,6 +5,7 @@
 #include "dji_controller/motor_data.hpp"
 #include <linux/can.h>
 #include <memory>
+#include <queue>
 
 #define ENCODER_ANGLE_RATIO 360.0f / 8192.0f
 #define REDUCE_RATIO 36.0f
@@ -14,6 +15,8 @@
 
 #define I_MAX 20 // Ampere, current limit
 #define V_MAX 300 // to be tuned, velocity limit
+
+#define Q_SIZE 256 // the size of error queues
 
 enum MotorType
 {
@@ -43,8 +46,8 @@ private:
 
     float goal_pos{}; /**< Desired position of the motor. */
     float goal_vel{}; /**< Desired velocity of the motor. */
-    float vel_error{}; /**< Error in velocity. */
-    float pos_error{}; /**< Error in position. */
+    std::queue<float> vel_errors; /**< A queue storing errors in vel. */
+    std::queue<float> pos_errors; /**< A queue storing errors in pos. */
     float current{}; /**< Current value of the motor. */
 
     /**
