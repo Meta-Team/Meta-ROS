@@ -3,7 +3,8 @@
 
     motor:
       count:  1
-      ids:    [0x10]
+      rids:   ["test"]
+      hids:   [0x10]
       brands: [2] # 0->dji, 1->dm, 2->unitree
       types:  [0]
     # for dji: 0->3508, 1->6020, 2->2006

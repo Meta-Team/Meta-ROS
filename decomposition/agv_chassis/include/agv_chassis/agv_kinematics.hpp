@@ -2,8 +2,10 @@
 #define AGV_KINEMATICS_HPP
 
 #include <cmath>
+#include <map>
 #include <motor_interface/msg/detail/dm_goal__struct.hpp>
 #include <motor_interface/msg/detail/motor_goal__struct.hpp>
+#include <unordered_map>
 #include <vector>
 
 #include "movement_interface/msg/natural_move.hpp"
@@ -15,18 +17,6 @@
 
 #define PI 3.14159265358979323846
 #define RADIUS 0.1 // meter
-
-enum MotorId
-{
-    LF_V = 1,
-    RF_V = 2,
-    LB_V = 3,
-    RB_V = 4,
-    LF_D = 5,
-    RF_D = 6,
-    LB_D = 7,
-    RB_D = 8,
-};
 
 /**
  * @brief Namespace containing functions and types related to AGV kinematics.
@@ -41,10 +31,8 @@ namespace AgvKinematics
     /**
      * @brief The offsets of the motors.
      * Used to compensate the difference between the actual and the theoretical angles of the motors.
-     * The order should be the same as MotorId.
-     * @note The first four values, which are for vel motors, must be zero.
      */
-    constexpr float offsets[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    extern std::unordered_map<std::string, float> offsets;
 
     /**
      * @brief Decomposes a natural move message into motor goals.
@@ -85,7 +73,7 @@ namespace AgvKinematics
      * @param goal_vel The goal velocity of the motor.
      * @param goal_pos The goal position of the motor.
      */
-    void add_goal(motor_interface::msg::MotorGoal &motor_goal, const MotorId rid, const float goal_vel, const float goal_pos);
+    void add_goal(motor_interface::msg::MotorGoal &motor_goal, const std::string& rid, const float goal_vel, const float goal_pos);
 
     /**
      * @brief Calculates the root sum square of two values.

@@ -7,8 +7,8 @@
 
     motor:
       count: 8
-      # [LF_V, RF_V, LB_V, RB_V, LF_D, RF_D, LB_D, RB_D]
-      ids:    [1, 2, 3, 4, 5, 6, 7, 8]
+      rids:   [LF_V, RF_V, LB_V, RB_V, LF_D, RF_D, LB_D, RB_D]
+      hids:   [1, 2, 3, 4, 5, 6, 7, 8]
       brands: [0, 0, 0, 0, 0, 0, 0, 0] # 0->dji, 1->dm
       types:  [0, 0, 0, 0, 1, 1, 1, 1]
       # for dji: 0->3508, 1->6020, 2->2006

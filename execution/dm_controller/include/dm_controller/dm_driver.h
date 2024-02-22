@@ -9,6 +9,7 @@
 #include <linux/can.h>
 #include <chrono>
 #include <memory>
+#include <string>
 #include <thread>
 
 #define START_CMD {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfc}
@@ -44,7 +45,7 @@ class DmDriver
 public:
     can_frame tx_frame; ///< The CAN frame used for transmitting data.
     int hid; ///< Hardware ID of the motor controlled by the driver.
-    int rid; ///< ROS ID of the motor controlled by the driver.
+    std::string rid; ///< ROS ID of the motor controlled by the driver.
 
     /**
      * @brief Destructor for the DmDriver class.
@@ -134,10 +135,11 @@ public:
      * @brief Constructs a DmMitDriver object with the specified ID, kp, and kd values.
      * 
      * @param rid The ROS ID of the DM device.
+     * @param hid The hardware ID of the DM device.
      * @param kp The proportional gain value.
      * @param kd The derivative gain value.
      */
-    DmMitDriver(int rid, float kp, float kd);
+    DmMitDriver(const std::string& rid, int hid, float kp, float kd);
 
     /**
      * @brief Sets the mode of the DM device.
@@ -188,8 +190,9 @@ public:
      * @brief Constructs a DmVelDriver object with the specified ID.
      * 
      * @param rid The ID of the DM motor.
+     * @param hid The hardware ID of the DM motor.
      */
-    DmVelDriver(int rid);
+    DmVelDriver(const std::string& rid, int hid);
 
     /**
      * @brief Sets the mode of the DM motor.

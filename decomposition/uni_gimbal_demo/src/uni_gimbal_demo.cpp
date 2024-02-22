@@ -35,11 +35,11 @@ private:
     {
         motor_interface::msg::MotorGoal goal_msg{};
         // yaw
-        goal_msg.motor_id.push_back(MotorId::YAW);
+        goal_msg.motor_id.push_back("YAW");
         goal_msg.goal_vel.push_back(- yaw_ratio * chassis_omega);
         goal_msg.goal_pos.push_back(0.0);
         // pitch
-        goal_msg.motor_id.push_back(MotorId::PITCH);
+        goal_msg.motor_id.push_back("PITCH");
         goal_msg.goal_vel.push_back(0.0);
         goal_msg.goal_pos.push_back(msg->pitch_pos);
 

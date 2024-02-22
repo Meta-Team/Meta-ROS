@@ -4,7 +4,8 @@
     # for node `dji_controller` and `motor_feedback`
     motor:
       count: 1
-      ids: [7]
+      rids: ["test"]
+      hids: [7]
       brands: [0]  # 0->dji, 1->dm
       types: [2]  # for dji: 0->3508, 1->6020, 2->2006; for dm: 0->vel, 1->mit, 2->pos_vel
 

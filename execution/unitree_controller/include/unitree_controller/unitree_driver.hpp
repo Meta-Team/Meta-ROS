@@ -15,13 +15,14 @@
 class UnitreeDriver
 {
 public:
-    int hid, rid; ///< The hardware ID and ROS ID of the motor.
+    int hid; ///< The hardware ID of the motor.
+    std::string rid; ///< The ROS ID of the motor.
 
     /**
      * @brief Construct a new UnitreeDriver object.
      * This constructor initializes a new UnitreeDriver object.
      */
-    UnitreeDriver(int rid);
+    UnitreeDriver(std::string rid, int hid);
 
     /**
      * @brief Destroy the UnitreeDriver object.

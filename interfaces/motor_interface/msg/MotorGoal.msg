@@ -1,4 +1,4 @@
-int32[] motor_id
+string[] motor_id
 float32[] goal_vel
 float32[] goal_pos
 

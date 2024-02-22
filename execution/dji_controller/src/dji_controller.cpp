@@ -8,6 +8,7 @@
 #include <linux/can.h>
 #include <memory>
 #include <rclcpp/logging.hpp>
+#include <string>
 #include <vector>
 
 class DjiController : public rclcpp::Node
@@ -76,7 +77,7 @@ private:
         int count = msg->motor_id.size();
         for (int i = 0; i < count; i++)
         {
-            int rid = msg->motor_id[i];
+            std::string rid = msg->motor_id[i];
             float pos = msg->goal_pos[i];
             float vel = msg->goal_vel[i];
 
@@ -103,11 +104,13 @@ private:
     {
         int motor_count = this->declare_parameter("motor.count", 0);
 
-        std::vector<int64_t> motor_brands {};
+        std::vector<int64_t> motor_brands{};
         motor_brands = this->declare_parameter("motor.brands", motor_brands);
-        std::vector<int64_t> motor_ids {};
-        motor_ids = this->declare_parameter("motor.ids", motor_ids);
-        std::vector<int64_t> motor_types {};
+        std::vector<std::string> motor_rids{};
+        motor_rids = this->declare_parameter("motor.rids", motor_rids);
+        std::vector<int64_t> motor_hids{};
+        motor_hids = this->declare_parameter("motor.hids", motor_hids);
+        std::vector<int64_t> motor_types{};
         motor_types = this->declare_parameter("motor.types", motor_types);
         
         p2v_kps = this->declare_parameter("motor.p2v.kps", p2v_kps);
@@ -124,12 +127,14 @@ private:
             
             dji_motor_count++;
             MotorType type = static_cast<MotorType>(motor_types[i]);
-            int rid = motor_ids[i];
-            drivers_.push_back(std::make_unique<DjiDriver>(rid, type));
+            std::string rid = motor_rids[i];
+            int hid = motor_hids[i];
+            drivers_.push_back(std::make_unique<DjiDriver>(rid, hid, type));
             drivers_.back()->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
             drivers_.back()->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
 
-            RCLCPP_INFO(this->get_logger(), "Motor rid %d hid %d initialized", drivers_.back()->rid, drivers_.back()->hid);
+            RCLCPP_INFO(this->get_logger(), "Motor rid %s hid %d initialized",
+                drivers_.back()->rid.c_str(), drivers_.back()->hid);
         }
     }
 };

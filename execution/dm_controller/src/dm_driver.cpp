@@ -58,11 +58,11 @@ DmDriver::~DmDriver()
  * DmMitDriver is a subclass of DmDriver that represents a specific type of driver.
  ************************************************************************************/
 
-DmMitDriver::DmMitDriver(int rid, float kp, float kd)
+DmMitDriver::DmMitDriver(const std::string& rid, int hid, float kp, float kd)
 {
     printf("DmMitDriver created\n");
     this->rid = rid;
-    this->hid = rid;
+    this->hid = hid;
     set_mode();
     set_param_mit(kp, kd);
 }
@@ -116,9 +116,9 @@ void DmMitDriver::set_position(float goal_pos)
  * DmVelDriver is a subclass of DmDriver that represents a specific type of driver.
  ************************************************************************************/
 
-DmVelDriver::DmVelDriver(int rid)
+DmVelDriver::DmVelDriver(const std::string& rid, int hid)
 {
-    this->hid = rid;
+    this->hid = hid;
     this->rid = rid;
     set_mode();
 }

@@ -17,14 +17,6 @@
 #define PI 3.14159265358979323846
 #define RADIUS 1 // meter
 
-enum MotorId
-{
-    F = 1,
-    L = 4,
-    B = 3,
-    R = 2,
-};
-
 /**
  * @brief This namespace contains functions to decompose movement commands into motor goals.
  */
@@ -61,12 +53,12 @@ namespace OmniKinematics
      * Set position to 0 to control the motor in velocity mode.
      * Set velocity to 0 to control the motor in position mode.
      * @param[out] motor_goals The motor goals to be set.
-     * @param wheel_id The ROS id of the motor.
+     * @param rid The ROS id of the motor.
      * @param goal_vel The goal velocity of the motor.
      * @param goal_pos The goal position of the motor.
      */
     void add_goal(motor_interface::msg::MotorGoal &motor_goals,
-                  const MotorId wheel_id, const float goal_vel, const float goal_pos);
+                  const std::string& rid, const float goal_vel, const float goal_pos);
 }
 
 #endif // OMNI_KINEMATICS_HPP

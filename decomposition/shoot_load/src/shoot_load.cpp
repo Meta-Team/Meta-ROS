@@ -33,17 +33,17 @@ private:
     {
         motor_interface::msg::MotorGoal goal_msg{};
 
-        goal_msg.motor_id.push_back(FEED_L);
+        goal_msg.motor_id.push_back("FEED_L");
         if (msg->feed_state == true) goal_msg.goal_vel.push_back(FEED_VEL);
         else goal_msg.goal_vel.push_back(0);
         goal_msg.goal_pos.push_back(0);
 
-        goal_msg.motor_id.push_back(FRIC_U);
+        goal_msg.motor_id.push_back("FRIC_U");
         if (msg->fric_state == true) goal_msg.goal_vel.push_back(FRIC_VEL);
         else goal_msg.goal_vel.push_back(0);
         goal_msg.goal_pos.push_back(0);
 
-        goal_msg.motor_id.push_back(FRIC_D);
+        goal_msg.motor_id.push_back("FRIC_D");
         if (msg->fric_state == true) goal_msg.goal_vel.push_back(FRIC_VEL);
         else goal_msg.goal_vel.push_back(0);
         goal_msg.goal_pos.push_back(0);

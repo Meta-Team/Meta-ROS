@@ -5,6 +5,7 @@
 #include <linux/can.h>
 #include <memory>
 #include <queue>
+#include <string>
 
 std::unique_ptr<CanDriver> DjiDriver::can_0 = std::make_unique<CanDriver>(0);
 std::unique_ptr<can_frame> DjiDriver::tx_frame_200 = init_frame(0x200);
@@ -12,15 +13,12 @@ std::unique_ptr<can_frame> DjiDriver::tx_frame_1ff = init_frame(0x1ff);
 std::unique_ptr<can_frame> DjiDriver::tx_frame_2ff = init_frame(0x2ff);
 can_frame DjiDriver::rx_frame;
 
-DjiDriver::DjiDriver(int rid, MotorType type) :
+DjiDriver::DjiDriver(const std::string& rid, const int hid, MotorType type) :
     p2v_prm(0.1, 0.01, 0.1),
-    v2c_prm(0.004, 0.00003, 0.1)
+    v2c_prm(0.004, 0.00003, 0.1),
+    hid(hid),
+    rid(rid)
 {
-    if (type == M3508) this->hid = rid;
-    else if (type == M6020) this->hid = rid - 4;
-    else if (type == M2006) this->hid = rid;
-    
-    this->rid = rid;
     this->motor_type = type;
     this->p2v_out = PidOutput();
     this->v2c_out = PidOutput();

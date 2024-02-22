@@ -74,14 +74,15 @@ private:
 
 public:
     int hid; /**< Hardware ID of the motor. */
-    int rid; /**< ROS ID of the motor. */
+    std::string rid; /**< ROS ID of the motor. */
 
     /**
      * @brief Constructor for DjiDriver class.
      * @param rid The ROS ID of the motor.
+     * @param hid The hardware ID of the motor.
      * @param type The type of the motor.
      */
-    DjiDriver(int rid, MotorType type);
+    DjiDriver(const std::string& rid, int hid, MotorType type);
     
     /**
      * @brief Set the desired position and velocity for the motor.
