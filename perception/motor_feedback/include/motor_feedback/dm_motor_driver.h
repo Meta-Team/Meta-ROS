@@ -3,6 +3,7 @@
 
 #include "motor_driver.hpp"
 #include "motor_data.hpp"
+#include <string>
 
 #define P_MAX 3.141593
 #define V_MAX 30
@@ -13,7 +14,7 @@ class DmMotorDriver : public MotorDriver
 public:
     void process_rx() override;
 
-    DmMotorDriver(int id);
+    DmMotorDriver(std::string rid, int hid);
 
 private:
     float uint_to_float(int x_int, float x_min, float x_max, int bits);

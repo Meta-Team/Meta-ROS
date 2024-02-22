@@ -1,4 +1,4 @@
-int32[] motor_id
+string[] motor_id
 ---
 float32[] present_tor
 float32[] present_vel

@@ -3,8 +3,6 @@
 #include "omni_chassis/omni_kinematics.hpp"
 #include "motor_interface/srv/motor_present.hpp"
 
-#define YAW_ID 5 // MY_TODO: change
-
 enum ChassisMode
 {
     ALL = 0,
@@ -41,7 +39,7 @@ private:
         };
         auto motor_req_ = std::make_shared<motor_interface::srv::MotorPresent::Request>();
         motor_req_->motor_id.clear();
-        motor_req_->motor_id.push_back(YAW_ID);
+        motor_req_->motor_id.push_back("YAW");
         motor_cli_->async_send_request(motor_req_, motor_cb);
 
         // calculate and publish

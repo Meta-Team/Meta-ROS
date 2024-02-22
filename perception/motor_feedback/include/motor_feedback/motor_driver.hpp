@@ -7,6 +7,7 @@
 #include <linux/can.h>
 #include <chrono>
 #include <memory>
+#include <string>
 #include <thread>
 
 #include "motor_data.hpp"
@@ -21,7 +22,8 @@
 class MotorDriver
 {
 public:
-    int motor_id; /**< The ID of the motor. */
+    int hid; /**< The Hardware ID of the motor. */
+    std::string rid; /**< The ROS ID of the motor. */
     MotorData present_data{}; /**< The present data of the motor. */
     
     /**

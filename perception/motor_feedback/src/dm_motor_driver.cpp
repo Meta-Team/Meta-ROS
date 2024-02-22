@@ -1,8 +1,9 @@
 #include "motor_feedback/dm_motor_driver.h"
 
-DmMotorDriver::DmMotorDriver(int id)
+DmMotorDriver::DmMotorDriver(std::string rid, int hid)
 {
-    this->motor_id = id;
+    this->rid = rid;
+    this->hid = hid;
 }
 
 float DmMotorDriver::uint_to_float(int x_int, float x_min, float x_max, int bits)

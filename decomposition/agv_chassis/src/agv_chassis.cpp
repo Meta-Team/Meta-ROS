@@ -3,7 +3,7 @@
 #include "agv_chassis/agv_kinematics.hpp"
 #include <rclcpp/publisher.hpp>
 
-#define YAW_ID 8 // MY_TODO: change
+// #define "YAW" 8 // MY_TODO: change
 
 enum ChassisMode
 {
@@ -30,11 +30,11 @@ private:
         // get motor position
         float motor_pos = 0;
         auto motor_cb = [&](rclcpp::Client<motor_interface::srv::MotorPresent>::SharedFuture future){
-            motor_pos = future.get()->present_pos[YAW_ID];
+            motor_pos = future.get()->present_pos[0];
         };
         auto motor_req_ = std::make_shared<motor_interface::srv::MotorPresent::Request>();
         motor_req_->motor_id.clear();
-        motor_req_->motor_id.push_back(YAW_ID);
+        motor_req_->motor_id.push_back("YAW");
         motor_cli_->async_send_request(motor_req_, motor_cb);
 
         // calculate and publish
@@ -55,11 +55,11 @@ private:
         // get motor position
         float motor_pos = 0;
         auto motor_cb = [&](rclcpp::Client<motor_interface::srv::MotorPresent>::SharedFuture future){
-            motor_pos = future.get()->present_pos[YAW_ID];
+            motor_pos = future.get()->present_pos[0];
         };
         auto motor_req_ = std::make_shared<motor_interface::srv::MotorPresent::Request>();
         motor_req_->motor_id.clear();
-        motor_req_->motor_id.push_back(YAW_ID);
+        motor_req_->motor_id.push_back("YAW");
         motor_cli_->async_send_request(motor_req_, motor_cb);
         
         // calculate and publish
