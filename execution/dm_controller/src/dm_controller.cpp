@@ -37,16 +37,16 @@ private:
 
     void motor_init()
     {
-        int motor_count = this->declare_parameter("motor_count", 0);
+        int motor_count = this->declare_parameter("motor.count", 0);
 
         std::vector<int64_t> motor_brands {};
-        motor_brands = this->declare_parameter("motor_brands", motor_brands);
+        motor_brands = this->declare_parameter("motor.brands", motor_brands);
         std::vector<int64_t> motor_ids {};
-        motor_ids = this->declare_parameter("motor_ids", motor_ids);
+        motor_ids = this->declare_parameter("motor.ids", motor_ids);
         std::vector<int64_t> motor_types {};
-        motor_types= this->declare_parameter("motor_types", motor_types);
-        kps = this->declare_parameter("p2v_kps", kps);
-        kis = this->declare_parameter("p2v_kis", kis);
+        motor_types= this->declare_parameter("motor.types", motor_types);
+        kps = this->declare_parameter("motor.p2v.kps", kps);
+        kis = this->declare_parameter("motor.p2v.kis", kis);
 
         for (int i = 0; i < motor_count; i++)
         {

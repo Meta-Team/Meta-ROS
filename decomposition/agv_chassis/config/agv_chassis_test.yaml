@@ -1,21 +1,25 @@
 /**:
   ros__parameters:
 
-    chassis_mode: 1
-    # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
+    chassis:
+      mode: 1
+      # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
 
-    motor_count: 8
-    # [LF_V, RF_V, LB_V, RB_V, LF_D, RF_D, LB_D, RB_D]
-    motor_ids:    [1, 2, 3, 4, 5, 6, 7, 8]
-    motor_brands: [0, 0, 0, 0, 0, 0, 0, 0] # 0->dji, 1->dm
-    motor_types:  [0, 0, 0, 0, 1, 1, 1, 1]
-    # for dji: 0->3508, 1->6020, 2->2006
-    # for dm: 0->vel, 1->mit, 2->pos_vel
+    motor:
+      count: 8
+      # [LF_V, RF_V, LB_V, RB_V, LF_D, RF_D, LB_D, RB_D]
+      ids:    [1, 2, 3, 4, 5, 6, 7, 8]
+      brands: [0, 0, 0, 0, 0, 0, 0, 0] # 0->dji, 1->dm
+      types:  [0, 0, 0, 0, 1, 1, 1, 1]
+      # for dji: 0->3508, 1->6020, 2->2006
+      # for dm: 0->vel, 1->mit, 2->pos_vel
 
-    p2v_kps: [0.0, 0.0, 0.0, 0.0, 0.8, 0.8, 0.8, 0.8]
-    p2v_kis: [0.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001, 0.001]
-    p2v_kds: [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0]
+      p2v:
+        kps: [0.0, 0.0, 0.0, 0.0, 0.8, 0.8, 0.8, 0.8]
+        kis: [0.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001, 0.001]
+        kds: [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0]
 
-    v2c_kps: [0.0025, 0.0025, 0.0025, 0.0025, 0.1, 0.1, 0.1, 0.1]
-    v2c_kis: [0.0000, 0.0000, 0.0000, 0.0000, 0.00001, 0.00001, 0.00001, 0.00001]
-    v2c_kds: [0.03, 0.03, 0.03, 0.03, 1.0, 1.0, 1.0, 1.0]
+      v2c:
+        kps: [0.0025, 0.0025, 0.0025, 0.0025, 0.1, 0.1, 0.1, 0.1]
+        kis: [0.0000, 0.0000, 0.0000, 0.0000, 0.00001, 0.00001, 0.00001, 0.00001]
+        kds: [0.03, 0.03, 0.03, 0.03, 1.0, 1.0, 1.0, 1.0]

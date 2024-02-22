@@ -101,21 +101,21 @@ private:
 
     void motor_init()
     {
-        int motor_count = this->declare_parameter("motor_count", 0);
+        int motor_count = this->declare_parameter("motor.count", 0);
 
         std::vector<int64_t> motor_brands {};
-        motor_brands = this->declare_parameter("motor_brands", motor_brands);
+        motor_brands = this->declare_parameter("motor.brands", motor_brands);
         std::vector<int64_t> motor_ids {};
-        motor_ids = this->declare_parameter("motor_ids", motor_ids);
+        motor_ids = this->declare_parameter("motor.ids", motor_ids);
         std::vector<int64_t> motor_types {};
-        motor_types= this->declare_parameter("motor_types", motor_types);
+        motor_types = this->declare_parameter("motor.types", motor_types);
         
-        p2v_kps = this->declare_parameter("p2v_kps", p2v_kps);
-        p2v_kis = this->declare_parameter("p2v_kis", p2v_kis);
-        p2v_kds = this->declare_parameter("p2v_kds", p2v_kds);
-        v2c_kps = this->declare_parameter("v2c_kps", v2c_kps);
-        v2c_kis = this->declare_parameter("v2c_kis", v2c_kis);
-        v2c_kds = this->declare_parameter("v2c_kds", v2c_kds);
+        p2v_kps = this->declare_parameter("motor.p2v.kps", p2v_kps);
+        p2v_kis = this->declare_parameter("motor.p2v.kis", p2v_kis);
+        p2v_kds = this->declare_parameter("motor.p2v.kds", p2v_kds);
+        v2c_kps = this->declare_parameter("motor.v2c.kps", v2c_kps);
+        v2c_kis = this->declare_parameter("motor.v2c.kis", v2c_kis);
+        v2c_kds = this->declare_parameter("motor.v2c.kds", v2c_kds);
 
         // initialize the drivers
         for (int i = 0; i < motor_count; i++)
