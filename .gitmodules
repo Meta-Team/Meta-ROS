@@ -1,0 +1,3 @@
+[submodule "decomposition/scara_moveit"]
+	path = decomposition/scara_moveit
+	url = https://github.com/Yao-Xinchen/scara_moveit
