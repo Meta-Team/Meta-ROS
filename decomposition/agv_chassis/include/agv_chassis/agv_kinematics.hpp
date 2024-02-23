@@ -3,8 +3,6 @@
 
 #include <cmath>
 #include <map>
-#include <motor_interface/msg/detail/dm_goal__struct.hpp>
-#include <motor_interface/msg/detail/motor_goal__struct.hpp>
 #include <unordered_map>
 #include <vector>
 

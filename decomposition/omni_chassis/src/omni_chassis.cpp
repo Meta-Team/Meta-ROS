@@ -57,8 +57,8 @@ private:
 public:
     OmniChassis() : Node("OmniChassis")
     {
-        int chassis_mode = 0;
-        chassis_mode = this->declare_parameter("chassis_mode", chassis_mode);
+        int chassis_mode = 1;
+        chassis_mode = this->declare_parameter("chassis.mode", chassis_mode);
         ChassisMode chassis_mode_ = static_cast<ChassisMode>(chassis_mode);
         RCLCPP_INFO(this->get_logger(), "chassis mode: %d", chassis_mode_);
 
