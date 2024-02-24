@@ -3,8 +3,6 @@
 #include "agv_chassis/agv_kinematics.hpp"
 #include <rclcpp/publisher.hpp>
 
-// #define "YAW" 8 // MY_TODO: change
-
 enum ChassisMode
 {
     ALL = 0,
@@ -74,7 +72,7 @@ private:
 public:
     AgvChassis() : Node("AgvChassis")
     {
-        int chassis_mode = 0;
+        int chassis_mode = 1;
         chassis_mode = this->declare_parameter("chassis_mode", chassis_mode);
         ChassisMode chassis_mode_ = static_cast<ChassisMode>(chassis_mode);
         RCLCPP_INFO(this->get_logger(), "Chassis mode: %d", chassis_mode_);
