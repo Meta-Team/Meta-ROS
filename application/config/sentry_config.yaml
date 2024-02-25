@@ -4,7 +4,13 @@
     chassis:
       mode: 1
       # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
+
+    gimbal:
       yaw_ratio: 100.0 # MY_TODO: to be tuned
+      fric_vel_u: 500.0
+      fric_vel_d: -500.0
+      feed_vel_l: 300.0
+      feed_vel_r: 300.0
 
     motor:
       count:  10

@@ -15,7 +15,7 @@ class Aiming : public rclcpp::Node
 public:
     Aiming() : Node("aiming")
     {
-        yaw_ratio = this->declare_parameter("yaw_ratio", yaw_ratio);
+        yaw_ratio = this->declare_parameter("gimbal.yaw_ratio", yaw_ratio);
         motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
         aim_sub_ = this->create_subscription<aiming_interface::msg::UniAimingDemo>("uni_aiming_demo",
             10, std::bind(&Aiming::aim_callback, this, std::placeholders::_1));

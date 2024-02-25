@@ -97,6 +97,6 @@ namespace AgvKinematics
      * @return True if the float is zero, false otherwise.
      */
     bool is_zero(float x);
-};
+}
 
 #endif // AGV_KINEMATICS_HPP
