@@ -43,7 +43,6 @@ void UnitreeDriver::set_goal(float goal_pos, float goal_vel)
         goal_cmd.q = 0.0;
         goal_cmd.dq = goal_vel * queryGearRatio(MotorType::GO_M8010_6); // cmd.W
     }
-    serial_port.sendRecv(&goal_cmd, &feedback_data);
 }
 
 void UnitreeDriver::set_pid(float kp, float kd)
@@ -55,4 +54,13 @@ void UnitreeDriver::set_pid(float kp, float kd)
 void UnitreeDriver::send_recv()
 {
     serial_port.sendRecv(&goal_cmd, &feedback_data);
+}
+
+std::tuple<float, float, float> UnitreeDriver::get_state()
+{
+    return std::make_tuple(
+        feedback_data.q / queryGearRatio(MotorType::GO_M8010_6), // pos
+        feedback_data.dq / queryGearRatio(MotorType::GO_M8010_6), // vel
+        feedback_data.tau // tor
+    );
 }

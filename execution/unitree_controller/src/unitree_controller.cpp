@@ -2,10 +2,15 @@
 #include "unitree_controller/unitree_driver.hpp"
 #include <memory>
 #include <motor_interface/msg/detail/motor_goal__struct.hpp>
+#include <motor_interface/msg/detail/motor_state__struct.hpp>
+#include <rclcpp/publisher.hpp>
 #include <rclcpp/subscription.hpp>
 #include <vector>
 
 #include "motor_interface/msg/motor_goal.hpp"
+#include "motor_interface/msg/motor_state.hpp"
+
+#define RATE 50 // ms
 
 class UnitreeController : public rclcpp::Node
 {
@@ -15,15 +20,20 @@ public:
         motor_init();
         goal_sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
             "motor_goal", 10, [this](const motor_interface::msg::MotorGoal::SharedPtr msg){
-                goal_callback(msg);
-            });
-
+            goal_callback(msg);
+        });
+        feedback_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
+        timer_ = this->create_wall_timer(std::chrono::milliseconds(RATE), [this](){
+            timer_callback();
+        });
         RCLCPP_INFO(this->get_logger(), "UnitreeController initialized");
     }
 
 private:
     std::vector<std::unique_ptr<UnitreeDriver>> drivers_;
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
+    rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr feedback_pub_;
+    rclcpp::TimerBase::SharedPtr timer_;
     std::vector<double> p2v_kps{}, p2v_kds{};
     int unitree_motor_count;
 
@@ -50,10 +60,31 @@ private:
                 driver->set_goal(pos, vel);
             }
             else {
-                // not found, may be a dm motor
+                // not found, may be a dm or dji motor
                 // RCLCPP_WARN(this->get_logger(), "Motor %d not found", rid);
             }
         }
+    }
+
+    void timer_callback()
+    {
+        // send and receive
+        for (auto& driver : drivers_)
+        {
+            driver->send_recv();
+        }
+        
+        // publish feedback
+        motor_interface::msg::MotorState msg;
+        for (auto& driver : drivers_)
+        {
+            msg.motor_id.push_back(driver->rid);
+            auto [pos, vel, tor] = driver->get_state();
+            msg.present_pos.push_back(pos);
+            msg.present_vel.push_back(vel);
+            msg.present_tor.push_back(tor);
+        }
+        feedback_pub_->publish(msg);
     }
 
     void motor_init()

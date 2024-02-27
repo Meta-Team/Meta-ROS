@@ -4,6 +4,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "unitreeMotor/unitreeMotor.h"
 #include "serialPort/SerialPort.h"
+#include <tuple>
 
 /**
  * @class UnitreeDriver
@@ -35,7 +36,7 @@ public:
      * This function sets the goal position and velocity for the motor.
      * @param pos The goal position for the motor.
      * @param vel The goal velocity for the motor.
-     * @note This would call send_recv().
+     * @note This does NOT call send_recv().
      * @warning The symbols in MotorCmd and MotorData differ from their documentation.
      */
     void set_goal(float goal_pos, float goal_vel);
@@ -53,6 +54,12 @@ public:
      * This would send the goal_cmd and overwrite the feedback_data.
      */
     void send_recv();
+
+    /**
+     * @brief Get the current state of the motor.
+     * @return A tuple containing the current position, velocity, and torque of the motor.
+     */
+    std::tuple<float, float, float> get_state();
 
 private:
     float kp, kd; ///< The PID parameters for the motor.
