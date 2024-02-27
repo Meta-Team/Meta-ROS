@@ -121,7 +121,7 @@ void DjiDriver::process_rx()
     
     present_data.update_pos((float)pos_raw * ENCODER_ANGLE_RATIO);
     present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
-    present_data.torque = (float)tor_raw * 16384 / 20; // actually current, Ampere
+    present_data.torque = (float)tor_raw / 16384 * 20; // actually current, Ampere
 }
 
 void DjiDriver::write_tx()

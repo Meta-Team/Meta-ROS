@@ -35,12 +35,15 @@ private:
         if (op_msg->p == true)
             shoot_msg.fric_state = true;
 
-        // space need to be kept pressed to keep to_stop false
+        // // space need to be kept pressed to keep to_stop false
+        // if (op_msg->space == true)
+        // {
+        //     to_stop = false;
+        //     shoot_msg.feed_state = true;
+        // }
+
         if (op_msg->space == true)
-        {
-            to_stop = false;
             shoot_msg.feed_state = true;
-        }
     }
 
     void send_timer_callback()
@@ -50,8 +53,8 @@ private:
 
     void recov_callback()
     {
-        if (to_stop == true) shoot_msg.feed_state = false;
-        to_stop = true;
+        // if (to_stop == true) shoot_msg.feed_state = false;
+        // to_stop = true;
     }
 };
 

@@ -41,7 +41,7 @@ private:
     {
         motor_interface::msg::MotorGoal goal_msg{};
 
-        goal_msg.motor_id.push_back("FEED_L");
+        goal_msg.motor_id.push_back("FEED_R");
         if (msg->feed_state == true) goal_msg.goal_vel.push_back(feed_vel_r);
         else goal_msg.goal_vel.push_back(0);
         goal_msg.goal_pos.push_back(0);

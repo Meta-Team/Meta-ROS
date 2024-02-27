@@ -7,17 +7,17 @@
 
     gimbal:
       yaw_ratio: 100.0 # MY_TODO: to be tuned
-      fric_vel_u: 500.0
-      fric_vel_d: -500.0
-      feed_vel_l: 300.0
-      feed_vel_r: 300.0
+      fric_vel_u: 600.0
+      fric_vel_d: -600.0
+      feed_vel_l: 50.0
+      feed_vel_r: -300.0
 
     motor:
       count:  3
       rids:   ["FRIC_D", "FRIC_U", "FEED_R"]
       hids:   [5, 6, 7]
       brands: [0, 0, 0] # 0->dji, 1->dm
-      types:  [0, 0, 0]
+      types:  [0, 0, 2]
       # for dji: 0->3508, 1->6020, 2->2006
       # for dm: 0->vel, 1->mit, 2->pos_vel
 
@@ -27,6 +27,6 @@
         kds: [0.0, 0.0, 0.0]
 
       v2c:
-        kps: [0.004, 0.004, 0.01]
-        kis: [0.000005, 0.000005, 0.00000]
-        kds: [0.1, 0.1, 0.0]
+        kps: [0.004, 0.004, 0.0035]
+        kis: [0.000005, 0.000005, 0.000005]
+        kds: [0.1, 0.1, 0.4]

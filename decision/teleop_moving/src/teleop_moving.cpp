@@ -4,7 +4,8 @@
 #include "movement_interface/msg/chassis_move.hpp"
 #include <rclcpp/logging.hpp>
 
-#define TRANS_VEL 300
+#define TRANS_VEL 500
+#define ROT_VEL 250
 
 class TeleopChassis : public rclcpp::Node
 {
@@ -46,8 +47,8 @@ private:
         if (msg->d == true) cha_msg_.vel_x = -TRANS_VEL;
         if (msg->w == true) cha_msg_.vel_y = +TRANS_VEL;
         if (msg->s == true) cha_msg_.vel_y = -TRANS_VEL;
-        if (msg->q == true) cha_msg_.omega = +100;
-        if (msg->e == true) cha_msg_.omega = -100;
+        if (msg->q == true) cha_msg_.omega = +ROT_VEL;
+        if (msg->e == true) cha_msg_.omega = -ROT_VEL;
     }
 
     void send_callback()
