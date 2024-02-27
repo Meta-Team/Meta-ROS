@@ -135,6 +135,12 @@ public:
      * @note get_frame() should be executed before calling this function.
      */
     void process_rx();
+
+    /**
+     * @brief Get the current state of the motor.
+     * @return A tuple containing the position, velocity, and current of the motor.
+     */
+    std::tuple<float, float, float> get_state();
 };
 
 #endif // DJI_DRIVER_H

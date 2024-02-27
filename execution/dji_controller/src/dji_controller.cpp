@@ -1,15 +1,17 @@
 #include "rclcpp/rclcpp.hpp"
 #include "dji_controller/dji_driver.h"
-
-#include "motor_interface/msg/motor_goal.hpp"
-#include "motor_interface/srv/motor_present.hpp"
 #include <cmath>
 #include <cstdint>
 #include <linux/can.h>
 #include <memory>
-#include <rclcpp/logging.hpp>
 #include <string>
 #include <vector>
+
+#include "motor_interface/msg/motor_goal.hpp"
+#include "motor_interface/msg/motor_state.hpp"
+
+#define ENABLE_PUB TRUE
+#define PUB_R 20 // ms
 
 class DjiController : public rclcpp::Node
 {
@@ -29,6 +31,13 @@ public:
             std::chrono::milliseconds(FEEDBACK_R), [this](){
                 feedback_timer_callback();
             });
+#if ENABLE_PUB == TRUE
+        pub_timer_ = this->create_wall_timer(
+            std::chrono::milliseconds(PUB_R), [this](){
+                pub_timer_callback();
+            });
+        state_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
+#endif
 
         // param_ev_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
         // p2v_kps_cb_ = param_ev_->add_parameter_callback("p2v_kps", std::bind(&DjiController::p2v_kps_callback, this, std::placeholders::_1));
@@ -45,6 +54,10 @@ private:
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
     rclcpp::TimerBase::SharedPtr feedback_timer_; // receive feedback frame regularly
+#if ENABLE_PUB == TRUE
+    rclcpp::TimerBase::SharedPtr pub_timer_;
+    rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
+#endif
     // std::shared_ptr<rclcpp::ParameterEventHandler> param_ev_;
     // std::shared_ptr<rclcpp::ParameterCallbackHandle> p2v_kps_cb_, p2v_kis_cb_, p2v_kds_cb_, v2c_kps_cb_, v2c_kis_cb_, v2c_kds_cb_;
     int dji_motor_count;
@@ -99,6 +112,23 @@ private:
             }
         }
     }
+
+#if ENABLE_PUB == TRUE
+    void pub_timer_callback()
+    {
+        // publish feedback
+        motor_interface::msg::MotorState msg;
+        for (auto& driver : drivers_)
+        {
+            msg.motor_id.push_back(driver->rid);
+            auto [pos, vel, cur] = driver->get_state();
+            msg.present_pos.push_back(pos);
+            msg.present_vel.push_back(vel);
+            msg.present_tor.push_back(cur);
+        }
+        state_pub_->publish(msg);
+    }
+#endif
 
     void motor_init()
     {

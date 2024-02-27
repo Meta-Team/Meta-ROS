@@ -6,6 +6,7 @@
 #include <memory>
 #include <queue>
 #include <string>
+#include <tuple>
 
 std::unique_ptr<CanDriver> DjiDriver::can_0 = std::make_unique<CanDriver>(0);
 std::unique_ptr<can_frame> DjiDriver::tx_frame_200 = init_frame(0x200);
@@ -176,4 +177,13 @@ void DjiDriver::send_frame()
 void DjiDriver::get_frame()
 {
     can_0->get_frame(rx_frame);
+}
+
+std::tuple<float, float, float> DjiDriver::get_state()
+{
+    return std::make_tuple(
+        present_data.position,
+        present_data.velocity,
+        present_data.torque
+    );
 }
