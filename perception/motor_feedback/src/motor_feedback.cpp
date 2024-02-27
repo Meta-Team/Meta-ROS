@@ -1,6 +1,8 @@
 #include "motor_feedback/motor_data.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include <bits/stdint-intn.h>
+#include <rclcpp/publisher.hpp>
+#include <rclcpp/timer.hpp>
 #include <string>
 #include <vector>
 
@@ -8,7 +10,8 @@
 #include "motor_feedback/dm_motor_driver.h"
 #include "motor_feedback/dji_motor_driver.h"
 
-#include "motor_interface/srv/motor_present.hpp"
+#include "motor_interface/srv/motor_state.hpp"
+#include "motor_interface/msg/motor_state.hpp"
 
 #define DaMiao 1
 #define DJI 0
@@ -22,8 +25,12 @@ std::unique_ptr<CanDriver> MotorDriver::can_0 = std::make_unique<CanDriver>(0);
 class MotorFeedback : public rclcpp::Node
 {
 private:
-    rclcpp::Service<motor_interface::srv::MotorPresent>::SharedPtr srv_;
-    rclcpp::TimerBase::SharedPtr timer_;
+    // publish and create service for motor state
+    // either can be removed if not needed
+    rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr pub_;
+    rclcpp::Service<motor_interface::srv::MotorState>::SharedPtr srv_;
+    rclcpp::TimerBase::SharedPtr update_timer_;
+    rclcpp::TimerBase::SharedPtr publish_timer;
 
 public:
     int motor_count;
@@ -33,19 +40,23 @@ public:
     {
         motor_drivers_.clear();
         motor_init();
-        srv_ = this->create_service<motor_interface::srv::MotorPresent>(
-            "motor_present", [this](const motor_interface::srv::MotorPresent::Request::SharedPtr request,
-                                                           motor_interface::srv::MotorPresent::Response::SharedPtr response){
+        srv_ = this->create_service<motor_interface::srv::MotorState>(
+            "motor_present", [this](const motor_interface::srv::MotorState::Request::SharedPtr request,
+                                                           motor_interface::srv::MotorState::Response::SharedPtr response){
                 this->srv_callback(request, response);
             });
-        timer_ = this->create_wall_timer(std::chrono::milliseconds(FEEDBACK_R), [this](){
-            this->timer_callback();
+        pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_present", 10);
+        update_timer_ = this->create_wall_timer(std::chrono::milliseconds(FEEDBACK_R), [this](){
+            this->update_timer_callback();
+        });
+        publish_timer = this->create_wall_timer(std::chrono::milliseconds(100), [this](){
+            this->publish_timer_callback();
         });
         RCLCPP_INFO(this->get_logger(), "MotorFeedback initialization complete");
     }
 
-    void srv_callback(const motor_interface::srv::MotorPresent::Request::SharedPtr request,
-                      motor_interface::srv::MotorPresent::Response::SharedPtr response)
+    void srv_callback(const motor_interface::srv::MotorState::Request::SharedPtr request,
+                      motor_interface::srv::MotorState::Response::SharedPtr response)
     {
         for (std::string desired_rid : request->motor_id)
         {
@@ -73,7 +84,24 @@ public:
         }
     }
 
-    void timer_callback()
+    void publish_timer_callback()
+    {
+        motor_interface::msg::MotorState msg;
+        msg.motor_id.clear();
+        msg.present_pos.clear();
+        msg.present_vel.clear();
+        msg.present_tor.clear();
+        for (auto& driver: motor_drivers_)
+        {
+            msg.motor_id.push_back(driver->rid);
+            msg.present_pos.push_back(driver->present_data.position);
+            msg.present_vel.push_back(driver->present_data.velocity);
+            msg.present_tor.push_back(driver->present_data.torque);
+        }
+        pub_->publish(msg);
+    }
+
+    void update_timer_callback()
     {
         MotorDriver::get_frame();
         for (auto& driver: motor_drivers_) driver->process_rx();

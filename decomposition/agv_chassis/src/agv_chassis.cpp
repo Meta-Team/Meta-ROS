@@ -19,7 +19,7 @@ private:
     rclcpp::Subscription<movement_interface::msg::ChassisMove>::SharedPtr cha_sub_;
     rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
     rclcpp::Client<gyro_interface::srv::GimbalPosition>::SharedPtr gimbal_cli_;
-    rclcpp::Client<motor_interface::srv::MotorPresent>::SharedPtr motor_cli_; // may change to other feedback
+    rclcpp::Client<motor_interface::srv::MotorState>::SharedPtr motor_cli_; // may change to other feedback
     rclcpp::CallbackGroup::SharedPtr gimbal_cbgp_;
     rclcpp::CallbackGroup::SharedPtr motor_cbgp_;
 
@@ -27,10 +27,10 @@ private:
     {
         // get motor position
         float motor_pos = 0;
-        auto motor_cb = [&](rclcpp::Client<motor_interface::srv::MotorPresent>::SharedFuture future){
+        auto motor_cb = [&](rclcpp::Client<motor_interface::srv::MotorState>::SharedFuture future){
             motor_pos = future.get()->present_pos[0];
         };
-        auto motor_req_ = std::make_shared<motor_interface::srv::MotorPresent::Request>();
+        auto motor_req_ = std::make_shared<motor_interface::srv::MotorState::Request>();
         motor_req_->motor_id.clear();
         motor_req_->motor_id.push_back("YAW");
         motor_cli_->async_send_request(motor_req_, motor_cb);
@@ -52,10 +52,10 @@ private:
 
         // get motor position
         float motor_pos = 0;
-        auto motor_cb = [&](rclcpp::Client<motor_interface::srv::MotorPresent>::SharedFuture future){
+        auto motor_cb = [&](rclcpp::Client<motor_interface::srv::MotorState>::SharedFuture future){
             motor_pos = future.get()->present_pos[0];
         };
-        auto motor_req_ = std::make_shared<motor_interface::srv::MotorPresent::Request>();
+        auto motor_req_ = std::make_shared<motor_interface::srv::MotorState::Request>();
         motor_req_->motor_id.clear();
         motor_req_->motor_id.push_back("YAW");
         motor_cli_->async_send_request(motor_req_, motor_cb);
@@ -89,7 +89,7 @@ public:
             gimbal_cbgp_ = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
             motor_cbgp_ = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
             gimbal_cli_ = this->create_client<gyro_interface::srv::GimbalPosition>("gimbal_position", rmw_qos_profile_services_default, gimbal_cbgp_);
-            motor_cli_ = this->create_client<motor_interface::srv::MotorPresent>("motor_present", rmw_qos_profile_services_default, motor_cbgp_);
+            motor_cli_ = this->create_client<motor_interface::srv::MotorState>("motor_present", rmw_qos_profile_services_default, motor_cbgp_);
             rclcpp::executors::SingleThreadedExecutor executor;
             executor.add_node(this->get_node_base_interface());
 
@@ -105,7 +105,7 @@ public:
             
             // initialize client
             motor_cbgp_ = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-            motor_cli_ = this->create_client<motor_interface::srv::MotorPresent>("motor_present");
+            motor_cli_ = this->create_client<motor_interface::srv::MotorState>("motor_present");
             rclcpp::executors::SingleThreadedExecutor executor;
             executor.add_node(this->get_node_base_interface());
 

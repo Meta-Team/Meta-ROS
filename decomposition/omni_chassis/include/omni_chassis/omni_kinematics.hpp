@@ -11,7 +11,6 @@
 #include "movement_interface/msg/chassis_move.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
 #include "gyro_interface/srv/gimbal_position.hpp"
-#include "motor_interface/srv/motor_present.hpp"
 
 #define DIRE -1 // 1 if counter-clockwise, -1 if clockwise
 #define PI 3.14159265358979323846

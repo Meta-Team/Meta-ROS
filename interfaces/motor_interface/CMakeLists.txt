@@ -23,7 +23,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/MotorGoal.msg"
-  "srv/MotorPresent.srv"
+  "msg/MotorState.msg"
+  "srv/MotorState.srv"
 )
 ament_export_dependencies(rosidl_default_runtime)
 

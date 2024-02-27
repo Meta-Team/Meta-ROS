@@ -11,7 +11,7 @@
 #include "movement_interface/msg/chassis_move.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
 #include "gyro_interface/srv/gimbal_position.hpp"
-#include "motor_interface/srv/motor_present.hpp"
+#include "motor_interface/srv/motor_state.hpp"
 
 #define PI 3.14159265358979323846
 #define RATIO 1 // ratio between velocity and angular velocity
