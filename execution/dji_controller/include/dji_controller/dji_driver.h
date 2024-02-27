@@ -8,7 +8,6 @@
 #include <queue>
 
 #define ENCODER_ANGLE_RATIO 360.0f / 8192.0f
-#define REDUCE_RATIO 36.0f
 
 #define CONTROL_R 1 // ms
 #define FEEDBACK_R 1 // ms
