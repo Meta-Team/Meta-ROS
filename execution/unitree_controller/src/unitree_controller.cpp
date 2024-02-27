@@ -55,13 +55,13 @@ private:
             // set goal
             if (iter != drivers_.end())
             {
-                // RCLCPP_INFO(this->get_logger(), "Motor %d set goal", rid);
+                // RCLCPP_INFO(this->get_logger(), "Motor %s set goal", rid.c_str());
                 auto driver = iter->get();
                 driver->set_goal(pos, vel);
             }
             else {
                 // not found, may be a dm or dji motor
-                // RCLCPP_WARN(this->get_logger(), "Motor %d not found", rid);
+                // RCLCPP_WARN(this->get_logger(), "Motor %s not found", rid.c_str);
             }
         }
     }
