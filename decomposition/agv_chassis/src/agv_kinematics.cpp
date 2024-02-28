@@ -1,13 +1,17 @@
 #include "agv_chassis/agv_kinematics.hpp"
 #include <cmath>
 
+float AgvKinematics::wheel_r = 0.05;
+float AgvKinematics::cha_r = 0.3;
+float AgvKinematics::decel_ratio = 20.0;
+
 unordered_map<string, float> AgvKinematics::vel = 
 {
     {"LF_V", 0.0},
     {"RF_V", 0.0},
     {"LB_V", 0.0},
     {"RB_V", 0.0}
-};
+}; // m/s
 
 unordered_map<string, float> AgvKinematics::pos = 
 {
@@ -15,7 +19,7 @@ unordered_map<string, float> AgvKinematics::pos =
     {"RF_D", 0.0},
     {"LB_D", 0.0},
     {"RB_D", 0.0}
-};
+}; // rad
 
 unordered_map<string, float> AgvKinematics::offsets =
 {
@@ -23,7 +27,7 @@ unordered_map<string, float> AgvKinematics::offsets =
     {"RF_D", 0.0},
     {"LB_D", 0.0},
     {"RB_D", 0.0}
-};
+}; // rad
 
 MotorGoal AgvKinematics::natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg, float yaw_diff)
 {
@@ -32,7 +36,7 @@ MotorGoal AgvKinematics::natural_decompo(const movement_interface::msg::NaturalM
 
     float trans_n = msg->vel_tau * sin(yaw_diff) + msg->vel_n * cos(yaw_diff);
     float trans_tao = msg->vel_tau * cos(yaw_diff) - msg->vel_n * sin(yaw_diff);
-    float rot_vel = msg->omega * RATIO / sqrt(2);
+    float rot_vel = msg->omega * cha_r / sqrt(2);
 
     add_group_goal(motor_goal, "LF", trans_n + rot_vel, trans_tao - rot_vel);
     add_group_goal(motor_goal, "RF", trans_n + rot_vel, trans_tao + rot_vel);
@@ -49,7 +53,7 @@ MotorGoal AgvKinematics::absolute_decompo(const movement_interface::msg::Absolut
 
     float trans_n = msg->vel_x * cos(chassis_yaw) - msg->vel_y * sin(chassis_yaw);
     float trans_tao = msg->vel_x * sin(chassis_yaw) + msg->vel_y * cos(chassis_yaw);
-    float rot_vel = msg->omega * RATIO / sqrt(2);
+    float rot_vel = msg->omega * cha_r / sqrt(2);
 
     add_group_goal(motor_goal, "LF", trans_n + rot_vel, trans_tao - rot_vel);
     add_group_goal(motor_goal, "RF", trans_n + rot_vel, trans_tao + rot_vel);
@@ -66,7 +70,7 @@ MotorGoal AgvKinematics::chassis_decompo(const movement_interface::msg::ChassisM
 
     float trans_n = msg->vel_y;
     float trans_tao = msg->vel_x;
-    float rot_vel = msg->omega * RATIO / sqrt(2);
+    float rot_vel = msg->omega * cha_r / sqrt(2);
 
     add_group_goal(motor_goal, "LF", trans_n + rot_vel, trans_tao - rot_vel);
     add_group_goal(motor_goal, "RF", trans_n + rot_vel, trans_tao + rot_vel);
@@ -83,11 +87,19 @@ void AgvKinematics::clear_goal(MotorGoal &motor_goal)
     motor_goal.goal_pos.clear();
 }
 
-void AgvKinematics::add_motor_goal(MotorGoal &motor_goal, const string& rid, const float goal_vel, const float goal_pos)
+void AgvKinematics::add_vel_goal(MotorGoal &motor_goal, const string& rid, const float goal_vel)
 {
     motor_goal.motor_id.push_back(rid);
-    motor_goal.goal_vel.push_back(goal_vel);
-    motor_goal.goal_pos.push_back(goal_pos + offsets[rid]);
+    motor_goal.goal_vel.push_back(goal_vel / wheel_r * decel_ratio); // convert to rad/s
+    motor_goal.goal_pos.push_back(0.0);
+}
+
+void AgvKinematics::add_pos_goal(MotorGoal &motor_goal, const string &rid, const float goal_pos)
+{
+    motor_goal.motor_id.push_back(rid);
+    motor_goal.goal_vel.push_back(0.0);
+    motor_goal.goal_pos.push_back(goal_pos + offsets[rid]); // already in rad
+
 }
 
 void AgvKinematics::add_group_goal(MotorGoal &motor_goal, const string& which, float vx, float vy)
@@ -111,8 +123,9 @@ void AgvKinematics::add_group_goal(MotorGoal &motor_goal, const string& which, f
         pos[dir_id] = atan(vx / vy);
         vel[vel_id] = velocity;
     }
-    add_motor_goal(motor_goal, vel_id, vel[vel_id], 0);
-    add_motor_goal(motor_goal, dir_id, 0, pos[dir_id]);
+
+    add_vel_goal(motor_goal, vel_id, vel[vel_id]); // MY_TODO: check this
+    add_pos_goal(motor_goal, dir_id, pos[dir_id]);
     
 }
 

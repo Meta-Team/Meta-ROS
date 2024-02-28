@@ -22,10 +22,4 @@ def generate_launch_description():
             name='dji_controller',
             parameters=[config],
         ),
-        # Node(
-        #     package='motor_feedback',
-        #     executable='motor_feedback',
-        #     name='motor_feedback',
-        #     parameters=[config],
-        # ),
     ])

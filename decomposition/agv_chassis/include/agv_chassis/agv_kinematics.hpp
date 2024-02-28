@@ -13,9 +13,8 @@
 #include "gyro_interface/srv/gimbal_position.hpp"
 #include "motor_interface/srv/motor_state.hpp"
 
-#define PI 3.14159265358979323846
-#define RATIO 1 // ratio between velocity and angular velocity
-#define TRIGGER 0.1 // a vel is considered to be zero if its absolute value is less than TRIGGER
+#define PI 3.1415926f
+#define TRIGGER 0.05 // a vel is considered to be zero if its absolute value is less than TRIGGER
 
 using std::string, std::unordered_map, motor_interface::msg::MotorGoal;
 
@@ -29,6 +28,10 @@ using std::string, std::unordered_map, motor_interface::msg::MotorGoal;
  */
 namespace AgvKinematics
 {
+    extern float wheel_r; ///< The radius of the wheels, in meters.
+    extern float cha_r; ///< The radius of the chassis, in meters.
+    extern float decel_ratio; ///< The ratio of motor deceleration.
+
     extern unordered_map<string, float> vel; ///< The velocities of the motors.
     extern unordered_map<string, float> pos; ///< The positions of the motors.
     extern unordered_map<string, float> offsets; ///< The offsets of the motors. Used in add_motor_goal.
@@ -65,21 +68,28 @@ namespace AgvKinematics
 
     /**
      * @brief Add the goal velocity and position of a motor.
-     * Set position to 0 to control the motor in velocity mode.
-     * Set velocity to 0 to control the motor in position mode.
      * @param[out] motor_goals The motor goals to be set.
      * @param rid The ROS id of the motor.
-     * @param goal_vel The goal velocity of the motor.
-     * @param goal_pos The goal position of the motor.
+     * @param goal_vel The goal velocity of the wheels in m/s.
+     * @note Goal positions would be set zero.
      */
-    void add_motor_goal(MotorGoal &motor_goal, const std::string& rid, const float goal_vel, const float goal_pos);
+    void add_vel_goal(MotorGoal &motor_goal, const string& rid, const float goal_vel);
+
+    /**
+     * @brief Add the goal position of a motor.
+     * @param[out] motor_goals The motor goals to be set.
+     * @param rid The ROS id of the motor.
+     * @param goal_pos The goal position of the wheels in rad.
+     * @note Goal velocities would be set zero.
+     */
+    void add_pos_goal(MotorGoal &motor_goal, const string& rid, const float goal_pos);
 
     /**
      * @brief Add the goal velocity and position of the two motors of a wheel.
      * @param[out] motor_goals The motor goals to be set.
      * @param which Which wheel to be set. Must be "LF", "RF", "LB", or "RB".
-     * @param vx The x component against the global frame.
-     * @param vy The y component against the global frame.
+     * @param vx The x component against the global frame in m/s.
+     * @param vy The y component against the global frame in m/s.
      */
     void add_group_goal(MotorGoal &motor_goal, const string& which, float vx, float vy);
 

@@ -13,14 +13,17 @@
 #include "gyro_interface/srv/gimbal_position.hpp"
 
 #define DIRE -1 // 1 if counter-clockwise, -1 if clockwise
-#define PI 3.14159265358979323846
-#define RADIUS 1 // meter
+#define PI 3.1415926f
 
 /**
  * @brief This namespace contains functions to decompose movement commands into motor goals.
  */
 namespace OmniKinematics
 {
+    extern float wheel_r; ///< The radius of the wheels, in meters.
+    extern float cha_r; ///< The radius of the chassis, in meters.
+    extern float decel_ratio; ///< The ratio of motor deceleration.
+
     /**
      * @brief Decompose a absolute movement command into motor goals.
      * An absolute movement is a movement relative to the ground.
@@ -49,15 +52,13 @@ namespace OmniKinematics
 
     /**
      * @brief Add the goal velocity and position of a motor.
-     * Set position to 0 to control the motor in velocity mode.
-     * Set velocity to 0 to control the motor in position mode.
      * @param[out] motor_goals The motor goals to be set.
      * @param rid The ROS id of the motor.
-     * @param goal_vel The goal velocity of the motor.
-     * @param goal_pos The goal position of the motor.
+     * @param goal_vel The goal velocity of the wheels in m/s.
+     * @note Goal positions would be set zero.
      */
     void add_goal(motor_interface::msg::MotorGoal &motor_goals,
-                  const std::string& rid, const float goal_vel, const float goal_pos);
+                  const std::string& rid, const float goal_vel);
 }
 
 #endif // OMNI_KINEMATICS_HPP

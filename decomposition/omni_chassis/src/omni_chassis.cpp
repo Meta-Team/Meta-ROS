@@ -57,6 +57,11 @@ private:
 public:
     OmniChassis() : Node("OmniChassis")
     {
+        // get params
+        OmniKinematics::cha_r = this->declare_parameter("chassis.chassis_radius", OmniKinematics::cha_r);
+        OmniKinematics::wheel_r = this->declare_parameter("chassis.wheel_radius", OmniKinematics::wheel_r);
+        OmniKinematics::decel_ratio = this->declare_parameter("chassis.deceleration_ratio", OmniKinematics::decel_ratio);
+
         int chassis_mode = 1;
         chassis_mode = this->declare_parameter("chassis.mode", chassis_mode);
         ChassisMode chassis_mode_ = static_cast<ChassisMode>(chassis_mode);

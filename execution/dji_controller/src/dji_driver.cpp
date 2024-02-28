@@ -119,8 +119,8 @@ void DjiDriver::process_rx()
         if ((int)rx_frame.can_id != 0x200 + hid) return;
     }
     
-    present_data.update_pos((float)pos_raw * ENCODER_ANGLE_RATIO);
-    present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s, 2*pi/60
+    present_data.update_pos((float)pos_raw / 8192.0f * 2 * 3.1415926f); // rad
+    present_data.velocity = (float)vel_raw * 3.1415926f / 30.0f; // rpm to rad/s
     present_data.torque = (float)tor_raw / 16384 * 20; // actually current, Ampere
 }
 

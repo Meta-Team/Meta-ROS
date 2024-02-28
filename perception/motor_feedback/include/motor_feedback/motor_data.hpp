@@ -4,6 +4,8 @@
 #include <cmath>
 #include <algorithm>
 
+#define PI 3.1415926f
+
 /**
  * @brief Represents the data of a motor.
  */
@@ -32,11 +34,11 @@ public:
      */
     void update_pos(float pos)
     {
-        int round = std::floor(position / 360);
+        int round = std::floor(position / 2 / PI);
 
-        float up = 360 * (round + 1) + pos;
-        float mid = 360 * round + pos;
-        float down = 360 * (round - 1) + pos;
+        float up = 2 * PI * (round + 1) + pos;
+        float mid = 2 * PI * round + pos;
+        float down = 2 * PI * (round - 1) + pos;
 
         auto comparison = [this](float a, float b)
         {
