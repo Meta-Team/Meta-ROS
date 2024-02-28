@@ -4,13 +4,13 @@
 #include "can_driver.hpp"
 
 #include "cstdint"
-#include "can_driver.hpp"
 #include <bits/stdint-uintn.h>
 #include <linux/can.h>
 #include <chrono>
 #include <memory>
 #include <string>
 #include <thread>
+#include <tuple>
 
 #define START_CMD {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfc}
 #define STOP_CMD {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfd}
@@ -42,14 +42,20 @@
  */
 class DmDriver
 {
-public:
+protected:
+    static std::unique_ptr<CanDriver> can_0; ///< The CAN driver used for communication.
     can_frame tx_frame; ///< The CAN frame used for transmitting data.
+    can_frame rx_frame; ///< The CAN frame used for receiving data.
+    float position; ///< The current position of the motor in rad.
+    float velocity; ///< The current velocity of the motor in rad/s.
+    float torque; ///< The current torque of the motor.
+
+public:
     int hid; ///< Hardware ID of the motor controlled by the driver.
     std::string rid; ///< ROS ID of the motor controlled by the driver.
 
     /**
      * @brief Destructor for the DmDriver class.
-     *
      * This destructor turns the motor off.
      */
     virtual ~DmDriver();
@@ -64,38 +70,52 @@ public:
      */
     void turn_off();
 
-    static std::unique_ptr<CanDriver> can_0; ///< The CAN driver used for communication.
-
     /**
      * @brief Sets the mode of the motor.
-     * 
      * This function must be implemented by derived classes.
      */
     virtual void set_mode() = 0;
 
     /**
      * @brief Sets the velocity of the motor.
-     * 
      * This function must be implemented by derived classes.
-     * 
      * @param goal_vel The desired velocity of the motor.
      */
     virtual void set_velocity(float goal_vel) = 0;
 
     /**
      * @brief Sets the position of the motor.
-     * 
      * This function must be implemented by derived classes.
-     * 
      * @param goal_pos The desired position of the motor.
      */
     virtual void set_position(float goal_pos) = 0;
 
     /**
+     * @brief Transmits the frame.
+     * This would send the tx_frame to the motor.
+     */
+    void tx() const;
+
+    /**
+     * @brief Receive the frame.
+     * This would write the received frame to the rx_frame.
+     */
+    void rx();
+
+    /**
+     * @brief Processes the received frame and updates the present data.
+     */
+    void process_rx();
+
+    /**
+     * @brief Gets the state of the motor.
+     * @return A tuple containing the position, velocity, and torque of the motor.
+     */
+    [[nodiscard]] std::tuple<float, float, float> get_state() const;
+
+    /**
      * @brief Converts an integer value to a floating-point value.
-     * 
      * This static function performs data conversion provided by the DM motor.
-     * 
      * @param x_int The integer value to be converted.
      * @param x_min The minimum value of the range.
      * @param x_max The maximum value of the range.
@@ -106,9 +126,7 @@ public:
 
     /**
      * @brief Converts a floating-point value to an integer value.
-     * 
      * This static function performs data conversion provided by the DM motor.
-     * 
      * @param x The floating-point value to be converted.
      * @param x_min The minimum value of the range.
      * @param x_max The maximum value of the range.
@@ -120,7 +138,6 @@ public:
 
 /**
  * @brief The DmMitDriver class represents a driver for a specific type of DM device.
- * 
  * This class inherits from the DmDriver base class and provides additional functionality
  * specific to the DmMitDriver. It allows setting the mode, parameters, velocity, and position
  * for the DM device.
@@ -133,7 +150,6 @@ private:
 public:
     /**
      * @brief Constructs a DmMitDriver object with the specified ID, kp, and kd values.
-     * 
      * @param rid The ROS ID of the DM device.
      * @param hid The hardware ID of the DM device.
      * @param kp The proportional gain value.
@@ -143,35 +159,28 @@ public:
 
     /**
      * @brief Sets the mode of the DM device.
-     * 
      * This function overrides the set_mode function from the base class.
      */
     void set_mode() override;
 
     /**
      * @brief Sets the proportional and derivative gains for the DM device.
-     * 
      * @param kp The new proportional gain value.
      * @param kd The new derivative gain value.
-     *
      * @note This function also set t_ff to 1.0.
      */
     void set_param_mit(float kp, float kd);
 
     /**
      * @brief Sets the velocity goal for the DM device.
-     * 
      * This function overrides the set_velocity function from the base class.
-     * 
      * @param goal_vel The desired velocity.
      */
     void set_velocity(float goal_vel) override;
 
     /**
      * @brief Sets the position goal for the DM device.
-     * 
      * This function overrides the set_position function from the base class.
-     * 
      * @param goal_pos The desired position.
      */
     void set_position(float goal_pos) override;
@@ -179,7 +188,6 @@ public:
 
 /**
  * @brief The DmVelDriver class represents a velocity-based driver for a DM motor.
- * 
  * This class inherits from the DmDriver base class and provides specific implementations
  * for setting the mode, velocity, and position of the DM motor.
  */
@@ -188,7 +196,6 @@ class DmVelDriver : public DmDriver
 public:
     /**
      * @brief Constructs a DmVelDriver object with the specified ID.
-     * 
      * @param rid The ID of the DM motor.
      * @param hid The hardware ID of the DM motor.
      */
@@ -196,7 +203,6 @@ public:
 
     /**
      * @brief Sets the mode of the DM motor.
-     * 
      * This function overrides the base class implementation and sets the mode of the DM motor
      * to velocity mode.
      */
@@ -204,20 +210,16 @@ public:
 
     /**
      * @brief Sets the velocity of the DM motor.
-     * 
      * This function overrides the base class implementation and sets the velocity of the DM motor
      * to the specified goal velocity.
-     * 
      * @param goal_vel The goal velocity to set for the DM motor.
      */
     void set_velocity(float goal_vel) override;
 
     /**
      * @brief Sets the position of the DM motor.
-     * 
      * This function overrides the base class implementation and sets the position of the DM motor
      * to the specified goal position.
-     * 
      * @param goal_pos The goal position to set for the DM motor.
      */
     void set_position(float goal_pos) override;

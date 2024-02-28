@@ -71,11 +71,12 @@ public:
         try {
             int write_result = write(s, &frame, sizeof(frame));
             if (write_result == -1) {
-                throw std::runtime_error("Error receiving from CAN: " + std::string(strerror(errno)));
+                throw std::runtime_error("Error sending to CAN: " + std::string(strerror(errno)));
             }
         } catch (const std::exception& e) {
             std::cerr << "\033[1;31m" << e.what() << "\033[0m" << std::endl;
         }
+        // write(s, &frame, sizeof(frame));
     }
 
     /**

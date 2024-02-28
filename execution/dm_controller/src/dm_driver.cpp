@@ -29,9 +29,9 @@ void DmDriver::turn_on()
     uint8_t start_cmd[8] = START_CMD;
     tx_frame.can_dlc = 0x08;
     memcpy(tx_frame.data, start_cmd, sizeof(start_cmd));
-    can_0->send_frame(tx_frame);
+    tx();
         
-    printf("turn-on frame sent\n");
+    // printf("turn-on frame sent\n");
     tx_frame = frame_temp;
 }
 
@@ -42,16 +42,42 @@ void DmDriver::turn_off()
     uint8_t stop_cmd[8] = STOP_CMD;
     tx_frame.can_dlc = 0x08;
     memcpy(tx_frame.data, stop_cmd, sizeof(stop_cmd));
-    can_0->send_frame(tx_frame);
+    tx();
 
-    printf("turn-off frmae sent\n");
+    // printf("turn-off frmae sent\n");
     tx_frame.can_dlc = dlc_temp;
 }
 
 DmDriver::~DmDriver()
 {
     turn_off();
-    printf("DmDriver deleted\n");
+    // printf("DmDriver deleted\n");
+}
+
+void DmDriver::tx() const
+{
+    can_0->send_frame(tx_frame);
+}
+
+void DmDriver::rx()
+{
+    can_0->get_frame(rx_frame);
+}
+
+void DmDriver::process_rx()
+{
+    float pos_raw = rx_frame.data[1]<<8 | rx_frame.data[2];
+    float vel_raw = rx_frame.data[3]<<4 | rx_frame.data[4]>>4;
+    float tor_raw = rx_frame.data[5];
+
+    position = uint_to_float(pos_raw, -P_MAX, P_MAX, 16);
+    velocity = uint_to_float(vel_raw, -V_MAX, V_MAX, 12);
+    torque = uint_to_float(tor_raw, -T_MAX, T_MAX, 12);
+}
+
+std::tuple<float, float, float> DmDriver::get_state() const
+{
+    return std::make_tuple(position, velocity, torque);
 }
 
 /*************************************************************************************
@@ -96,7 +122,7 @@ void DmMitDriver::set_velocity(float goal_vel)
     tx_frame.data[3] &= 0x0f;
     tx_frame.data[3] |= (uint_vel & 0x0f) << 4;
     tx_frame.data[2] = uint_vel >> 4;
-    can_0->send_frame(tx_frame);
+    tx();
 }
 
 void DmMitDriver::set_position(float goal_pos)
@@ -104,7 +130,7 @@ void DmMitDriver::set_position(float goal_pos)
     uint32_t uint_pos = float_to_uint(goal_pos, -P_MAX, P_MAX, 16);
     tx_frame.data[1] = uint_pos & 0x0ff;
     tx_frame.data[0] = uint_pos >> 8;
-    can_0->send_frame(tx_frame);
+    tx();
     printf("frame sent: ");
     for (int i = 0; i < 8; i++) {
         printf("%02X ", tx_frame.data[i]);
@@ -135,7 +161,7 @@ void DmVelDriver::set_velocity(float goal_vel)
     uint32_t* pvel;
     pvel = (uint32_t*) &temp_vel;
     memcpy(&tx_frame.data[0], pvel, sizeof(uint32_t));
-    can_0->send_frame(tx_frame);
+    tx();
 }
 
 void DmVelDriver::set_position(float /*goal_pos*/)
