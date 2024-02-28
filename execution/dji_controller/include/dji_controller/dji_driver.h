@@ -19,9 +19,9 @@
 
 enum MotorType
 {
-    M3508,
-    M6020,
-    M2006,
+    M3508 = 0,
+    M6020 = 1,
+    M2006 = 2,
 };
 
 /**
@@ -119,19 +119,19 @@ public:
      * This would send all three transmit frames to the motor at once.
      * @note write_tx() should be executed before calling this function.
      */
-    static void send_frame();
+    static void tx();
 
     /**
      * @brief Get the receive frame.
      * This would write the received frame to the rx_frame variable.
      * @note This function should be executed before calling process_rx().
      */
-    static void get_frame();
+    static void rx();
 
     /**
      * @brief Process the receive frame.
      * This updates the present data of the motor according to the rx_frame variable.
-     * @note get_frame() should be executed before calling this function.
+     * @note rx() should be executed before calling this function.
      */
     void process_rx();
 
@@ -139,7 +139,7 @@ public:
      * @brief Get the current state of the motor.
      * @return A tuple containing the position, velocity, and current of the motor.
      */
-    std::tuple<float, float, float> get_state();
+    [[nodiscard]] std::tuple<float, float, float> get_state();
 };
 
 #endif // DJI_DRIVER_H

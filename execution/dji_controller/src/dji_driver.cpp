@@ -167,14 +167,14 @@ void DjiDriver::write_tx()
     }
 }
 
-void DjiDriver::send_frame()
+void DjiDriver::tx()
 {
     can_0->send_frame(*tx_frame_200);
     can_0->send_frame(*tx_frame_1ff);
     can_0->send_frame(*tx_frame_2ff);
 }
 
-void DjiDriver::get_frame()
+void DjiDriver::rx()
 {
     can_0->get_frame(rx_frame);
 }

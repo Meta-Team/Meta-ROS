@@ -67,21 +67,14 @@ private:
 
     void control_timer_callback()
     {
-        for (auto& driver : drivers_)
-        {
-            driver->write_tx();
-            DjiDriver::send_frame();
-        }
+        for (auto& driver : drivers_) driver->write_tx();
+        DjiDriver::tx();
     }
 
     void feedback_timer_callback()
     {
-        DjiDriver::get_frame();
-        for (auto& driver : drivers_)
-        { 
-            driver->process_rx();
-            // rclcpp::sleep_for(std::chrono::milliseconds(1)); // sleep for 1 ms
-        }
+        DjiDriver::rx();
+        for (auto& driver : drivers_) driver->process_rx();
     }
     
     void goal_callback(const motor_interface::msg::MotorGoal::SharedPtr msg)
