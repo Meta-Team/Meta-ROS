@@ -1,3 +1,6 @@
 [submodule "decomposition/scara_moveit"]
 	path = decomposition/scara_moveit
 	url = https://github.com/Yao-Xinchen/scara_moveit
+[submodule "perception/ahrs_feedback/serial"]
+	path = perception/ahrs_feedback/serial
+	url = https://github.com/jinmenglei/serial_ros2
