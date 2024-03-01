@@ -31,7 +31,7 @@ public:
      * @brief Update the cumulative position of the motor.
      * @param pos The new feedback position.
      */
-    void update_pos(float pos)
+    void update_pos(float pos) // MY_TODO: check the first usage of this function
     {
         int round = std::floor(position / 2 / PI);
 

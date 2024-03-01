@@ -9,8 +9,10 @@
       yaw_ratio: 100.0 # MY_TODO: to be tuned
       fric_vel_u: 600.0
       fric_vel_d: -600.0
-      feed_vel_l: 50.0
-      feed_vel_r: -300.0
+      feed_vel_l: 15.0
+      feed_vel_r: -15.0
+      feed_ratio: 36.0
+      fric_ratio: 1.0
 
     motor:
       count:  3

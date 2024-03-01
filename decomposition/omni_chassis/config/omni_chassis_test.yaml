@@ -2,9 +2,9 @@
   ros__parameters:
 
     chassis:
-      wheel_radius: 0.07 # m
+      wheel_radius: 0.076 # m
       deceleration_ratio: 20.0
-      chassis_radius: 0.5 # m
+      chassis_radius: 0.255 # m
 
     motor:
       count:  4

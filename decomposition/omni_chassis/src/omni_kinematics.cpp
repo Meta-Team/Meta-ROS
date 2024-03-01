@@ -2,8 +2,8 @@
 #include <cmath>
 #include <math.h>
 
-float OmniKinematics::cha_r = 0.3;
-float OmniKinematics::wheel_r = 0.1;
+float OmniKinematics::cha_r = 0.255;
+float OmniKinematics::wheel_r = 0.76;
 float OmniKinematics::decel_ratio = 20.0;
 float OmniKinematics::n_offset = 0.0;
 
