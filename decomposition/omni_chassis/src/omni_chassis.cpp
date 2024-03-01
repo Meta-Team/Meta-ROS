@@ -15,7 +15,7 @@ public:
         OmniKinematics::cha_r = this->declare_parameter("chassis.chassis_radius", OmniKinematics::cha_r);
         OmniKinematics::wheel_r = this->declare_parameter("chassis.wheel_radius", OmniKinematics::wheel_r);
         OmniKinematics::decel_ratio = this->declare_parameter("chassis.deceleration_ratio", OmniKinematics::decel_ratio);
-        OmniKinematics::n_offset = this->declare_parameter("chassis.north_offset", OmniKinematics::n_offset);
+        OmniKinematics::n_offset = this->declare_parameter("north_offset", OmniKinematics::n_offset);
 
         // init publisher and subscribers
         motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);

@@ -13,20 +13,21 @@ find_package(ament_cmake REQUIRED)
 
 find_package(rclcpp REQUIRED)
 find_package(aiming_interface REQUIRED)
-find_package(gyro_interface REQUIRED)
 find_package(movement_interface REQUIRED)
 find_package(motor_interface REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 include_directories(include)
 
 add_executable(uni_gimbal_node 
-  src/uni_gimbal.cpp)
+  src/uni_gimbal.cpp
+  src/gimbal.cpp)
 
 ament_target_dependencies(uni_gimbal_node
   rclcpp
   aiming_interface
-  gyro_interface
   movement_interface
+  geometry_msgs
   motor_interface)
 
 install(TARGETS uni_gimbal_node
