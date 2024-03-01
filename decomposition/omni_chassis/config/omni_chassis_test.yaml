@@ -2,25 +2,24 @@
   ros__parameters:
 
     chassis:
-      mode: 1
-      # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
       wheel_radius: 0.07 # m
       deceleration_ratio: 20.0
       chassis_radius: 0.5 # m
+      north_offset: 0.0 # rad, the offset from chassis
 
     motor:
       count:  4
       rids:   ["F", "L", "B", "R"]
-      hids:   [1, 2, 3, 4]
-      brands: [0, 0, 0, 0] # 0->dji, 1->dm
-      types:  [0, 0, 0, 0]
+      hids:   [1, 2, 3, 4,]
+      brands: [0, 0, 0, 0,] # 0->dji, 1->dm
+      types:  [0, 0, 0, 0,]
       # for dji: 0->3508, 1->6020, 2->2006
       # for dm: 0->vel, 1->mit, 2->pos_vel
       p2v:
-        kps: [0.1,     0.1,     0.1,     0.1]
-        kis: [0.001,   0.001,   0.001,   0.001]
-        kds: [0.1,     0.1,     0.1,     0.1]
+        kps: [0.0,   0.0,   0.0,   0.0,]
+        kis: [0.0,   0.0,   0.0,   0.0,]
+        kds: [0.0,   0.0,   0.0,   0.0,]
       v2c:
-        kps: [0.01,  0.01,  0.01,  0.01]
-        kis: [0.00002, 0.00002, 0.00002, 0.00002]
-        kds: [0.2,     0.2,     0.2,     0.2]
+        kps: [0.2,  0.2,  0.2,  0.2,]
+        kis: [0.0004, 0.0004, 0.0004, 0.0004,]
+        kds: [4.0,   4.0,   4.0,   4.0,]

@@ -15,7 +15,7 @@
   <depend>rclcpp</depend>
   <depend>movement_interface</depend>
   <depend>motor_interface</depend>
-  <depend>gyro_interface</depend>
+  <depend>geometry_msgs</depend>
 
   <exec_depend>ros2launch</exec_depend>
 

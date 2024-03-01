@@ -10,7 +10,6 @@
 #include "movement_interface/msg/absolute_move.hpp"
 #include "movement_interface/msg/chassis_move.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
-#include "gyro_interface/srv/gimbal_position.hpp"
 
 #define DIRE -1 // 1 if counter-clockwise, -1 if clockwise
 #define PI 3.1415926f
@@ -23,16 +22,18 @@ namespace OmniKinematics
     extern float wheel_r; ///< The radius of the wheels, in meters.
     extern float cha_r; ///< The radius of the chassis, in meters.
     extern float decel_ratio; ///< The ratio of motor deceleration.
+    extern float n_offset; ///< The offset of the north direction, in radians.
 
     /**
      * @brief Decompose a absolute movement command into motor goals.
      * An absolute movement is a movement relative to the ground.
      * @param msg The absolute movement command.
+     * @param gimbal The yaw position of the gimbal against the ground, in radians.
+     * @param motor The yaw position of the gimbal against the chassis, in radians.
      * @return The motor goals.
-     * @param chassis_yaw The yaw angle of the chassis.
      */
     motor_interface::msg::MotorGoal absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg,
-                                                     float chassis_yaw);
+                                                     float gimbal, float motor);
 
     /**
      * @brief Decompose a chassis movement command into motor goals.

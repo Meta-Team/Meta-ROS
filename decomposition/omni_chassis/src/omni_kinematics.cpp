@@ -1,19 +1,25 @@
 #include "omni_chassis/omni_kinematics.hpp"
+#include <cmath>
+#include <math.h>
 
 float OmniKinematics::cha_r = 0.3;
 float OmniKinematics::wheel_r = 0.1;
 float OmniKinematics::decel_ratio = 20.0;
+float OmniKinematics::n_offset = 0.0;
 
-motor_interface::msg::MotorGoal OmniKinematics::absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg, float chassis_yaw)
+motor_interface::msg::MotorGoal OmniKinematics::absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg, float gimbal, float motor)
 {
     motor_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);
-    float rot = msg->omega * cha_r;
+    float rot = msg->omega * cha_r; // m/s
+    float dir = gimbal + motor - n_offset; // direction of the movement against chassis in rad
+    float vx = msg->vel_x;
+    float vy = msg->vel_y;
 
-    add_goal(motor_goal, "F", + msg->vel_x * cos(chassis_yaw) - msg->vel_y * sin(chassis_yaw) + rot);
-    add_goal(motor_goal, "L", - msg->vel_x * sin(chassis_yaw) - msg->vel_y * cos(chassis_yaw) + rot);
-    add_goal(motor_goal, "B", - msg->vel_x * cos(chassis_yaw) + msg->vel_y * sin(chassis_yaw) + rot);
-    add_goal(motor_goal, "R", + msg->vel_x * sin(chassis_yaw) + msg->vel_y * cos(chassis_yaw) + rot);
+    add_goal(motor_goal, "F", + vx * sin(dir) + vy * cos(dir) + rot);
+    add_goal(motor_goal, "L", - vx * cos(dir) + vy * sin(dir) + rot);
+    add_goal(motor_goal, "B", - vx * sin(dir) - vy * cos(dir) + rot);
+    add_goal(motor_goal, "R", + vx * cos(dir) - vy * sin(dir) + rot);
 
     return motor_goal;
 }
@@ -24,10 +30,10 @@ motor_interface::msg::MotorGoal OmniKinematics::chassis_decompo(const movement_i
     clear_goal(motor_goal);
     float rot = msg->omega * cha_r;
 
-    add_goal(motor_goal, "F", + msg->vel_x + rot);
-    add_goal(motor_goal, "L", - msg->vel_y + rot);
-    add_goal(motor_goal, "B", - msg->vel_x + rot);
-    add_goal(motor_goal, "R", + msg->vel_y + rot);
+    add_goal(motor_goal, "F", + msg->vel_y + rot);
+    add_goal(motor_goal, "L", - msg->vel_x + rot);
+    add_goal(motor_goal, "B", - msg->vel_y + rot);
+    add_goal(motor_goal, "R", + msg->vel_x + rot);
 
     return motor_goal;
 }

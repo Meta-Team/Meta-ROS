@@ -13,7 +13,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(movement_interface REQUIRED)
 find_package(motor_interface REQUIRED)
-find_package(gyro_interface REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 include_directories(include)
 
@@ -25,7 +25,7 @@ ament_target_dependencies(omni_chassis
   rclcpp
   movement_interface
   motor_interface
-  gyro_interface
+  geometry_msgs
   )
 
 install(TARGETS

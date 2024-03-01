@@ -35,10 +35,10 @@ private:
     {
         to_stop = false;
         reset_goal();
-        if (msg->w) vel->vel_y += UNIT_VEL;
-        if (msg->s) vel->vel_y -= UNIT_VEL;
-        if (msg->a) vel->vel_x += UNIT_VEL;
-        if (msg->d) vel->vel_x -= UNIT_VEL;
+        if (msg->w) vel->vel_x += UNIT_VEL;
+        if (msg->s) vel->vel_x -= UNIT_VEL;
+        if (msg->a) vel->vel_y += UNIT_VEL;
+        if (msg->d) vel->vel_y -= UNIT_VEL;
         if (msg->q) vel->omega += UNIT_VEL;
         if (msg->e) vel->omega -= UNIT_VEL;
     }

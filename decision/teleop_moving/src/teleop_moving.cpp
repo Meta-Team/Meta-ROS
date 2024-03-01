@@ -4,14 +4,16 @@
 #include "movement_interface/msg/chassis_move.hpp"
 #include <rclcpp/logging.hpp>
 
-#define TRANS_VEL 500
-#define ROT_VEL 250
 
-class TeleopChassis : public rclcpp::Node
+class TeleopMoving : public rclcpp::Node
 {
 public:
-    TeleopChassis() : Node("TeleopChassis")
+    TeleopMoving() : Node("TeleopMoving")
     {
+        trans_vel = this->declare_parameter("trans_vel", trans_vel);
+        rot_vel = this->declare_parameter("rot_vel", rot_vel);
+        RCLCPP_INFO(this->get_logger(), "Translational velocity: %f, Rotational velocity: %f", trans_vel, rot_vel);
+
         cha_pub_ = this->create_publisher<movement_interface::msg::ChassisMove>(
             "chassis_move", 10);
         key_sub_ = this->create_subscription<operation_interface::msg::TeleopKey>(
@@ -26,7 +28,7 @@ public:
             std::chrono::milliseconds(200), [this](){
                 recov_callback();
             });
-        RCLCPP_INFO(this->get_logger(), "TeleopChassis initialized.");
+        RCLCPP_INFO(this->get_logger(), "TeleopMoving initialized.");
     }
 
 private:
@@ -36,6 +38,9 @@ private:
     rclcpp::TimerBase::SharedPtr send_timer_;
     rclcpp::TimerBase::SharedPtr recov_timer_;
 
+    float trans_vel = 0.0f;
+    float rot_vel = 0.0f;
+
     movement_interface::msg::ChassisMove move_msg{};
     bool to_stop;
 
@@ -43,12 +48,12 @@ private:
     {
         to_stop = false;
         // set goals
-        if (msg->a == true) cha_msg_.vel_x = +TRANS_VEL;
-        if (msg->d == true) cha_msg_.vel_x = -TRANS_VEL;
-        if (msg->w == true) cha_msg_.vel_y = +TRANS_VEL;
-        if (msg->s == true) cha_msg_.vel_y = -TRANS_VEL;
-        if (msg->q == true) cha_msg_.omega = +ROT_VEL;
-        if (msg->e == true) cha_msg_.omega = -ROT_VEL;
+        if (msg->a == true) cha_msg_.vel_y = + trans_vel;
+        if (msg->d == true) cha_msg_.vel_y = - trans_vel;
+        if (msg->w == true) cha_msg_.vel_x = + trans_vel;
+        if (msg->s == true) cha_msg_.vel_x = - trans_vel;
+        if (msg->q == true) cha_msg_.omega = + rot_vel;
+        if (msg->e == true) cha_msg_.omega = - rot_vel;
     }
 
     void send_callback()
@@ -73,7 +78,7 @@ private:
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
-    auto node = std::make_shared<TeleopChassis>();
+    auto node = std::make_shared<TeleopMoving>();
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
