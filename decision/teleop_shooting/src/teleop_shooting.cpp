@@ -14,8 +14,6 @@ public:
             10, std::bind(&TeleopShooting::op_callback, this, std::placeholders::_1));
         send_timer_ = this->create_wall_timer(std::chrono::milliseconds(20),
             std::bind(&TeleopShooting::send_timer_callback, this));
-        recov_timer_ = this->create_wall_timer(std::chrono::milliseconds(200),
-            std::bind(&TeleopShooting::recov_callback, this));
         RCLCPP_INFO(this->get_logger(), "TeleopShooting initialized.");
     }
 
@@ -26,7 +24,6 @@ private:
     rclcpp::TimerBase::SharedPtr recov_timer_;
 
     shooting_interface::msg::Shoot shoot_msg{};
-    bool to_stop = true;
 
     void op_callback(const operation_interface::msg::TeleopKey::SharedPtr op_msg)
     {
@@ -35,26 +32,17 @@ private:
         if (op_msg->p == true)
             shoot_msg.fric_state = true;
 
-        // // space need to be kept pressed to keep to_stop false
-        // if (op_msg->space == true)
-        // {
-        //     to_stop = false;
-        //     shoot_msg.feed_state = true;
-        // }
-
         if (op_msg->space == true)
-            shoot_msg.feed_state = true;
+        {
+            // toggle feed state
+            if (shoot_msg.feed_state == true) shoot_msg.feed_state = false;
+            else shoot_msg.feed_state = true;
+        }
     }
 
     void send_timer_callback()
     {
         shoot_pub_->publish(shoot_msg);
-    }
-
-    void recov_callback()
-    {
-        // if (to_stop == true) shoot_msg.feed_state = false;
-        // to_stop = true;
     }
 };
 
