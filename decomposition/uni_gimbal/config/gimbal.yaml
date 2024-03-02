@@ -1,0 +1,18 @@
+/**:
+  ros__parameters:
+    
+    motor:
+      count: 1
+      rid: ["PITCH",]
+      hid: [5,]
+      brand: [0,] # 0->dji, 1->dm
+      type: [1,]
+      # for dji: 0->3508, 1->6020, 2->2006
+      p2v:
+        kps: [0.05,]
+        kis: [0.0,]
+        kds: [0.0,]
+      v2c:
+        kps: [0.08,]
+        kis: [0.0001,]
+        kds: [2.0,]

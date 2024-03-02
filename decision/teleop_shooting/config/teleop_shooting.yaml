@@ -1,12 +1,7 @@
 /**:
   ros__parameters:
 
-    chassis:
-      mode: 1
-      # 0->enable all, 1->only chassis movement, 2->only absolute movement, 3->only natural movement
-
     gimbal:
-      yaw_ratio: 100.0 # MY_TODO: to be tuned
       fric_vel_u: 600.0
       fric_vel_d: -600.0
       feed_vel_l: 15.0
@@ -22,13 +17,11 @@
       types:  [0, 0, 2]
       # for dji: 0->3508, 1->6020, 2->2006
       # for dm: 0->vel, 1->mit, 2->pos_vel
-
       p2v:
         kps: [0.0, 0.0, 0.0]
         kis: [0.0, 0.0, 0.0]
         kds: [0.0, 0.0, 0.0]
-
       v2c:
-        kps: [0.004, 0.004, 0.0035]
-        kis: [0.000005, 0.000005, 0.000005]
-        kds: [0.1, 0.1, 0.4]
+        kps: [0.08, 0.08, 0.07]
+        kis: [0.0001, 0.0001, 0.0001]
+        kds: [2.0, 2.0, 8.0]

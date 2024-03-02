@@ -121,8 +121,8 @@ private:
             }
         }
 
-        if (!yaw_found) RCLCPP_ERROR(this->get_logger(), "No yaw motor found in config.");
-        if (!pitch_found) RCLCPP_ERROR(this->get_logger(), "No pitch motor found in config.");
+        if (!yaw_found) RCLCPP_WARN(this->get_logger(), "No yaw motor found in config.");
+        if (!pitch_found) RCLCPP_WARN(this->get_logger(), "No pitch motor found in config.");
 
         gimbal_ = std::make_unique<Gimbal>(yaw, pitch);
     }
