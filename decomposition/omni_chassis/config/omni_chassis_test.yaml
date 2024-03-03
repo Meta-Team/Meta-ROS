@@ -2,6 +2,7 @@
   ros__parameters:
 
     chassis:
+      move_mode: "chassis"
       wheel_radius: 0.076 # m
       deceleration_ratio: 20.0
       chassis_radius: 0.255 # m

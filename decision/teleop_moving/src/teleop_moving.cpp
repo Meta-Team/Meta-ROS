@@ -1,9 +1,8 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "operation_interface/msg/teleop_key.hpp"
-#include "movement_interface/msg/chassis_move.hpp"
 #include <rclcpp/logging.hpp>
-
+#include "behavior_interface/msg/move.hpp"
 
 class TeleopMoving : public rclcpp::Node
 {
@@ -14,8 +13,8 @@ public:
         rot_vel = this->declare_parameter("rot_vel", rot_vel);
         RCLCPP_INFO(this->get_logger(), "Translational velocity: %f, Rotational velocity: %f", trans_vel, rot_vel);
 
-        cha_pub_ = this->create_publisher<movement_interface::msg::ChassisMove>(
-            "chassis_move", 10);
+        cha_pub_ = this->create_publisher<behavior_interface::msg::Move>(
+            "move", 10);
         key_sub_ = this->create_subscription<operation_interface::msg::TeleopKey>(
             "teleop_key", 10, [this](const operation_interface::msg::TeleopKey::SharedPtr key_msg_) { 
                 key_callback(key_msg_);
@@ -33,15 +32,15 @@ public:
 
 private:
     rclcpp::Subscription<operation_interface::msg::TeleopKey>::SharedPtr key_sub_;
-    rclcpp::Publisher<movement_interface::msg::ChassisMove>::SharedPtr cha_pub_;
-    movement_interface::msg::ChassisMove cha_msg_;
+    rclcpp::Publisher<behavior_interface::msg::Move>::SharedPtr cha_pub_;
+    behavior_interface::msg::Move cha_msg_;
     rclcpp::TimerBase::SharedPtr send_timer_;
     rclcpp::TimerBase::SharedPtr recov_timer_;
 
     float trans_vel = 0.0f;
     float rot_vel = 0.0f;
 
-    movement_interface::msg::ChassisMove move_msg{};
+    behavior_interface::msg::Move move_msg{};
     bool to_stop;
 
     void key_callback(const operation_interface::msg::TeleopKey::SharedPtr msg)

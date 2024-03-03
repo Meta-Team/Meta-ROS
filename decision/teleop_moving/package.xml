@@ -15,6 +15,7 @@
   <depend>rclcpp</depend>
   <depend>operation_interface</depend>
   <depend>movement_interface</depend>
+  <depend>behavior_interface</depend>
 
   <exec_depend>ros2launch</exec_depend>
 

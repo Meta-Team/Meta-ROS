@@ -2,8 +2,6 @@
 
 #include "mecanum_chassis/mecanum_kinematics.hpp"
 
-#include "movement_interface/msg/natural_move.hpp"
-#include "movement_interface/msg/absolute_move.hpp"
 
 class MecanumChassis : public rclcpp::Node
 {
@@ -14,8 +12,6 @@ public:
     }
 
 private:
-    rclcpp::Subscription<movement_interface::msg::NaturalMove>::SharedPtr nat_sub_;
-    rclcpp::Subscription<movement_interface::msg::AbsoluteMove>::SharedPtr abs_sub_;
 
 };
 
