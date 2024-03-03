@@ -1,6 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 
-#include "shooting_interface/msg/shoot.hpp"
+#include "behavior_interface/msg/shoot.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
 
 enum MotorId
@@ -16,7 +16,7 @@ class ShootLoad : public rclcpp::Node
 public:
     ShootLoad() : Node("shoot_load")
     {
-        shoot_sub_ = this->create_subscription<shooting_interface::msg::Shoot>("shoot",
+        shoot_sub_ = this->create_subscription<behavior_interface::msg::Shoot>("shoot",
             10, std::bind(&ShootLoad::shoot_callback, this, std::placeholders::_1));
         motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
         get_param();
@@ -24,7 +24,7 @@ public:
     }
 
 private:
-    rclcpp::Subscription<shooting_interface::msg::Shoot>::SharedPtr shoot_sub_;
+    rclcpp::Subscription<behavior_interface::msg::Shoot>::SharedPtr shoot_sub_;
     rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
 
     float feed_vel_l = 15.0, feed_vel_r = 15.0;
@@ -42,7 +42,7 @@ private:
         RCLCPP_INFO(this->get_logger(), "Feed velocity: %f and %f, Friction velocity: %f and %f", feed_vel_l, feed_vel_r, fric_vel_u, fric_vel_d);
     }
 
-    void shoot_callback(const shooting_interface::msg::Shoot::SharedPtr msg)
+    void shoot_callback(const behavior_interface::msg::Shoot::SharedPtr msg)
     {
         motor_interface::msg::MotorGoal goal_msg{};
 

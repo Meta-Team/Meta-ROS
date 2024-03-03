@@ -7,7 +7,7 @@ float OmniKinematics::wheel_r = 0.76;
 float OmniKinematics::decel_ratio = 20.0;
 float OmniKinematics::n_offset = 0.0;
 
-motor_interface::msg::MotorGoal OmniKinematics::absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg, float gimbal, float motor)
+motor_interface::msg::MotorGoal OmniKinematics::absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, float gimbal, float motor)
 {
     motor_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);
@@ -24,7 +24,7 @@ motor_interface::msg::MotorGoal OmniKinematics::absolute_decompo(const movement_
     return motor_goal;
 }
 
-motor_interface::msg::MotorGoal OmniKinematics::chassis_decompo(const movement_interface::msg::ChassisMove::SharedPtr msg)
+motor_interface::msg::MotorGoal OmniKinematics::chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg)
 {
     motor_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);

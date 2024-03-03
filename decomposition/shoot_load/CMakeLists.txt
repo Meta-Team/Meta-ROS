@@ -11,14 +11,14 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(shooting_interface REQUIRED)
 find_package(motor_interface REQUIRED)
+find_package(behavior_interface REQUIRED)
 
 add_executable(shoot_load
   src/shoot_load.cpp)
 ament_target_dependencies(shoot_load
   rclcpp
-  shooting_interface
+  behavior_interface
   motor_interface)
 
 install(TARGETS

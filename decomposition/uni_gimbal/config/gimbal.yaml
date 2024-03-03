@@ -3,10 +3,10 @@
     
     motor:
       count: 1
-      rid: ["PITCH",]
-      hid: [5,]
-      brand: [0,] # 0->dji, 1->dm
-      type: [1,]
+      rids: ["PITCH",]
+      hids: [5,]
+      brands: [0,] # 0->dji, 1->dm
+      types: [1,]
       # for dji: 0->3508, 1->6020, 2->2006
       p2v:
         kps: [0.05,]

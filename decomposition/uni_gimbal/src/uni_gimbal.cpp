@@ -1,15 +1,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "uni_gimbal/gimbal.h"
 #include <memory>
-#include <movement_interface/msg/detail/chassis_move__struct.hpp>
 #include <vector>
 
-#include "aiming_interface/msg/uni_aiming.hpp"
-#include "movement_interface/msg/natural_move.hpp"
-#include "movement_interface/msg/absolute_move.hpp"
+#include "behavior_interface/msg/aim.hpp"
+#include "behavior_interface/msg/move.hpp"
 #include "geometry_msgs/msg/vector3.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
-
 
 class UniGimbal: public rclcpp::Node
 {
@@ -19,16 +16,12 @@ public:
         north_offset = this->declare_parameter("north_offset", north_offset);
         init_gimbal();
 
-        goal_sub_ = this->create_subscription<aiming_interface::msg::UniAiming>(
-            "uni_aiming", 10, [this](const aiming_interface::msg::UniAiming::SharedPtr msg){
+        goal_sub_ = this->create_subscription<behavior_interface::msg::Aim>(
+            "aim", 10, [this](const behavior_interface::msg::Aim::SharedPtr msg){
                 goal_callback(msg);
             });
-        cha_sub_ = this->create_subscription<movement_interface::msg::ChassisMove>(
-            "chassis_move", 10, [this](const movement_interface::msg::ChassisMove::SharedPtr msg){
-                omega_callback(msg);
-            });
-        abs_sub_ = this->create_subscription<movement_interface::msg::AbsoluteMove>(
-            "absolute_move", 10, [this](const movement_interface::msg::AbsoluteMove::SharedPtr msg){
+        move_sub_ = this->create_subscription<behavior_interface::msg::Move>(
+            "move", 10, [this](const behavior_interface::msg::Move::SharedPtr msg){
                 omega_callback(msg);
             });
         feedback_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
@@ -43,9 +36,8 @@ public:
     }
 
 private:
-    rclcpp::Subscription<aiming_interface::msg::UniAiming>::SharedPtr goal_sub_;
-    rclcpp::Subscription<movement_interface::msg::ChassisMove>::SharedPtr cha_sub_;
-    rclcpp::Subscription<movement_interface::msg::AbsoluteMove>::SharedPtr abs_sub_;
+    rclcpp::Subscription<behavior_interface::msg::Aim>::SharedPtr goal_sub_;
+    rclcpp::Subscription<behavior_interface::msg::Move>::SharedPtr move_sub_;
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr feedback_sub_;
     rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr pub_;
     rclcpp::TimerBase::SharedPtr control_timer_;
@@ -54,11 +46,11 @@ private:
 
     float north_offset = 0.0; // The offset of the north direction, in radians.
 
-    void goal_callback(const aiming_interface::msg::UniAiming::SharedPtr goal_msg)
+    void goal_callback(const behavior_interface::msg::Aim::SharedPtr goal_msg)
     {
         // update goal_dir
-        float goal_dir = goal_msg->yaw_pos - north_offset;
-        float goal_pitch = goal_msg->pitch_pos;
+        float goal_dir = goal_msg->yaw - north_offset;
+        float goal_pitch = goal_msg->pitch;
         gimbal_->set_goal(goal_dir, goal_pitch);
     }
 
@@ -69,12 +61,7 @@ private:
         gimbal_->get_feedback(current_dir, current_pitch);
     }
 
-    void omega_callback(const movement_interface::msg::ChassisMove::SharedPtr msg)
-    {
-        gimbal_->update_omega(msg->omega);
-    }
-
-    void omega_callback(const movement_interface::msg::AbsoluteMove::SharedPtr msg)
+    void omega_callback(const behavior_interface::msg::Move::SharedPtr msg)
     {
         gimbal_->update_omega(msg->omega);
     }
@@ -93,16 +80,16 @@ private:
 
     void init_gimbal()
     {
-        int motor_count = this->declare_parameter("motor_count", 0);
+        int motor_count = this->declare_parameter("motor.count", 0);
 
         std::vector<std::string> rids{};
-        rids = this->declare_parameter("rids", rids);
+        rids = this->declare_parameter("motor.rids", rids);
         std::vector<double> p2v_kps{};
-        p2v_kps = this->declare_parameter("p2v_kps", p2v_kps);
+        p2v_kps = this->declare_parameter("motor.p2v.kps", p2v_kps);
         std::vector<double> p2v_kis{};
-        p2v_kis = this->declare_parameter("p2v_kis", p2v_kis);
+        p2v_kis = this->declare_parameter("motor.p2v.kis", p2v_kis);
         std::vector<double> p2v_kds{};
-        p2v_kds = this->declare_parameter("p2v_kds", p2v_kds);
+        p2v_kds = this->declare_parameter("motor.p2v.kds", p2v_kds);
 
         PidParam yaw, pitch;
         bool yaw_found = false, pitch_found = false;

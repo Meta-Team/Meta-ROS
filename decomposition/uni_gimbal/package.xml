@@ -13,10 +13,9 @@
   <test_depend>ament_lint_common</test_depend>
 
   <depend>rclcpp</depend>
-  <depend>aiming_interface</depend>
-  <depend>movement_interface</depend>
   <depend>motor_interface</depend>
   <depend>geometry_msgs</depend>
+  <depend>behavior_interface</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

@@ -6,9 +6,7 @@
 #include <vector>
 #include <iostream>
 
-#include "movement_interface/msg/natural_move.hpp"
-#include "movement_interface/msg/absolute_move.hpp"
-#include "movement_interface/msg/chassis_move.hpp"
+#include "behavior_interface/msg/move.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
 
 #define DIRE -1 // 1 if counter-clockwise, -1 if clockwise
@@ -32,7 +30,7 @@ namespace OmniKinematics
      * @param motor The yaw position of the gimbal against the chassis, in radians.
      * @return The motor goals.
      */
-    motor_interface::msg::MotorGoal absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg,
+    motor_interface::msg::MotorGoal absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg,
                                                      float gimbal, float motor);
 
     /**
@@ -42,7 +40,7 @@ namespace OmniKinematics
      * @return The motor goals.
      * @note This is independent of any feedback and is recommended in testing.
      */
-    motor_interface::msg::MotorGoal chassis_decompo(const movement_interface::msg::ChassisMove::SharedPtr msg);
+    motor_interface::msg::MotorGoal chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg);
 
     /**
      * @brief Clear the motor goals.

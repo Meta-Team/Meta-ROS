@@ -11,9 +11,9 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(movement_interface REQUIRED)
 find_package(motor_interface REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(behavior_interface REQUIRED)
 
 include_directories(include)
 
@@ -23,9 +23,9 @@ add_executable(omni_chassis
 
 ament_target_dependencies(omni_chassis
   rclcpp
-  movement_interface
   motor_interface
   geometry_msgs
+  behavior_interface
   )
 
 install(TARGETS
