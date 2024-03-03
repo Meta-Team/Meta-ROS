@@ -21,12 +21,12 @@ def generate_launch_description():
             name='omni_chassis',
             parameters=[chassis_config],
         ),
-        # Node(
-        #     package='dji_controller',
-        #     executable='dji_controller',
-        #     name='dji_controller',
-        #     parameters=[chassis_config],
-        # ),
+        Node(
+            package='dji_controller',
+            executable='dji_controller',
+            name='dji_controller',
+            parameters=[chassis_config],
+        ),
         Node(
             package='teleop_moving',
             executable='teleop_moving',
