@@ -43,10 +43,10 @@ private:
 
     MotorData present_data{}; /**< Data representing the current state of the motor. */
 
+    float vel_error{}; /**< Error in velocity. */
+    float pos_error{}; /**< Error in position. */
     float goal_pos{}; /**< Desired position of the motor. */
     float goal_vel{}; /**< Desired velocity of the motor. */
-    std::queue<float> vel_errors; /**< A queue storing errors in vel. */
-    std::queue<float> pos_errors; /**< A queue storing errors in pos. */
     float current{}; /**< Current value of the motor. */
 
     /**
