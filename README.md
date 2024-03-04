@@ -1,29 +1,53 @@
 # Meta-ROS
 
-### Basic Info
+## Basic Info
 
-Created by Yao Xinchen, 2023/7/13
+Created by Yao Xinchen, 2023/7/13. \
+Based on ROS2 Foxy. \
+Tested on Nvidia Orin Nano, Ubuntu 20.04. \
+Used for RoboMaster Team Meta to control robots.
 
-Based on ROS2 foxy
+This project is hoped to be modular, readable and easy to maintain.
 
-Tested on Nvidia Orin Nano, Ubuntu 20.04
+## Wiki
 
-Used for RoboMaster Team Meta to control robots
+There's a wiki for this project.
+[Wiki for Meta-ROS](https://github.com/Yao-Xinchen/Meta-ROS-wiki)
 
-### Dependencies
+## Dependencies
 
-ROS2 foxy
+1. ros2 (ros-foxy or ros-humble)
+2. serial-driver
+3. moveit
+4. moveit-servo
 
-### Structure
+## Structure
 
 4 main layers: Perception -> Decision -> Decomposition -> Execution
 
-### To Compile
+## To Compile
 
-Build with ```colcon build --cmake-args '-DCMAKE_EXPORT_COMPILE_COMMANDS=On'``` in the workspace
+First, create a workspace and clone the project.
 
-Update ROS extension with ctrl+shift+p -> ROS: Update C++ Properties -> ROS: Update Python Path
+```Bash
+mkdir Meta-ROS
+cd Meta-ROS
+git clone --recurse-submodules https://github.com/Yao-Xinchen/Meta-ROS src
+```
 
-Update clangd with ctrl+shift+p -> clangd: Restart language server
+To build run the script `first_build.bash` or `first_build.zsh` with
 
-If clangd is not activated, use ```cp build/compile_commands.json compile_commands.json```
+```Shell
+# For bash
+bash src/first_build.bash
+# For zsh
+zsh src/first_build.zsh
+```
+
+or run the following commands:
+
+```Bash
+colcon build --symlink-install --packages-select serial
+source ./install/setup.bash
+colcon build --symlink-install --cmake-args '-DCMAKE_EXPORT_COMPILE_COMMANDS=On'
+```
