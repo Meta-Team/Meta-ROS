@@ -3,14 +3,14 @@
 
     north_offset: 0.0 # rad, north against the desired front
     trans_vel: 3.0 # m/s
-    rot_vel: 4.0 # rad/s
+    rot_vel: 6.0 # rad/s
     aim_sensitivity: 3.14 # rad/s
     deadzone: 0.05 # percentage
     
     chassis:
-      wheel_radius: 0.07 # m
+      wheel_radius: 0.076 # m
       deceleration_ratio: 20.0
-      chassis_radius: 1.57 # m
+      chassis_radius: 0.255 # m
 
     gimbal:
       fric_vel_u: 600.0
