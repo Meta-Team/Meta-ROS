@@ -2,20 +2,23 @@
   ros__parameters:
 
     north_offset: 0.0 # rad, north against the desired front
-    trans_vel: 2.0 # m/s
-    rot_vel: 3.14 # rad/s
+    trans_vel: 3.0 # m/s
+    rot_vel: 4.0 # rad/s
+    aim_sensitivity: 3.14 # rad/s
+    deadzone: 0.05 # percentage
     
     chassis:
       wheel_radius: 0.07 # m
       deceleration_ratio: 20.0
-      chassis_radius: 0.5 # m
+      chassis_radius: 1.57 # m
 
     gimbal:
-      yaw_ratio: 100.0 # MY_TODO: to be tuned
-      fric_vel_u: 500.0
-      fric_vel_d: -500.0
-      feed_vel_l: 300.0
-      feed_vel_r: 300.0
+      fric_vel_u: 600.0
+      fric_vel_d: -600.0
+      feed_vel_l: 15.0
+      feed_vel_r: -15.0
+      feed_ratio: 36.0
+      fric_ratio: 1.0
 
     motor:
       count:  10

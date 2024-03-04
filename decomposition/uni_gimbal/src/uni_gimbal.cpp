@@ -33,6 +33,8 @@ public:
             std::chrono::milliseconds(CONTROL_R), [this](){
                 pub_callback();
             });
+
+        RCLCPP_INFO(this->get_logger(), "UniGimbal initialized.");
     }
 
 private:
@@ -76,6 +78,7 @@ private:
         msg.motor_id.push_back("PITCH");
         msg.goal_pos.push_back(0.0);
         msg.goal_vel.push_back(pitch_vel);
+        pub_->publish(msg);
     }
 
     void init_gimbal()

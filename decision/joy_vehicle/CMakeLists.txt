@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(uni_gimbal)
+project(joy_vehicle)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -10,32 +10,23 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-
 find_package(rclcpp REQUIRED)
-find_package(motor_interface REQUIRED)
-find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(behavior_interface REQUIRED)
 
 include_directories(include)
 
-add_executable(uni_gimbal 
-  src/uni_gimbal.cpp
-  src/gimbal.cpp)
-
-ament_target_dependencies(uni_gimbal
+add_executable(joy_vehicle
+  src/joy_vehicle.cpp
+  src/joy_interpreter.cpp)
+ament_target_dependencies(joy_vehicle
   rclcpp
-  geometry_msgs
-  motor_interface
+  sensor_msgs
   behavior_interface)
 
-install(TARGETS uni_gimbal
+install(TARGETS
+  joy_vehicle
   DESTINATION lib/${PROJECT_NAME})
-
-install(DIRECTORY
-  config
-  launch
-  DESTINATION share/${PROJECT_NAME}
-)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
