@@ -11,14 +11,12 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(operation_interface REQUIRED)
-find_package(movement_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(behavior_interface REQUIRED)
 
 add_executable(teleop_moving src/teleop_moving.cpp)
 ament_target_dependencies(teleop_moving
   operation_interface
-  movement_interface
   rclcpp
   behavior_interface
 )

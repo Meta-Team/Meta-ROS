@@ -6,11 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "movement_interface/msg/natural_move.hpp"
-#include "movement_interface/msg/absolute_move.hpp"
-#include "movement_interface/msg/chassis_move.hpp"
+#include "behavior_interface/msg/move.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
-#include "gyro_interface/srv/gimbal_position.hpp"
 #include "motor_interface/srv/motor_state.hpp"
 
 #define PI 3.1415926f
@@ -39,10 +36,10 @@ namespace AgvKinematics
     /**
      * @brief Decomposes a natural move message into motor goals.
      * @param msg The natural move message.
-     * @param yaw_diff The yaw difference.
+     * @param yaw_diff The yaw difference between chassis and gimbal.
      * @return The motor goal.
      */
-    MotorGoal natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg, float yaw_diff);
+    MotorGoal natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float yaw_diff);
 
     /**
      * @brief Decomposes an absolute move message into motor goals.
@@ -50,14 +47,14 @@ namespace AgvKinematics
      * @param chassis_yaw The chassis yaw.
      * @return The motor goal.
      */
-    MotorGoal absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg, float chassis_yaw);
+    MotorGoal absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, float chassis_yaw);
 
     /**
      * @brief Decomposes a chassis move message into motor goals.
      * @param msg The chassis move message.
      * @return The motor goal.
      */
-    MotorGoal chassis_decompo(const movement_interface::msg::ChassisMove::SharedPtr msg);
+    MotorGoal chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg);
 
     /**
      * @brief Clear the motor goals.

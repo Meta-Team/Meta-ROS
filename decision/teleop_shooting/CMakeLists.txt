@@ -12,14 +12,14 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(operation_interface REQUIRED)
-find_package(shooting_interface REQUIRED)
+find_package(behavior_interface REQUIRED)
 
 add_executable(teleop_shooting
   src/teleop_shooting.cpp)
 ament_target_dependencies(teleop_shooting
   rclcpp
   operation_interface
-  shooting_interface)
+  behavior_interface)
 
 install(TARGETS
   teleop_shooting

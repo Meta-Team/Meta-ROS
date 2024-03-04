@@ -11,7 +11,6 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(movement_interface REQUIRED)
 find_package(motor_interface REQUIRED)
 find_package(behavior_interface REQUIRED)
 

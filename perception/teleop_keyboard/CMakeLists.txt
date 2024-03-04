@@ -11,7 +11,6 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(movement_interface REQUIRED)
 find_package(operation_interface REQUIRED)
 
 include_directories(include)
@@ -21,7 +20,6 @@ add_executable(teleop_keyboard
 
 ament_target_dependencies(teleop_keyboard
   rclcpp
-  movement_interface
   operation_interface)
 
 install(TARGETS

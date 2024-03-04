@@ -21,6 +21,7 @@ unordered_map<string, float> AgvKinematics::pos =
     {"RB_D", 0.0}
 }; // rad
 
+// MY_TODO: change to param
 unordered_map<string, float> AgvKinematics::offsets =
 {
     {"LF_D", 0.0},
@@ -29,13 +30,13 @@ unordered_map<string, float> AgvKinematics::offsets =
     {"RB_D", 0.0}
 }; // rad
 
-MotorGoal AgvKinematics::natural_decompo(const movement_interface::msg::NaturalMove::SharedPtr msg, float yaw_diff)
+MotorGoal AgvKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float yaw_diff)
 {
     MotorGoal motor_goal;
     clear_goal(motor_goal);
 
-    float trans_n = msg->vel_tau * sin(yaw_diff) + msg->vel_n * cos(yaw_diff);
-    float trans_tao = msg->vel_tau * cos(yaw_diff) - msg->vel_n * sin(yaw_diff);
+    float trans_n = msg->vel_x * sin(yaw_diff) + msg->vel_y * cos(yaw_diff);
+    float trans_tao = msg->vel_x * cos(yaw_diff) - msg->vel_y * sin(yaw_diff);
     float rot_vel = msg->omega * cha_r / sqrt(2);
 
     add_group_goal(motor_goal, "LF", trans_n + rot_vel, trans_tao - rot_vel);
@@ -46,7 +47,7 @@ MotorGoal AgvKinematics::natural_decompo(const movement_interface::msg::NaturalM
     return motor_goal;
 }
 
-MotorGoal AgvKinematics::absolute_decompo(const movement_interface::msg::AbsoluteMove::SharedPtr msg, float chassis_yaw)
+MotorGoal AgvKinematics::absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, float chassis_yaw)
 {
     MotorGoal motor_goal;
     clear_goal(motor_goal);
@@ -63,7 +64,7 @@ MotorGoal AgvKinematics::absolute_decompo(const movement_interface::msg::Absolut
     return motor_goal;
 }
 
-MotorGoal AgvKinematics::chassis_decompo(const movement_interface::msg::ChassisMove::SharedPtr msg)
+MotorGoal AgvKinematics::chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg)
 {
     MotorGoal motor_goal;
     clear_goal(motor_goal);

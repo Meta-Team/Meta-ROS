@@ -1,7 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "operation_interface/msg/remote_control.hpp"
-#include "movement_interface/msg/chassis_move.hpp" // MY_TODO: change to other movement
+#include "behavior_interface/msg/move.hpp"
 
 #define UNIT_VEL 500
 #define RECOV_R 100
@@ -12,7 +12,7 @@ class RemoteMoving : public rclcpp::Node
 public:
     RemoteMoving() : Node("remote_moving")
     {
-        vel = std::make_unique<movement_interface::msg::ChassisMove>();
+        vel = std::make_unique<behavior_interface::msg::Move>();
         sub_ = this->create_subscription<operation_interface::msg::RemoteControl>(
             "remote_control", 10,
             std::bind(&RemoteMoving::control_callback, this, std::placeholders::_1));
@@ -20,16 +20,16 @@ public:
             std::bind(&RemoteMoving::recov_callback, this));
         send_timer_ = this->create_wall_timer(std::chrono::milliseconds(SEND_R),
             std::bind(&RemoteMoving::send_callback, this));
-        pub_ = this->create_publisher<movement_interface::msg::ChassisMove>("chassis_move", 10);
+        pub_ = this->create_publisher<behavior_interface::msg::Move>("chassis_move", 10);
     }
 
 private:
     rclcpp::Subscription<operation_interface::msg::RemoteControl>::SharedPtr sub_;
-    rclcpp::Publisher<movement_interface::msg::ChassisMove>::SharedPtr pub_;
+    rclcpp::Publisher<behavior_interface::msg::Move>::SharedPtr pub_;
     rclcpp::TimerBase::SharedPtr recov_timer_;
     rclcpp::TimerBase::SharedPtr send_timer_;
     bool to_stop = true;
-    movement_interface::msg::ChassisMove::UniquePtr vel;
+    behavior_interface::msg::Move::UniquePtr vel;
 
     void control_callback(const operation_interface::msg::RemoteControl::SharedPtr msg)
     {

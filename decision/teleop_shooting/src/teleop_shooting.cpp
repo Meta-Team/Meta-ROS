@@ -1,7 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "operation_interface/msg/teleop_key.hpp"
-#include "shooting_interface/msg/shoot.hpp"
+#include "behavior_interface/msg/shoot.hpp"
 
 class TeleopShooting : public rclcpp::Node
 {
@@ -9,7 +9,7 @@ public:
     TeleopShooting() : Node("teleop_shooting")
     {
         shoot_msg.id = 0;
-        shoot_pub_ = this->create_publisher<shooting_interface::msg::Shoot>("shoot", 10);
+        shoot_pub_ = this->create_publisher<behavior_interface::msg::Shoot>("shoot", 10);
         op_sub_ = this->create_subscription<operation_interface::msg::TeleopKey>("teleop_key",
             10, std::bind(&TeleopShooting::op_callback, this, std::placeholders::_1));
         send_timer_ = this->create_wall_timer(std::chrono::milliseconds(20),
@@ -18,12 +18,12 @@ public:
     }
 
 private:
-    rclcpp::Publisher<shooting_interface::msg::Shoot>::SharedPtr shoot_pub_;
+    rclcpp::Publisher<behavior_interface::msg::Shoot>::SharedPtr shoot_pub_;
     rclcpp::Subscription<operation_interface::msg::TeleopKey>::SharedPtr op_sub_;
     rclcpp::TimerBase::SharedPtr send_timer_;
     rclcpp::TimerBase::SharedPtr recov_timer_;
 
-    shooting_interface::msg::Shoot shoot_msg{};
+    behavior_interface::msg::Shoot shoot_msg{};
 
     void op_callback(const operation_interface::msg::TeleopKey::SharedPtr op_msg)
     {
