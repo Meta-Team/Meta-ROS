@@ -53,14 +53,13 @@ void DjiDriver::vel2current()
     vel_error = goal_vel - present_data.velocity;
 
     v2c_out.p = v2c_prm.kp * vel_error;
-    v2c_out.i += v2c_prm.ki * vel_error * CONTROL_R; // the sum of the queue
+    v2c_out.i += v2c_prm.ki * vel_error * CONTROL_R; curb(v2c_out.i, I_MAX / 2.0);
     v2c_out.d = v2c_prm.kd * (vel_error - prev_error) / CONTROL_R;
 
     this->current = v2c_out.sum();
 
     // restrict the current
-    if (current > I_MAX) this->current = I_MAX;
-    else if (current < -I_MAX) this->current = -I_MAX;
+    curb(current, I_MAX);
 }
 
 void DjiDriver::pos2velocity()
@@ -69,14 +68,13 @@ void DjiDriver::pos2velocity()
     pos_error = goal_pos - present_data.position;
 
     p2v_out.p = p2v_prm.kp * pos_error;
-    p2v_out.i += p2v_prm.ki * pos_error * CONTROL_R; // the sum of the queue
+    p2v_out.i += p2v_prm.ki * pos_error * CONTROL_R; curb(p2v_out.i, V_MAX / 2.0);
     p2v_out.d = p2v_prm.kd * (pos_error - prev_error) / CONTROL_R;
 
     this->goal_vel = p2v_out.sum();
 
     // restrict the velocity
-    if (goal_vel > V_MAX) this->goal_vel = V_MAX;
-    else if (goal_vel < -V_MAX) this->goal_vel = -V_MAX;
+    curb(goal_vel, V_MAX);
 }
 
 std::unique_ptr<can_frame> DjiDriver::init_frame(int frame_id)
@@ -174,4 +172,10 @@ std::tuple<float, float, float> DjiDriver::get_state()
         present_data.velocity,
         present_data.torque
     );
+}
+
+void DjiDriver::curb(float &val, float limit)
+{
+    if (val > limit) val = limit;
+    else if (val < -limit) val = -limit;
 }

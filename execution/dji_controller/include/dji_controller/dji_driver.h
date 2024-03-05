@@ -140,6 +140,14 @@ public:
      * @return A tuple containing the position, velocity, and current of the motor.
      */
     [[nodiscard]] std::tuple<float, float, float> get_state();
+
+    /**
+     * @brief Limits the value of a variable to a specified range.
+     * @param val Reference to the variable to be limited.
+     * @param limit The upper and lower limit for the value.
+     * @note Limit must be positive.
+     */
+    void curb(float &val, float limit);
 };
 
 #endif // DJI_DRIVER_H
