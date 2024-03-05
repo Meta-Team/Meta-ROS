@@ -53,8 +53,8 @@ void DjiDriver::vel2current()
     vel_error = goal_vel - present_data.velocity;
 
     v2c_out.p = v2c_prm.kp * vel_error;
-    v2c_out.i += v2c_prm.ki * vel_error * CONTROL_R; curb(v2c_out.i, I_MAX / 2.0);
-    v2c_out.d = v2c_prm.kd * (vel_error - prev_error) / CONTROL_R;
+    v2c_out.i += v2c_prm.ki * vel_error * DT; curb(v2c_out.i, I_MAX / 2.0);
+    v2c_out.d = v2c_prm.kd * (vel_error - prev_error) / DT;
 
     this->current = v2c_out.sum();
 
@@ -68,8 +68,8 @@ void DjiDriver::pos2velocity()
     pos_error = goal_pos - present_data.position;
 
     p2v_out.p = p2v_prm.kp * pos_error;
-    p2v_out.i += p2v_prm.ki * pos_error * CONTROL_R; curb(p2v_out.i, V_MAX / 2.0);
-    p2v_out.d = p2v_prm.kd * (pos_error - prev_error) / CONTROL_R;
+    p2v_out.i += p2v_prm.ki * pos_error * DT; curb(p2v_out.i, V_MAX / 2.0);
+    p2v_out.d = p2v_prm.kd * (pos_error - prev_error) / DT;
 
     this->goal_vel = p2v_out.sum();
 
