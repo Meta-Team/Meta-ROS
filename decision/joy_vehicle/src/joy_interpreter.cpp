@@ -35,7 +35,7 @@ void JoyInterpreter::update()
 {
     move_->vel_x = max_vel * ls_x;
     move_->vel_y = max_vel * ls_y;
-    move_->omega = max_vel * (rt - lt) / 2;
+    move_->omega = max_omega * (rt - lt) / 2;
     aim_->pitch += aim_sensitive * rs_x * PERIOD / 1000; curb(aim_->pitch, PI / 2);
     aim_->yaw += aim_sensitive * rs_y * PERIOD / 1000;
     shoot_->fric_state = lb;
