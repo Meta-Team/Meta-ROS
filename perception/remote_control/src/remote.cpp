@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 
-bool Remote::is_wanted_pre(std::vector<uint8_t> &prefix)
+bool Remote::is_wanted_pre(const std::vector<uint8_t> &prefix)
 {
     if (prefix[0] != 0xA5) return false;
 

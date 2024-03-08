@@ -50,14 +50,14 @@ public:
     /**
      * @brief Represents a remote frame structure used for communication. 
      */
-    struct __attribute__((packed, aligned(1))) RemoteFrame
+    struct [[gnu::packed]] RemoteFrame
     {
         /**
          * @brief Represents the header of the remote frame.
          */
-        struct __attribute__((packed, aligned(1))) Header
+        struct [[gnu::packed]] Header
         {
-            uint8_t sof = 0xA5; /**< Start of Frame */
+            static constexpr uint8_t sof = 0xA5; /**< Start of Frame */
             uint16_t length; /**< Length of the frame */
             uint8_t seq; /**< Sequence number */
             uint8_t crc8; /**< CRC8 checksum */
@@ -66,7 +66,7 @@ public:
         /**
          * @brief Represents the data payload of the remote frame.
          */
-        struct __attribute__((packed, aligned(1))) Data
+        struct [[gnu::packed]] Data
         {
             int16_t mouse_x; /**< X-coordinate of the mouse */
             int16_t mouse_y; /**< Y-coordinate of the mouse */
@@ -79,7 +79,7 @@ public:
 
         Header header; /**< The header of the remote frame */
         uint16_t cmd_id; /**< Command ID */
-        Data data; /**< The data payload of the remote frame */
+        Data data; /**< The data of the remote frame */
         uint16_t tail; /**< Tail of the frame */
     };
 
@@ -90,7 +90,7 @@ public:
      * @param prefix The prefix to check.
      * @return True if the prefix is a wanted prefix, false otherwise.
      */
-    static bool is_wanted_pre(std::vector<uint8_t> &prefix);
+    static bool is_wanted_pre(const std::vector<uint8_t> &prefix);
 
     /**
      * @brief Constructs a Remote object from a frame.
