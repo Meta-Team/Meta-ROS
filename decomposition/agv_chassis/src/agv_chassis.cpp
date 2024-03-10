@@ -60,7 +60,7 @@ public:
         get_offsets();
 
         // initialize subscriber
-        gimbal_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>("gimbal_position", 10,
+        gimbal_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>("euler_angles", 10,
             std::bind(&AgvChassis::gimbal_callback, this, ph::_1));
         motor_sub_ = this->create_subscription<motor_interface::msg::MotorState>("motor_state", 10,
             std::bind(&AgvChassis::motor_callback, this, ph::_1));
@@ -109,7 +109,6 @@ public:
             const auto& [offset, found] = offset_found;
             if (!found) RCLCPP_ERROR(this->get_logger(), "Offset not found for %s", rid.c_str());
         }
-        
     }
 };
 
