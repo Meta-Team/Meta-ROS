@@ -7,4 +7,4 @@
 [submodule "perception/meta_vision"]
 	path = perception/meta_vision
 	url = https://github.com/Yao-Xinchen/Meta-Vision
-	branch = raw
+	branch = integrated
