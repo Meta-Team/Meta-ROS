@@ -7,27 +7,29 @@ float AgvKinematics::decel_ratio = 20.0;
 
 unordered_map<string, float> AgvKinematics::vel = 
 {
+    // {rid, vel}
     {"LF_V", 0.0},
     {"RF_V", 0.0},
     {"LB_V", 0.0},
-    {"RB_V", 0.0}
+    {"RB_V", 0.0},
 }; // m/s
 
 unordered_map<string, float> AgvKinematics::pos = 
 {
+    // {rid, pos}
     {"LF_D", 0.0},
     {"RF_D", 0.0},
     {"LB_D", 0.0},
-    {"RB_D", 0.0}
+    {"RB_D", 0.0},
 }; // rad
 
-// MY_TODO: change to param
-unordered_map<string, float> AgvKinematics::offsets =
+unordered_map<string, pair<float, bool>> AgvKinematics::offsets =
 {
-    {"LF_D", 0.0},
-    {"RF_D", 0.0},
-    {"LB_D", 0.0},
-    {"RB_D", 0.0}
+    // {rid, {offset, found}}
+    {"LF_D", {0.0, false}},
+    {"RF_D", {0.0, false}},
+    {"LB_D", {0.0, false}},
+    {"RB_D", {0.0, false}},
 }; // rad
 
 MotorGoal AgvKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float yaw_diff)
@@ -99,8 +101,7 @@ void AgvKinematics::add_pos_goal(MotorGoal &motor_goal, const string &rid, const
 {
     motor_goal.motor_id.push_back(rid);
     motor_goal.goal_vel.push_back(0.0);
-    motor_goal.goal_pos.push_back(goal_pos + offsets[rid]); // already in rad
-
+    motor_goal.goal_pos.push_back(goal_pos + offsets[rid].first); // already in rad
 }
 
 void AgvKinematics::add_group_goal(MotorGoal &motor_goal, const string& which, float vx, float vy)
@@ -114,7 +115,12 @@ void AgvKinematics::add_group_goal(MotorGoal &motor_goal, const string& which, f
         // pos[dir_id] does not change
         vel[vel_id] = 0;
     }
-    else if (is_zero(vy)) // if vy is 0, vx/vy would be 0/0
+    else if (is_zero(vy)) // if vy is 0
+    {
+        pos[dir_id] = 1E-3; // not zero, to enable pos control
+        vel[vel_id] = vx;
+    }
+    else if (is_zero(vx)) // if vx is 0, vx/vy would be 0/0
     {
         pos[dir_id] = PI / 2;
         vel[vel_id] = vy;

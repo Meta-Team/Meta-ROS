@@ -4,6 +4,7 @@
 #include <cmath>
 #include <map>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "behavior_interface/msg/move.hpp"
@@ -13,15 +14,12 @@
 #define PI 3.1415926f
 #define TRIGGER 0.05 // a vel is considered to be zero if its absolute value is less than TRIGGER
 
-using std::string, std::unordered_map, motor_interface::msg::MotorGoal;
+using std::string, std::unordered_map, std::pair, motor_interface::msg::MotorGoal;
 
 /**
  * @brief Namespace containing functions and types related to AGV kinematics.
- *
  * An AGV chassis has 4 direction motors and 4 velocity motors.
- * The direction motors are controlled by DM motor drivers, while the velocity motors are controlled by DJI motor drivers.
- *
- * @note In this namespace, left is set to be positive and forward is set to be positive.    
+ * @note +x is the front of the chassis, +y is the left of the chassis.    
  */
 namespace AgvKinematics
 {
@@ -31,7 +29,7 @@ namespace AgvKinematics
 
     extern unordered_map<string, float> vel; ///< The velocities of the motors.
     extern unordered_map<string, float> pos; ///< The positions of the motors.
-    extern unordered_map<string, float> offsets; ///< The offsets of the motors. Used in add_motor_goal.
+    extern unordered_map<string, pair<float, bool>> offsets; ///< The offsets of the motors. Bool indicates whether the offset is found.
 
     /**
      * @brief Decomposes a natural move message into motor goals.

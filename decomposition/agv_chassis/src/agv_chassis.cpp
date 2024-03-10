@@ -3,8 +3,11 @@
 
 #include "geometry_msgs/msg/vector3.hpp"
 #include "motor_interface/msg/motor_state.hpp"
+#include <cstdint>
+#include <vector>
 
 namespace ph = std::placeholders;
+using std::string, std::vector;
 
 class AgvChassis : public rclcpp::Node
 {
@@ -50,9 +53,11 @@ private:
 public:
     AgvChassis() : Node("AgvChassis")
     {
-        std::string mode = "chassis";
+        string mode = "chassis";
         mode = this->declare_parameter("chassis.move_mode", mode);
         RCLCPP_INFO(this->get_logger(), "Chassis mode: %s", mode.c_str());
+
+        get_offsets();
 
         // initialize subscriber
         gimbal_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>("gimbal_position", 10,
@@ -76,6 +81,35 @@ public:
         // initialize publisher
         motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
         RCLCPP_INFO(this->get_logger(), "AgvChassis initialized");
+    }
+
+    void get_offsets()
+    {
+        vector<double> offsets;
+        offsets = this->declare_parameter("chassis.offsets", offsets);
+        vector<string> rids;
+        rids = this->declare_parameter("chassis.rids", rids);
+
+        for (int i = 0; i < static_cast<int>(rids.size()); i++)
+        {
+            const string id = rids[i];
+            const float offset = offsets[i];
+            const auto it = AgvKinematics::offsets.find(id);
+            if (it != AgvKinematics::offsets.end()) // found
+            {
+                // {rid, {offset, found}}
+                auto& [offset_, found_] = it->second;
+                offset_ = offset;
+                found_ = true;
+            }
+        }
+
+        for (const auto& [rid, offset_found] : AgvKinematics::offsets)
+        {
+            const auto& [offset, found] = offset_found;
+            if (!found) RCLCPP_ERROR(this->get_logger(), "Offset not found for %s", rid.c_str());
+        }
+        
     }
 };
 
