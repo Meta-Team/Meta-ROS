@@ -5,18 +5,24 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(behavior_interface REQUIRED)
 
 include_directories(include)
 
 add_executable(auto_sentry src/auto_sentry.cpp)
-ament_target_dependencies(auto_sentry rclcpp behavior_interface)
+ament_target_dependencies(auto_sentry
+  rclcpp
+  behavior_interface
+  vision_interface
+)
 
 install(TARGETS
   auto_sentry
