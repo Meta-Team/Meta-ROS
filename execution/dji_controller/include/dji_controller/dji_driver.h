@@ -15,7 +15,7 @@
 #define I_MAX 20 // Ampere, current limit
 #define V_MAX 300 // to be tuned, velocity limit
 
-#define Q_SIZE 256 // the size of error queues
+#define NaN std::nan("")
 
 enum MotorType
 {

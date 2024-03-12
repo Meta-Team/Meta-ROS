@@ -94,13 +94,13 @@ void AgvKinematics::add_vel_goal(MotorGoal &motor_goal, const string& rid, const
 {
     motor_goal.motor_id.push_back(rid);
     motor_goal.goal_vel.push_back(goal_vel / wheel_r * decel_ratio); // convert to rad/s
-    motor_goal.goal_pos.push_back(0.0);
+    motor_goal.goal_pos.push_back(NaN);
 }
 
 void AgvKinematics::add_pos_goal(MotorGoal &motor_goal, const string &rid, const float goal_pos)
 {
     motor_goal.motor_id.push_back(rid);
-    motor_goal.goal_vel.push_back(0.0);
+    motor_goal.goal_vel.push_back(NaN);
     motor_goal.goal_pos.push_back(goal_pos + offsets[rid].first); // already in rad
 }
 

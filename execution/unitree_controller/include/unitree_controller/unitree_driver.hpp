@@ -6,6 +6,8 @@
 #include "serialPort/SerialPort.h"
 #include <tuple>
 
+#define NaN std::nan("")
+
 /**
  * @class UnitreeDriver
  * @brief A class to control and manage Unitree motors.

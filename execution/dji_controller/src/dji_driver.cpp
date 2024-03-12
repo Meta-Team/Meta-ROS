@@ -112,7 +112,7 @@ void DjiDriver::process_rx()
 
 void DjiDriver::write_tx()
 {
-    if (goal_pos != 0.0 && goal_vel == 0.0) pos2velocity();
+    if (goal_pos != NaN && goal_vel == NaN) pos2velocity();
     vel2current();
 
     if (motor_type == M3508)

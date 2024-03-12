@@ -9,6 +9,8 @@
 #include "behavior_interface/msg/move.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
 
+#define NaN std::nan("")
+
 #define DIRE -1 // 1 if counter-clockwise, -1 if clockwise
 #define PI 3.1415926f
 

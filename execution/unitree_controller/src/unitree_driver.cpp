@@ -29,14 +29,14 @@ UnitreeDriver::~UnitreeDriver()
 void UnitreeDriver::set_goal(float goal_pos, float goal_vel)
 {
     goal_cmd.tau = 0.0; // cmd.T
-    if (goal_pos != 0.0)
+    if (goal_pos != NaN)
     {
         goal_cmd.kd = 0.0;
         goal_cmd.kp = this->kp;
         goal_cmd.q = goal_pos * queryGearRatio(MotorType::GO_M8010_6); // cmd.Pos
         goal_cmd.dq = 0.0;
     }
-    if (goal_vel != 0.0)
+    if (goal_vel != NaN)
     {
         goal_cmd.kd = this->kd;
         goal_cmd.kp = 0.0;

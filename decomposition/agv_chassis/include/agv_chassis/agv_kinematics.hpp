@@ -11,6 +11,8 @@
 #include "motor_interface/msg/motor_goal.hpp"
 #include "motor_interface/srv/motor_state.hpp"
 
+#define NaN std::nan("")
+
 #define PI 3.1415926f
 #define TRIGGER 0.05 // a vel is considered to be zero if its absolute value is less than TRIGGER
 
