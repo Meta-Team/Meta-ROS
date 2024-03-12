@@ -19,6 +19,7 @@
       feed_vel_r: -15.0
       feed_ratio: 36.0
       fric_ratio: 1.0
+      search_vel: 0.5
 
     motor:
       count:  10
