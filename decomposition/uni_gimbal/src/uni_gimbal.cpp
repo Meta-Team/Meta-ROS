@@ -8,6 +8,8 @@
 #include "geometry_msgs/msg/vector3.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
 
+#define NaN std::nan("")
+
 class UniGimbal: public rclcpp::Node
 {
 public:
@@ -51,14 +53,14 @@ private:
     void goal_callback(const behavior_interface::msg::Aim::SharedPtr goal_msg)
     {
         // update goal_dir
-        float goal_dir = goal_msg->yaw - north_offset;
+        float goal_dir = goal_msg->yaw; // relative to north
         float goal_pitch = goal_msg->pitch;
         gimbal_->set_goal(goal_dir, goal_pitch);
     }
 
     void feedback_callback(const geometry_msgs::msg::Vector3::SharedPtr feedback_msg)
     {
-        float current_dir = - feedback_msg->z;
+        float current_dir = - feedback_msg->z; // relative to north
         float current_pitch = feedback_msg->y;
         gimbal_->get_feedback(current_dir, current_pitch);
     }
@@ -73,10 +75,10 @@ private:
         auto [yaw_vel, pitch_vel] = gimbal_->calc_vel();
         auto msg = motor_interface::msg::MotorGoal();
         msg.motor_id.push_back("YAW");
-        msg.goal_pos.push_back(0.0);
+        msg.goal_pos.push_back(NaN);
         msg.goal_vel.push_back(yaw_vel);
         msg.motor_id.push_back("PITCH");
-        msg.goal_pos.push_back(0.0);
+        msg.goal_pos.push_back(NaN);
         msg.goal_vel.push_back(pitch_vel);
         pub_->publish(msg);
     }
