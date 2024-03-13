@@ -6,6 +6,7 @@
     rot_vel: 6.0 # rad/s
     aim_sensitivity: 3.14 # rad/s
     deadzone: 0.05 # percentage
+    auto_rotate: 2 # rad/s, of the chassis
     
     chassis:
       wheel_radius: 0.076 # m

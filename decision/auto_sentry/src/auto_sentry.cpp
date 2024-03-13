@@ -3,25 +3,32 @@
 #include "behavior_interface/msg/move.hpp"
 #include "behavior_interface/msg/shoot.hpp"
 #include "vision_interface/msg/auto_aim.hpp"
-#include <behavior_interface/msg/detail/aim__struct.hpp>
-#include <rclcpp/timer.hpp>
+#include "auto_sentry/aim_mode.hpp"
 
-#define COUNT 10
-
-#define UPDATE_R 10 // ms
-#define SEARCH_VEL 0.3 // rad/s // MY_TODO: change to param
+#define UPDATE_R 20 // ms
+#define PUB_R 10 // ms
 
 using namespace behavior_interface::msg;
 using vision_interface::msg::AutoAim;
-
+ 
 class AutoSentry : public rclcpp::Node
 {
 public:
-    AutoSentry() : Node("auto_sentry")
+    AutoSentry() : Node("auto_sentry"), aim_mode(this->get_logger())
     {
         this->aim_pub_ = this->create_publisher<Aim>("aim", 10);
         this->move_pub_ = this->create_publisher<Move>("move", 10);
         this->shoot_pub_ = this->create_publisher<Shoot>("shoot", 10);
+
+        search_vel = this->declare_parameter("gimbal.search_vel", search_vel);
+        freq = this->declare_parameter("gimbal.freq", freq);
+        amplitude = this->declare_parameter("gimbal.amplitude", amplitude);
+        north_offset = this->declare_parameter("north_offset", north_offset);
+        auto_rotate = this->declare_parameter("auto_rotate", auto_rotate);
+
+        set_msgs();
+
+        RCLCPP_INFO(this->get_logger(), "AutoSentry initialized");
     }
 
 private:
@@ -29,48 +36,83 @@ private:
     rclcpp::Publisher<Move>::SharedPtr move_pub_;
     rclcpp::Publisher<Shoot>::SharedPtr shoot_pub_;
     rclcpp::Subscription<AutoAim>::SharedPtr auto_aim_sub_;
-    rclcpp::TimerBase::SharedPtr count_timer_;
     rclcpp::TimerBase::SharedPtr publish_timer_;
     rclcpp::TimerBase::SharedPtr update_timer_;
 
-    int count_down = COUNT;
+    double north_offset = 0.0;
+    double search_vel = 0.5; // rad/s
+    double freq = 3.0;
+    double amplitude = 0.4; // rad
+    double auto_rotate = 2; // rad/s
 
+    AimMode aim_mode;
+
+    float yaw_buffer = 0.0;
+    float pitch_buffer = 0.0;
+    bool received = false;
     Aim aim_msg;
     Move move_msg;
     Shoot shoot_msg;
 
     void auto_aim_callback(const AutoAim::SharedPtr msg)
     {
-        aim_msg.yaw = msg->yaw;
-        aim_msg.pitch = msg->pitch;
-        count_down = COUNT; // reset count down
-    }
-
-    void count_timer_callback()
-    {
-        --count_down;
+        received = true;
+        // save the latest aim
+        yaw_buffer = msg->yaw;
+        pitch_buffer = msg->pitch;
     }
 
     void update_timer_callback()
     {
-        if (count_down <= 0)
-        {
+        if (received) ++aim_mode;
+        else --aim_mode;
 
+        received = false; // reset
+
+        if (aim_mode.is_active()) // target found
+        {
+            // load the latest aim
+            aim_msg.yaw = yaw_buffer;
+            aim_msg.pitch = pitch_buffer;
+            // start feeding
+            shoot_msg.feed_state = true;
+        }
+        else { // target lost
+            search();
+            // stop feeding
+            shoot_msg.feed_state = false;
         }
     }
 
     void pub_timer_callback()
     {
+        aim_pub_->publish(aim_msg);
+        move_pub_->publish(move_msg);
+        shoot_pub_->publish(shoot_msg);
     }
 
     void search()
     {
-        aim_msg.yaw += SEARCH_VEL * UPDATE_R / 1000;
+        // yaw
+        aim_msg.yaw += search_vel * UPDATE_R / 1000;
         aim_msg.yaw = std::fmod(aim_msg.yaw, 2 * M_PI);
 
-        // aim_msg.pitch
-        // start sin wave
-        // aim_msg.pitch = std::sin(aim_msg.yaw);
+        // pitch sin wave
+        aim_msg.pitch = std::sin(freq * aim_msg.yaw);
+    }
+
+    void set_msgs()
+    {
+        aim_msg.yaw = north_offset;
+        aim_msg.pitch = 0.0;
+
+        move_msg.vel_x = 0.0;
+        move_msg.vel_y = 0.0;
+        move_msg.omega = auto_rotate;
+
+        shoot_msg.id = 0;
+        shoot_msg.feed_state = false;
+        shoot_msg.fric_state = true;
     }
 };
 
