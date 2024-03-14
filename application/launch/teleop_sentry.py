@@ -1,6 +1,10 @@
 import os
-from ament_index_python import get_package_share_directory
+from pathlib import Path
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.actions import (DeclareLaunchArgument, GroupAction,
+                            IncludeLaunchDescription, SetEnvironmentVariable)
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 def generate_launch_description():
@@ -9,7 +13,15 @@ def generate_launch_description():
         'config',
         'sentry_config.yaml'
     )
-    return LaunchDescription([
+
+    ahrs_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('fdilink_ahrs'),
+                        'launch/ahrs_driver.launch.py')
+        )
+    )
+
+    ld = LaunchDescription([
         Node(
             package='omni_chassis',
             executable='omni_chassis',
@@ -35,3 +47,8 @@ def generate_launch_description():
             parameters=[config],
         )
     ])
+
+
+    ld.add_action(ahrs_launch)
+    
+    return ld

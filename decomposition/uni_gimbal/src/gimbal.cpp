@@ -54,7 +54,7 @@ std::pair<float, float> Gimbal::calc_vel()
     yaw_output.p = yaw_param.kp * yaw_error;
     yaw_output.i += yaw_param.ki * yaw_error * DT;
     yaw_output.d = yaw_param.kd * (yaw_error - prev_yaw_error) / DT;
-    yaw_vel = yaw_output.sum();
+    yaw_vel = yaw_output.sum() - omega;
     curb(yaw_vel, V_MAX);
 
     // pitch
