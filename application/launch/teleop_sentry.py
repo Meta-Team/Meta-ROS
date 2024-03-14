@@ -7,7 +7,7 @@ def generate_launch_description():
     config = os.path.join(
         get_package_share_directory('application'),
         'config',
-        'teleop_keyboard_config.yaml'
+        'sentry_config.yaml'
     )
     return LaunchDescription([
         Node(
@@ -20,12 +20,6 @@ def generate_launch_description():
             package='dji_controller',
             executable='dji_controller',
             name='dji_controller',
-            parameters=[config],
-        ),
-        Node(
-            package='teleop_keyboard',
-            executable='teleop_keyboard',
-            name='teleop_keyboard',
             parameters=[config],
         ),
         Node(

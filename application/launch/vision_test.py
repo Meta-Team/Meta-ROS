@@ -24,6 +24,11 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription([
+        Node(
+            package="auto_sentry",
+            executable="auto_sentry",
+            name="auto_sentry",
+        )
     ])
 
     ld.add_action(ahrs_launch)

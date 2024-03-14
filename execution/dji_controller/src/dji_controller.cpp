@@ -38,15 +38,6 @@ public:
             });
         state_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
 #endif
-
-        // param_ev_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
-        // p2v_kps_cb_ = param_ev_->add_parameter_callback("p2v_kps", std::bind(&DjiController::p2v_kps_callback, this, std::placeholders::_1));
-        // p2v_kis_cb_ = param_ev_->add_parameter_callback("p2v_kis", std::bind(&DjiController::p2v_kis_callback, this, std::placeholders::_1));
-        // p2v_kds_cb_ = param_ev_->add_parameter_callback("p2v_kds", std::bind(&DjiController::p2v_kds_callback, this, std::placeholders::_1));
-        // v2c_kps_cb_ = param_ev_->add_parameter_callback("v2c_kps", std::bind(&DjiController::v2c_kps_callback, this, std::placeholders::_1));
-        // v2c_kis_cb_ = param_ev_->add_parameter_callback("v2c_kis", std::bind(&DjiController::v2c_kis_callback, this, std::placeholders::_1));
-        // v2c_kds_cb_ = param_ev_->add_parameter_callback("v2c_kds", std::bind(&DjiController::v2c_kds_callback, this, std::placeholders::_1));
-
         RCLCPP_INFO(this->get_logger(), "DjiController initialized");
     }
 
@@ -58,8 +49,6 @@ private:
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
 #endif
-    // std::shared_ptr<rclcpp::ParameterEventHandler> param_ev_;
-    // std::shared_ptr<rclcpp::ParameterCallbackHandle> p2v_kps_cb_, p2v_kis_cb_, p2v_kds_cb_, v2c_kps_cb_, v2c_kis_cb_, v2c_kds_cb_;
     int dji_motor_count;
     std::vector<std::unique_ptr<DjiDriver>> drivers_; // std::unique_ptr<DjiDriver> drivers_[8];
     std::vector<double> p2v_kps{}, p2v_kis{}, p2v_kds{};

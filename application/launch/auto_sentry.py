@@ -30,9 +30,15 @@ def generate_launch_description():
 
     ld = LaunchDescription([
         Node(
-            package='omni_chassis',
-            executable='omni_chassis',
-            name='omni_chassis',
+            package='auto_sentry',
+            executable='auto_sentry',
+            name='auto_sentry',
+            parameters=[config],
+        ),
+        Node(
+            package='auto_sentry',
+            executable='auto_sentry',
+            name='auto_sentry',
             parameters=[config],
         ),
         Node(
@@ -41,12 +47,12 @@ def generate_launch_description():
             name="uni_gimbal",
             parameters=[config],
         ),
-        Node(
-            package='dji_controller',
-            executable='dji_controller',
-            name='dji_controller',
-            parameters=[config],
-        ),
+        # Node(
+        #     package='dji_controller',
+        #     executable='dji_controller',
+        #     name='dji_controller',
+        #     parameters=[config],
+        # ),
     ])
 
     ld.add_action(ahrs_launch)
