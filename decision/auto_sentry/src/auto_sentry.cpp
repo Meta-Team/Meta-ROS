@@ -6,7 +6,7 @@
 #include "auto_sentry/aim_mode.hpp"
 
 #define UPDATE_R 20 // ms
-#define PUB_R 10 // ms
+#define PUB_R 20 // ms
 
 using namespace behavior_interface::msg;
 using vision_interface::msg::AutoAim;
@@ -27,6 +27,14 @@ public:
         auto_rotate = this->declare_parameter("auto_rotate", auto_rotate);
 
         set_msgs();
+
+        this->auto_aim_sub_ = this->create_subscription<AutoAim>("auto_aim", 10,
+            std::bind(&AutoSentry::auto_aim_callback, this, std::placeholders::_1));
+
+        this->publish_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_R),
+            std::bind(&AutoSentry::pub_timer_callback, this));
+        this->update_timer_ = this->create_wall_timer(std::chrono::milliseconds(UPDATE_R),
+            std::bind(&AutoSentry::update_timer_callback, this));
 
         RCLCPP_INFO(this->get_logger(), "AutoSentry initialized");
     }
