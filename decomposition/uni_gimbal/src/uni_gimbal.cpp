@@ -81,6 +81,7 @@ private:
         msg.goal_pos.push_back(NaN);
         msg.goal_vel.push_back(pitch_vel);
         pub_->publish(msg);
+        // RCLCPP_INFO(this->get_logger(), "Yaw vel: %f, pitch vel: %f", yaw_vel, pitch_vel);
     }
 
     void init_gimbal()
@@ -105,11 +106,13 @@ private:
             {
                 pitch = PidParam(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
                 pitch_found = true;
+                RCLCPP_INFO(this->get_logger(), "Pitch kp: %f, ki: %f, kd: %f", p2v_kps[i], p2v_kis[i], p2v_kds[i]);
             }
             if (rids[i] == "YAW")
             {
                 yaw = PidParam(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
                 yaw_found = true;
+                RCLCPP_INFO(this->get_logger(), "Yaw kp: %f, ki: %f, kd: %f", p2v_kps[i], p2v_kis[i], p2v_kds[i]);
             }
         }
 

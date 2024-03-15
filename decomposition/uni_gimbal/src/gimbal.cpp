@@ -52,7 +52,7 @@ std::pair<float, float> Gimbal::calc_vel()
     float prev_yaw_error = yaw_error;
     yaw_error = min_error(goal_yaw_pos, current_yaw_pos);
     yaw_output.p = yaw_param.kp * yaw_error;
-    yaw_output.i += yaw_param.ki * yaw_error * DT;
+    yaw_output.i += yaw_param.ki * yaw_error * DT; curb(yaw_output.i, V_MAX / 2.0f);
     yaw_output.d = yaw_param.kd * (yaw_error - prev_yaw_error) / DT;
     yaw_vel = yaw_output.sum() - omega;
     curb(yaw_vel, V_MAX);
@@ -61,7 +61,7 @@ std::pair<float, float> Gimbal::calc_vel()
     float prev_pitch_error = pitch_error;
     pitch_error = min_error(goal_pitch_pos, current_pitch_pos); // not that necessary
     pitch_output.p = pitch_param.kp * pitch_error;
-    pitch_output.i += pitch_param.ki * pitch_error * DT;
+    pitch_output.i += pitch_param.ki * pitch_error * DT; curb(pitch_output.i, V_MAX / 2.0f);
     pitch_output.d = pitch_param.kd * (pitch_error - prev_pitch_error) / DT;
     pitch_vel = pitch_output.sum();
     curb(pitch_vel, V_MAX);
