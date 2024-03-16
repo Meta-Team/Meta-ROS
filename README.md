@@ -4,19 +4,22 @@
 
 Created by Yao Xinchen, 2023/7/13. \
 Based on ROS2 Foxy. \
-Tested on Nvidia Orin Nano, Ubuntu 20.04. \
+Tested on Nvidia Orin Nano, Ubuntu 22.04. \
 Used for RoboMaster Team Meta to control robots.
 
 This project is hoped to be modular, readable and easy to maintain.
 
-## Wiki
+## Doc
 
-There's a wiki for this project.
-[Wiki for Meta-ROS](https://github.com/Yao-Xinchen/Meta-ROS-wiki)
+There's a document describing how this project is designed -> 
+[Meta-ROS-Doc Web](https://yao-xinchen.github.io/Meta-ROS-Doc/meta-ros.html)
+
+Its source code is provided here ->
+[Meta-ROS-Doc Source](https://github.com/Yao-Xinchen/Meta-ROS-Doc)
 
 ## Dependencies
 
-1. ros2 (ros-foxy or ros-humble)
+1. ros-humble
 2. serial-driver
 3. moveit
 4. moveit-servo
