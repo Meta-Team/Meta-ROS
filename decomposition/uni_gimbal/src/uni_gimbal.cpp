@@ -49,6 +49,7 @@ private:
     std::unique_ptr<Gimbal> gimbal_;
 
     float north_offset = 0.0; // The offset of the north direction, in radians.
+    float compensate = 0.7; // ratio of yaw vel compensate
 
     void goal_callback(const behavior_interface::msg::Aim::SharedPtr goal_msg)
     {
@@ -81,7 +82,7 @@ private:
         msg.goal_pos.push_back(NaN);
         msg.goal_vel.push_back(pitch_vel);
         pub_->publish(msg);
-        // RCLCPP_INFO(this->get_logger(), "Yaw vel: %f, pitch vel: %f", yaw_vel, pitch_vel);
+        // RCLCPP_INFO(this->get_logger(), "Yaw vel: %f", yaw_vel);
     }
 
     void init_gimbal()
@@ -119,7 +120,9 @@ private:
         if (!yaw_found) RCLCPP_WARN(this->get_logger(), "No yaw motor found in config.");
         if (!pitch_found) RCLCPP_WARN(this->get_logger(), "No pitch motor found in config.");
 
-        gimbal_ = std::make_unique<Gimbal>(yaw, pitch);
+        compensate = this->declare_parameter("comp_ratio", compensate);
+
+        gimbal_ = std::make_unique<Gimbal>(yaw, pitch, compensate);
     }
 };
 

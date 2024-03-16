@@ -38,7 +38,7 @@ public:
      * @param yaw The PID parameters for the yaw axis.
      * @param pitch The PID parameters for the pitch axis.
      */
-    Gimbal(PidParam yaw, PidParam pitch);
+    Gimbal(PidParam yaw, PidParam pitch, float comp);
 
     /**
      * @brief Set the goal position of the gimbal.
@@ -101,6 +101,7 @@ private:
     PidOutput pitch_output;
 
     float omega = 0.0; ///< The angular velocity of the chassis, in rad/s.
+    float ratio = 0.7; ///< Ratio of compensate omega.
 };
 
 #endif // GIMBAL_PID_H

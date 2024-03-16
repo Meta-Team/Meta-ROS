@@ -1,10 +1,11 @@
 #include "uni_gimbal/gimbal.h"
 #include <algorithm>
 
-Gimbal::Gimbal(PidParam yaw, PidParam pitch)
+Gimbal::Gimbal(PidParam yaw, PidParam pitch, float comp)
 {
     yaw_param = yaw;
     pitch_param = pitch;
+    this->ratio = comp;
 }
 
 void Gimbal::set_goal(float goal_yaw_pos, float goal_pitch_pos)
@@ -54,7 +55,7 @@ std::pair<float, float> Gimbal::calc_vel()
     yaw_output.p = yaw_param.kp * yaw_error;
     yaw_output.i += yaw_param.ki * yaw_error * DT; curb(yaw_output.i, V_MAX / 2.0f);
     yaw_output.d = yaw_param.kd * (yaw_error - prev_yaw_error) / DT;
-    yaw_vel = yaw_output.sum() - omega;
+    yaw_vel = yaw_output.sum() - ratio * omega;
     curb(yaw_vel, V_MAX);
 
     // pitch
