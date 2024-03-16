@@ -6,7 +6,7 @@
     rot_vel: 4.0 # rad/s
     aim_sensitivity: 3.14 # rad/s
     deadzone: 0.05 # percentage
-    auto_rotate: 2 # rad/s, of the chassis
+    auto_rotate: 2.0 # rad/s, of the chassis
     
     chassis:
       wheel_radius: 0.076 # m
@@ -21,6 +21,8 @@
       feed_ratio: 36.0
       fric_ratio: 1.0
       search_vel: 0.5
+      feed_vib_freq: 2.0 # Hz
+      feed_vib_amp: 5.0 # rad/s
 
     motor:
       count:  10

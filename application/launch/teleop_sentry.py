@@ -45,10 +45,22 @@ def generate_launch_description():
             executable="uni_gimbal",
             name="uni_gimbal",
             parameters=[config],
-        )
+        ),
+        Node(
+            package="shoot_load",
+            executable="shoot_load",
+            name="shoot_load",
+            parameters=[config],
+        ),
+        Node(
+            package="teleop_shooting",
+            executable="teleop_shooting",
+            name="teleop_shooting",
+            parameters=[config],
+        ),
     ])
 
 
-    ld.add_action(ahrs_launch)
+    # ld.add_action(ahrs_launch)
     
     return ld
