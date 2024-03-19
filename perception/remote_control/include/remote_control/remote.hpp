@@ -57,7 +57,7 @@ public:
          */
         struct [[gnu::packed]] Header
         {
-            static constexpr uint8_t sof = 0xA5; /**< Start of Frame */
+            uint8_t sof = 0xA5; /**< Start of Frame */
             uint16_t length; /**< Length of the frame */
             uint8_t seq; /**< Sequence number */
             uint8_t crc8; /**< CRC8 checksum */

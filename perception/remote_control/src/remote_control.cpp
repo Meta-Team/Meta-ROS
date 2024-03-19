@@ -79,13 +79,14 @@ void RemoteControl::receive()
                     // publish message
                     auto msg = remote.msg();
                     pub_->publish(msg);
+                    // RCLCPP_INFO(node_->get_logger(), "Received remote control frame");
                 }
                 else {
                     RCLCPP_WARN(node_->get_logger(), "CRC16 check failed");
                 }
             }
             else {
-                RCLCPP_WARN(node_->get_logger(), "Received unwanted frame");
+                // RCLCPP_WARN(node_->get_logger(), "Received unwanted frame");
             }
         }
         catch (const std::exception & e)

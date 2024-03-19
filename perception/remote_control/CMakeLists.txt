@@ -26,7 +26,8 @@ find_package(operation_interface REQUIRED)
 
 add_library(remote_control SHARED
   src/remote_control.cpp
-  src/remote.cpp)
+  src/remote.cpp
+  src/crc.cpp)
 
 target_include_directories(remote_control PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
