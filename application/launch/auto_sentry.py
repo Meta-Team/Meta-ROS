@@ -30,9 +30,9 @@ def generate_launch_description():
 
     ld = LaunchDescription([
         Node(
-            package='auto_sentry',
-            executable='auto_sentry',
-            name='auto_sentry',
+            package='omni_chassis',
+            executable='omni_chassis',
+            name='omni_chassis',
             parameters=[config],
         ),
         Node(
@@ -47,6 +47,12 @@ def generate_launch_description():
             name="uni_gimbal",
             parameters=[config],
         ),
+        Node(
+            package="shoot_load",
+            executable="shoot_load",
+            name="shoot_load",
+            parameters=[config],
+        )
         # Node(
         #     package='dji_controller',
         #     executable='dji_controller',
