@@ -1,4 +1,4 @@
-#include "remote_control/crc.h"
+#include "referee_serial/crc.h"
 
 namespace crc
 {

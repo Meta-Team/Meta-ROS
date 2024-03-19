@@ -1,9 +1,9 @@
-#include "remote_control/remote.hpp"
+#include "referee_serial/remote_control.hpp"
 #include <bitset>
 #include <cstdint>
 #include <vector>
 
-bool Remote::is_wanted_pre(const std::vector<uint8_t> &prefix)
+bool RemoteControl::is_wanted_pre(const std::vector<uint8_t> &prefix)
 {
     if (prefix[0] != 0xA5) return false;
 
@@ -14,13 +14,13 @@ bool Remote::is_wanted_pre(const std::vector<uint8_t> &prefix)
     return true;
 }
 
-Remote::Remote(const std::vector<uint8_t> &frame)
+RemoteControl::RemoteControl(const std::vector<uint8_t> &frame)
 {
     // copy the uint8_t vector to the struct
     std::copy(frame.begin(), frame.end(), reinterpret_cast<uint8_t *>(&interpreted));
 }
 
-operation_interface::msg::RemoteControl Remote::msg()
+operation_interface::msg::RemoteControl RemoteControl::msg()
 {
     operation_interface::msg::RemoteControl msg;
     // mouse

@@ -1,24 +1,22 @@
-#ifndef REMOTE_HPP
-#define REMOTE_HPP
+#ifndef REMOTE_CONTROL_HPP
+#define REMOTE_CONTROL_HPP
 
 #include <cstdint>
 #include <memory>
-#include <operation_interface/msg/detail/remote_control__struct.hpp>
 #include <stdint.h>
 #include <bitset>
 #include <sys/types.h>
 #include <vector>
 
 #include "operation_interface/msg/remote_control.hpp"
-#include "remote_control/remote_control.hpp"
+#include "referee_serial/referee_serial.hpp"
 
 /**
- * @class Remote
+ * @class RemoteControl
  * @brief A class to represent a remote control.
- * 
  * This class encapsulates the state of a remote control, including the state of the keys and the mouse.
  */
-class Remote
+class RemoteControl
 {
 private:
     /**
@@ -93,11 +91,11 @@ public:
     static bool is_wanted_pre(const std::vector<uint8_t> &prefix);
 
     /**
-     * @brief Constructs a Remote object from a frame.
+     * @brief Constructs a RemoteControl object from a frame.
      * This would interpret the frame by copying the data into the RemoteFrame struct.
-     * @param frame The frame to construct the Remote object from.
+     * @param frame The frame to construct the RemoteControl object from.
      */
-    Remote(const std::vector<uint8_t> &frame);
+    RemoteControl(const std::vector<uint8_t> &frame);
 
     /**
      * @brief Sets the message based on the current state.
@@ -107,4 +105,4 @@ public:
     operation_interface::msg::RemoteControl msg();
 };
 
-#endif // REMOTE_HPP
+#endif // REMOTE_CONTROL_HPP

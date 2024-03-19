@@ -1,5 +1,5 @@
-#ifndef UART_DRIVER_HPP
-#define UART_DRIVER_HPP
+#ifndef REFEREE_SERIAL_HPP
+#define REFEREE_SERIAL_HPP
 
 // inspired by https://github.com/Meta-Team/Meta-Vision-SolaisNG
 
@@ -12,6 +12,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "operation_interface/msg/remote_control.hpp"
+#include "operation_interface/msg/game_info.hpp"
 
 using spb = asio::serial_port_base;
 using drivers::serial_driver::FlowControl;
@@ -20,11 +21,11 @@ using drivers::serial_driver::SerialPort;
 using drivers::serial_driver::StopBits;
 using drivers::serial_driver::SerialPortConfig;
 
-class RemoteControl
+class RefereeSerial
 {
 public:
-    RemoteControl(const rclcpp::NodeOptions & options);
-    ~RemoteControl();
+    RefereeSerial(const rclcpp::NodeOptions & options);
+    ~RefereeSerial();
     rclcpp::node_interfaces::NodeBaseInterface::SharedPtr get_node_base_interface() const;
 
     void receive();
@@ -32,7 +33,8 @@ public:
 
 private:
     rclcpp::Node::SharedPtr node_;
-    rclcpp::Publisher<operation_interface::msg::RemoteControl>::SharedPtr pub_;
+    rclcpp::Publisher<operation_interface::msg::RemoteControl>::SharedPtr remote_control_pub_;
+    rclcpp::Publisher<operation_interface::msg::GameInfo>::SharedPtr game_info_pub_;
 
     std::unique_ptr<IoContext> ctx_;
     std::unique_ptr<SerialPortConfig> config_;
@@ -47,4 +49,4 @@ private:
     static constexpr StopBits sb = StopBits::ONE;
 };
 
-#endif // UART_DRIVER_HPP
+#endif // REFEREE_SERIAL_HPP

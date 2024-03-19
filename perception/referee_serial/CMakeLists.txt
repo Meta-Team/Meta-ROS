@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(remote_control)
+project(referee_serial)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -24,26 +24,27 @@ find_package(rclcpp REQUIRED)
 find_package(serial_driver REQUIRED)
 find_package(operation_interface REQUIRED)
 
-add_library(remote_control SHARED
+add_library(referee_serial SHARED
+  src/referee_serial.cpp
   src/remote_control.cpp
-  src/remote.cpp
+  src/game_info.cpp
   src/crc.cpp)
 
-target_include_directories(remote_control PRIVATE
+target_include_directories(referee_serial PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
-rclcpp_components_register_node(remote_control
-  PLUGIN "RemoteControl"
-  EXECUTABLE remote_control_node)
+rclcpp_components_register_node(referee_serial
+  PLUGIN "RefereeSerial"
+  EXECUTABLE referee_serial_node)
 
-ament_target_dependencies(remote_control
+ament_target_dependencies(referee_serial
   rclcpp
   serial_driver
   operation_interface)
 
 install(TARGETS
-  remote_control
+  referee_serial
   DESTINATION lib/${PROJECT_NAME})
 
 install(
@@ -52,7 +53,7 @@ install(
 )
 
 install(
-  TARGETS remote_control
+  TARGETS referee_serial
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
