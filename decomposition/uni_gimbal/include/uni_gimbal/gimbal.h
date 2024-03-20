@@ -37,6 +37,7 @@ public:
      * @brief Construct a new Gimbal object.
      * @param yaw The PID parameters for the yaw axis.
      * @param pitch The PID parameters for the pitch axis.
+     * @param comp The ratio of compensate omega.
      */
     Gimbal(PidParam yaw, PidParam pitch, float comp);
 

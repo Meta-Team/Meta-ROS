@@ -15,7 +15,6 @@ class UniGimbal: public rclcpp::Node
 public:
     UniGimbal() : Node("UniGimbal")
     {
-        north_offset = this->declare_parameter("north_offset", north_offset);
         init_gimbal();
 
         goal_sub_ = this->create_subscription<behavior_interface::msg::Aim>(
@@ -48,8 +47,7 @@ private:
 
     std::unique_ptr<Gimbal> gimbal_;
 
-    float north_offset = 0.0; // The offset of the north direction, in radians.
-    float compensate = 0.7; // ratio of yaw vel compensate
+    float compensate = 1.1; // ratio of yaw vel compensate
 
     void goal_callback(const behavior_interface::msg::Aim::SharedPtr goal_msg)
     {
@@ -121,6 +119,7 @@ private:
         if (!pitch_found) RCLCPP_WARN(this->get_logger(), "No pitch motor found in config.");
 
         compensate = this->declare_parameter("comp_ratio", compensate);
+        RCLCPP_INFO(this->get_logger(), "Comp Ratio set to %f", compensate);
 
         gimbal_ = std::make_unique<Gimbal>(yaw, pitch, compensate);
     }
