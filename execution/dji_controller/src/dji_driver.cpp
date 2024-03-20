@@ -5,6 +5,7 @@
 #include <linux/can.h>
 #include <memory>
 #include <queue>
+#include <rclcpp/utilities.hpp>
 #include <string>
 #include <tuple>
 
@@ -156,7 +157,9 @@ void DjiDriver::write_tx()
 void DjiDriver::tx()
 {
     can_0->send_frame(*tx_frame_200);
+    rclcpp::sleep_for(std::chrono::milliseconds(1));
     can_0->send_frame(*tx_frame_1ff);
+    rclcpp::sleep_for(std::chrono::milliseconds(1));
     can_0->send_frame(*tx_frame_2ff);
 }
 
