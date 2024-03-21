@@ -10,7 +10,7 @@
 #include "motor_interface/msg/motor_goal.hpp"
 #include "motor_interface/msg/motor_state.hpp"
 
-#define ENABLE_PUB TRUE
+#define ENABLE_PUB true
 #define PUB_R 20 // ms
 
 class DjiController : public rclcpp::Node
@@ -31,7 +31,7 @@ public:
             std::chrono::milliseconds(FEEDBACK_R), [this](){
                 feedback_timer_callback();
             });
-#if ENABLE_PUB == TRUE
+#if ENABLE_PUB == true
         pub_timer_ = this->create_wall_timer(
             std::chrono::milliseconds(PUB_R), [this](){
                 pub_timer_callback();
@@ -45,7 +45,7 @@ private:
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
     rclcpp::TimerBase::SharedPtr feedback_timer_; // receive feedback frame regularly
-#if ENABLE_PUB == TRUE
+#if ENABLE_PUB == true
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
 #endif
@@ -96,7 +96,7 @@ private:
         }
     }
 
-#if ENABLE_PUB == TRUE
+#if ENABLE_PUB == true
     void pub_timer_callback()
     {
         // publish feedback

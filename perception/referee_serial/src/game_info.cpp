@@ -5,7 +5,7 @@
 
 const std::array<std::string, 6> GameInfo::game_type = 
 {
-    NULL,
+    "",
     "RoboMaster",
     "Single",
     "AI",

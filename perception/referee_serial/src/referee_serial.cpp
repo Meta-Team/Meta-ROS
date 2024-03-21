@@ -7,6 +7,8 @@
 #include <rclcpp/utilities.hpp>
 #include "referee_serial/crc.h"
 
+#define DEBUG false
+
 constexpr const char * RefereeSerial::dev_name;
 constexpr const char * RefereeSerial::dev_null;
 constexpr uint32_t RefereeSerial::baud;
@@ -81,7 +83,9 @@ void RefereeSerial::receive()
                     // publish message
                     auto msg = rc.msg();
                     remote_control_pub_->publish(msg);
-                    // RCLCPP_INFO(node_->get_logger(), "Received remote control frame");
+#if DEBUG == true
+                    RCLCPP_INFO(node_->get_logger(), "Received remote control frame");
+#endif
                 }
                 else {
                     RCLCPP_WARN(node_->get_logger(), "RemoteControl CRC16 check failed");
@@ -103,15 +107,21 @@ void RefereeSerial::receive()
                     // publish message
                     auto msg = gi.msg();
                     game_info_pub_->publish(msg);
-                    // RCLCPP_INFO(node_->get_logger(), "Received game info frame");
+#if DEBUG == true
+                    RCLCPP_INFO(node_->get_logger(), "Received game info frame");
+#endif
                 }
                 else {
                     RCLCPP_WARN(node_->get_logger(), "GameInfo CRC16 check failed");
                 }
             }
-            else {
-                // RCLCPP_WARN(node_->get_logger(), "Received unwanted frame");
+#if DEBUG == true
+            else if (prefix[0] == 0xA5)
+            {
+                uint16_t cmd_id = static_cast<uint16_t>(prefix[5]) | (static_cast<uint16_t>(prefix[6]) << 8);
+                RCLCPP_WARN(node_->get_logger(), "Received unwanted frame with cmd_id: 0x%04X", cmd_id);
             }
+#endif
         }
         catch (const std::exception & e)
         {
