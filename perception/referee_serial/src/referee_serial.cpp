@@ -5,11 +5,12 @@
 #include <cstdint>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/utilities.hpp>
+#include <string>
 #include "referee_serial/crc.h"
 
 #define DEBUG false
 
-constexpr const char * RefereeSerial::dev_name;
+std::string RefereeSerial::dev_name;
 constexpr const char * RefereeSerial::dev_null;
 constexpr uint32_t RefereeSerial::baud;
 constexpr FlowControl RefereeSerial::fc;
@@ -18,10 +19,16 @@ constexpr StopBits RefereeSerial::sb;
 
 RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
 {
+    node_ = rclcpp::Node::make_shared("referee_serial", options);
+
+    // create serial port
+    dev_name = node_->declare_parameter("serial_path", "/dev/ttyUSB0");
     ctx_ = std::make_unique<IoContext>(2);
     config_ = std::make_unique<SerialPortConfig>(baud, fc, pt, sb);
     port_ = std::make_unique<SerialPort>(*ctx_, dev_name, *config_);
-    node_ = rclcpp::Node::make_shared("referee_serial", options);
+    RCLCPP_INFO(node_->get_logger(), "Using serial port: %s", dev_name.c_str());
+
+    // create publishers
     remote_control_pub_ = node_->create_publisher<operation_interface::msg::RemoteControl>("remote_control", 10);
     game_info_pub_ = node_->create_publisher<operation_interface::msg::GameInfo>("game_info", 10);
 
@@ -31,7 +38,8 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
         port_->open();
         receive_thread = std::thread(&RefereeSerial::receive, this);
     }
-    RCLCPP_INFO(node_->get_logger(), "RefereeSerial node started");
+
+    RCLCPP_INFO(node_->get_logger(), "RefereeSerial initialized");
 }
 
 RefereeSerial::~RefereeSerial()
@@ -73,7 +81,7 @@ void RefereeSerial::receive()
                 frame.resize(sizeof(RemoteControl::RemoteFrame) - prefix.size());
                 port_->receive(frame);
                 frame.insert(frame.begin(), prefix.begin(), prefix.end());
-                 // interpret frame
+                // interpret frame
                 RemoteControl rc(frame);
 
                 bool crc16_check = crc::verifyCRC16CheckSum(reinterpret_cast<uint8_t*>(&rc.interpreted), sizeof(RemoteControl::RemoteFrame));

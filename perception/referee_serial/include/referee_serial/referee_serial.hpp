@@ -41,7 +41,7 @@ private:
     std::unique_ptr<SerialPort> port_;
     std::vector<uint8_t> send_recv_buff;
     std::thread receive_thread;
-    static constexpr const char* dev_name = "/dev/ttyUSB0";
+    static std::string dev_name;
     static constexpr const char* dev_null = "/dev/null";
     static constexpr uint32_t baud = 115200;
     static constexpr FlowControl fc = FlowControl::NONE;

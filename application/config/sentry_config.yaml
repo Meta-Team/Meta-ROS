@@ -8,6 +8,7 @@
     deadzone: 0.05 # percentage
     auto_rotate: 2.0 # rad/s, of the chassis
     comp_ratio: 1.1
+    serial_path: "/dev/ttyUSB0"
     
     chassis:
       wheel_radius: 0.076 # m
