@@ -21,8 +21,8 @@ public:
         this->shoot_pub_ = this->create_publisher<Shoot>("shoot", 10);
 
         search_vel = this->declare_parameter("gimbal.search_vel", search_vel);
-        freq = this->declare_parameter("gimbal.freq", freq);
-        amplitude = this->declare_parameter("gimbal.amplitude", amplitude);
+        freq = this->declare_parameter("gimbal.pitch_freq", freq);
+        amplitude = this->declare_parameter("gimbal.pitch_amp", amplitude);
         north_offset = this->declare_parameter("north_offset", north_offset);
         auto_rotate = this->declare_parameter("auto_rotate", auto_rotate);
 
@@ -106,7 +106,7 @@ private:
         aim_msg.yaw = std::fmod(aim_msg.yaw, 2 * M_PI);
 
         // pitch sin wave
-        aim_msg.pitch = std::sin(freq * aim_msg.yaw);
+        aim_msg.pitch = amplitude * std::sin(freq * now().seconds());
     }
 
     void set_msgs()

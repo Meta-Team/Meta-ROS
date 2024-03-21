@@ -5,6 +5,8 @@
 
 #define COUNT 10
 
+#define MODE_DEBUG false
+
 class AimMode
 {
 public:
@@ -43,7 +45,9 @@ private:
 
     void determine()
     {
+#if MODE_DEBUG
         RCLCPP_INFO(logger, "count = %d", count_down);
+#endif // MODE_DEBUG
         if (count_down == COUNT && !max_reached)
         {
             active = true;
