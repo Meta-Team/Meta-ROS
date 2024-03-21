@@ -1,6 +1,5 @@
 #include "rclcpp/rclcpp.hpp"
 #include "joy_vehicle/joy_interpreter.hpp"
-#include <behavior_interface/msg/detail/move__struct.hpp>
 #include <memory>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/publisher.hpp>
@@ -26,7 +25,8 @@ public:
         shoot_pub_ = this->create_publisher<behavior_interface::msg::Shoot>("shoot", 10);
         aim_pub_ = this->create_publisher<behavior_interface::msg::Aim>("aim", 10);
         joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
-            "joy", 10, std::bind(&JoyVehicle::joy_callback, this, std::placeholders::_1));
+            "joy", 10,
+            std::bind(&JoyVehicle::joy_callback, this, std::placeholders::_1));
 
         // timer
         timer_ = this->create_wall_timer(

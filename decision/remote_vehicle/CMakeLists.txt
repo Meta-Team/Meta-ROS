@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(remote_moving)
+project(remote_vehicle)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -10,25 +10,25 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-find_package(operation_interface REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(behavior_interface REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
 
-add_executable(remote_moving src/remote_moving.cpp)
-ament_target_dependencies(remote_moving
-  operation_interface
+include_directories(
+  include
+)
+
+add_executable(remote_vehicle
+  src/remote_vehicle.cpp
+  src/remote_interpreter.cpp)
+ament_target_dependencies(remote_vehicle
   rclcpp
   behavior_interface
+  operation_interface
 )
 
 install(TARGETS
-  remote_moving
+  remote_vehicle
   DESTINATION lib/${PROJECT_NAME}
-)
-
-install(DIRECTORY
-  launch
-  DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

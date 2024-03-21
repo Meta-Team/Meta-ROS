@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>remote_moving</name>
+  <name>remote_vehicle</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="yao29@illinois.edu">xinchen</maintainer>
@@ -14,10 +14,7 @@
 
   <depend>rclcpp</depend>
   <depend>operation_interface</depend>
-  <depend>movement_interface</depend>
   <depend>behavior_interface</depend>
-
-  <exec_depend>ros2launch</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
