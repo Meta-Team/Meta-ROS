@@ -41,7 +41,8 @@ rclcpp_components_register_node(referee_serial
 ament_target_dependencies(referee_serial
   rclcpp
   serial_driver
-  operation_interface)
+  operation_interface
+  rclcpp_components)
 
 install(TARGETS
   referee_serial
