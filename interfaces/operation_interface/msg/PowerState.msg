@@ -1,0 +1,7 @@
+uint16 chassis_voltage
+uint16 chassis_current
+float32 chassis_power
+uint16 buffer_energy
+uint16 barrel_17_heat_1
+uint16 barrel_17_heat_2
+uint16 barrel_42_heat

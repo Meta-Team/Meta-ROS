@@ -30,7 +30,7 @@ bool GameInfo::is_wanted_pre(const std::vector<uint8_t> &prefix)
     uint16_t length = static_cast<uint16_t>(prefix[1]) | (static_cast<uint16_t>(prefix[2]) << 8);
     uint16_t cmd_id = static_cast<uint16_t>(prefix[5]) | (static_cast<uint16_t>(prefix[6]) << 8);
 
-    if (cmd_id != 0x0001 || length != 0x000B) return false;
+    if (cmd_id != 0x0001 || length != 11) return false;
     return true;
 }
 

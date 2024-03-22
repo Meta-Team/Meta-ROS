@@ -13,6 +13,7 @@
 
 #include "operation_interface/msg/remote_control.hpp"
 #include "operation_interface/msg/game_info.hpp"
+#include "operation_interface/msg/power_state.hpp"
 
 using spb = asio::serial_port_base;
 using drivers::serial_driver::FlowControl;
@@ -31,10 +32,16 @@ public:
     void receive();
     void reopen_port();
 
+    template<typename MSG, typename PARSE>
+    void handleFrame(const std::vector<uint8_t>& prefix,
+        typename rclcpp::Publisher<MSG>::SharedPtr pub,
+        const std::string frameType);
+
 private:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Publisher<operation_interface::msg::RemoteControl>::SharedPtr remote_control_pub_;
     rclcpp::Publisher<operation_interface::msg::GameInfo>::SharedPtr game_info_pub_;
+    rclcpp::Publisher<operation_interface::msg::PowerState>::SharedPtr power_state_pub_;
 
     std::unique_ptr<IoContext> ctx_;
     std::unique_ptr<SerialPortConfig> config_;

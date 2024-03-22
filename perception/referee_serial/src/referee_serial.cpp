@@ -1,11 +1,13 @@
 #include "referee_serial/referee_serial.hpp"
 #include "referee_serial/remote_control.hpp"
 #include "referee_serial/game_info.hpp"
+#include "referee_serial/power_state.hpp"
 #include <chrono>
 #include <cstdint>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/utilities.hpp>
 #include <string>
+#include <vector>
 #include "referee_serial/crc.h"
 
 #define DEBUG false
@@ -31,6 +33,7 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     // create publishers
     remote_control_pub_ = node_->create_publisher<operation_interface::msg::RemoteControl>("remote_control", 10);
     game_info_pub_ = node_->create_publisher<operation_interface::msg::GameInfo>("game_info", 10);
+    power_state_pub_ = node_->create_publisher<operation_interface::msg::PowerState>("power_state", 10);
 
     // open serial port
     if (!port_->is_open())
@@ -66,8 +69,6 @@ rclcpp::node_interfaces::NodeBaseInterface::SharedPtr RefereeSerial::get_node_ba
 void RefereeSerial::receive()
 {
     std::vector<uint8_t> prefix(7); // header + cmd_id
-    std::vector<uint8_t> frame;
-    frame.reserve(sizeof(RemoteControl::RemoteFrame));
     RCLCPP_INFO(node_->get_logger(), "Receiving remote control frames");
 
     while (rclcpp::ok())
@@ -77,52 +78,20 @@ void RefereeSerial::receive()
 
             if (RemoteControl::is_wanted_pre(prefix)) // remote control
             {
-                // read the rest of the frame
-                frame.resize(sizeof(RemoteControl::RemoteFrame) - prefix.size());
-                port_->receive(frame);
-                frame.insert(frame.begin(), prefix.begin(), prefix.end());
-                // interpret frame
-                RemoteControl rc(frame);
-
-                bool crc16_check = crc::verifyCRC16CheckSum(reinterpret_cast<uint8_t*>(&rc.interpreted), sizeof(RemoteControl::RemoteFrame));
-
-                if (crc16_check)
-                {
-                    // publish message
-                    auto msg = rc.msg();
-                    remote_control_pub_->publish(msg);
-#if DEBUG == true
-                    RCLCPP_INFO(node_->get_logger(), "Received remote control frame");
-#endif
-                }
-                else {
-                    RCLCPP_WARN(node_->get_logger(), "RemoteControl CRC16 check failed");
-                }
+                handleFrame<operation_interface::msg::RemoteControl, RemoteControl>(
+                    prefix, remote_control_pub_, "remote control");
             }
             else if (GameInfo::is_wanted_pre(prefix)) // game info
             {
-                // read the rest of the frame
-                frame.resize(sizeof(GameInfo::GameInfoFrame) - prefix.size());
-                port_->receive(frame);
-                frame.insert(frame.begin(), prefix.begin(), prefix.end());
-                // interpret frame
-                GameInfo gi(frame);
-
-                bool crc16_check = crc::verifyCRC16CheckSum(reinterpret_cast<uint8_t*>(&gi.interpreted), sizeof(GameInfo::GameInfoFrame));
-
-                if (crc16_check)
-                {
-                    // publish message
-                    auto msg = gi.msg();
-                    game_info_pub_->publish(msg);
-#if DEBUG == true
-                    RCLCPP_INFO(node_->get_logger(), "Received game info frame");
-#endif
-                }
-                else {
-                    RCLCPP_WARN(node_->get_logger(), "GameInfo CRC16 check failed");
-                }
+                handleFrame<operation_interface::msg::GameInfo, GameInfo>(
+                    prefix, game_info_pub_, "game info");
             }
+            else if (PowerState::is_wanted_pre(prefix)) // power state
+            {
+                handleFrame<operation_interface::msg::PowerState, PowerState>(
+                    prefix, power_state_pub_, "power state");
+            }
+            
 #if DEBUG == true
             else if (prefix[0] == 0xA5)
             {
@@ -136,6 +105,32 @@ void RefereeSerial::receive()
             RCLCPP_ERROR(node_->get_logger(), "Error receiving remote control frame: %s", e.what());
             reopen_port();
         }
+    }
+}
+
+template<typename MSG, typename PARSE>
+void RefereeSerial::handleFrame(const std::vector<uint8_t>& prefix,
+    typename rclcpp::Publisher<MSG>::SharedPtr pub,
+    const std::string frameType)
+{
+    std::vector<uint8_t> frame;
+    frame.resize(sizeof(typename PARSE::FrameType) - prefix.size());
+    port_->receive(frame);
+    frame.insert(frame.begin(), prefix.begin(), prefix.end());
+
+    PARSE info(frame);
+    bool crc16_check = crc::verifyCRC16CheckSum(reinterpret_cast<uint8_t*>(&info.interpreted), sizeof(typename PARSE::FrameType));
+
+    if (crc16_check)
+    {
+        MSG msg = info.msg();
+        pub->publish(msg);
+#if DEBUG == true
+        RCLCPP_INFO(node_->get_logger(), "Received %s frame", frameType.c_str());
+#endif
+    }
+    else {
+        RCLCPP_WARN(node_->get_logger(), "%s CRC16 check failed", frameType.c_str());
     }
 }
 

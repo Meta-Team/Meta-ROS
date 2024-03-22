@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/TeleopKey.msg"
   "msg/RemoteControl.msg"
   "msg/GameInfo.msg"
+  "msg/PowerState.msg"
 )
 ament_export_dependencies(rosidl_default_runtime)
 

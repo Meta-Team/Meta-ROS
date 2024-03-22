@@ -48,7 +48,7 @@ public:
     /**
      * @brief Represents a remote frame structure used for communication. 
      */
-    struct [[gnu::packed]] RemoteFrame
+    struct [[gnu::packed]] FrameType
     {
         /**
          * @brief Represents the header of the remote frame.
@@ -81,7 +81,7 @@ public:
         uint16_t tail; /**< Tail of the frame */
     };
 
-    RemoteFrame interpreted; /**< The interpreted frame */ 
+    FrameType interpreted; /**< The interpreted frame */ 
 
     /**
      * @brief Checks if the prefix is a wanted prefix.
@@ -92,7 +92,7 @@ public:
 
     /**
      * @brief Constructs a RemoteControl object from a frame.
-     * This would interpret the frame by copying the data into the RemoteFrame struct.
+     * This would interpret the frame by copying the data into the FrameType struct.
      * @param frame The frame to construct the RemoteControl object from.
      */
     RemoteControl(const std::vector<uint8_t> &frame);

@@ -1,28 +1,19 @@
-#ifndef GAME_INFO_HPP
-#define GAME_INFO_HPP
+#ifndef POWER_STATE_HPP
+#define POWER_STATE_HPP
 
-#include <array>
-#include <cstddef>
 #include <cstdint>
-#include <memory>
-#include <stdint.h>
 #include <bitset>
-#include <string>
-#include <sys/types.h>
 #include <vector>
+#include <memory>
+#include <sys/types.h>
 
-#include "operation_interface/msg/game_info.hpp"
+#include "operation_interface/msg/power_state.hpp"
 #include "referee_serial/referee_serial.hpp"
 
 // refer to ./remote_control.hpp for explanation
 
-class GameInfo
+class PowerState
 {
-private:
-    static const std::array<std::string, 6> game_type;
-
-    static const std::array<std::string, 6> game_progress;
-
 public:
     struct [[gnu::packed]] FrameType
     {
@@ -36,10 +27,13 @@ public:
 
         struct [[gnu::packed]] Data
         {
-            uint8_t game_type : 4;
-            uint8_t game_progress : 4;
-            uint16_t stage_remain_time;
-            uint64_t unix_timestamp;
+            uint16_t chassis_voltage;
+            uint16_t chassis_current;
+            float chassis_power;
+            uint16_t buffer_energy;
+            uint16_t barrel_17_heat_1;
+            uint16_t barrel_17_heat_2;
+            uint16_t barrel_42_heat;
         };
 
         Header header;
@@ -52,9 +46,9 @@ public:
 
     static bool is_wanted_pre(const std::vector<uint8_t> &prefix);
 
-    GameInfo(const std::vector<uint8_t> &frame);
+    PowerState(const std::vector<uint8_t> &frame);
 
-    operation_interface::msg::GameInfo msg();
+    operation_interface::msg::PowerState msg();
 };
 
-#endif  // GAME_INFO_HPP
+#endif // POWER_STATE_HPP
