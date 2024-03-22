@@ -29,6 +29,7 @@ rclcpp_components_register_node(dbus_control
 ament_target_dependencies(dbus_control
   rclcpp
   rclcpp_components
+  serial_driver
 )
 
 install(TARGETS

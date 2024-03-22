@@ -60,7 +60,7 @@ RefereeSerial::~RefereeSerial()
 
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr RefereeSerial::get_node_base_interface() const
 {
-  return node_->get_node_base_interface();
+    return node_->get_node_base_interface();
 }
 
 void RefereeSerial::receive()
