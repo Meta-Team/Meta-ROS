@@ -91,7 +91,6 @@ void RefereeSerial::receive()
                 handleFrame<operation_interface::msg::PowerState, PowerState>(
                     prefix, power_state_pub_, "power state");
             }
-            
 #if DEBUG == true
             else if (prefix[0] == 0xA5)
             {
@@ -111,7 +110,7 @@ void RefereeSerial::receive()
 template<typename MSG, typename PARSE>
 void RefereeSerial::handleFrame(const std::vector<uint8_t>& prefix,
     typename rclcpp::Publisher<MSG>::SharedPtr pub,
-    const std::string frameType)
+    const std::string frame_type)
 {
     std::vector<uint8_t> frame;
     frame.resize(sizeof(typename PARSE::FrameType) - prefix.size());
@@ -126,11 +125,11 @@ void RefereeSerial::handleFrame(const std::vector<uint8_t>& prefix,
         MSG msg = info.msg();
         pub->publish(msg);
 #if DEBUG == true
-        RCLCPP_INFO(node_->get_logger(), "Received %s frame", frameType.c_str());
+        RCLCPP_INFO(node_->get_logger(), "Received %s frame", frame_type.c_str());
 #endif
     }
     else {
-        RCLCPP_WARN(node_->get_logger(), "%s CRC16 check failed", frameType.c_str());
+        RCLCPP_WARN(node_->get_logger(), "%s CRC16 check failed", frame_type.c_str());
     }
 }
 

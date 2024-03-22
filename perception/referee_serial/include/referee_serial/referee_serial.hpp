@@ -22,38 +22,79 @@ using drivers::serial_driver::SerialPort;
 using drivers::serial_driver::StopBits;
 using drivers::serial_driver::SerialPortConfig;
 
+/**
+ * @class RefereeSerial
+ * @brief A node for handling serial communication with the referee system.
+ * This node should be regestered as a ROS2 component.
+ */
 class RefereeSerial
 {
 public:
+/**
+     * @brief Constructor for the RefereeSerial class.
+     * @param options Node options for the ROS2 node.
+     * Initializes the publishers and subscribers for the node.
+     * Opens the serial port for communication with the referee system.
+     * Starts a thread to receive data from the serial port.
+     */
     RefereeSerial(const rclcpp::NodeOptions & options);
+
+    /**
+     * @brief Destructor for the RefereeSerial class.
+     * Closes the serial port and waits for the receive thread to exit.
+     */
     ~RefereeSerial();
+
+    /**
+     * @brief Method to get the base interface of the node.
+     * @return Shared pointer to the base interface of the node.
+     */
     rclcpp::node_interfaces::NodeBaseInterface::SharedPtr get_node_base_interface() const;
 
+    /**
+     * @brief Method to receive data from the serial port.
+     * Interprets the received data and publishes it to the appropriate topic.
+     * @note This would call the handleFrame method, and is called by the receive_thread.
+     */
     void receive();
+
+    /**
+     * @brief Method to reopen the serial port.
+     * Called when the serial port is closed.
+     */
     void reopen_port();
 
+    /**
+     * @brief Method to handle a frame of data.
+     * @tparam MSG The message type to be published.
+     * @tparam PARSE The class to parse the data.
+     * @param prefix The prefix of the frame.
+     * @param pub The publisher for the message.
+     * @param frame_type The type of the frame.
+     */
     template<typename MSG, typename PARSE>
     void handleFrame(const std::vector<uint8_t>& prefix,
         typename rclcpp::Publisher<MSG>::SharedPtr pub,
-        const std::string frameType);
+        const std::string frame_type);
 
 private:
-    rclcpp::Node::SharedPtr node_;
+    rclcpp::Node::SharedPtr node_; ///< Pointer to the ROS2 node.
     rclcpp::Publisher<operation_interface::msg::RemoteControl>::SharedPtr remote_control_pub_;
     rclcpp::Publisher<operation_interface::msg::GameInfo>::SharedPtr game_info_pub_;
     rclcpp::Publisher<operation_interface::msg::PowerState>::SharedPtr power_state_pub_;
 
+    // Serial port
     std::unique_ptr<IoContext> ctx_;
     std::unique_ptr<SerialPortConfig> config_;
     std::unique_ptr<SerialPort> port_;
-    std::vector<uint8_t> send_recv_buff;
-    std::thread receive_thread;
-    static std::string dev_name;
+    static std::string dev_name; ///< The path to the serial port.
     static constexpr const char* dev_null = "/dev/null";
     static constexpr uint32_t baud = 115200;
     static constexpr FlowControl fc = FlowControl::NONE;
     static constexpr Parity pt = Parity::NONE;
     static constexpr StopBits sb = StopBits::ONE;
+
+    std::thread receive_thread; ///< Thread to receive data from the serial port.
 };
 
 #endif // REFEREE_SERIAL_HPP
