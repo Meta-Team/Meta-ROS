@@ -22,7 +22,8 @@ namespace OmniKinematics
     extern float wheel_r; ///< The radius of the wheels, in meters.
     extern float cha_r; ///< The radius of the chassis, in meters.
     extern float decel_ratio; ///< The ratio of motor deceleration.
-    extern float n_offset; ///< The offset of the north direction, in radians.
+    extern float n_offset; ///< The feedback angle of ahrs, when the ahrs is facing the desired front.
+    extern float yaw_offset; ///< The feedback angle of yaw motor, when gimbal is parallel to the chassis front.
 
     /**
      * @brief Decompose a absolute movement command into motor goals.
@@ -43,6 +44,15 @@ namespace OmniKinematics
      * @note This is independent of any feedback and is recommended in testing.
      */
     motor_interface::msg::MotorGoal chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg);
+
+    /**
+     * @brief Decompose a natural movement command into motor goals.
+     * A natural movement is a movement relative to the chassis and gimbal.
+     * @param msg The natural movement command.
+     * @param motor The yaw position of the gimbal against the chassis, in radians.
+     * @return The motor goals.
+     */
+    motor_interface::msg::MotorGoal natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float motor);
 
     /**
      * @brief Clear the motor goals.

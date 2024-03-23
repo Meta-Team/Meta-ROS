@@ -6,13 +6,14 @@ float OmniKinematics::cha_r = 0.255;
 float OmniKinematics::wheel_r = 0.76;
 float OmniKinematics::decel_ratio = 20.0;
 float OmniKinematics::n_offset = 0.0;
+float OmniKinematics::yaw_offset = 0.0;
 
 motor_interface::msg::MotorGoal OmniKinematics::absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, float gimbal, float motor)
 {
     motor_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);
     float rot = msg->omega * cha_r; // m/s
-    float dir = gimbal + motor - n_offset; // direction of the movement against chassis in rad
+    float dir = gimbal + (motor - yaw_offset) - n_offset; // direction of the movement against chassis in rad
     float vx = msg->vel_x;
     float vy = msg->vel_y;
 
@@ -29,11 +30,30 @@ motor_interface::msg::MotorGoal OmniKinematics::chassis_decompo(const behavior_i
     motor_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);
     float rot = msg->omega * cha_r;
+    float vx = msg->vel_x;
+    float vy = msg->vel_y;
 
-    add_goal(motor_goal, "F", + msg->vel_y + rot);
-    add_goal(motor_goal, "L", - msg->vel_x + rot);
-    add_goal(motor_goal, "B", - msg->vel_y + rot);
-    add_goal(motor_goal, "R", + msg->vel_x + rot);
+    add_goal(motor_goal, "F", + vy + rot);
+    add_goal(motor_goal, "L", - vx + rot);
+    add_goal(motor_goal, "B", - vy + rot);
+    add_goal(motor_goal, "R", + vx + rot);
+
+    return motor_goal;
+}
+
+motor_interface::msg::MotorGoal OmniKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float motor)
+{
+    motor_interface::msg::MotorGoal motor_goal;
+    clear_goal(motor_goal);
+    float rot = msg->omega * cha_r;
+    float dir = motor - yaw_offset;
+    float vx = msg->vel_x;
+    float vy = msg->vel_y;
+
+    add_goal(motor_goal, "F", + vx * sin(dir) + vy * cos(dir) + rot);
+    add_goal(motor_goal, "L", - vx * cos(dir) + vy * sin(dir) + rot);
+    add_goal(motor_goal, "B", - vx * sin(dir) - vy * cos(dir) + rot);
+    add_goal(motor_goal, "R", + vx * cos(dir) - vy * sin(dir) + rot);
 
     return motor_goal;
 }
