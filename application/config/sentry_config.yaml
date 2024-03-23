@@ -2,13 +2,15 @@
   ros__parameters:
 
     north_offset: 0.0 # rad, north against the desired front
-    trans_vel: 3.0 # m/s
-    rot_vel: 6.0 # rad/s
-    aim_sensitivity: 3.14 # rad/s
-    deadzone: 0.05 # percentage
     auto_rotate: 2.0 # rad/s, of the chassis
     comp_ratio: 1.1
     serial_path: "/dev/ttyUSB0"
+
+    control:
+      trans_vel: 3.0 # m/s
+      rot_vel: 6.0 # rad/s
+      aim_sensitivity: 3.14 # rad/s
+      deadzone: 0.05 # percentage
     
     chassis:
       wheel_radius: 0.076 # m

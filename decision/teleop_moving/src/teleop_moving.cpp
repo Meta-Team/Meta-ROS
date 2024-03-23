@@ -9,8 +9,8 @@ class TeleopMoving : public rclcpp::Node
 public:
     TeleopMoving() : Node("TeleopMoving")
     {
-        trans_vel = this->declare_parameter("trans_vel", trans_vel);
-        rot_vel = this->declare_parameter("rot_vel", rot_vel);
+        trans_vel = this->declare_parameter("control.trans_vel", trans_vel);
+        rot_vel = this->declare_parameter("control.rot_vel", rot_vel);
         RCLCPP_INFO(this->get_logger(), "Translational velocity: %f, Rotational velocity: %f", trans_vel, rot_vel);
 
         cha_pub_ = this->create_publisher<behavior_interface::msg::Move>(
