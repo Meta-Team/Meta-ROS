@@ -51,14 +51,20 @@ def generate_launch_description():
             name='omni_chassis',
             parameters=[config],
         ),
+        Node(
+            package='shoot_load',
+            executable='shoot_load',
+            name='shoot_load',
+            parameters=[config],
+        ),
 
         # exec
-        # Node(
-        #     package='dji_controller',
-        #     executable='dji_controller',
-        #     name='dji_controller',
-        #     parameters=[config],
-        # ),
+        Node(
+            package='dji_controller',
+            executable='dji_controller',
+            name='dji_controller',
+            parameters=[config],
+        ),
     ])
 
     ld.add_action(ahrs_launch)
