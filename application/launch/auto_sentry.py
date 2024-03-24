@@ -52,13 +52,13 @@ def generate_launch_description():
             executable="shoot_load",
             name="shoot_load",
             parameters=[config],
-        )
-        # Node(
-        #     package='dji_controller',
-        #     executable='dji_controller',
-        #     name='dji_controller',
-        #     parameters=[config],
-        # ),
+        ),
+        Node(
+            package='dji_controller',
+            executable='dji_controller',
+            name='dji_controller',
+            parameters=[config],
+        ),
     ])
 
     ld.add_action(ahrs_launch)
