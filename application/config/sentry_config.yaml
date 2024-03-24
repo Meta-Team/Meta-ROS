@@ -16,6 +16,7 @@
       wheel_radius: 0.076 # m
       deceleration_ratio: 20.0
       chassis_radius: 0.255 # m
+      yaw_offset: 0.0 # rad, yaw's zero against the chassis front
 
     gimbal:
       fric_vel_u: -800.0

@@ -18,6 +18,7 @@ public:
         OmniKinematics::wheel_r = this->declare_parameter("chassis.wheel_radius", OmniKinematics::wheel_r);
         OmniKinematics::decel_ratio = this->declare_parameter("chassis.deceleration_ratio", OmniKinematics::decel_ratio);
         OmniKinematics::n_offset = this->declare_parameter("north_offset", OmniKinematics::n_offset);
+        OmniKinematics::yaw_offset = this->declare_parameter("chassis.yaw_offset", OmniKinematics::yaw_offset);
 
         // init publisher and subscribers
         motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
@@ -31,6 +32,11 @@ public:
         else if (move_mode == "absolute")
             move_sub_ = this->create_subscription<behavior_interface::msg::Move>("move",
                 10, std::bind(&OmniChassis::abs_callback, this, std::placeholders::_1));
+        else if (move_mode == "natural")
+            move_sub_ = this->create_subscription<behavior_interface::msg::Move>("move",
+                10, std::bind(&OmniChassis::nat_callback, this, std::placeholders::_1));
+        else
+            RCLCPP_ERROR(this->get_logger(), "Invalid move_mode: %s", move_mode.c_str());
 
         RCLCPP_INFO(this->get_logger(), "OmniChassis initialized.");
     }
@@ -54,6 +60,12 @@ private:
     void abs_callback(const behavior_interface::msg::Move::SharedPtr abs_msg)
     {
         auto tx_msg = OmniKinematics::absolute_decompo(abs_msg, gimbal_yaw_pos, motor_yaw_pos);
+        motor_pub_->publish(tx_msg);
+    }
+
+    void nat_callback(const behavior_interface::msg::Move::SharedPtr nat_msg)
+    {
+        auto tx_msg = OmniKinematics::natural_decompo(nat_msg, motor_yaw_pos);
         motor_pub_->publish(tx_msg);
     }
 
