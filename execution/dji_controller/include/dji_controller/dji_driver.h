@@ -7,8 +7,6 @@
 #include <memory>
 #include <queue>
 
-#define ENCODER_ANGLE_RATIO 360.0f / 8192.0f
-
 #define CONTROL_R 4 // ms
 
 #define I_MAX 20 // Ampere, current limit

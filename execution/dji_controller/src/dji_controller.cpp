@@ -6,6 +6,7 @@
 #include <linux/can.h>
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "motor_interface/msg/motor_goal.hpp"
@@ -14,14 +15,15 @@
 #define ENABLE_PUB true
 #define PUB_R 20 // ms
 
-#define FEEDBACK_R 50 // us
-
 class DjiController : public rclcpp::Node
 {
 public:
     DjiController() : Node("DjiController")
     {
+        // initialize the motors
         motor_init();
+
+        // create subscriptions and timers
         goal_sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
             "motor_goal", 10, [this](const motor_interface::msg::MotorGoal::SharedPtr msg){
                 goal_callback(msg);
@@ -30,17 +32,20 @@ public:
             std::chrono::milliseconds(CONTROL_R), [this](){
                 control_timer_callback();
             });
-        feedback_timer_ = this->create_wall_timer(
-            std::chrono::microseconds(FEEDBACK_R), [this](){
-                feedback_timer_callback();
-            });
+
+        // start the feedback thread
+        feedback_thread_ = std::thread(&DjiController::feedback_loop, this);
+
 #if ENABLE_PUB == true
+        // create a timer for publishing motor state
         pub_timer_ = this->create_wall_timer(
             std::chrono::milliseconds(PUB_R), [this](){
                 pub_timer_callback();
             });
         state_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
 #endif
+
+        // complete initialization
         RCLCPP_INFO(this->get_logger(), "DjiController initialized");
     }
 
@@ -48,6 +53,7 @@ private:
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
     rclcpp::TimerBase::SharedPtr feedback_timer_; // receive feedback frame regularly
+    std::thread feedback_thread_;
 #if ENABLE_PUB == true
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
@@ -63,10 +69,13 @@ private:
         DjiDriver::tx();
     }
 
-    void feedback_timer_callback()
+    void feedback_loop()
     {
-        DjiDriver::rx();
-        for (auto& driver : drivers_) driver->process_rx();
+        while (rclcpp::ok())
+        {
+            DjiDriver::rx();
+            for (auto& driver : drivers_) driver->process_rx();
+        }
     }
     
     void goal_callback(const motor_interface::msg::MotorGoal::SharedPtr msg)
