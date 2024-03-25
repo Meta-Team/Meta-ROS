@@ -1,5 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "dji_controller/dji_driver.h"
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <linux/can.h>
@@ -12,6 +13,8 @@
 
 #define ENABLE_PUB true
 #define PUB_R 20 // ms
+
+#define FEEDBACK_R 50 // us
 
 class DjiController : public rclcpp::Node
 {
@@ -28,7 +31,7 @@ public:
                 control_timer_callback();
             });
         feedback_timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(FEEDBACK_R), [this](){
+            std::chrono::microseconds(FEEDBACK_R), [this](){
                 feedback_timer_callback();
             });
 #if ENABLE_PUB == true
