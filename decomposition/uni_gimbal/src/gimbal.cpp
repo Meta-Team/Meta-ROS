@@ -12,6 +12,7 @@ void Gimbal::set_goal(float goal_yaw_pos, float goal_pitch_pos)
 {
     this->goal_yaw_pos = goal_yaw_pos;
     this->goal_pitch_pos = goal_pitch_pos;
+    curb(goal_pitch_pos, 15.0f / 180.0f * 3.1415926f); // 15 degree
 }
 
 void Gimbal::update_omega(float omega)

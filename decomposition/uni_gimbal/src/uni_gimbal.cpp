@@ -10,6 +10,8 @@
 
 #define NaN std::nan("")
 
+#define CONTROL_R 3 // ms
+
 class UniGimbal: public rclcpp::Node
 {
 public:

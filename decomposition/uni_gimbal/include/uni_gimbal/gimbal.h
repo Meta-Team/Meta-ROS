@@ -3,10 +3,9 @@
 
 #include <queue>
 
-#define Q_SIZE 256
-#define CONTROL_R 10 // ms
+#define CALC_FREQ 1 // ms
 #define V_MAX 12 // to be tuned, velocity limit
-#define DT CONTROL_R / 1000.0 // s
+#define DT CALC_FREQ / 1000.0 // s
 
 struct PidParam
 {
