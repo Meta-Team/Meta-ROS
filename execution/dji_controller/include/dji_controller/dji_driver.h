@@ -7,7 +7,7 @@
 #include <memory>
 #include <queue>
 
-#define CONTROL_R 4 // ms
+#define CALC_FREQ 1 // ms
 
 #define I_MAX 20 // Ampere, current limit
 #define V_MAX 300 // to be tuned, velocity limit

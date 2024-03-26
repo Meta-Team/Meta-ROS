@@ -14,6 +14,7 @@
 
 #define ENABLE_PUB true
 #define PUB_R 20 // ms
+#define CONTROL_R 3 // ms
 
 class DjiController : public rclcpp::Node
 {

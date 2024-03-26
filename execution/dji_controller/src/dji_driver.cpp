@@ -9,7 +9,7 @@
 #include <string>
 #include <tuple>
 
-#define DT CONTROL_R / 1000 // the time interval, in seconds
+#define DT CALC_FREQ / 1000 // the time interval, in seconds
 
 std::unique_ptr<CanDriver> DjiDriver::can_0 = std::make_unique<CanDriver>(0);
 std::unique_ptr<can_frame> DjiDriver::tx_frame_200 = init_frame(0x200);
