@@ -38,6 +38,7 @@ public:
         else
             RCLCPP_ERROR(this->get_logger(), "Invalid move_mode: %s", move_mode.c_str());
 
+        RCLCPP_INFO(this->get_logger(), "Chassis mode set to %s", move_mode.c_str());
         RCLCPP_INFO(this->get_logger(), "OmniChassis initialized.");
     }
 
