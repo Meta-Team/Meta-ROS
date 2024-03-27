@@ -8,6 +8,11 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 def generate_launch_description():
+    config = os.path.join(
+        get_package_share_directory('application'),
+        'config',
+        'sentry_config.yaml'
+    )
 
     ahrs_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -28,7 +33,13 @@ def generate_launch_description():
             package="auto_sentry",
             executable="auto_sentry",
             name="auto_sentry",
-        )
+        ),
+        Node(
+            package="uni_gimbal",
+            executable="uni_gimbal",
+            name="uni_gimbal",
+            parameters=[config],
+        ),
     ])
 
     ld.add_action(ahrs_launch)
