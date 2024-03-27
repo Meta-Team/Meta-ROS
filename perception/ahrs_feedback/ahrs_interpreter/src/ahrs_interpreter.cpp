@@ -22,7 +22,7 @@ private:
     void callback(const geometry_msgs::msg::Vector3::SharedPtr feedback_msg)
     {
         ahrs_interface::msg::AngularPosition pub_msg;
-        pub_msg.yaw = - feedback_msg->z;
+        pub_msg.yaw = 2 * M_PI - feedback_msg->z;
         pub_msg.pitch = feedback_msg->y;
         pub_->publish(pub_msg);
     }
