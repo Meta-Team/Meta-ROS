@@ -182,3 +182,11 @@ void DjiDriver::curb(float &val, float limit)
     if (val > limit) val = limit;
     else if (val < -limit) val = -limit;
 }
+
+void DjiDriver::stop_all()
+{
+    for (auto &current: tx_frame_200->data) current = 0;
+    for (auto &current: tx_frame_1ff->data) current = 0;
+    for (auto &current: tx_frame_2ff->data) current = 0;
+    DjiDriver::tx();
+}

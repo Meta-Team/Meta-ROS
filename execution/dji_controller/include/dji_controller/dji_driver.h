@@ -145,6 +145,8 @@ public:
      * @note Limit must be positive.
      */
     void curb(float &val, float limit);
+
+    static void stop_all();
 };
 
 #endif // DJI_DRIVER_H

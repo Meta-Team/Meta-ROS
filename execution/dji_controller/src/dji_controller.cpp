@@ -50,6 +50,11 @@ public:
         RCLCPP_INFO(this->get_logger(), "DjiController initialized");
     }
 
+    ~DjiController()
+    {
+        DjiDriver::stop_all();
+    }
+
 private:
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
