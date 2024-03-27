@@ -51,6 +51,9 @@ private:
 
     float compensate = 1.1; // ratio of yaw vel compensate
 
+    float yaw_offset = 0.0;
+    float pitch_offset = 0.0;
+
     void goal_callback(const behavior_interface::msg::Aim::SharedPtr goal_msg)
     {
         // update goal_dir
@@ -61,8 +64,8 @@ private:
 
     void feedback_callback(const geometry_msgs::msg::Vector3::SharedPtr feedback_msg)
     {
-        float current_dir = - feedback_msg->z; // relative to north
-        float current_pitch = feedback_msg->y;
+        float current_dir = - feedback_msg->z + yaw_offset; // relative to north
+        float current_pitch = feedback_msg->y + pitch_offset;
         gimbal_->get_feedback(current_dir, current_pitch);
     }
 
@@ -97,6 +100,9 @@ private:
         p2v_kis = this->declare_parameter("motor.p2v.kis", p2v_kis);
         std::vector<double> p2v_kds{};
         p2v_kds = this->declare_parameter("motor.p2v.kds", p2v_kds);
+
+        yaw_offset = this->declare_parameter("gimbal.aim_yaw_offset", yaw_offset);
+        pitch_offset = this->declare_parameter("gimbal.aim_pitch_offset", pitch_offset);
 
         PidParam yaw, pitch;
         bool yaw_found = false, pitch_found = false;

@@ -3,13 +3,13 @@
 
     north_offset: 0.0 # rad,   north against the desired front
     auto_rotate: 0.0 # rad/s,   of the chassis
-    comp_ratio: 1.00
+    comp_ratio: 0.9
     move_mode: "natural"
     serial_path: "/dev/ttyUSB0"
     reset_delay: 500 # ms
 
     control:
-      trans_vel: 2.0 # m/s
+      trans_vel: 2.5 # m/s
       rot_vel: 8.0 # rad/s
       aim_sensitivity: 3.14 # rad/s
       deadzone: 0.15 # percentage
@@ -23,15 +23,17 @@
     gimbal:
       fric_vel_u: -800.0 #-800.0
       fric_vel_d: 800.0 #+800.0
-      feed_vel_l: 15.0
-      feed_vel_r: -15.0
+      feed_vel_l: 5.0
+      feed_vel_r: -20.0 #15.0
       feed_ratio: 36.0
       fric_ratio: 1.0
-      search_vel: 1.0
+      search_vel: 1.6
       feed_vib_freq: 2.0
       feed_vib_amp: 0.0
       pitch_freq: 2.0
       pitch_amp: 0.0
+      aim_yaw_offset: 0.0872664626
+      aim_pitch_offset: 0.080
 
     motor:
       count:  10
@@ -43,8 +45,8 @@
       # for dm: 0->vel,   1->mit,   2->pos_vel
       p2v:
         kps:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       4.0E+0,    4.5E+1]
-        kis:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       2.0E-1,    0.5E+1]
-        kds:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       3.0E+4,    1.0E+5]
+        kis:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       2.5E-1,    0.5E+1]
+        kds:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       4.0E+4,    1.0E+5]
       v2c:
         kps:  [1.2E-2,    1.2E-2,    1.2E-2,    1.2E-2,    1.0E-2,    1.0E-2,    2.0E-2,    2.0E-2,    4.0E+0,    6.5E-1]
         kis:  [1.0E-4,    1.0E-4,    1.0E-4,    1.0E-4,    1.2E-2,    1.6E-2,    2.5E-2,    2.5E-2,    2.5E+0,    3.0E+0]
