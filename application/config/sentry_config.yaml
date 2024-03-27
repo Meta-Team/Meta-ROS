@@ -6,10 +6,11 @@
     comp_ratio: 1.00
     move_mode: "natural"
     serial_path: "/dev/ttyUSB0"
+    reset_delay: 500 # ms
 
     control:
       trans_vel: 2.0 # m/s
-      rot_vel: 5.0 # rad/s
+      rot_vel: 8.0 # rad/s
       aim_sensitivity: 3.14 # rad/s
       deadzone: 0.15 # percentage
     
@@ -20,13 +21,13 @@
       yaw_offset: -0.245 # rad, yaw's zero against the chassis front
 
     gimbal:
-      fric_vel_u: 0.0 #-800.0
-      fric_vel_d: 0.0 #+800.0
+      fric_vel_u: -800.0 #-800.0
+      fric_vel_d: 800.0 #+800.0
       feed_vel_l: 15.0
       feed_vel_r: -15.0
       feed_ratio: 36.0
       fric_ratio: 1.0
-      search_vel: 0.0
+      search_vel: 1.0
       feed_vib_freq: 2.0
       feed_vib_amp: 0.0
       pitch_freq: 2.0
@@ -41,12 +42,10 @@
       # for dji: 0->3508,   1->6020,   2->2006
       # for dm: 0->vel,   1->mit,   2->pos_vel
       p2v:
-        kps:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       6.0E+0,    4.5E+1] # 6, 
+        kps:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       4.0E+0,    4.5E+1]
         kis:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       2.0E-1,    0.5E+1]
-        kds:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0E+0,    1.0E+5]
+        kds:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       3.0E+4,    1.0E+5]
       v2c:
         kps:  [1.2E-2,    1.2E-2,    1.2E-2,    1.2E-2,    1.0E-2,    1.0E-2,    2.0E-2,    2.0E-2,    4.0E+0,    6.5E-1]
-        kis:  [1.0E-4,    1.0E-4,    1.0E-4,    1.0E-4,    1.2E-2,    1.6E-2,    2.5E-2,    2.5E-2,    3.0E+0,    3.0E+0]
+        kis:  [1.0E-4,    1.0E-4,    1.0E-4,    1.0E-4,    1.2E-2,    1.6E-2,    2.5E-2,    2.5E-2,    2.5E+0,    3.0E+0]
         kds:  [0.0E+3,    0.0E+3,    0.0E+3,    0.0E+3,    0.0E+3,    0.0E+3,    1.0E+2,    1.0E+2,    0.0E+0,    0.0E+0]
-
-        # 0.6E-3, 0.8E-3

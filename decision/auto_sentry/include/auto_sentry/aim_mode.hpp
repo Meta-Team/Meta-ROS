@@ -3,14 +3,12 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#define COUNT 10
-
 #define MODE_DEBUG false
 
 class AimMode
 {
 public:
-    AimMode(rclcpp::Logger logger) : logger(logger)
+    AimMode(rclcpp::Logger logger, int delay) : reset_delay(delay), logger(logger)
     {
         active = false;
         count_down = 0;
@@ -20,7 +18,7 @@ public:
 
     void operator ++()
     {
-        count_down = COUNT;
+        count_down = reset_delay;
         determine();
     }
 
@@ -37,6 +35,7 @@ public:
     }
 
 private:
+    int reset_delay;
     int count_down;
     bool active;
     bool max_reached;
@@ -45,10 +44,13 @@ private:
 
     void determine()
     {
-#if MODE_DEBUG
+#if MODE_DEBUG == true
         RCLCPP_INFO(logger, "count = %d", count_down);
 #endif // MODE_DEBUG
-        if (count_down == COUNT && !max_reached)
+        if (count_down == reset_delay) active = true;
+        if (count_down == 0) active = false;
+
+        if (count_down == reset_delay && !max_reached)
         {
             active = true;
             max_reached = true;

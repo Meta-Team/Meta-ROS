@@ -4,8 +4,9 @@
 #include "behavior_interface/msg/shoot.hpp"
 #include "vision_interface/msg/auto_aim.hpp"
 #include "auto_sentry/aim_mode.hpp"
+#include <memory>
 
-#define UPDATE_R 20 // ms
+#define UPDATE_R 1 // ms
 #define PUB_R 20 // ms
 
 using namespace behavior_interface::msg;
@@ -14,7 +15,7 @@ using vision_interface::msg::AutoAim;
 class AutoSentry : public rclcpp::Node
 {
 public:
-    AutoSentry() : Node("auto_sentry"), aim_mode(this->get_logger())
+    AutoSentry() : Node("auto_sentry")
     {
         this->aim_pub_ = this->create_publisher<Aim>("aim", 10);
         this->move_pub_ = this->create_publisher<Move>("move", 10);
@@ -25,6 +26,8 @@ public:
         amplitude = this->declare_parameter("gimbal.pitch_amp", amplitude);
         north_offset = this->declare_parameter("north_offset", north_offset);
         auto_rotate = this->declare_parameter("auto_rotate", auto_rotate);
+        int reset_delay = this->declare_parameter("reset_delay", 1000); // ms
+        aim_mode = std::make_unique<AimMode>(this->get_logger(), reset_delay);
 
         set_msgs();
 
@@ -53,7 +56,7 @@ private:
     double amplitude = 0.4; // rad
     double auto_rotate = 2; // rad/s
 
-    AimMode aim_mode;
+    std::unique_ptr<AimMode> aim_mode;
 
     float yaw_buffer = 0.0;
     float pitch_buffer = 0.0;
@@ -72,12 +75,12 @@ private:
 
     void update_timer_callback()
     {
-        if (received) ++aim_mode;
-        else --aim_mode;
+        if (received) ++(*aim_mode);
+        else --(*aim_mode);
 
         received = false; // reset
 
-        if (aim_mode.is_active()) // target found
+        if (aim_mode->is_active()) // target found
         {
             // load the latest aim
             aim_msg.yaw = yaw_buffer;
