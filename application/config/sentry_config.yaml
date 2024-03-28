@@ -23,13 +23,13 @@
     gimbal:
       fric_vel_u: -800.0 #-800.0
       fric_vel_d: 800.0 #+800.0
+      fric_ratio: 1.0
       feed_vel_l: 5.0
       feed_vel_r: -20.0 #15.0
       feed_ratio: 36.0
-      fric_ratio: 1.0
+      drawback_delay: 500 # ms
+      jammed_threshold: 1.0 # rad/s
       search_vel: 1.6
-      feed_vib_freq: 2.0
-      feed_vib_amp: 0.0
       pitch_freq: 2.0
       pitch_amp: 0.0
       aim_yaw_offset: 0.0872664626
