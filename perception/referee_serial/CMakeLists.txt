@@ -28,6 +28,7 @@ add_library(referee_serial SHARED
   src/referee_serial.cpp
   src/remote_control.cpp
   src/game_info.cpp
+  src/power_state.cpp
   src/crc.cpp)
 
 target_include_directories(referee_serial PRIVATE

@@ -5,12 +5,14 @@
 #include "vision_interface/msg/auto_aim.hpp"
 #include "auto_sentry/aim_mode.hpp"
 #include <memory>
+#include "operation_interface/msg/game_info.hpp"
 
 #define UPDATE_R 1 // ms
 #define PUB_R 20 // ms
 
 using namespace behavior_interface::msg;
 using vision_interface::msg::AutoAim;
+using operation_interface::msg::GameInfo;
  
 class AutoSentry : public rclcpp::Node
 {
@@ -46,6 +48,7 @@ private:
     rclcpp::Publisher<Aim>::SharedPtr aim_pub_;
     rclcpp::Publisher<Move>::SharedPtr move_pub_;
     rclcpp::Publisher<Shoot>::SharedPtr shoot_pub_;
+    rclcpp::Subscription<GameInfo>::SharedPtr game_info;
     rclcpp::Subscription<AutoAim>::SharedPtr auto_aim_sub_;
     rclcpp::TimerBase::SharedPtr publish_timer_;
     rclcpp::TimerBase::SharedPtr update_timer_;
@@ -65,6 +68,8 @@ private:
     Move move_msg;
     Shoot shoot_msg;
 
+    bool robot_active = false;
+
     void auto_aim_callback(const AutoAim::SharedPtr msg)
     {
         received = true;
@@ -73,25 +78,45 @@ private:
         pitch_buffer = msg->pitch;
     }
 
+    void game_info_callback(operation_interface::msg::GameInfo::SharedPtr msg)
+    {
+        const auto progress = msg->game_progress;
+        if (progress == "NotStarted" || progress == "End") robot_active = false;
+        else if (progress == "Preparation" || progress == "SelfCheck" || progress == "5sCountdown") robot_active = true;
+    }
+
     void update_timer_callback()
     {
-        if (received) ++(*aim_mode);
-        else --(*aim_mode);
-
-        received = false; // reset
-
-        if (aim_mode->is_active()) // target found
+        if (robot_active == true) // active
         {
-            // load the latest aim
-            aim_msg.yaw = yaw_buffer;
-            aim_msg.pitch = pitch_buffer;
-            // start feeding
-            shoot_msg.feed_state = true;
+            if (received) ++(*aim_mode);
+            else --(*aim_mode);
+
+            received = false; // reset
+
+            if (aim_mode->is_active()) // target found
+            {
+                // load the latest aim
+                aim_msg.yaw = yaw_buffer;
+                aim_msg.pitch = pitch_buffer;
+                // start feeding
+                shoot_msg.feed_state = true;
+            }
+            else { // target lost
+                search();
+                // stop feeding
+                shoot_msg.feed_state = false;
+            }
         }
-        else { // target lost
-            search();
-            // stop feeding
+        else // inactive
+        {
+            aim_msg.pitch = 0;
+            aim_msg.yaw = 0;
             shoot_msg.feed_state = false;
+            shoot_msg.fric_state = false;
+            move_msg.omega = 0;
+            move_msg.vel_x = 0;
+            move_msg.vel_y = 0;
         }
     }
 

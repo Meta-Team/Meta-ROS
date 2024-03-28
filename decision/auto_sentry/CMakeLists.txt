@@ -22,6 +22,7 @@ ament_target_dependencies(auto_sentry
   rclcpp
   behavior_interface
   vision_interface
+  operation_interface
 )
 
 install(TARGETS

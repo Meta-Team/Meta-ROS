@@ -30,6 +30,12 @@ def generate_launch_description():
 
     ld = LaunchDescription([
         Node(
+            package='referee_serial',
+            executable='referee_serial',
+            name='referee_serial',
+            parameters=[config],
+        ),
+        Node(
             package='omni_chassis',
             executable='omni_chassis',
             name='omni_chassis',

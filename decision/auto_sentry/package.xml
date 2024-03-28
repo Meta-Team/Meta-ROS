@@ -14,6 +14,7 @@
 
   <depend>behavior_interface</depend>
   <depend>vision_interface</depend>
+  <depend>operation_interface</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
