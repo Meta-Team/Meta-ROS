@@ -3,7 +3,7 @@
 ## Basic Info
 
 Created by Yao Xinchen, 2023/7/13. \
-Based on ROS2 Foxy. \
+Based on ROS2 Humble. \
 Tested on Nvidia Orin Nano, Ubuntu 22.04. \
 Used for RoboMaster Team Meta to control robots.
 
