@@ -1,0 +1,20 @@
+/**:
+  ros__parameters:
+
+    comp_ratio: 0.9
+    move_mode: "natural"
+    serial_path: "/dev/ttyUSB0"
+
+    control:
+      trans_vel: 2.5 # m/s
+      rot_vel: 8.0 # rad/s
+      aim_sensitivity: 3.14 # rad/s
+      deadzone: 0.15 # percentage
+    
+    chassis:
+      wheel_radius: 0.076 # 0.076 # m
+      wheel_angle: 0.785 # rad
+      deceleration_ratio: 20.0
+      chassis_width: 0.5 # m
+      chassis_length: 0.5 # m
+      yaw_offset: -0.245 # rad, yaw's zero against the chassis front
