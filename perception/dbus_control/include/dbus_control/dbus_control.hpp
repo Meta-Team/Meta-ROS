@@ -24,6 +24,8 @@ public:
     void receive();
     void reopen_port();
 
+    bool first = true;
+
 private:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Publisher<operation_interface::msg::DbusControl>::SharedPtr pub_;

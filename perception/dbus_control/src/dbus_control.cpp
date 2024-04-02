@@ -2,8 +2,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "dbus_control/dbus_control.hpp"
 #include <cstdint>
+#include <cstdio>
 #include <exception>
+#include <rclcpp/clock.hpp>
 #include <vector>
+#include <bitset>
+
+#define DEBUG false
 
 std::string DbusControl::dev_name;
 constexpr const char * DbusControl::dev_null;
@@ -17,7 +22,7 @@ DbusControl::DbusControl(const rclcpp::NodeOptions & options)
     node_ = rclcpp::Node::make_shared("referee_serial", options);
 
     // create serial port
-    dev_name = node_->declare_parameter("serial_path", "/dev/ttyUSB1");
+    dev_name = node_->declare_parameter("serial_path", "/dev/ttyUSB3");
     ctx_ = std::make_unique<IoContext>(2);
     config_ = std::make_unique<SerialPortConfig>(baud, fc, pt, sb);
     port_ = std::make_unique<SerialPort>(*ctx_, dev_name, *config_);
@@ -58,11 +63,37 @@ rclcpp::node_interfaces::NodeBaseInterface::SharedPtr DbusControl::get_node_base
 
 void DbusControl::receive()
 {
+    auto new_byte = std::vector<uint8_t>(1);
+    new_byte[0] = 0;
+
     while (rclcpp::ok())
     {
         try {
-            std::vector<uint8_t> frame(16);
-            port_->receive(frame);
+            auto frame = std::vector<uint8_t>(0);
+            auto last_receive_moment = rclcpp::Clock().now().seconds();
+
+            while (rclcpp::Clock().now().seconds() - last_receive_moment < 0.01)
+            {
+                last_receive_moment = rclcpp::Clock().now().seconds();
+                frame.insert(frame.end(), new_byte.begin(),new_byte.end());
+                port_->receive(new_byte);
+            }
+
+#if DEBUG == true
+            for (auto byte : frame)
+            {
+                std::bitset<8> binary(byte);
+                std::cout << binary << ' ';
+            }
+            std::cout << '\n';
+#endif // DEBUG == true
+
+            if (first)
+            {
+                first = false;
+                continue;
+            }
+            
             DbusFrame info(frame);
             auto msg = info.msg();
             pub_->publish(msg);
