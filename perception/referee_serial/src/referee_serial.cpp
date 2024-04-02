@@ -10,7 +10,7 @@
 #include <vector>
 #include "referee_serial/crc.h"
 
-#define DEBUG false
+#define DEBUG true
 
 std::string RefereeSerial::dev_name;
 constexpr const char * RefereeSerial::dev_null;

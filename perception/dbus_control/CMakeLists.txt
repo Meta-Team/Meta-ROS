@@ -16,7 +16,8 @@ ament_auto_find_build_dependencies()
 find_package(rclcpp_components)
 
 add_library(dbus_control SHARED
-  src/dbus_control.cpp)
+  src/dbus_control.cpp
+  src/dbus_frame.cpp)
 
 target_include_directories(dbus_control PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -30,6 +31,7 @@ ament_target_dependencies(dbus_control
   rclcpp
   rclcpp_components
   serial_driver
+  operation_interface
 )
 
 install(TARGETS
