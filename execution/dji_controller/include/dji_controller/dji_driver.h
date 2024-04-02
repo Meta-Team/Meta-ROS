@@ -78,7 +78,7 @@ public:
      * @param hid The hardware ID of the motor.
      * @param type The type of the motor.
      */
-    DjiDriver(const std::string& rid, int hid, MotorType type);
+    DjiDriver(const std::string& rid, int hid, std::string);
     
     /**
      * @brief Set the desired position and velocity for the motor.

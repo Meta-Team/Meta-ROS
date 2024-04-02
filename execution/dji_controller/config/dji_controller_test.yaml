@@ -6,8 +6,8 @@
       count: 1
       rids: ["YAW"]
       hids: [5]
-      brands: [0]  # 0->dji, 1->dm
-      types: [1]  # for dji: 0->3508, 1->6020, 2->2006; for dm: 0->vel, 1->mit, 2->pos_vel
+      brands: ["DJI"]  # 0->dji, 1->dm
+      types: ["6020"]
 
       # for node `dji_controller`
       p2v:

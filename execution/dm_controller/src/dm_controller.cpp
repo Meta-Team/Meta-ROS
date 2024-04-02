@@ -12,12 +12,6 @@
 #define PUB_R 20
 #define ENABLE_PUB TRUE
 
-enum Mode
-{
-    VEL = 0,
-    MIT = 1,
-};
-
 class DmController : public rclcpp::Node
 {
 public:
@@ -60,35 +54,35 @@ private:
     {
         int motor_count = this->declare_parameter("motor.count", 0);
 
-        std::vector<int64_t> motor_brands{};
+        std::vector<std::string> motor_brands{};
         motor_brands = this->declare_parameter("motor.brands", motor_brands);
         std::vector<std::string> motor_rids{};
         motor_rids = this->declare_parameter("motor.rids", motor_rids);
         std::vector<int64_t> motor_hids{};
         motor_hids = this->declare_parameter("motor.hids", motor_hids);
-        std::vector<int64_t> motor_types{};
+        std::vector<std::string> motor_types{};
         motor_types= this->declare_parameter("motor.types", motor_types);
         kps = this->declare_parameter("motor.p2v.kps", kps);
         kis = this->declare_parameter("motor.p2v.kis", kis);
 
         for (int i = 0; i < motor_count; i++)
         {
-            if (motor_brands[i] != 1) continue; // only create drivers for DM motors
+            if (motor_brands[i] != "DM") continue; // only create drivers for DM motors
 
             dm_motor_count++;
             std::string rid = motor_rids[i];
             int hid = motor_hids[i];
 
-            if (motor_types[i] == Mode::VEL)
+            if (motor_types[i] == "VEL")
             {
                 dm_driver_.push_back(std::make_unique<DmVelDriver>(rid, hid));
             }
-            else if (motor_types[i] == Mode::MIT)
+            else if (motor_types[i] == "MIT")
             {
                 dm_driver_.push_back(std::make_unique<DmMitDriver>(rid, hid, kps[i], kis[i]));
             }
             else {
-                RCLCPP_WARN(this->get_logger(), "Motor %s type %d not supported", rid.c_str(), static_cast<int>(motor_types[i]));
+                RCLCPP_WARN(this->get_logger(), "Motor %s type %s not supported", rid.c_str(), motor_types[i].c_str());
             }
         }
 

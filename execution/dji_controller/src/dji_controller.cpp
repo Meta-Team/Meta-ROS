@@ -135,13 +135,13 @@ private:
     {
         int motor_count = this->declare_parameter("motor.count", 0);
 
-        std::vector<int64_t> motor_brands{};
+        std::vector<std::string> motor_brands{};
         motor_brands = this->declare_parameter("motor.brands", motor_brands);
         std::vector<std::string> motor_rids{};
         motor_rids = this->declare_parameter("motor.rids", motor_rids);
         std::vector<int64_t> motor_hids{};
         motor_hids = this->declare_parameter("motor.hids", motor_hids);
-        std::vector<int64_t> motor_types{};
+        std::vector<std::string> motor_types{};
         motor_types = this->declare_parameter("motor.types", motor_types);
         
         p2v_kps = this->declare_parameter("motor.p2v.kps", p2v_kps);
@@ -154,10 +154,10 @@ private:
         // initialize the drivers
         for (int i = 0; i < motor_count; i++)
         {
-            if (motor_brands[i] != 0) continue; // only create drivers for DJI motors
+            if (motor_brands[i] != "DJI") continue; // only create drivers for DJI motors
             
             dji_motor_count++;
-            MotorType type = static_cast<MotorType>(motor_types[i]);
+            std::string type = motor_types[i];
             std::string rid = motor_rids[i];
             int hid = motor_hids[i];
             drivers_.push_back(std::make_unique<DjiDriver>(rid, hid, type));

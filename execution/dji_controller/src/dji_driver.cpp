@@ -17,13 +17,17 @@ std::unique_ptr<can_frame> DjiDriver::tx_frame_1ff = init_frame(0x1ff);
 std::unique_ptr<can_frame> DjiDriver::tx_frame_2ff = init_frame(0x2ff);
 can_frame DjiDriver::rx_frame;
 
-DjiDriver::DjiDriver(const std::string& rid, const int hid, MotorType type) :
+DjiDriver::DjiDriver(const std::string& rid, const int hid, std::string type) :
     p2v_prm(0.1, 0.01, 0.1),
     v2c_prm(0.004, 0.00003, 0.1),
     hid(hid),
     rid(rid)
 {
-    this->motor_type = type;
+    if (type == "3508") motor_type = M3508;
+    else if (type == "6020") motor_type = M6020;
+    else if (type == "2006") motor_type = M2006;
+    else std::cerr << "Unknown motor type: " << type << std::endl;
+    
     this->p2v_out = PidOutput();
     this->v2c_out = PidOutput();
 }
