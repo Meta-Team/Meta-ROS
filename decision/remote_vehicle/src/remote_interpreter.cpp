@@ -1,7 +1,8 @@
 #include "remote_vehicle/remote_interpreter.hpp"
+#include <cmath>
 
-RemoteInterpreter::RemoteInterpreter(float max_vel, float max_omega, float aim_sens)
-    : max_vel(max_vel), max_omega(max_omega), aim_sensitive(aim_sens)
+RemoteInterpreter::RemoteInterpreter(double max_vel, double max_omega, double aim_sens, double interfere_sens)
+    : max_vel(max_vel), max_omega(max_omega), aim_sensitive(aim_sens), interfere_sensitive(interfere_sens)
 {
     // initialize buttons and axes
     w = a = s = d = shift = ctrl = q = e = r = f = g = z = x = c = v = b = false;
@@ -12,9 +13,26 @@ RemoteInterpreter::RemoteInterpreter(float max_vel, float max_omega, float aim_s
     move_ = std::make_shared<Move>();
     shoot_ = std::make_shared<Shoot>();
     aim_ = std::make_shared<Aim>();
+
+    // start threads
+    interpret_thread = std::thread([this] {
+        while (true)
+        {
+            interpret();
+            std::this_thread::sleep_for(std::chrono::milliseconds(PERIOD));
+        }
+    });
 }
 
-void RemoteInterpreter::input(const RemoteControl::SharedPtr msg)
+RemoteInterpreter::~RemoteInterpreter()
+{
+    if (interpret_thread.joinable())
+    {
+        interpret_thread.join();
+    }
+}
+
+void RemoteInterpreter::manual_input(const RemoteControl::SharedPtr msg)
 {
     w = msg->w;
     a = msg->a;
@@ -39,15 +57,36 @@ void RemoteInterpreter::input(const RemoteControl::SharedPtr msg)
     mouse_z = msg->mouse_z;
 }
 
-void RemoteInterpreter::update()
+void RemoteInterpreter::vision_input(const AutoAim::SharedPtr msg)
 {
+    auto_yaw = msg->yaw;
+    auto_pitch = msg->pitch;
+    last_auto_time = rclcpp::Clock().now().seconds();
+}
+
+void RemoteInterpreter::interpret()
+{
+    // move
     move_->vel_x = max_vel * (w - s);
     move_->vel_y = max_vel * (a - d);
     move_->omega = max_omega * (q - e);
-    aim_->pitch += aim_sensitive * mouse_y * PERIOD / 1000; curb(aim_->pitch, PI / 2);
-    aim_->yaw += aim_sensitive * mouse_x * PERIOD / 1000;
-    shoot_->fric_state = right_button;
+    // shoot
+    shoot_->fric_state = shift;
     shoot_->feed_state = left_button;
+    // aim
+    mode = right_button ? AUTO : MANUAL;
+    if (mode == AUTO && rclcpp::Clock().now().seconds() - last_auto_time < 0.2)
+    {
+        manual_yaw += mouse_x * interfere_sensitive * PERIOD / 1000;
+        manual_pitch += mouse_y * interfere_sensitive * PERIOD / 1000;
+        aim_->yaw = auto_yaw + manual_yaw;
+        aim_->pitch = auto_pitch + manual_pitch;
+    }
+    else // auto aim inactive, or timeout
+    {
+        aim_->yaw += mouse_x * aim_sensitive * PERIOD / 1000;
+        aim_->pitch += mouse_y * aim_sensitive * PERIOD / 1000;
+    }
 }
 
 void RemoteInterpreter::curb(double &val, double max_val)
@@ -60,6 +99,12 @@ void RemoteInterpreter::curb(double &val, double max_val)
     {
         val = -max_val;
     }
+}
+
+void RemoteInterpreter::my_mod(double &val, double mod)
+{
+    val = fmod(val, mod);
+    if (val < 0) val += mod;
 }
 
 Move::SharedPtr RemoteInterpreter::get_move() const

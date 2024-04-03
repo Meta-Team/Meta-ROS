@@ -24,6 +24,7 @@ ament_target_dependencies(remote_vehicle
   rclcpp
   behavior_interface
   operation_interface
+  vision_interface
 )
 
 install(TARGETS
