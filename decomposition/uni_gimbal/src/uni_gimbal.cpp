@@ -10,7 +10,7 @@
 
 #define NaN std::nan("")
 
-#define CONTROL_R 3 // ms
+#define CONTROL_R 4 // ms
 
 class UniGimbal: public rclcpp::Node
 {
@@ -49,23 +49,23 @@ private:
 
     std::unique_ptr<Gimbal> gimbal_;
 
-    float compensate = 1.1; // ratio of yaw vel compensate
+    double compensate = 0.0; // ratio of yaw vel compensate
 
-    float yaw_offset = 0.0;
-    float pitch_offset = 0.0;
+    double yaw_offset = 0.0;
+    double pitch_offset = 0.0;
 
     void goal_callback(const behavior_interface::msg::Aim::SharedPtr goal_msg)
     {
         // update goal_dir
-        float goal_dir = goal_msg->yaw; // relative to north
-        float goal_pitch = goal_msg->pitch;
+        double goal_dir = goal_msg->yaw; // relative to north
+        double goal_pitch = goal_msg->pitch;
         gimbal_->set_goal(goal_dir, goal_pitch);
     }
 
     void feedback_callback(const geometry_msgs::msg::Vector3::SharedPtr feedback_msg)
     {
-        float current_dir = - feedback_msg->z + yaw_offset; // relative to north
-        float current_pitch = feedback_msg->y + pitch_offset;
+        double current_dir = - feedback_msg->z + yaw_offset; // relative to north
+        double current_pitch = feedback_msg->y + pitch_offset;
         gimbal_->get_feedback(current_dir, current_pitch);
     }
 
@@ -76,7 +76,8 @@ private:
 
     void pub_callback()
     {
-        auto [yaw_vel, pitch_vel] = gimbal_->calc_vel();
+        double yaw_vel = gimbal_->get_yaw_vel();
+        double pitch_vel = gimbal_->get_pitch_vel();
         auto msg = motor_interface::msg::MotorGoal();
         msg.motor_id.push_back("YAW");
         msg.goal_pos.push_back(NaN);

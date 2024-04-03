@@ -2,6 +2,7 @@
 #define GIMBAL_PID_H
 
 #include <queue>
+#include <thread>
 
 #define CALC_FREQ 1 // ms
 #define V_MAX 12 // to be tuned, velocity limit
@@ -41,6 +42,11 @@ public:
     Gimbal(PidParam yaw, PidParam pitch, float comp);
 
     /**
+     * @brief Destroy the Gimbal object.
+     */
+    ~Gimbal() { calc_thread.join(); }
+
+    /**
      * @brief Set the goal position of the gimbal.
      * @param goal_yaw_pos The goal yaw position of the gimbal, in radians, relative to north.
      * @param goal_pitch_pos The goal pitch position of the gimbal, in radians.
@@ -76,10 +82,16 @@ public:
     float min_error(float goal, float current);
 
     /**
-     * @brief Calculate the velocity of the gimbal.
-     * @return [yaw_vel, pitch_vel] The velocity of the yaw and pitch axis, in rad/s.
+     * @brief Get the velocity of the gimbal.
+     * @return The velocity of the yaw axis, in rad/s.
      */
-    std::pair<float, float> calc_vel();
+    [[nodiscard]] float get_yaw_vel() const { return yaw_vel; }
+
+    /**
+     * @brief Get the velocity of the gimbal.
+     * @return The velocity of the pitch axis, in rad/s.
+     */
+    [[nodiscard]] float get_pitch_vel() const { return pitch_vel; }
 
 private:
     float yaw_vel = 0.0; ///< The goal yaw velocity of the gimbal, in rad/s.
@@ -102,6 +114,14 @@ private:
 
     float omega = 0.0; ///< The angular velocity of the chassis, in rad/s.
     float ratio = 0.7; ///< Ratio of compensate omega.
+
+    std::thread calc_thread; ///< The thread for PID calculation.
+
+    /**
+     * @brief Calculate the velocity of the gimbal.
+     * @return [yaw_vel, pitch_vel] The velocity of the yaw and pitch axis, in rad/s.
+     */
+    void calc_vel();
 };
 
 #endif // GIMBAL_PID_H
