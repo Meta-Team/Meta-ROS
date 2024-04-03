@@ -4,6 +4,7 @@
 #include "geometry_msgs/msg/vector3.hpp"
 #include "motor_interface/msg/motor_state.hpp"
 #include <cstdint>
+#include <rclcpp/logging.hpp>
 #include <vector>
 
 namespace ph = std::placeholders;
@@ -17,37 +18,44 @@ private:
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr gimbal_sub_;
     rclcpp::Subscription<motor_interface::msg::MotorState>::SharedPtr motor_sub_;
 
-    void nat_callback(const behavior_interface::msg::Move::SharedPtr nat_msg)
-    {
-        // MY_TODO: complete the algorithm
-        float temp = 0;
+    double motor_yaw_pos = 0.0; // The yaw position of the gimbal against the chassis, in radians.
+    double gimbal_yaw_pos = 0.0; // The yaw position of the gimbal against the ground, in radians.
 
-        // calculate and publish
-        motor_pub_->publish(AgvKinematics::natural_decompo(nat_msg, temp));
+    void cha_callback(const behavior_interface::msg::Move::SharedPtr cha_msg)
+    {
+        auto tx_msg = AgvKinematics::chassis_decompo(cha_msg);
+        motor_pub_->publish(tx_msg);
     }
 
     void abs_callback(const behavior_interface::msg::Move::SharedPtr abs_msg)
     {
-        // MY_TODO: complete the algorithm
-        float temp = 0;
-        
-        // calculate and publish
-        motor_pub_->publish(AgvKinematics::absolute_decompo(abs_msg, temp));
+        auto tx_msg = AgvKinematics::absolute_decompo(abs_msg, gimbal_yaw_pos, motor_yaw_pos);
+        motor_pub_->publish(tx_msg);
     }
 
-    void cha_callback(const behavior_interface::msg::Move::SharedPtr cha_msg)
+    void nat_callback(const behavior_interface::msg::Move::SharedPtr nat_msg)
     {
-        motor_pub_->publish(AgvKinematics::chassis_decompo(cha_msg));
+        auto tx_msg = AgvKinematics::natural_decompo(nat_msg, motor_yaw_pos);
+        motor_pub_->publish(tx_msg);
     }
 
     void gimbal_callback(const geometry_msgs::msg::Vector3::SharedPtr gimbal_msg)
     {
-        // MY_TODO: complete the algorithm
+        gimbal_yaw_pos = gimbal_msg->z;
     }
     
     void motor_callback(const motor_interface::msg::MotorState::SharedPtr motor_msg)
     {
-        // MY_TODO: complete the algorithm
+        // update motor_yaw_pos
+        int count = motor_msg->motor_id.size();
+        for (int i = 0; i < count; i++) // look for the yaw motor
+        {
+            if (motor_msg->motor_id[i] == "YAW")
+            {
+                motor_yaw_pos = motor_msg->present_pos[i];
+                break;
+            }
+        }
     }
 
 public:
@@ -60,11 +68,11 @@ public:
         get_offsets();
 
         // initialize subscriber
-        gimbal_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>("euler_angles", 10,
-            std::bind(&AgvChassis::gimbal_callback, this, ph::_1));
+        motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
         motor_sub_ = this->create_subscription<motor_interface::msg::MotorState>("motor_state", 10,
             std::bind(&AgvChassis::motor_callback, this, ph::_1));
-        
+        gimbal_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>("euler_angles", 10,
+            std::bind(&AgvChassis::gimbal_callback, this, ph::_1));
         if (mode == "chassis")
             move_sub_ = this->create_subscription<behavior_interface::msg::Move>("move", 10,
                 std::bind(&AgvChassis::cha_callback, this, ph::_1));
@@ -76,10 +84,8 @@ public:
                 std::bind(&AgvChassis::abs_callback, this, ph::_1));
         else
             RCLCPP_ERROR(this->get_logger(), "Invalid mode: %s", mode.c_str());
-        // MY_TODO: other subscriber
 
-        // initialize publisher
-        motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
+        RCLCPP_INFO(this->get_logger(), "Chassis mode set to %s", mode.c_str());
         RCLCPP_INFO(this->get_logger(), "AgvChassis initialized");
     }
 

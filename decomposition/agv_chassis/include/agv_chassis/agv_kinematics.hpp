@@ -13,7 +13,6 @@
 
 #define NaN std::nan("")
 
-#define PI 3.1415926f
 #define TRIGGER 0.05 // a vel is considered to be zero if its absolute value is less than TRIGGER
 
 using std::string, std::unordered_map, std::pair, motor_interface::msg::MotorGoal;
@@ -25,13 +24,15 @@ using std::string, std::unordered_map, std::pair, motor_interface::msg::MotorGoa
  */
 namespace AgvKinematics
 {
-    extern float wheel_r; ///< The radius of the wheels, in meters.
-    extern float cha_r; ///< The radius of the chassis, in meters.
-    extern float decel_ratio; ///< The ratio of motor deceleration.
+    extern double wheel_r; ///< The radius of the wheels, in meters.
+    extern double cha_r; ///< The radius of the chassis, in meters.
+    extern double decel_ratio; ///< The ratio of motor deceleration.
+    extern double n_offset; ///< The feedback angle of ahrs, when the ahrs is facing the desired front.
+    extern double yaw_offset; ///< The feedback angle of yaw motor, when gimbal is parallel to the chassis front.
 
-    extern unordered_map<string, float> vel; ///< The velocities of the motors.
-    extern unordered_map<string, float> pos; ///< The positions of the motors.
-    extern unordered_map<string, pair<float, bool>> offsets; ///< The offsets of the motors. Bool indicates whether the offset is found.
+    extern unordered_map<string, double> vel; ///< The velocities of the motors.
+    extern unordered_map<string, double> pos; ///< The positions of the motors.
+    extern unordered_map<string, pair<double, bool>> offsets; ///< The offsets of the motors. Bool indicates whether the offset is found.
 
     /**
      * @brief Decomposes a natural move message into motor goals.
@@ -39,15 +40,16 @@ namespace AgvKinematics
      * @param yaw_diff The yaw difference between chassis and gimbal.
      * @return The motor goal.
      */
-    MotorGoal natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float yaw_diff);
+    MotorGoal natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, double yaw_diff);
 
     /**
      * @brief Decomposes an absolute move message into motor goals.
      * @param msg The absolute move message.
-     * @param chassis_yaw The chassis yaw.
+     * @param gimbal The ahrs yaw position.
+     * @param motor The yaw motor position.
      * @return The motor goal.
      */
-    MotorGoal absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, float chassis_yaw);
+    MotorGoal absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, double gimbal, double motor);
 
     /**
      * @brief Decomposes a chassis move message into motor goals.
@@ -70,7 +72,7 @@ namespace AgvKinematics
      * @param goal_vel The goal velocity of the wheels in m/s.
      * @note Goal positions would be set zero.
      */
-    void add_vel_goal(MotorGoal &motor_goal, const string& rid, const float goal_vel);
+    void add_vel_goal(MotorGoal &motor_goal, const string& rid, const double goal_vel);
 
     /**
      * @brief Add the goal position of a motor.
@@ -79,16 +81,16 @@ namespace AgvKinematics
      * @param goal_pos The goal position of the wheels in rad.
      * @note Goal velocities would be set zero.
      */
-    void add_pos_goal(MotorGoal &motor_goal, const string& rid, const float goal_pos);
+    void add_pos_goal(MotorGoal &motor_goal, const string& rid, const double goal_pos);
 
     /**
      * @brief Add the goal velocity and position of the two motors of a wheel.
      * @param[out] motor_goals The motor goals to be set.
      * @param which Which wheel to be set. Must be "LF", "RF", "LB", or "RB".
-     * @param vx The x component against the global frame in m/s.
-     * @param vy The y component against the global frame in m/s.
+     * @param vx The front component against the chassis frame in m/s.
+     * @param vy The left component against the global frame in m/s.
      */
-    void add_group_goal(MotorGoal &motor_goal, const string& which, float vx, float vy);
+    void add_group_goal(MotorGoal &motor_goal, const string& which, double vx, double vy);
 
     /**
      * @brief Calculates the root sum square of two values.
@@ -96,14 +98,14 @@ namespace AgvKinematics
      * @param y The second value.
      * @return The root sum square.
      */
-    float rss(float x, float y);
+    double rss(double x, double y);
 
     /**
-     * @brief Checks if a float is close to zero.
-     * @param x The float to be checked.
-     * @return True if the float is zero, false otherwise.
+     * @brief Checks if a double is close to zero.
+     * @param x The double to be checked.
+     * @return True if the double is zero, false otherwise.
      */
-    bool is_zero(float x);
+    bool is_zero(double x);
 }
 
 #endif // AGV_KINEMATICS_HPP

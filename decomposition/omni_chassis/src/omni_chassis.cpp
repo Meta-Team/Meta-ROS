@@ -13,7 +13,7 @@ public:
     OmniChassis() : Node("OmniChassis")
     {
         // get params
-        move_mode = this->declare_parameter("move_mode", "chassis");
+        std::string move_mode = this->declare_parameter("move_mode", "chassis");
         OmniKinematics::cha_r = this->declare_parameter("chassis.chassis_radius", OmniKinematics::cha_r);
         OmniKinematics::wheel_r = this->declare_parameter("chassis.wheel_radius", OmniKinematics::wheel_r);
         OmniKinematics::decel_ratio = this->declare_parameter("chassis.deceleration_ratio", OmniKinematics::decel_ratio);
@@ -48,7 +48,6 @@ private:
     rclcpp::Subscription<motor_interface::msg::MotorState>::SharedPtr motor_sub_;
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr gimbal_sub_; // ahrs feedback on gimbal
 
-    std::string move_mode;
     float gimbal_yaw_pos = 0.0; // The yaw position of the gimbal against the ground, in radians.
     float motor_yaw_pos = 0.0; // The yaw position of the gimbal against the chassis, in radians.
 
