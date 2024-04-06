@@ -118,8 +118,8 @@ void DjiDriver::process_rx()
 
 void DjiDriver::write_tx()
 {
-    if (goal_pos != NaN) pos2velocity(); // this would overwrite goal_vel
-    if (goal_vel != NaN) vel2current(); // this would overwrite current
+    if (!std::isnan(goal_pos)) pos2velocity(); // this would overwrite goal_vel
+    if (!std::isnan(goal_vel)) vel2current(); // this would overwrite current
     // if both are NaN, then use the current value directly
 
     if (motor_type == M3508)
