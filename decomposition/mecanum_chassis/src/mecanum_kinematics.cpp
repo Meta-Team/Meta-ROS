@@ -47,6 +47,7 @@ motor_interface::msg::MotorGoal MecanumKinematics::natural_decompo(const behavio
 void MecanumKinematics::clear_goal(motor_interface::msg::MotorGoal &motor_goal)
 {
     motor_goal.motor_id.clear();
+    motor_goal.goal_tor.clear();
     motor_goal.goal_vel.clear();
     motor_goal.goal_pos.clear();
 }
@@ -54,6 +55,7 @@ void MecanumKinematics::clear_goal(motor_interface::msg::MotorGoal &motor_goal)
 void MecanumKinematics::add_goal(motor_interface::msg::MotorGoal &motor_goal, const std::string& rid, const float goal_vel)
 {
     motor_goal.motor_id.push_back(rid);
+    motor_goal.goal_tor.push_back(NaN);
     motor_goal.goal_vel.push_back(goal_vel / wheel_r * decel_ratio); // convert to rad/s
     motor_goal.goal_pos.push_back(NaN);
 }

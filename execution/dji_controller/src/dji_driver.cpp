@@ -32,10 +32,11 @@ DjiDriver::DjiDriver(const std::string& rid, const int hid, std::string type) :
     this->v2c_out = PidOutput();
 }
 
-void DjiDriver::set_goal(float goal_pos, float goal_vel)
+void DjiDriver::set_goal(float goal_pos, float goal_vel, float goal_cur)
 {
     this->goal_pos = goal_pos;
     this->goal_vel = goal_vel;
+    this->current = goal_cur;
 }
 
 void DjiDriver::set_p2v_pid(float kp, float ki, float kd)
@@ -117,8 +118,9 @@ void DjiDriver::process_rx()
 
 void DjiDriver::write_tx()
 {
-    if (goal_pos != NaN && goal_vel == NaN) pos2velocity();
-    vel2current();
+    if (goal_pos != NaN) pos2velocity(); // this would overwrite goal_vel
+    if (goal_vel != NaN) vel2current(); // this would overwrite current
+    // if both are NaN, then use the current value directly
 
     if (motor_type == M3508)
     {

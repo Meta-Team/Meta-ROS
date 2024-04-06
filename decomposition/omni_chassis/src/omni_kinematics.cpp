@@ -70,4 +70,5 @@ void OmniKinematics::add_goal(motor_interface::msg::MotorGoal &motor_goal, const
     motor_goal.motor_id.push_back(rid);
     motor_goal.goal_vel.push_back(DIRE * goal_vel / wheel_r * decel_ratio); // convert to rad/s
     motor_goal.goal_pos.push_back(NaN);
+    motor_goal.goal_tor.push_back(NaN);
 }

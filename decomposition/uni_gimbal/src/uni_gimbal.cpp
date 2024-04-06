@@ -79,12 +79,16 @@ private:
         double yaw_vel = gimbal_->get_yaw_vel();
         double pitch_vel = gimbal_->get_pitch_vel();
         auto msg = motor_interface::msg::MotorGoal();
+        // yaw
         msg.motor_id.push_back("YAW");
         msg.goal_pos.push_back(NaN);
         msg.goal_vel.push_back(yaw_vel);
+        msg.goal_tor.push_back(NaN);
+        // pitch
         msg.motor_id.push_back("PITCH");
         msg.goal_pos.push_back(NaN);
         msg.goal_vel.push_back(pitch_vel);
+        msg.goal_tor.push_back(NaN);
         pub_->publish(msg);
         // RCLCPP_INFO(this->get_logger(), "Yaw vel: %f", yaw_vel);
     }

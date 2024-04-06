@@ -48,15 +48,15 @@ private:
 
     /**
      * @brief Convert velocity to current using PID control.
-     * This depends on member variables goal_vel, present_data.velocity.
-     * The result is stored in member variable current.
+     * This depends on member variables `goal_vel`, `present_data.velocity`.
+     * The result is stored in member variable `current`.
      */
     void vel2current();
 
     /**
      * @brief Convert position to velocity using PID control.
-     * This depends on member variables goal_pos, present_data.position.
-     * The result is stored in member variable goal_vel.
+     * This depends on member variables `goal_pos`, `present_data.position`.
+     * The result is stored in member variable `goal_vel`.
      * @note To realize position control, this function should be executed before vel2current().
      */
     void pos2velocity();
@@ -85,7 +85,7 @@ public:
      * @param goal_pos The desired position.
      * @param goal_vel The desired velocity.
      */
-    void set_goal(float goal_pos, float goal_vel);
+    void set_goal(float goal_pos, float goal_vel, float goal_cur);
 
     /**
      * @brief Set the PID parameters for position-to-velocity conversion.

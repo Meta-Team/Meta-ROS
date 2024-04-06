@@ -93,6 +93,7 @@ private:
             std::string rid = msg->motor_id[i];
             float pos = msg->goal_pos[i];
             float vel = msg->goal_vel[i];
+            float cur = msg->goal_tor[i];
 
             // find corresponding driver
             auto iter = std::find_if(drivers_.begin(), drivers_.end(),
@@ -104,7 +105,7 @@ private:
             if (iter != drivers_.end())
             {
                 auto driver = iter->get();
-                driver->set_goal(pos, vel);
+                driver->set_goal(pos, vel, cur);
                 // RCLCPP_INFO(this->get_logger(), "%s receive goal", rid.c_str());
             }
             else {
