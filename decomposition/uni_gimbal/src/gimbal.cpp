@@ -17,13 +17,12 @@ Gimbal::Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, float comp)
     });
 }
 #else // IMU_FB == true
-Gimbal::Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, PidParam yaw_v2v, PidParam pitch_v2v, float comp)
+Gimbal::Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, PidParam yaw_v2v, PidParam pitch_v2v)
 {
     yaw_p2v_param = yaw_p2v;
     pitch_p2v_param = pitch_p2v;
     yaw_v2v_param = yaw_v2v;
     pitch_v2v_param = pitch_v2v;
-    this->ratio = comp;
     calc_thread = std::thread([this](){
         while (true)
         {
@@ -89,7 +88,11 @@ void Gimbal::calc_vel()
     yaw_p2v_output.p = yaw_p2v_param.kp * yaw_pos_error;
     yaw_p2v_output.i += yaw_p2v_param.ki * yaw_pos_error * DT; curb(yaw_p2v_output.i, V_MAX / 2.0f);
     yaw_p2v_output.d = yaw_p2v_param.kd * (yaw_pos_error - prev_yaw_pos_error) / DT;
+#if IMU_FB == false
     goal_yaw_vel = yaw_p2v_output.sum() - ratio * omega;
+#else
+    goal_yaw_vel = yaw_p2v_output.sum();
+#endif // IMU_FB
     curb(goal_yaw_vel, V_MAX);
 
     // pitch

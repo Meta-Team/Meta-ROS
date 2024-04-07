@@ -50,9 +50,8 @@ public:
      * @param pitch_p2v The position-to-voltage PID parameters for the pitch axis.
      * @param yaw_v2v The velocity-to-voltage PID parameters for the yaw axis.
      * @param pitch_v2v The velocity-to-voltage PID parameters for the pitch axis.
-     * @param comp The ratio of compensate omega.
      */
-    Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, PidParam yaw_v2v, PidParam pitch_v2v, float comp);
+    Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, PidParam yaw_v2v, PidParam pitch_v2v);
 #endif // IMU_FB
 
     /**
@@ -168,7 +167,9 @@ private:
 #endif // IMU_FB
 
     float omega = 0.0; ///< The angular velocity of the chassis, in rad/s.
+#if IMU_FB == false
     float ratio = 0.7; ///< Ratio of compensate omega.
+#endif // IMU_FB
 
     std::thread calc_thread; ///< The thread for PID calculation.
 

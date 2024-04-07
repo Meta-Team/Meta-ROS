@@ -175,13 +175,12 @@ private:
         if (!yaw_found) RCLCPP_WARN(this->get_logger(), "No yaw motor found in config.");
         if (!pitch_found) RCLCPP_WARN(this->get_logger(), "No pitch motor found in config.");
 
-        compensate = this->declare_parameter("comp_ratio", compensate);
-        RCLCPP_INFO(this->get_logger(), "Comp Ratio set to %f", compensate);
-
 #if IMU_FB == false
+        compensate = this->declare_parameter("comp_ratio", compensate);
         gimbal_ = std::make_unique<Gimbal>(yaw_p2v, pitch_p2v, compensate);
+        RCLCPP_INFO(this->get_logger(), "Comp Ratio set to %f", compensate);
 #else
-        gimbal_ = std::make_unique<Gimbal>(yaw_p2v, pitch_p2v, yaw_v2v, pitch_v2v, compensate);
+        gimbal_ = std::make_unique<Gimbal>(yaw_p2v, pitch_p2v, yaw_v2v, pitch_v2v);
 #endif // IMU_FB
     }
 };
