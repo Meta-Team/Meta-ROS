@@ -29,12 +29,6 @@ def generate_launch_description():
             name='joy_node',
             parameters=[config],
         ),
-        Node(
-            package='referee_serial',
-            executable='referee_serial',
-            name='referee_serial',
-            parameters=[config],
-        ),
 
         # deci
         Node(

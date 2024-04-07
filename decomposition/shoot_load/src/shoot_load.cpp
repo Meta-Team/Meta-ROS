@@ -140,22 +140,22 @@ private:
         clear(motor_msg);
 
         motor_msg.motor_id.push_back("FRIC_U");
-        motor_msg.goal_vel.push_back(fric_goal_vel_u);
+        motor_msg.goal_vel.push_back(fric_goal_vel_u * fric_ratio);
         motor_msg.goal_pos.push_back(NaN);
         motor_msg.goal_tor.push_back(NaN);
 
         motor_msg.motor_id.push_back("FRIC_D");
-        motor_msg.goal_vel.push_back(fric_goal_vel_d);
+        motor_msg.goal_vel.push_back(fric_goal_vel_d * fric_ratio);
         motor_msg.goal_pos.push_back(NaN);
         motor_msg.goal_tor.push_back(NaN);
 
         motor_msg.motor_id.push_back("FEED_L");
-        motor_msg.goal_vel.push_back(feed_goal_vel_l);
+        motor_msg.goal_vel.push_back(feed_goal_vel_l * feed_ratio);
         motor_msg.goal_pos.push_back(NaN);
         motor_msg.goal_tor.push_back(NaN);
 
         motor_msg.motor_id.push_back("FEED_R");
-        motor_msg.goal_vel.push_back(feed_goal_vel_r);
+        motor_msg.goal_vel.push_back(feed_goal_vel_r * feed_ratio);
         motor_msg.goal_pos.push_back(NaN);
         motor_msg.goal_tor.push_back(NaN);
         

@@ -4,7 +4,7 @@
 #include <queue>
 #include <thread>
 
-#define IMU_FB false
+#define IMU_FB true
 
 #define CALC_FREQ 1 // ms
 #define V_MAX 12 // to be tuned, velocity limit
