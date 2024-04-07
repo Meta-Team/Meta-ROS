@@ -15,6 +15,7 @@ find_package(rclcpp REQUIRED)
 find_package(motor_interface REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(behavior_interface REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 include_directories(include)
 
@@ -26,7 +27,8 @@ ament_target_dependencies(uni_gimbal
   rclcpp
   geometry_msgs
   motor_interface
-  behavior_interface)
+  behavior_interface
+  sensor_msgs)
 
 install(TARGETS uni_gimbal
   DESTINATION lib/${PROJECT_NAME})
