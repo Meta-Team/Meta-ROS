@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <rclcpp/timer.hpp>
 
 #include "behavior_interface/msg/shoot.hpp"
 #include "motor_interface/msg/motor_goal.hpp"
@@ -27,6 +28,9 @@ public:
         pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_FREQ),
             std::bind(&ShootLoad::pub_timer_callback, this)
         );
+        update_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_FREQ),
+            std::bind(&ShootLoad::update_timer_callback, this)
+        );
 
         RCLCPP_INFO(this->get_logger(), "ShootLoad initialized.");
     }
@@ -36,6 +40,7 @@ private:
     rclcpp::Subscription<motor_interface::msg::MotorState>::SharedPtr feeback_sub_;
     rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
+    rclcpp::TimerBase::SharedPtr update_timer_;
 
     // ros params, constant after initialization
     float feed_max_vel_l = 5.0, feed_max_vel_r = 5.0;
@@ -121,6 +126,11 @@ private:
         {
             fric_goal_vel_d = fric_max_vel_d;
             fric_goal_vel_u = fric_max_vel_u;
+        }
+        else // not to shoot
+        {
+            fric_goal_vel_d = 0.0;
+            fric_goal_vel_u = 0.0;
         }
     }
 
