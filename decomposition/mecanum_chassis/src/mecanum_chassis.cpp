@@ -47,7 +47,7 @@ private:
     rclcpp::Subscription<motor_interface::msg::MotorState>::SharedPtr motor_sub_;
 
     std::string move_mode;
-    float motor_yaw_pos = 0.0; // The yaw position of the gimbal against the chassis, in radians.
+    double motor_yaw_pos = 0.0; // The yaw position of the gimbal against the chassis, in radians.
 
     void cha_callback(const behavior_interface::msg::Move::SharedPtr cha_msg)
     {

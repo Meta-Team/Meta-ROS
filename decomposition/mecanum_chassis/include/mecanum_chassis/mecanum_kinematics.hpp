@@ -16,36 +16,36 @@
 
 struct PidParam
 {
-    float kp = 0.0; ///< The proportional gain of the PID controller.
-    float ki = 0.0; ///< The integral gain of the PID controller.
-    float kd = 0.0; ///< The derivative gain of the PID controller.
+    double kp = 0.0; ///< The proportional gain of the PID controller.
+    double ki = 0.0; ///< The integral gain of the PID controller.
+    double kd = 0.0; ///< The derivative gain of the PID controller.
 
-    PidParam(float kp, float ki, float kd) : kp(kp), ki(ki), kd(kd) {}
+    PidParam(double kp, double ki, double kd) : kp(kp), ki(ki), kd(kd) {}
     PidParam() : kp(0), ki(0), kd(0) {}
 };
 
 struct PidOutput
 {
-    float p = 0.0; ///< The proportional term of the PID controller.
-    float i = 0.0; ///< The integral term of the PID controller.
-    float d = 0.0; ///< The derivative term of the PID controller.
+    double p = 0.0; ///< The proportional term of the PID controller.
+    double i = 0.0; ///< The integral term of the PID controller.
+    double d = 0.0; ///< The derivative term of the PID controller.
 
-    float sum() { return p + i + d; }
+    double sum() { return p + i + d; }
 };
 
 namespace MecanumKinematics
 {
-    extern float cha_wid; ///< The width of the chassis, in meters.
-    extern float cha_len; ///< The length of the chassis, in meters.
-    extern float wheel_angle; ///< The angle of the small wheels, in radians.
-    extern float wheel_r; ///< The radius of the wheels, in meters.
-    extern float decel_ratio; ///< The ratio of motor deceleration.
-    extern float yaw_offset; ///< The feedback angle of yaw motor, when gimbal is parallel to the chassis front.
+    extern double cha_wid; ///< The width of the chassis, in meters.
+    extern double cha_len; ///< The length of the chassis, in meters.
+    extern double wheel_angle; ///< The angle of the small wheels, in radians.
+    extern double wheel_r; ///< The radius of the wheels, in meters.
+    extern double decel_ratio; ///< The ratio of motor deceleration.
+    extern double yaw_offset; ///< The feedback angle of yaw motor, when gimbal is parallel to the chassis front.
 
     extern PidParam cha_param; ///< The PID parameters for the chassis.
     extern PidOutput cha_output; ///< The PID output for the chassis.
 
-    extern float yaw_error; ///< The error of the yaw motor.
+    extern double yaw_error; ///< The error of the yaw motor.
 
     /**
      * @brief Decompose a chassis movement command into motor goals.
@@ -56,7 +56,7 @@ namespace MecanumKinematics
      * @return The motor goals.
      * @note This is independent of any feedback and is recommended in testing.
      */
-    motor_interface::msg::MotorGoal chassis_decompo(const float v_x, const float v_y, const float omega);
+    motor_interface::msg::MotorGoal chassis_decompo(const double v_x, const double v_y, const double omega);
 
     /**
      * @brief Decompose a natural movement command into motor goals.
@@ -65,7 +65,7 @@ namespace MecanumKinematics
      * @param motor The yaw position of the gimbal against the chassis, in radians.
      * @return The motor goals.
      */
-    motor_interface::msg::MotorGoal natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float motor);
+    motor_interface::msg::MotorGoal natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, double motor);
 
     /**
      * @brief Clear the motor goals.
@@ -82,7 +82,7 @@ namespace MecanumKinematics
      * @note Goal positions would be set zero.
      */
     void add_goal(motor_interface::msg::MotorGoal &motor_goals,
-                  const std::string& rid, const float goal_vel);
+                  const std::string& rid, const double goal_vel);
 }
 
 #endif // MECANUM_KINEMATICS_HPP
