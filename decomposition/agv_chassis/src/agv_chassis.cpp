@@ -92,9 +92,9 @@ public:
     void get_offsets()
     {
         vector<double> offsets;
-        offsets = this->declare_parameter("chassis.offsets", offsets);
+        offsets = this->declare_parameter("motor.offsets", offsets);
         vector<string> rids;
-        rids = this->declare_parameter("chassis.rids", rids);
+        rids = this->declare_parameter("motor.rids", rids);
 
         for (int i = 0; i < static_cast<int>(rids.size()); i++)
         {
@@ -107,6 +107,7 @@ public:
                 auto& [offset_, found_] = it->second;
                 offset_ = offset;
                 found_ = true;
+                RCLCPP_INFO(this->get_logger(), "Offset found for %s: %f", id.c_str(), offset);
             }
         }
 
