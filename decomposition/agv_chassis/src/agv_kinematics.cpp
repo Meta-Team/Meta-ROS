@@ -25,13 +25,12 @@ unordered_map<string, double> AgvKinematics::pos =
     {"RB_D", 0.0},
 }; // rad
 
-unordered_map<string, pair<double, bool>> AgvKinematics::offsets =
+unordered_map<string, double> AgvKinematics::offsets =
 {
-    // {rid, {offset, found}}
-    {"LF_D", {0.0, false}},
-    {"RF_D", {0.0, false}},
-    {"LB_D", {0.0, false}},
-    {"RB_D", {0.0, false}},
+    {"LF_D", 0.0},
+    {"RF_D", 0.0},
+    {"LB_D", 0.0},
+    {"RB_D", 0.0},
 }; // rad
 
 MotorGoal AgvKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, double yaw_diff)
@@ -107,7 +106,7 @@ void AgvKinematics::add_pos_goal(MotorGoal &motor_goal, const string &rid, const
     motor_goal.motor_id.push_back(rid);
     motor_goal.goal_tor.push_back(NaN);
     motor_goal.goal_vel.push_back(NaN);
-    motor_goal.goal_pos.push_back(goal_pos + offsets[rid].first); // already in rad
+    motor_goal.goal_pos.push_back(DIR * goal_pos + offsets[rid]); // already in rad
 }
 
 void AgvKinematics::add_group_goal(MotorGoal &motor_goal, const string& which, double vx, double vy)

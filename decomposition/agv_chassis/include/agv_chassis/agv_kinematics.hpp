@@ -15,7 +15,10 @@
 
 #define TRIGGER 0.05 // a vel is considered to be zero if its absolute value is less than TRIGGER
 
-using std::string, std::unordered_map, std::pair, motor_interface::msg::MotorGoal;
+#define DIR -1 // -1 if direction motors take clockwise as positive, 1 if counterclockwise
+
+using std::string, std::unordered_map;
+using motor_interface::msg::MotorGoal;
 
 /**
  * @brief Namespace containing functions and types related to AGV kinematics.
@@ -32,8 +35,7 @@ namespace AgvKinematics
 
     extern unordered_map<string, double> vel; ///< The velocities of the motors.
     extern unordered_map<string, double> pos; ///< The positions of the motors.
-    extern unordered_map<string, pair<double, bool>> offsets; ///< The offsets of the motors. Bool indicates whether the offset is found.
-
+    extern unordered_map<string, double> offsets; ///< The offsets of the motors.
     /**
      * @brief Decomposes a natural move message into motor goals.
      * @param msg The natural move message.

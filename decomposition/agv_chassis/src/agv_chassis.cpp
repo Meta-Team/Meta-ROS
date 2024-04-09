@@ -103,18 +103,8 @@ public:
             const auto it = AgvKinematics::offsets.find(id);
             if (it != AgvKinematics::offsets.end()) // found
             {
-                // {rid, {offset, found}}
-                auto& [offset_, found_] = it->second;
-                offset_ = offset;
-                found_ = true;
-                RCLCPP_INFO(this->get_logger(), "Offset found for %s: %f", id.c_str(), offset);
+                it->second = offset;
             }
-        }
-
-        for (const auto& [rid, offset_found] : AgvKinematics::offsets)
-        {
-            const auto& [offset, found] = offset_found;
-            if (!found) RCLCPP_ERROR(this->get_logger(), "Offset not found for %s", rid.c_str());
         }
     }
 };
