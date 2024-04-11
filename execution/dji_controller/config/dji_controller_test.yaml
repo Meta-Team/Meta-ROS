@@ -4,17 +4,18 @@
     # for node `dji_controller` and `motor_feedback`
     motor:
       count: 1
-      rids: ["YAW"]
+      rids: ["J7"]
       hids: [5]
+      ports: ["CAN1"]
       brands: ["DJI"]  # 0->dji, 1->dm
-      types: ["6020"]
+      types: ["2006"]
 
       # for node `dji_controller`
       p2v:
-        kps: [0.8]
-        kis: [0.001]
-        kds: [1.0]
+        kps: [0.0]
+        kis: [0.00]
+        kds: [0.0]
       v2c:
-        kps: [2.7]
-        kis: [0.6]
-        kds: [2.0]
+        kps: [5.0E-2]
+        kis: [2.5E-1]
+        kds: [1.0E+2]
