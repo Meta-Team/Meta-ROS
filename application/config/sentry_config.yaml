@@ -39,6 +39,7 @@
       count:  10
       rids:   ["F",       "L",       "B",       "R",       "FRIC_U",  "FRIC_D",  "FEED_L",  "FEED_R",  "YAW",     "PITCH"]
       hids:   [1,         4,         2,         3,         5,         6,         8,         7,         5,         6]
+      ports:  ["CAN0",    "CAN0",    "CAN0",    "CAN0",    "CAN0",    "CAN0",    "CAN0",    "CAN0",    "CAN0",    "CAN0"]
       brands: ["DJI",     "DJI",     "DJI",     "DJI",     "DJI",     "DJI",     "DJI",     "DJI",     "DJI",     "DJI"]
       types:  ["3508",    "3508",    "3508",    "3508",    "3508",    "3508",    "2006",    "2006",    "6020",    "6020"]
 

@@ -3,6 +3,8 @@
 
 #include "can_driver.hpp"
 #include "dji_controller/motor_data.hpp"
+#include "dji_controller/can_port.hpp"
+#include <array>
 #include <linux/can.h>
 #include <memory>
 #include <queue>
@@ -13,6 +15,10 @@
 #define V_MAX 300 // to be tuned, velocity limit
 
 #define NaN std::nan("")
+
+using std::array;
+using std::unique_ptr;
+using std::string;
 
 enum MotorType
 {
@@ -30,10 +36,9 @@ enum MotorType
 class DjiDriver
 {
 private:
-    static std::unique_ptr<CanDriver> can_0; /**< Pointer to the CAN driver instance. */
-    static std::unique_ptr<can_frame> tx_frame_200, tx_frame_1ff, tx_frame_2ff; /**< Pointers to CAN frames for transmitting data. */
-    static can_frame rx_frame; /**< CAN frame for receiving data. */
+    static array<unique_ptr<CanPort>, 2> can_ports; /**< Array of pointers to the CAN port instances. */
 
+    uint8_t port; /**< CAN port number. */
     MotorType motor_type; /**< Type of the motor. */
     PidParam p2v_prm, v2c_prm; /**< PID parameters for position-to-velocity and velocity-to-current conversion. */
     PidOutput p2v_out, v2c_out; /**< PID outputs for position-to-velocity and velocity-to-current conversion. */
@@ -61,24 +66,18 @@ private:
      */
     void pos2velocity();
 
-    /**
-     * @brief Initialize a CAN frame.
-     * @param frame_id The ID of the frame.
-     * @return A pointer to the CAN frame.
-     */
-    static std::unique_ptr<can_frame> init_frame(int frame_id);
-
 public:
     int hid; /**< Hardware ID of the motor. */
-    std::string rid; /**< ROS ID of the motor. */
+    string rid; /**< ROS ID of the motor. */
 
     /**
      * @brief Constructor for DjiDriver class.
      * @param rid The ROS ID of the motor.
      * @param hid The hardware ID of the motor.
      * @param type The type of the motor.
+     * @param port The port name of the CAN bus.
      */
-    DjiDriver(const std::string& rid, int hid, std::string);
+    DjiDriver(const string& rid, int hid, string type, string port);
     
     /**
      * @brief Set the desired position and velocity for the motor.
@@ -146,7 +145,6 @@ public:
      */
     void curb(float &val, float limit);
 
-    static void stop_all();
 };
 
 #endif // DJI_DRIVER_H
