@@ -22,8 +22,8 @@ class CanDriver
 {
 private:
     int s;
-    struct sockaddr_can addr;
-    struct ifreq ifr;
+    sockaddr_can addr;
+    ifreq ifr;
 
 public:
     /**
@@ -31,7 +31,7 @@ public:
      * Bind to the CAN cocket and cerr if it fails.
      * @param port The port number to use for the CAN driver. Default is 0.
      */
-    CanDriver(int port = 0)
+    CanDriver(int port)
     {
         s = socket(PF_CAN, SOCK_RAW, CAN_RAW); // open the CAN socket
 
@@ -43,7 +43,7 @@ public:
         addr.can_ifindex = ifr.ifr_ifindex; // set the socket address
 
         try {
-            int bind_result = bind(s, (struct sockaddr *)&addr, sizeof(addr)); // bind the socket to the CAN interface
+            int bind_result = bind(s, (sockaddr*)&addr, sizeof(addr)); // bind the socket to the CAN interface
             if (bind_result == -1) {
                 throw std::runtime_error("Error binding socket to CAN interface: " + std::string(strerror(errno)));
             }

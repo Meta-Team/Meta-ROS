@@ -1,11 +1,12 @@
 #include "dji_controller/dji_driver.h"
 #include "dji_controller/can_driver.hpp"
+#include "dji_controller/can_port.hpp"
 #include <cstdint>
+#include <cstdio>
 #include <deque>
 #include <linux/can.h>
 #include <memory>
 #include <queue>
-#include <rclcpp/utilities.hpp>
 #include <string>
 #include <tuple>
 
@@ -176,14 +177,18 @@ void DjiDriver::write_tx()
 
 void DjiDriver::tx()
 {
-    for (const auto& can_port : can_ports)
+    for (auto& can_port : can_ports)
         can_port->tx();
 }
 
-void DjiDriver::rx()
+void DjiDriver::rx0()
 {
-    for (const auto& can_port : can_ports)
-        can_port->rx();
+    can_ports[0]->rx();
+}
+
+void DjiDriver::rx1()
+{
+    can_ports[1]->rx();
 }
 
 std::tuple<float, float, float> DjiDriver::get_state()

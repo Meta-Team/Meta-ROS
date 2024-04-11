@@ -34,8 +34,10 @@ public:
                 control_timer_callback();
             });
 
-        // start the feedback thread
-        feedback_thread_ = std::thread(&DjiController::feedback_loop, this);
+        // start the feedback threads
+        // two separate threads so that they don't block each other
+        feedback_thread_0 = std::thread(&DjiController::feedback_loop_0, this);
+        feedback_thread_1 = std::thread(&DjiController::feedback_loop_1, this);
 
 #if ENABLE_PUB == true
         // create a timer for publishing motor state
@@ -54,7 +56,7 @@ private:
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
     rclcpp::TimerBase::SharedPtr feedback_timer_; // receive feedback frame regularly
-    std::thread feedback_thread_;
+    std::thread feedback_thread_0, feedback_thread_1;
 #if ENABLE_PUB == true
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
@@ -70,11 +72,20 @@ private:
         DjiDriver::tx();
     }
 
-    void feedback_loop()
+    void feedback_loop_0()
     {
         while (rclcpp::ok())
         {
-            DjiDriver::rx();
+            DjiDriver::rx0();
+            for (auto& driver : drivers_) driver->process_rx();
+        }
+    }
+
+    void feedback_loop_1()
+    {
+        while (rclcpp::ok())
+        {
+            DjiDriver::rx1();
             for (auto& driver : drivers_) driver->process_rx();
         }
     }

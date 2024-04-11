@@ -118,11 +118,18 @@ public:
     static void tx();
 
     /**
-     * @brief Get the receive frame.
+     * @brief Get the receive frame of CAN0.
      * This would write the received frame to the rx_frame variable.
      * @note This function should be executed before calling process_rx().
      */
-    static void rx();
+    static void rx0();
+
+    /**
+     * @brief Get the receive frame of CAN1.
+     * This would write the received frame to the rx_frame variable.
+     * @note This function should be executed before calling process_rx().
+     */
+    static void rx1();
 
     /**
      * @brief Process the receive frame.
