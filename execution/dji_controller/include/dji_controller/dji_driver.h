@@ -152,6 +152,11 @@ public:
      */
     void curb(float &val, float limit);
 
+    /**
+     * @brief Get the port number of the CAN bus.
+     * @return The port number.
+     */
+    [[nodiscard]] int get_port() const { return port; }
 };
 
 #endif // DJI_DRIVER_H

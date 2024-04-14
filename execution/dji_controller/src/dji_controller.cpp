@@ -174,8 +174,8 @@ private:
             drivers_.back()->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
             drivers_.back()->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
 
-            RCLCPP_INFO(this->get_logger(), "Motor rid %s hid %d initialized, with %f %f %f %f %f %f",
-                drivers_.back()->rid.c_str(), drivers_.back()->hid,
+            RCLCPP_INFO(this->get_logger(), "Motor rid %s hid %d port %d initialized, with %f %f %f %f %f %f",
+                drivers_.back()->rid.c_str(), drivers_.back()->hid, drivers_.back()->get_port(),
                 p2v_kps[i], p2v_kis[i], p2v_kds[i], v2c_kps[i], v2c_kis[i], v2c_kds[i]);
         }
     }

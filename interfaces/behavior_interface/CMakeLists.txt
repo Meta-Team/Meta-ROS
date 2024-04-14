@@ -15,6 +15,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Aim.msg"
   "msg/Move.msg"
   "msg/Shoot.msg"
+  "msg/EndVel.msg"
 )
 ament_export_dependencies(rosidl_default_runtime)
 
