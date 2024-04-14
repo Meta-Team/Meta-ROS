@@ -4,6 +4,10 @@
     north_offset: 0.0 # rad, north against the desired front
     trans_vel: 3.0 # m/s
     rot_vel: 6.0 # rad/s
+
+    control:
+      end_linear_vel: 0.0 # m/s
+      end_angular_vel: 0.0 # rad/s
     
     chassis:
       move_mode: "chassis"

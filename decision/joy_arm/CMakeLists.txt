@@ -14,6 +14,19 @@ find_package(rclcpp REQUIRED)
 find_package(behavior_interface REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
+include_directories(include)
+
+add_executable(joy_arm
+  src/joy_arm.cpp
+  src/joy_interpreter.cpp)
+ament_target_dependencies(joy_arm
+  rclcpp
+  behavior_interface
+  sensor_msgs)
+
+install(TARGETS
+  joy_arm
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

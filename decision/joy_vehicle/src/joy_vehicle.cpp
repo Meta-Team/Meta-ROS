@@ -20,7 +20,7 @@ public:
         
         interpreter_ = std::make_unique<JoyInterpreter>(max_vel, max_omega, aim_sens, deadzone);
 
-        // // pub and sub
+        // pub and sub
         move_pub_ = this->create_publisher<behavior_interface::msg::Move>("move", 10);
         shoot_pub_ = this->create_publisher<behavior_interface::msg::Shoot>("shoot", 10);
         aim_pub_ = this->create_publisher<behavior_interface::msg::Aim>("aim", 10);
