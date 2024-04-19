@@ -12,10 +12,10 @@
 
       # for node `dji_controller`
       p2v:
-        kps: [3.0]
-        kis: [0.00]
-        kds: [0.0]
+        kps: [2.5E+1]
+        kis: [1.5E+1]
+        kds: [1.0E+4]
       v2c:
         kps: [1.5E-1]
-        kis: [1.0E-4]
+        kis: [5.0E-3]
         kds: [0.0E+3]

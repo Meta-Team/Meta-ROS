@@ -1,9 +1,17 @@
 /motor_tester:
   ros__parameters:
-    motor_rid: "t0"
+    # motor_rid: "t1"
+    # goal_type: "pos"
+    # goal_upper: 1.7
+    # goal_lower: -3.4
+    # goal_init: -1.0
+    # sensitivity: 1.0 # per second
+    # deadzone: 0.2
+
+    motor_rid: "J1"
     goal_type: "pos"
-    goal_upper: 1.5
-    goal_lower: 0.4
-    goal_init: 0.8
-    sensitivity: 1.0 # per second
+    goal_upper: 500.0
+    goal_lower: -20.0
+    goal_init: 10.0
+    sensitivity: 100.0 # per second
     deadzone: 0.2
