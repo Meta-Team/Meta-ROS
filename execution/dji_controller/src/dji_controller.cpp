@@ -12,8 +12,9 @@
 #include "motor_interface/msg/motor_goal.hpp"
 #include "motor_interface/msg/motor_state.hpp"
 
+#define DISABLE_CONTROL false
 #define ENABLE_PUB true
-#define PUB_R 20 // ms
+#define PUB_R 10 // ms
 #define CONTROL_R 3 // ms
 
 class DjiController : public rclcpp::Node
@@ -69,7 +70,9 @@ private:
     void control_timer_callback()
     {
         for (auto& driver : drivers_) driver->write_tx();
+#if DISABLE_CONTROL == false
         DjiDriver::tx();
+#endif
     }
 
     void feedback_loop_0()
