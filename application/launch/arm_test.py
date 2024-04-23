@@ -27,7 +27,13 @@ def generate_launch_description():
             executable="dji_controller",
             name="dji_controller",
             parameters=[config],
-        )
+        ),
+        Node(
+            package="unitree_controller",
+            executable="unitree_controller",
+            name="unitree_controller",
+            parameters=[config],
+        ),
     ])
     
     ld.add_action(moveit_launch)
