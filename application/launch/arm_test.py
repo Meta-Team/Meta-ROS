@@ -8,24 +8,25 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 def generate_launch_description():
+    config = os.path.join(
+        get_package_share_directory('application'),
+        'config',
+        'scara_config.yaml'
+    )
 
     moveit_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('scara_moveit'),
-                        'launch/scara_test.py')
+                        'launch/scara.py')
         )
     )
 
     ld = LaunchDescription([
         Node(
-            package="joy_arm",
-            executable="joy_arm",
-            name="joy_arm",
-        ),
-        Node(
-            package="joy",
-            executable="joy_node",
-            name="joy_node",
+            package="dji_controller",
+            executable="dji_controller",
+            name="dji_controller",
+            parameters=[config],
         )
     ])
     

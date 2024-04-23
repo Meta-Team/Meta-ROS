@@ -16,7 +16,7 @@
       chassis_radius: 0.255 # m
 
     motor:
-      count:   8
+      count:   15
       rids:    ["LF_V",    "RF_V",    "RB_V",    "LB_V",    "LF_D",    "RF_D",    "RB_D",    "LB_D",    "J1",      "J2",      "J3",      "J4",      "J5",      "J6",      "J7"]
       hids:    [1,         2,         3,         4,         2,         3,         4,         1,         4,         1,         2,         2,         3,         1,         5]
       ports:   ["CAN0",    "CAN0",    "CAN0",    "CAN0,     "CAN0",    "CAN0",    "CAN0,     "CAN0",    "CAN1",    "USB0",    "USB0",    "CAN1",    "CAN1",    "CAN1",    "CAN1"]
