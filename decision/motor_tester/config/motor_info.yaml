@@ -13,5 +13,5 @@
     goal_upper: 0.0
     goal_lower: -6.0
     goal_init: 0.0
-    sensitivity: 2  .0 # per second
+    sensitivity: 2.0 # per second
     deadzone: 0.2

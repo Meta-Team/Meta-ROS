@@ -93,6 +93,8 @@ private:
         motor_hids = this->declare_parameter("motor.hids", motor_hids);
         std::vector<std::string> motor_types{};
         motor_types = this->declare_parameter("motor.types", motor_types);
+        std::vector<std::string> motor_ports{};
+        motor_ports = this->declare_parameter("motor.ports", motor_ports);
         
         p2v_kps = this->declare_parameter("motor.p2v.kps", p2v_kps);
         p2v_kds = this->declare_parameter("motor.p2v.kds", p2v_kds);
@@ -104,7 +106,8 @@ private:
             unitree_motor_count++;
             std::string rid = motor_rids[i];
             int hid = motor_hids[i];
-            drivers_.push_back(std::make_unique<UnitreeDriver>(rid, hid));
+            std::string port = motor_ports[i];
+            drivers_.push_back(std::make_unique<UnitreeDriver>(rid, hid, port));
             drivers_.back()->set_pid(p2v_kps[i], p2v_kds[i]);
             RCLCPP_INFO(this->get_logger(), "Motor rid %s hid %d initialized with kp %f kd %f",
                 rid.c_str(), hid, p2v_kps[i], p2v_kds[i]);

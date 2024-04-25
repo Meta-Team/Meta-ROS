@@ -5,13 +5,12 @@
       count:  2
       rids:   ["t0", "t1"]
       hids:   [0x00, 0x01]
-      brands: ["UT", "UT"] # 0->dji, 1->dm, 2->unitree
+      brands: ["UT", "UT"]
       types:  ["", ""]
-    # for dji: 0->3508, 1->6020, 2->2006
-    # for dm: 0->vel, 1->mit, 2->pos_vel
+      ports:  ["USB0", "USB0"]
 
       p2v:
-        kps: [0.4, 0.1]
+        kps: [0.2, 0.1]
         kis: [0.0, 0.0]
         kds: [0.05, 0.05]
 

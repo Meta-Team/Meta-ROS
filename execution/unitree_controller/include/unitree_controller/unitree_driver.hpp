@@ -32,7 +32,7 @@ public:
      * @brief Construct a new UnitreeDriver object.
      * This constructor initializes a new UnitreeDriver object.
      */
-    UnitreeDriver(std::string rid, int hid);
+    UnitreeDriver(std::string rid, int hid, std::string port);
 
     /**
      * @brief Destroy the UnitreeDriver object.
@@ -77,6 +77,7 @@ private:
     MotorData feedback_data; ///< The current feedback data for the motor. Its symbols differ from the documentation.
 
     std::thread update_thread;
+    std::atomic<bool> running{true};
 
     void stop();
 
@@ -86,7 +87,6 @@ private:
     bool ready = false;
     double zero = 0.0;
 
-    std::atomic<bool> running{true};
     std::thread cali_thread;
 
     void calibrate();

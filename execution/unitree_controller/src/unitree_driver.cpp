@@ -3,8 +3,8 @@
 #include <cmath>
 #include <thread>
 
-UnitreeDriver::UnitreeDriver(std::string rid, int hid)
-    : hid(hid), rid(rid), serial_port("/dev/ttyUSB0")
+UnitreeDriver::UnitreeDriver(std::string rid, int hid, std::string port)
+    : hid(hid), rid(rid), serial_port("/dev/tty" + port)
 {
     goal_cmd.motorType = MotorType::GO_M8010_6;
     feedback_data.motorType = MotorType::GO_M8010_6;
@@ -30,7 +30,9 @@ UnitreeDriver::~UnitreeDriver()
 
 void UnitreeDriver::set_goal(double goal_pos, double goal_vel)
 {
+#if CALI == true
     if (!ready) return;
+#endif // CALI == true
     goal_cmd.tau = 0.0; // cmd.T
     if (!std::isnan(goal_pos))
     {
