@@ -12,7 +12,7 @@
 
 #define CALI true
 #define CALI_TIMEOUT 5 // seconds
-#define TRY_VEL 1.0
+#define TRY_VEL 1.5
 #define JAMMED_THRESHOLD 0.3 // s
 
 /**
@@ -84,9 +84,9 @@ private:
 
 #if CALI == true
     bool ready = false;
-    
     double zero = 0.0;
 
+    std::atomic<bool> running{true};
     std::thread cali_thread;
 
     void calibrate();

@@ -1,5 +1,6 @@
 #include "unitree_controller/unitree_driver.hpp"
 #include "unitreeMotor/unitreeMotor.h"
+#include <cmath>
 #include <thread>
 
 UnitreeDriver::UnitreeDriver(std::string rid, int hid)
@@ -14,14 +15,17 @@ UnitreeDriver::UnitreeDriver(std::string rid, int hid)
 
 #if CALI == true
     cali_thread = std::thread(&UnitreeDriver::calibrate, this);
-    if (cali_thread.joinable()) cali_thread.join();
 #endif // CALI == ture
 }
 
 UnitreeDriver::~UnitreeDriver()
 {
-    if (update_thread.joinable()) update_thread.join();
     stop();
+    running = false;
+    if (update_thread.joinable()) update_thread.join();
+#if CALI == true
+    if (cali_thread.joinable()) cali_thread.join();
+#endif // CALI == true
 }
 
 void UnitreeDriver::set_goal(double goal_pos, double goal_vel)
@@ -35,7 +39,7 @@ void UnitreeDriver::set_goal(double goal_pos, double goal_vel)
 #if CALI == false
         goal_cmd.q = goal_pos * queryGearRatio(MotorType::GO_M8010_6); // cmd.Pos
 #else // CALI == true
-        goal_cmd.q = (goal_pos + zero) * queryGearRatio(MotorType::GO_M8010_6); 
+        goal_cmd.q = goal_pos * queryGearRatio(MotorType::GO_M8010_6) + zero;
 #endif // CALI
         goal_cmd.dq = 0.0;
     }
@@ -84,7 +88,7 @@ void UnitreeDriver::stop()
 
 void UnitreeDriver::control_loop()
 {
-    while (true)
+    while (running)
     {
         this->send_recv();
         std::this_thread::sleep_for(std::chrono::milliseconds(UPDATE_FREQ));
@@ -103,6 +107,7 @@ void UnitreeDriver::calibrate()
     while (rclcpp::Clock().now().seconds() - start < CALI_TIMEOUT)
     {
         // set goal and get feedback
+        goal_cmd.kd = this->kd;
         this->goal_cmd.dq = TRY_VEL * queryGearRatio(MotorType::GO_M8010_6); // rad/s
         auto vel = feedback_data.dq / queryGearRatio(MotorType::GO_M8010_6);
 
@@ -122,7 +127,8 @@ void UnitreeDriver::calibrate()
 
     if (found)
     {
-        zero = feedback_data.dq;
+        zero = feedback_data.q;
+        set_goal(0.0, std::nan(""));
         auto log = rclcpp::get_logger("unitree_driver");
         RCLCPP_INFO(log, "Motor %s zero found: %f", rid.c_str(), zero);
     }
@@ -130,8 +136,6 @@ void UnitreeDriver::calibrate()
         auto log = rclcpp::get_logger("unitree_driver");
         RCLCPP_WARN(log, "Motor %s zero not found", rid.c_str());
     }
-
-    stop();
     ready = true;
 }
 #endif
