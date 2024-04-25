@@ -10,7 +10,7 @@
 #include "motor_interface/msg/motor_goal.hpp"
 #include "motor_interface/msg/motor_state.hpp"
 
-#define RATE 50 // ms
+#define PUB_R 20 // ms
 
 class UnitreeController : public rclcpp::Node
 {
@@ -23,8 +23,8 @@ public:
             goal_callback(msg);
         });
         feedback_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
-        timer_ = this->create_wall_timer(std::chrono::milliseconds(RATE), [this](){
-            timer_callback();
+        pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_R), [this](){
+            pub_timer_callback();
         });
         RCLCPP_INFO(this->get_logger(), "UnitreeController initialized");
     }
@@ -33,7 +33,7 @@ private:
     std::vector<std::unique_ptr<UnitreeDriver>> drivers_;
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr feedback_pub_;
-    rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::TimerBase::SharedPtr pub_timer_;
     std::vector<double> p2v_kps{}, p2v_kds{};
     int unitree_motor_count;
 
@@ -43,8 +43,8 @@ private:
         for (int i = 0; i < count; i++)
         {
             std::string rid = msg->motor_id[i];
-            float pos = msg->goal_pos[i];
-            float vel = msg->goal_vel[i];
+            double pos = msg->goal_pos[i];
+            double vel = msg->goal_vel[i];
 
             // find corresponding driver
             auto iter = std::find_if(drivers_.begin(), drivers_.end(),
@@ -66,14 +66,8 @@ private:
         }
     }
 
-    void timer_callback()
-    {
-        // send and receive
-        for (auto& driver : drivers_)
-        {
-            driver->send_recv();
-        }
-        
+    void pub_timer_callback()
+    {   
         // publish feedback
         motor_interface::msg::MotorState msg;
         for (auto& driver : drivers_)
