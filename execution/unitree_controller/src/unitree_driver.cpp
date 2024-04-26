@@ -11,7 +11,7 @@ UnitreeDriver::UnitreeDriver(std::string rid, int hid, std::string port)
     goal_cmd.mode = queryMotorMode(goal_cmd.motorType, MotorMode::FOC);
     goal_cmd.id = hid;
     stop();
-    update_thread = std::thread(&UnitreeDriver::control_loop, this);
+    control_thread = std::thread(&UnitreeDriver::control_loop, this);
 
 #if CALI == true
     cali_thread = std::thread(&UnitreeDriver::calibrate, this);
@@ -22,7 +22,7 @@ UnitreeDriver::~UnitreeDriver()
 {
     stop();
     running = false;
-    if (update_thread.joinable()) update_thread.join();
+    if (control_thread.joinable()) control_thread.join();
 #if CALI == true
     if (cali_thread.joinable()) cali_thread.join();
 #endif // CALI == true
