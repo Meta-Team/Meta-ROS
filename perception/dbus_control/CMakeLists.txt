@@ -17,7 +17,7 @@ find_package(rclcpp_components)
 
 add_library(dbus_control SHARED
   src/dbus_control.cpp
-  src/dbus_frame.cpp)
+  src/dbus.cpp)
 
 target_include_directories(dbus_control PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

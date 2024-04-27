@@ -1,4 +1,4 @@
-int16 mouse_x
+int16 mouse_x # MY_DODO: define x axis
 int16 mouse_y
 int16 mouse_z
 bool left_button

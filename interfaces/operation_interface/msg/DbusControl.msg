@@ -4,3 +4,4 @@ float64 rs_x
 float64 rs_y
 uint8 lsw # switch
 uint8 rsw
+float64 wheel
