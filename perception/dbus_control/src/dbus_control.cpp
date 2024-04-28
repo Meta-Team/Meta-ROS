@@ -1,10 +1,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "dbus_control/dbus_control.hpp"
+#include <string>
 
 DbusControl::DbusControl(const rclcpp::NodeOptions & options)
 {
-    node_ = rclcpp::Node::make_shared("referee_serial", options);
-    dbus = std::make_unique<Dbus>("/dev/ttyUSB0");
+    node_ = rclcpp::Node::make_shared("dbus_control", options);
+    std::string port = node_->declare_parameter("dbus_port", "ttyUSB1");
+    dbus = std::make_unique<Dbus>("/dev/" + port);
 
     dbus_pub_ = node_->create_publisher<operation_interface::msg::DbusControl>("dbus_control", 10);
     keymouse_pub_ = node_->create_publisher<operation_interface::msg::RemoteControl>("keymouse_control", 10);

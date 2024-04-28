@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <fcntl.h>
+#include <rclcpp/logging.hpp>
 #include <unistd.h>
 #include <cstring>
 
@@ -60,7 +61,8 @@ Dbus::Dbus(std::string dev_path)
         while (running)
         {
             read();
-            std::this_thread::sleep_for(std::chrono::milliseconds(30)); // MY_TODO: check if necessary
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            // sleeping is necessary
         }
     });
 }
@@ -78,11 +80,11 @@ operation_interface::msg::DbusControl Dbus::controller_msg()
 
     operation_interface::msg::DbusControl msg;
 
-    msg.rs_y = static_cast<double>(-data.ch0 / 660.0); // right stick horizontal
-    msg.rs_x = static_cast<double>(-data.ch1 / 660.0); // right stick vertical
-    msg.ls_y = static_cast<double>(-data.ch2 / 660.0); // left stick horizontal
-    msg.ls_x = static_cast<double>(-data.ch3 / 660.0); // left stick vertical
-    msg.wheel = static_cast<double>(data.wheel / 660.0); // wheel
+    msg.rs_y = static_cast<double>(-data.ch0) / 660.0; // right stick horizontal, left positive
+    msg.rs_x = static_cast<double>(data.ch1) / 660.0; // right stick vertical, up positive
+    msg.ls_y = static_cast<double>(-data.ch2) / 660.0; // left stick horizontal, left positive
+    msg.ls_x = static_cast<double>(data.ch3) / 660.0; // left stick vertical, up positive
+    msg.wheel = static_cast<double>(data.wheel) / 660.0; // wheel
     if (data.s1 != 0) msg.lsw = data.s1;
     if (data.s0 != 0) msg.rsw = data.s0;
 
@@ -98,9 +100,9 @@ operation_interface::msg::RemoteControl Dbus::keymouse_msg()
     msg.left_button = data.l;
     msg.right_button = data.r;
 
-    msg.mouse_x = static_cast<double>(data.x / 1600.0);
-    msg.mouse_y = static_cast<double>(data.y / 1600.0);
-    msg.mouse_z = static_cast<double>(data.z / 1600.0);
+    msg.mouse_x = static_cast<double>(data.x) / 1600.0;
+    msg.mouse_y = static_cast<double>(data.y) / 1600.0;
+    msg.mouse_z = static_cast<double>(data.z) / 1600.0;
 
     msg.w = data.key & 0x01 ? true : false;
     msg.s = data.key & 0x02 ? true : false;
@@ -156,6 +158,7 @@ void Dbus::unpack()
     data.z = buf[10] | (buf[11] << 8);
     data.l = buf[12];
     data.r = buf[13];
+    // RCLCPP_INFO(rclcpp::get_logger("Dbus"), "x: %d, y: %d, z: %d, l: %d, r: %d", data.x, data.y, data.z, data.l, data.r);
     data.key = buf[14] | buf[15] << 8;  // key board code
     data.wheel = (buf[16] | buf[17] << 8) - 1024;
     success = true;
@@ -176,13 +179,13 @@ void Dbus::read()
         }
         else if (n == 1)
         {
-        // Shift the buffer //
-        for (int i = 0; i < 17; i++)
-        {
-            buf[i] = buf[i + 1];
-        }
-        buf[17] = read_byte;
-        count++;
+            // Shift the buffer
+            for (int i = 0; i < 17; i++)
+            {
+                buf[i] = buf[i + 1];
+            }
+            buf[17] = read_byte;
+            count++;
         }
     }
     unpack();

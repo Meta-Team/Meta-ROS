@@ -15,8 +15,9 @@ RemoteInterpreter::RemoteInterpreter(double max_vel, double max_omega, double ai
     aim_ = std::make_shared<Aim>();
 
     // start threads
+    running = true;
     interpret_thread = std::thread([this] {
-        while (true)
+        while (running)
         {
             interpret();
             std::this_thread::sleep_for(std::chrono::milliseconds(PERIOD));
@@ -26,6 +27,7 @@ RemoteInterpreter::RemoteInterpreter(double max_vel, double max_omega, double ai
 
 RemoteInterpreter::~RemoteInterpreter()
 {
+    running = false;
     if (interpret_thread.joinable())
     {
         interpret_thread.join();

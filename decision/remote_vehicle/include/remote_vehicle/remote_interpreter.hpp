@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <rclcpp/clock.hpp>
 #include <thread>
+#include <atomic>
 
 #define PERIOD 10 // ms
 
@@ -99,6 +100,7 @@ private:
     Shoot::SharedPtr shoot_;
     Aim::SharedPtr aim_;
 
+    std::atomic<bool> running;
     std::thread interpret_thread;
     double last_auto_time = 0; ///< The last time auto aim is active.
 

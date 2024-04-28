@@ -24,9 +24,9 @@ operation_interface::msg::RemoteControl RemoteControl::msg()
 {
     operation_interface::msg::RemoteControl msg;
     // mouse
-    msg.mouse_x = this->interpreted.data.mouse_x;
-    msg.mouse_y = this->interpreted.data.mouse_y;
-    msg.mouse_z = this->interpreted.data.mouse_z;
+    msg.mouse_x = static_cast<double>(this->interpreted.data.mouse_x) / 1600.0;
+    msg.mouse_y = static_cast<double>(this->interpreted.data.mouse_y) / 1600.0;
+    msg.mouse_z = static_cast<double>(this->interpreted.data.mouse_z) / 1600.0;
     msg.left_button = (this->interpreted.data.left_button == 0) ? false : true;
     msg.right_button = (this->interpreted.data.right_button == 0) ? false : true;
     // keyboard

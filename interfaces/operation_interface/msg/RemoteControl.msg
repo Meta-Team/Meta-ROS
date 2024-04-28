@@ -1,6 +1,6 @@
-int16 mouse_x # MY_DODO: define x axis
-int16 mouse_y
-int16 mouse_z
+float64 mouse_x # MY_DODO: define x axis
+float64 mouse_y
+float64 mouse_z
 bool left_button
 bool right_button
 bool w
