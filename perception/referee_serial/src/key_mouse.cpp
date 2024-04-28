@@ -1,9 +1,9 @@
-#include "referee_serial/remote_control.hpp"
+#include "referee_serial/key_mouse.hpp"
 #include <bitset>
 #include <cstdint>
 #include <vector>
 
-bool RemoteControl::is_wanted_pre(const std::vector<uint8_t> &prefix)
+bool KeyMouse::is_wanted_pre(const std::vector<uint8_t> &prefix)
 {
     if (prefix[0] != 0xA5) return false;
 
@@ -14,15 +14,15 @@ bool RemoteControl::is_wanted_pre(const std::vector<uint8_t> &prefix)
     return true;
 }
 
-RemoteControl::RemoteControl(const std::vector<uint8_t> &frame)
+KeyMouse::KeyMouse(const std::vector<uint8_t> &frame)
 {
     // copy the uint8_t vector to the struct
     std::copy(frame.begin(), frame.end(), reinterpret_cast<uint8_t *>(&interpreted));
 }
 
-operation_interface::msg::RemoteControl RemoteControl::msg()
+operation_interface::msg::KeyMouse KeyMouse::msg()
 {
-    operation_interface::msg::RemoteControl msg;
+    operation_interface::msg::KeyMouse msg;
     // mouse
     msg.mouse_x = static_cast<double>(this->interpreted.data.mouse_x) / 1600.0;
     msg.mouse_y = static_cast<double>(this->interpreted.data.mouse_y) / 1600.0;

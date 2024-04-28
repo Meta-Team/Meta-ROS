@@ -8,7 +8,7 @@
 #include <cstdint>
 
 #include "operation_interface/msg/dbus_control.hpp"
-#include "operation_interface/msg/remote_control.hpp"
+#include "operation_interface/msg/key_mouse.hpp"
 
 struct DbusData
 {
@@ -39,7 +39,7 @@ public:
     ~Dbus();
 
     operation_interface::msg::DbusControl controller_msg();
-    operation_interface::msg::RemoteControl keymouse_msg();
+    operation_interface::msg::KeyMouse keymouse_msg();
 
     bool valid() { return success; }
 

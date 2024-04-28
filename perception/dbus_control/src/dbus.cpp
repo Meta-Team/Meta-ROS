@@ -91,11 +91,11 @@ operation_interface::msg::DbusControl Dbus::controller_msg()
     return msg;
 }
 
-operation_interface::msg::RemoteControl Dbus::keymouse_msg()
+operation_interface::msg::KeyMouse Dbus::keymouse_msg()
 {
-    if (!success) return operation_interface::msg::RemoteControl();
+    if (!success) return operation_interface::msg::KeyMouse();
 
-    operation_interface::msg::RemoteControl msg;
+    operation_interface::msg::KeyMouse msg;
 
     msg.left_button = data.l;
     msg.right_button = data.r;

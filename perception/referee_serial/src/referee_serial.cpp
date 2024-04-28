@@ -1,5 +1,5 @@
 #include "referee_serial/referee_serial.hpp"
-#include "referee_serial/remote_control.hpp"
+#include "referee_serial/key_mouse.hpp"
 #include "referee_serial/game_info.hpp"
 #include "referee_serial/power_state.hpp"
 #include <chrono>
@@ -10,7 +10,7 @@
 #include <vector>
 #include "referee_serial/crc.h"
 
-#define DEBUG true
+#define DEBUG false
 
 std::string RefereeSerial::dev_name;
 constexpr const char * RefereeSerial::dev_null;
@@ -31,7 +31,7 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     RCLCPP_INFO(node_->get_logger(), "Using serial port: %s", dev_name.c_str());
 
     // create publishers
-    remote_control_pub_ = node_->create_publisher<operation_interface::msg::RemoteControl>("remote_control", 10);
+    key_mouse_pub_ = node_->create_publisher<operation_interface::msg::KeyMouse>("key_mouse", 10);
     game_info_pub_ = node_->create_publisher<operation_interface::msg::GameInfo>("game_info", 10);
     power_state_pub_ = node_->create_publisher<operation_interface::msg::PowerState>("power_state", 10);
 
@@ -76,20 +76,20 @@ void RefereeSerial::receive()
         try {
             port_->receive(prefix);
 
-            if (RemoteControl::is_wanted_pre(prefix)) // remote control
+            if (KeyMouse::is_wanted_pre(prefix)) // remote control
             {
-                handleFrame<operation_interface::msg::RemoteControl, RemoteControl>(
-                    prefix, remote_control_pub_, "remote control");
+                handleFrame<operation_interface::msg::KeyMouse, KeyMouse>(
+                    prefix, key_mouse_pub_, "key_mouse");
             }
             else if (GameInfo::is_wanted_pre(prefix)) // game info
             {
                 handleFrame<operation_interface::msg::GameInfo, GameInfo>(
-                    prefix, game_info_pub_, "game info");
+                    prefix, game_info_pub_, "game_info");
             }
             else if (PowerState::is_wanted_pre(prefix)) // power state
             {
                 handleFrame<operation_interface::msg::PowerState, PowerState>(
-                    prefix, power_state_pub_, "power state");
+                    prefix, power_state_pub_, "power_state");
             }
 #if DEBUG == true
             else if (prefix[0] == 0xA5)

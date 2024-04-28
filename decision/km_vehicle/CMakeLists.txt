@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(remote_vehicle)
+project(km_vehicle)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -17,10 +17,10 @@ include_directories(
   include
 )
 
-add_executable(remote_vehicle
-  src/remote_vehicle.cpp
-  src/remote_interpreter.cpp)
-ament_target_dependencies(remote_vehicle
+add_executable(km_vehicle
+  src/km_vehicle.cpp
+  src/km_interpreter.cpp)
+ament_target_dependencies(km_vehicle
   rclcpp
   behavior_interface
   operation_interface
@@ -28,7 +28,7 @@ ament_target_dependencies(remote_vehicle
 )
 
 install(TARGETS
-  remote_vehicle
+  km_vehicle
   DESTINATION lib/${PROJECT_NAME}
 )
 

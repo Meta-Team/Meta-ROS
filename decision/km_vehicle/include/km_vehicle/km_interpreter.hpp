@@ -1,19 +1,19 @@
 #ifndef REMOTE_INTERPRETER_HPP
 #define REMOTE_INTERPRETER_HPP
 
-#include "operation_interface/msg/remote_control.hpp"
+#include "operation_interface/msg/key_mouse.hpp"
 #include "behavior_interface/msg/move.hpp"
 #include "behavior_interface/msg/shoot.hpp"
 #include "behavior_interface/msg/aim.hpp"
 #include "vision_interface/msg/auto_aim.hpp"
 #include <cstdint>
-#include <rclcpp/clock.hpp>
 #include <thread>
 #include <atomic>
+#include "rclcpp/rclcpp.hpp"
 
 #define PERIOD 10 // ms
 
-using operation_interface::msg::RemoteControl;
+using operation_interface::msg::KeyMouse;
 using behavior_interface::msg::Move;
 using behavior_interface::msg::Shoot;
 using behavior_interface::msg::Aim;
@@ -56,7 +56,7 @@ public:
      * @brief Set the manual input from the remote control.
      * @param msg The remote control message.
      */
-    void manual_input(const RemoteControl::SharedPtr msg);
+    void manual_input(const KeyMouse::SharedPtr msg);
 
     /**
      * @brief Set the auto aim input from the vision system.

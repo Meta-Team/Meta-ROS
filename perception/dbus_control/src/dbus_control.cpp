@@ -9,7 +9,7 @@ DbusControl::DbusControl(const rclcpp::NodeOptions & options)
     dbus = std::make_unique<Dbus>("/dev/" + port);
 
     dbus_pub_ = node_->create_publisher<operation_interface::msg::DbusControl>("dbus_control", 10);
-    keymouse_pub_ = node_->create_publisher<operation_interface::msg::RemoteControl>("keymouse_control", 10);
+    keymouse_pub_ = node_->create_publisher<operation_interface::msg::KeyMouse>("key_mouse", 10);
 
     timer_ = node_->create_wall_timer(std::chrono::milliseconds(PUB_RATE), std::bind(&DbusControl::timer_callback, this));
 

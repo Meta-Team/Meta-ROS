@@ -1,5 +1,5 @@
-#ifndef REMOTE_CONTROL_HPP
-#define REMOTE_CONTROL_HPP
+#ifndef KEY_MOUSE_HPP
+#define KEY_MOUSE_HPP
 
 #include <cstdint>
 #include <memory>
@@ -8,15 +8,15 @@
 #include <sys/types.h>
 #include <vector>
 
-#include "operation_interface/msg/remote_control.hpp"
+#include "operation_interface/msg/key_mouse.hpp"
 #include "referee_serial/referee_serial.hpp"
 
 /**
- * @class RemoteControl
+ * @class KeyMouse
  * @brief A class to represent a remote control.
  * This class encapsulates the state of a remote control, including the state of the keys and the mouse.
  */
-class RemoteControl
+class KeyMouse
 {
 private:
     /**
@@ -91,18 +91,18 @@ public:
     static bool is_wanted_pre(const std::vector<uint8_t> &prefix);
 
     /**
-     * @brief Constructs a RemoteControl object from a frame.
+     * @brief Constructs a KeyMouse object from a frame.
      * This would interpret the frame by copying the data into the FrameType struct.
-     * @param frame The frame to construct the RemoteControl object from.
+     * @param frame The frame to construct the KeyMouse object from.
      */
-    RemoteControl(const std::vector<uint8_t> &frame);
+    KeyMouse(const std::vector<uint8_t> &frame);
 
     /**
      * @brief Sets the message based on the current state.
      * This function copies the current state data into the message object.
      * @note Should be called before publishing the message.
      */
-    operation_interface::msg::RemoteControl msg();
+    operation_interface::msg::KeyMouse msg();
 };
 
-#endif // REMOTE_CONTROL_HPP
+#endif // KEY_MOUSE_HPP

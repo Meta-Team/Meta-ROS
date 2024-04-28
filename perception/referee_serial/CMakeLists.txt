@@ -26,7 +26,7 @@ find_package(operation_interface REQUIRED)
 
 add_library(referee_serial SHARED
   src/referee_serial.cpp
-  src/remote_control.cpp
+  src/key_mouse.cpp
   src/game_info.cpp
   src/power_state.cpp
   src/crc.cpp)

@@ -1,4 +1,4 @@
-#include "remote_vehicle/remote_interpreter.hpp"
+#include "km_vehicle/km_interpreter.hpp"
 #include <cmath>
 
 RemoteInterpreter::RemoteInterpreter(double max_vel, double max_omega, double aim_sens, double interfere_sens)
@@ -34,7 +34,7 @@ RemoteInterpreter::~RemoteInterpreter()
     }
 }
 
-void RemoteInterpreter::manual_input(const RemoteControl::SharedPtr msg)
+void RemoteInterpreter::manual_input(const KeyMouse::SharedPtr msg)
 {
     w = msg->w;
     a = msg->a;

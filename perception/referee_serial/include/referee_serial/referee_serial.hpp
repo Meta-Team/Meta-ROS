@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include "rclcpp/rclcpp.hpp"
 
-#include "operation_interface/msg/remote_control.hpp"
+#include "operation_interface/msg/key_mouse.hpp"
 #include "operation_interface/msg/game_info.hpp"
 #include "operation_interface/msg/power_state.hpp"
 
@@ -79,7 +79,7 @@ public:
 
 private:
     rclcpp::Node::SharedPtr node_; ///< Pointer to the ROS2 node.
-    rclcpp::Publisher<operation_interface::msg::RemoteControl>::SharedPtr remote_control_pub_;
+    rclcpp::Publisher<operation_interface::msg::KeyMouse>::SharedPtr key_mouse_pub_;
     rclcpp::Publisher<operation_interface::msg::GameInfo>::SharedPtr game_info_pub_;
     rclcpp::Publisher<operation_interface::msg::PowerState>::SharedPtr power_state_pub_;
 

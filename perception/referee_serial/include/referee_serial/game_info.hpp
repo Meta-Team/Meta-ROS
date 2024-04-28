@@ -14,7 +14,7 @@
 #include "operation_interface/msg/game_info.hpp"
 #include "referee_serial/referee_serial.hpp"
 
-// refer to ./remote_control.hpp for explanation
+// refer to ./key_mouse.hpp for explanation
 
 class GameInfo
 {

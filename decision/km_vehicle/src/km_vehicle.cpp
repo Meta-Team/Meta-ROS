@@ -2,15 +2,15 @@
 #include <rclcpp/logging.hpp>
 #include <rclcpp/subscription.hpp>
 #include <vision_interface/msg/detail/auto_aim__struct.hpp>
-#include "remote_vehicle/remote_interpreter.hpp"
+#include "km_vehicle/km_interpreter.hpp"
 
-#include "operation_interface/msg/remote_control.hpp"
+#include "operation_interface/msg/key_mouse.hpp"
 #include "behavior_interface/msg/move.hpp"
 #include "behavior_interface/msg/shoot.hpp"
 #include "behavior_interface/msg/aim.hpp"
 #include "vision_interface/msg/auto_aim.hpp"
 
-using operation_interface::msg::RemoteControl;
+using operation_interface::msg::KeyMouse;
 using behavior_interface::msg::Move;
 using behavior_interface::msg::Shoot;
 using behavior_interface::msg::Aim;
@@ -19,7 +19,7 @@ using vision_interface::msg::AutoAim;
 class RemoteVehicle : public rclcpp::Node
 {
 public:
-    RemoteVehicle() : Node("remote_vehicle")
+    RemoteVehicle() : Node("km_vehicle")
     {
         double max_vel = this->declare_parameter("control.trans_vel", 2.0);
         double max_omega = this->declare_parameter("control.rot_vel", 3.0);
@@ -34,9 +34,9 @@ public:
         pub_move = this->create_publisher<Move>("move", 10);
         pub_shoot = this->create_publisher<Shoot>("shoot", 10);
         pub_aim = this->create_publisher<Aim>("aim", 10);
-        remote_sub_ = this->create_subscription<RemoteControl>(
-            "remote_control", 10,
-            std::bind(&RemoteVehicle::remote_callback, this, std::placeholders::_1));
+        km_sub_ = this->create_subscription<KeyMouse>(
+            "key_mouse", 10,
+            std::bind(&RemoteVehicle::km_callback, this, std::placeholders::_1));
         vision_sub_ = this->create_subscription<AutoAim>(
             "auto_aim", 10,
             std::bind(&RemoteVehicle::vision_callback, this, std::placeholders::_1));
@@ -45,7 +45,7 @@ public:
     }
 
 private:
-    rclcpp::Subscription<RemoteControl>::SharedPtr remote_sub_;
+    rclcpp::Subscription<KeyMouse>::SharedPtr km_sub_;
     rclcpp::Subscription<AutoAim>::SharedPtr vision_sub_;
     rclcpp::Publisher<Move>::SharedPtr pub_move;
     rclcpp::Publisher<Shoot>::SharedPtr pub_shoot;
@@ -53,7 +53,7 @@ private:
 
     std::unique_ptr<RemoteInterpreter> interpreter;
 
-    void remote_callback(const RemoteControl::SharedPtr msg)
+    void km_callback(const KeyMouse::SharedPtr msg)
     {
         interpreter->manual_input(msg);
     }
