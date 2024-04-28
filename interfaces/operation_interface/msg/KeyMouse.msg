@@ -1,3 +1,5 @@
+bool active
+
 float64 mouse_x # MY_DODO: define x axis
 float64 mouse_y
 float64 mouse_z

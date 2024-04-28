@@ -13,16 +13,16 @@
 
 /**
  * @class KeyMouse
- * @brief A class to represent a remote control.
- * This class encapsulates the state of a remote control, including the state of the keys and the mouse.
+ * @brief A class to represent a keymouse control.
+ * This class encapsulates the state of a keymouse control, including the state of the keys and the mouse.
  */
 class KeyMouse
 {
 private:
     /**
      * @enum Keys
-     * @brief An enumeration to represent the keys on the remote control.
-     * Can be used to interpret the keyboard field of the remote frame.
+     * @brief An enumeration to represent the keys on the keymouse control.
+     * Can be used to interpret the keyboard field of the keymouse frame.
      */
     enum // Keys
     {
@@ -46,12 +46,12 @@ private:
 
 public:
     /**
-     * @brief Represents a remote frame structure used for communication. 
+     * @brief Represents a keymouse frame structure used for communication. 
      */
     struct [[gnu::packed]] FrameType
     {
         /**
-         * @brief Represents the header of the remote frame.
+         * @brief Represents the header of the keymouse frame.
          */
         struct [[gnu::packed]] Header
         {
@@ -62,7 +62,7 @@ public:
         };
 
         /**
-         * @brief Represents the data payload of the remote frame.
+         * @brief Represents the data payload of the keymouse frame.
          */
         struct [[gnu::packed]] Data
         {
@@ -75,9 +75,9 @@ public:
             uint16_t reserved; /**< Reserved field */
         };
 
-        Header header; /**< The header of the remote frame */
+        Header header; /**< The header of the keymouse frame */
         uint16_t cmd_id; /**< Command ID */
-        Data data; /**< The data of the remote frame */
+        Data data; /**< The data of the keymouse frame */
         uint16_t tail; /**< Tail of the frame */
     };
 

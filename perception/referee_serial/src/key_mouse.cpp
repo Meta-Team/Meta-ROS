@@ -23,6 +23,7 @@ KeyMouse::KeyMouse(const std::vector<uint8_t> &frame)
 operation_interface::msg::KeyMouse KeyMouse::msg()
 {
     operation_interface::msg::KeyMouse msg;
+    msg.active = true;
     // mouse
     msg.mouse_x = static_cast<double>(this->interpreted.data.mouse_x) / 1600.0;
     msg.mouse_y = static_cast<double>(this->interpreted.data.mouse_y) / 1600.0;

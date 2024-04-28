@@ -1,5 +1,5 @@
-#ifndef REMOTE_INTERPRETER_HPP
-#define REMOTE_INTERPRETER_HPP
+#ifndef KM_INTERPRETER_HPP
+#define KM_INTERPRETER_HPP
 
 #include "operation_interface/msg/key_mouse.hpp"
 #include "behavior_interface/msg/move.hpp"
@@ -11,7 +11,7 @@
 #include <atomic>
 #include "rclcpp/rclcpp.hpp"
 
-#define PERIOD 10 // ms
+#define PERIOD 5 // ms
 
 using operation_interface::msg::KeyMouse;
 using behavior_interface::msg::Move;
@@ -20,12 +20,12 @@ using behavior_interface::msg::Aim;
 using vision_interface::msg::AutoAim;
 
 /**
- * @class RemoteInterpreter
- * @brief A class to interpret remote control inputs for a vehicle.
+ * @class KmInterpreter
+ * @brief A class to interpret keymouse control inputs for a vehicle.
  * When auto aim is enabled, operator can still manually interfere the aim.
  * @note There is an internal thread to regularly interpret the inputs.
  */
-class RemoteInterpreter
+class KmInterpreter
 {
 public:
     /**
@@ -39,22 +39,22 @@ public:
     };
 
     /**
-    * @brief Constructs a new RemoteInterpreter object.
+    * @brief Constructs a new KmInterpreter object.
     * @param max_vel The maximum velocity for moving.
     * @param max_omega The maximum angular velocity for moving.
     * @param aim_sens The sensitivity for aiming.
     * @param interfere_sens The sensitivity for the interference when auto aim is active.
     */
-    RemoteInterpreter(double max_vel, double max_omega, double aim_sens, double interfere_sens);
+    KmInterpreter(double max_vel, double max_omega, double aim_sens, double interfere_sens);
 
     /**
-     * @brief Destroy the Remote Interpreter object
+     * @brief Destroy the object
      */
-    ~RemoteInterpreter();
+    ~KmInterpreter();
     
     /**
-     * @brief Set the manual input from the remote control.
-     * @param msg The remote control message.
+     * @brief Set the manual input from the keymouse control.
+     * @param msg The keymouse control message.
      */
     void manual_input(const KeyMouse::SharedPtr msg);
 
@@ -68,21 +68,31 @@ public:
      * @brief Get the move msg.
      * @return The move object.
      */
-    [[nodiscard]] Move::SharedPtr get_move() const;
+    [[nodiscard]] Move get_move() const { return *move_; }
 
     /**
      * @brief Get the shoot msg.
      * @return The shoot object.
      */
-    [[nodiscard]] Shoot::SharedPtr get_shoot() const;
+    [[nodiscard]] Shoot get_shoot() const { return *shoot_; }
 
     /**
      * @brief Get the aim msg.
      * @return The aim object.
      */
-    [[nodiscard]] Aim::SharedPtr get_aim() const;
+    [[nodiscard]] Aim get_aim() const { return *aim_; }
+
+    /**
+     * @brief Check if the node should publish the messages.
+     * @return True if active.
+     */
+    [[nodiscard]] bool is_active() const { return active; }
+
 
 private:
+    // publish only when active
+    bool active = false;
+
     // buttons and axes
     bool w, a, s, d, shift, ctrl, q, e, r, f, g, z, x, c, v, b;
     bool left_button, right_button;
@@ -127,4 +137,4 @@ private:
     void my_mod(double& val, double mod);
 };
 
-#endif // REMOTE_INTERPRETER_HPP
+#endif // KM_INTERPRETER_HPP

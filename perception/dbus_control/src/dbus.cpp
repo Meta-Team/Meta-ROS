@@ -96,6 +96,9 @@ operation_interface::msg::KeyMouse Dbus::keymouse_msg()
     if (!success) return operation_interface::msg::KeyMouse();
 
     operation_interface::msg::KeyMouse msg;
+    // only valid when right switch is at the bottom
+    if (data.s0 == 2) msg.active = true;
+    else msg.active = false;
 
     msg.left_button = data.l;
     msg.right_button = data.r;

@@ -1,7 +1,7 @@
 #include "km_vehicle/km_interpreter.hpp"
 #include <cmath>
 
-RemoteInterpreter::RemoteInterpreter(double max_vel, double max_omega, double aim_sens, double interfere_sens)
+KmInterpreter::KmInterpreter(double max_vel, double max_omega, double aim_sens, double interfere_sens)
     : max_vel(max_vel), max_omega(max_omega), aim_sensitive(aim_sens), interfere_sensitive(interfere_sens)
 {
     // initialize buttons and axes
@@ -25,17 +25,15 @@ RemoteInterpreter::RemoteInterpreter(double max_vel, double max_omega, double ai
     });
 }
 
-RemoteInterpreter::~RemoteInterpreter()
+KmInterpreter::~KmInterpreter()
 {
     running = false;
-    if (interpret_thread.joinable())
-    {
-        interpret_thread.join();
-    }
+    if (interpret_thread.joinable()) interpret_thread.join();
 }
 
-void RemoteInterpreter::manual_input(const KeyMouse::SharedPtr msg)
+void KmInterpreter::manual_input(const KeyMouse::SharedPtr msg)
 {
+    this->active = msg->active;
     w = msg->w;
     a = msg->a;
     s = msg->s;
@@ -59,14 +57,14 @@ void RemoteInterpreter::manual_input(const KeyMouse::SharedPtr msg)
     mouse_z = msg->mouse_z;
 }
 
-void RemoteInterpreter::vision_input(const AutoAim::SharedPtr msg)
+void KmInterpreter::vision_input(const AutoAim::SharedPtr msg)
 {
     auto_yaw = msg->yaw;
     auto_pitch = msg->pitch;
     last_auto_time = rclcpp::Clock().now().seconds();
 }
 
-void RemoteInterpreter::interpret()
+void KmInterpreter::interpret()
 {
     // move
     move_->vel_x = max_vel * (w - s);
@@ -91,7 +89,7 @@ void RemoteInterpreter::interpret()
     }
 }
 
-void RemoteInterpreter::curb(double &val, double max_val)
+void KmInterpreter::curb(double &val, double max_val)
 {
     if (val > max_val)
     {
@@ -103,23 +101,8 @@ void RemoteInterpreter::curb(double &val, double max_val)
     }
 }
 
-void RemoteInterpreter::my_mod(double &val, double mod)
+void KmInterpreter::my_mod(double &val, double mod)
 {
     val = fmod(val, mod);
     if (val < 0) val += mod;
-}
-
-Move::SharedPtr RemoteInterpreter::get_move() const
-{
-    return move_;
-}
-
-Shoot::SharedPtr RemoteInterpreter::get_shoot() const
-{
-    return shoot_;
-}
-
-Aim::SharedPtr RemoteInterpreter::get_aim() const
-{
-    return aim_;
 }

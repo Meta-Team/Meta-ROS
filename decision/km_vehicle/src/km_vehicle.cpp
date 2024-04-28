@@ -1,7 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include <rclcpp/logging.hpp>
 #include <rclcpp/subscription.hpp>
-#include <vision_interface/msg/detail/auto_aim__struct.hpp>
 #include "km_vehicle/km_interpreter.hpp"
 
 #include "operation_interface/msg/key_mouse.hpp"
@@ -10,16 +9,18 @@
 #include "behavior_interface/msg/aim.hpp"
 #include "vision_interface/msg/auto_aim.hpp"
 
+#define PUB_RATE 10 // Hz
+
 using operation_interface::msg::KeyMouse;
 using behavior_interface::msg::Move;
 using behavior_interface::msg::Shoot;
 using behavior_interface::msg::Aim;
 using vision_interface::msg::AutoAim;
 
-class RemoteVehicle : public rclcpp::Node
+class KmVehicle : public rclcpp::Node
 {
 public:
-    RemoteVehicle() : Node("km_vehicle")
+    KmVehicle() : Node("km_vehicle")
     {
         double max_vel = this->declare_parameter("control.trans_vel", 2.0);
         double max_omega = this->declare_parameter("control.rot_vel", 3.0);
@@ -28,7 +29,7 @@ public:
         RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, aim_sens: %f, interfere_sens: %f",
             max_vel, max_omega, aim_sens, interfere_sens);
 
-        interpreter = std::make_unique<RemoteInterpreter>(max_vel, max_omega, aim_sens, interfere_sens);
+        interpreter = std::make_unique<KmInterpreter>(max_vel, max_omega, aim_sens, interfere_sens);
 
         // pub and sub
         pub_move = this->create_publisher<Move>("move", 10);
@@ -36,12 +37,15 @@ public:
         pub_aim = this->create_publisher<Aim>("aim", 10);
         km_sub_ = this->create_subscription<KeyMouse>(
             "key_mouse", 10,
-            std::bind(&RemoteVehicle::km_callback, this, std::placeholders::_1));
+            std::bind(&KmVehicle::km_callback, this, std::placeholders::_1));
         vision_sub_ = this->create_subscription<AutoAim>(
             "auto_aim", 10,
-            std::bind(&RemoteVehicle::vision_callback, this, std::placeholders::_1));
+            std::bind(&KmVehicle::vision_callback, this, std::placeholders::_1));
 
-        RCLCPP_INFO(this->get_logger(), "RemoteVehicle initialized");
+        timer = this->create_wall_timer(std::chrono::milliseconds(PUB_RATE),
+            std::bind(&KmVehicle::timer_callback, this));
+
+        RCLCPP_INFO(this->get_logger(), "KmVehicle initialized");
     }
 
 private:
@@ -50,8 +54,9 @@ private:
     rclcpp::Publisher<Move>::SharedPtr pub_move;
     rclcpp::Publisher<Shoot>::SharedPtr pub_shoot;
     rclcpp::Publisher<Aim>::SharedPtr pub_aim;
+    rclcpp::TimerBase::SharedPtr timer;
 
-    std::unique_ptr<RemoteInterpreter> interpreter;
+    std::unique_ptr<KmInterpreter> interpreter;
 
     void km_callback(const KeyMouse::SharedPtr msg)
     {
@@ -60,9 +65,10 @@ private:
 
     void timer_callback()
     {
-        pub_move->publish(*interpreter->get_move());
-        pub_shoot->publish(*interpreter->get_shoot());
-        pub_aim->publish(*interpreter->get_aim());
+        if (!interpreter->is_active()) return;
+        pub_move->publish(interpreter->get_move());
+        pub_shoot->publish(interpreter->get_shoot());
+        pub_aim->publish(interpreter->get_aim());
     }
 
     void vision_callback(const AutoAim::SharedPtr msg)
@@ -74,7 +80,7 @@ private:
 int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<RemoteVehicle>());
+    rclcpp::spin(std::make_shared<KmVehicle>());
     rclcpp::shutdown();
     return 0;
 }

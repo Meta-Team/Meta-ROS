@@ -69,14 +69,14 @@ rclcpp::node_interfaces::NodeBaseInterface::SharedPtr RefereeSerial::get_node_ba
 void RefereeSerial::receive()
 {
     std::vector<uint8_t> prefix(7); // header + cmd_id
-    RCLCPP_INFO(node_->get_logger(), "Receiving remote control frames");
+    RCLCPP_INFO(node_->get_logger(), "Receiving serial frames");
 
     while (rclcpp::ok())
     {
         try {
             port_->receive(prefix);
 
-            if (KeyMouse::is_wanted_pre(prefix)) // remote control
+            if (KeyMouse::is_wanted_pre(prefix)) // key mouse
             {
                 handleFrame<operation_interface::msg::KeyMouse, KeyMouse>(
                     prefix, key_mouse_pub_, "key_mouse");
@@ -101,7 +101,7 @@ void RefereeSerial::receive()
         }
         catch (const std::exception & e)
         {
-            RCLCPP_ERROR(node_->get_logger(), "Error receiving remote control frame: %s", e.what());
+            RCLCPP_ERROR(node_->get_logger(), "Error receiving frame: %s", e.what());
             reopen_port();
         }
     }
