@@ -2,6 +2,7 @@
 #include "referee_serial/key_mouse.hpp"
 #include "referee_serial/game_info.hpp"
 #include "referee_serial/power_state.hpp"
+#include "referee_serial/custom_controller.hpp"
 #include <chrono>
 #include <cstdint>
 #include <rclcpp/logging.hpp>
@@ -34,6 +35,7 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     key_mouse_pub_ = node_->create_publisher<operation_interface::msg::KeyMouse>("key_mouse", 10);
     game_info_pub_ = node_->create_publisher<operation_interface::msg::GameInfo>("game_info", 10);
     power_state_pub_ = node_->create_publisher<operation_interface::msg::PowerState>("power_state", 10);
+    custom_controller_pub_ = node_->create_publisher<operation_interface::msg::CustomController>("custom_controller", 10);
 
     // open serial port
     if (!port_->is_open())
@@ -91,6 +93,11 @@ void RefereeSerial::receive()
                 handleFrame<operation_interface::msg::PowerState, PowerState>(
                     prefix, power_state_pub_, "power_state");
             }
+            else if (CustomController::is_wanted_pre(prefix)) // custom controller
+            {
+                handleFrame<operation_interface::msg::CustomController, CustomController>(
+                    prefix, custom_controller_pub_, "custom_controller");
+            }
 #if DEBUG == true
             else if (prefix[0] == 0xA5)
             {
@@ -117,7 +124,7 @@ void RefereeSerial::handleFrame(const std::vector<uint8_t>& prefix,
     port_->receive(frame);
     frame.insert(frame.begin(), prefix.begin(), prefix.end());
 
-    PARSE info(frame);
+    PARSE info(frame); // parse the frame
     bool crc16_check = crc::verifyCRC16CheckSum(reinterpret_cast<uint8_t*>(&info.interpreted), sizeof(typename PARSE::FrameType));
 
     if (crc16_check)

@@ -14,6 +14,7 @@
 #include "operation_interface/msg/key_mouse.hpp"
 #include "operation_interface/msg/game_info.hpp"
 #include "operation_interface/msg/power_state.hpp"
+#include "operation_interface/msg/custom_controller.hpp"
 
 using spb = asio::serial_port_base;
 using drivers::serial_driver::FlowControl;
@@ -82,6 +83,7 @@ private:
     rclcpp::Publisher<operation_interface::msg::KeyMouse>::SharedPtr key_mouse_pub_;
     rclcpp::Publisher<operation_interface::msg::GameInfo>::SharedPtr game_info_pub_;
     rclcpp::Publisher<operation_interface::msg::PowerState>::SharedPtr power_state_pub_;
+    rclcpp::Publisher<operation_interface::msg::CustomController>::SharedPtr custom_controller_pub_;
 
     // Serial port
     std::unique_ptr<IoContext> ctx_;

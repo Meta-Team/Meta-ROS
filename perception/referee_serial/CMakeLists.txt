@@ -29,7 +29,7 @@ add_library(referee_serial SHARED
   src/key_mouse.cpp
   src/game_info.cpp
   src/power_state.cpp
-  src/custome_controller.cpp
+  src/custom_controller.cpp
   src/crc.cpp)
 
 target_include_directories(referee_serial PRIVATE
