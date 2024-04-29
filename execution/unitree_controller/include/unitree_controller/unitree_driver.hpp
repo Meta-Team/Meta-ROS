@@ -76,7 +76,6 @@ private:
     MotorData feedback_data; ///< The current feedback data for the motor. Its symbols differ from the documentation.
 
     std::thread control_thread; ///< The thread for the control loop.
-    std::atomic<bool> running{true}; ///< A flag to indicate if the control loop should be running.
 
     /**
      * @brief Stop the motor.

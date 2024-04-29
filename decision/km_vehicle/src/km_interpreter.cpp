@@ -15,9 +15,8 @@ KmInterpreter::KmInterpreter(double max_vel, double max_omega, double aim_sens, 
     aim_ = std::make_shared<Aim>();
 
     // start threads
-    running = true;
     interpret_thread = std::thread([this] {
-        while (running)
+        while (rclcpp::ok())
         {
             interpret();
             std::this_thread::sleep_for(std::chrono::milliseconds(PERIOD));
@@ -27,7 +26,6 @@ KmInterpreter::KmInterpreter(double max_vel, double max_omega, double aim_sens, 
 
 KmInterpreter::~KmInterpreter()
 {
-    running = false;
     if (interpret_thread.joinable()) interpret_thread.join();
 }
 

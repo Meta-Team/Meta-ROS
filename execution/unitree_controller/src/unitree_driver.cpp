@@ -21,7 +21,6 @@ UnitreeDriver::UnitreeDriver(std::string rid, int hid, std::string port)
 UnitreeDriver::~UnitreeDriver()
 {
     stop();
-    running = false;
     if (control_thread.joinable()) control_thread.join();
 #if CALI == true
     if (cali_thread.joinable()) cali_thread.join();
@@ -90,7 +89,7 @@ void UnitreeDriver::stop()
 
 void UnitreeDriver::control_loop()
 {
-    while (running)
+    while (rclcpp::ok())
     {
         this->send_recv();
         std::this_thread::sleep_for(std::chrono::milliseconds(UPDATE_FREQ));

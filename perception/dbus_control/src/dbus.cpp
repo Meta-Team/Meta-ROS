@@ -56,9 +56,8 @@ Dbus::Dbus(std::string dev_path)
     port = fd;
 
     // Start read thread
-    running = true;
     read_thread = std::thread([this]() {
-        while (running)
+        while (rclcpp::ok())
         {
             read();
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -69,7 +68,6 @@ Dbus::Dbus(std::string dev_path)
 
 Dbus::~Dbus()
 {
-    running = false;
     close(port);
     if (read_thread.joinable()) read_thread.join();
 }

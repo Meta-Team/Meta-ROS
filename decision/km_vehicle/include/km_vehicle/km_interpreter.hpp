@@ -8,7 +8,6 @@
 #include "vision_interface/msg/auto_aim.hpp"
 #include <cstdint>
 #include <thread>
-#include <atomic>
 #include "rclcpp/rclcpp.hpp"
 
 #define PERIOD 5 // ms
@@ -110,7 +109,6 @@ private:
     Shoot::SharedPtr shoot_;
     Aim::SharedPtr aim_;
 
-    std::atomic<bool> running;
     std::thread interpret_thread;
     double last_auto_time = 0; ///< The last time auto aim is active.
 

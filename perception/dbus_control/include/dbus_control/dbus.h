@@ -50,7 +50,6 @@ private:
     bool success = false;
     bool update = false;
 
-    std::atomic<bool> running;
     std::thread read_thread;
 
     void unpack();
