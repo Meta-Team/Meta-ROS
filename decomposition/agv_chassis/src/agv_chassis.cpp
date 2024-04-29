@@ -91,21 +91,14 @@ public:
 
     void get_offsets()
     {
-        vector<double> offsets;
-        offsets = this->declare_parameter("motor.offsets", offsets);
-        vector<string> rids;
-        rids = this->declare_parameter("motor.rids", rids);
-
-        for (int i = 0; i < static_cast<int>(rids.size()); i++)
-        {
-            const string id = rids[i];
-            const float offset = offsets[i];
-            const auto it = AgvKinematics::offsets.find(id);
-            if (it != AgvKinematics::offsets.end()) // found
-            {
-                it->second = offset;
-            }
-        }
+        double lf = this->declare_parameter("offsets.LF", 0.0);
+        double rf = this->declare_parameter("offsets.RF", 0.0);
+        double lb = this->declare_parameter("offsets.LB", 0.0);
+        double rb = this->declare_parameter("offsets.RB", 0.0);
+        AgvKinematics::offsets["LF_D"] = lf;
+        AgvKinematics::offsets["RF_D"] = rf;
+        AgvKinematics::offsets["LB_D"] = lb;
+        AgvKinematics::offsets["RB_D"] = rb;
     }
 };
 
