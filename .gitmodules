@@ -4,7 +4,7 @@
 [submodule "perception/ahrs_feedback/serial"]
 	path = perception/ahrs_feedback/serial
 	url = https://github.com/jinmenglei/serial_ros2
-[submodule "perception/meta_vision"]
-	path = perception/meta_vision
-	url = https://github.com/Yao-Xinchen/Meta-Vision
+[submodule "perception/solais_vision"]
+	path = perception/solais_vision
+	url = https://github.com/Meta-Team/Meta-Vision-SolaisNG
 	branch = integrated
