@@ -8,7 +8,6 @@ def generate_launch_description():
         get_package_share_directory('dji_controller'),
         'config',
         'dji_controller_test.yaml'
-        # "scara_dji_test.yaml"
     )
     return LaunchDescription([
         Node(

@@ -1,21 +1,19 @@
 /**:
   ros__parameters:
 
-    # for node `dji_controller` and `motor_feedback`
     motor:
-      count: 1
-      rids: ["J1"]
-      hids: [4]
-      ports: ["CAN0"]
-      brands: ["DJI"]  # 0->dji, 1->dm
-      types: ["2006"]
+      count: 2
+      rids: ["J1", "J2"]
+      hids: [1, 2]
+      ports: ["CAN1", "CAN1"]
+      brands: ["DJI", "DJI"]
+      types: ["3508", "3508"]
 
-      # for node `dji_controller`
       p2v:
-        kps: [2.5E+1]
-        kis: [1.5E+1]
-        kds: [1.0E+4]
+        kps: [2.5E+1, 2.5E+1]
+        kis: [1.5E+1, 1.5E+1]
+        kds: [1.0E+4, 1.0E+4]
       v2c:
-        kps: [1.5E-1]
-        kis: [5.0E-3]
-        kds: [0.0E+3]
+        kps: [4.2E-2, 4.2E-2]
+        kis: [3.0E-4, 3.0E-4]
+        kds: [0.0E+3, 0.0E+3]

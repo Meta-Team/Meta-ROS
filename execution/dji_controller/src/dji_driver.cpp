@@ -7,15 +7,15 @@
 #include <linux/can.h>
 #include <memory>
 #include <queue>
+#include <rclcpp/logging.hpp>
 #include <string>
 #include <tuple>
 
 #define DT CALC_FREQ / 1000 // the time interval, in seconds
 
 // static members
-vector<unique_ptr<CanPort>> DjiDriver::can_ports{};
-vector<int> DjiDriver::port_ids{};
-vector<std::thread> DjiDriver::rx_threads{};
+umap<int, unique_ptr<CanPort>> DjiDriver::can_ports{};
+umap<int, std::thread> DjiDriver::rx_threads{};
 vector<std::shared_ptr<DjiDriver>> DjiDriver::instances{};
 
 DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_port) :
@@ -39,13 +39,10 @@ DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_p
 void DjiDriver::set_port(int port)
 {
     this->port = port;
-    auto it = std::find(port_ids.begin(), port_ids.end(), port);
-    // if the port is not in the list, add it
-    if (it == port_ids.end())
+    if (can_ports.find(port) == can_ports.end())
     {
-        port_ids.push_back(port);
-        can_ports.push_back(std::make_unique<CanPort>(port));
-        rx_threads.push_back(std::thread(&DjiDriver::rx_loop, this, port));
+        can_ports[port] = std::make_unique<CanPort>(port);
+        rx_threads[port] = std::thread(&DjiDriver::rx_loop, this, port);
     }
 }
 
@@ -200,7 +197,7 @@ void DjiDriver::write_tx()
 
 void DjiDriver::tx()
 {
-    for (auto& can_port : can_ports)
+    for (auto& [_, can_port] : can_ports)
         can_port->tx();
 }
 

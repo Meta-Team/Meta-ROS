@@ -4,11 +4,10 @@
 #include "can_driver.hpp"
 #include "dji_controller/motor_data.hpp"
 #include "dji_controller/can_port.hpp"
-#include <array>
 #include <linux/can.h>
 #include <memory>
-#include <queue>
 #include <thread>
+#include <unordered_map>
 
 #define CALC_FREQ 1 // ms
 
@@ -20,6 +19,9 @@
 using std::vector;
 using std::unique_ptr;
 using std::string;
+using std::unordered_map;
+
+#define umap unordered_map
 
 enum MotorType
 {
@@ -37,9 +39,8 @@ enum MotorType
 class DjiDriver
 {
 private:
-    static vector<unique_ptr<CanPort>> can_ports; /**< Array of pointers to the CAN port instances. */
-    static vector<int> port_ids; /**< Array of CAN port IDs. */
-    static vector<std::thread> rx_threads; /**< Array of threads for the feedback loop. */
+    static umap<int, unique_ptr<CanPort>> can_ports; /**< Array of pointers to the CAN port instances. */
+    static umap<int, std::thread> rx_threads; /**< Array of threads for the feedback loop. */
 
     /**
      * @brief A vector of shared pointers to the DjiDriver instances.
