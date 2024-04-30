@@ -12,9 +12,9 @@
 struct MotorData
 {
 public:
-    float torque;
-    float velocity; // rad/s
-    float position; // cumulative position, rad
+    double torque;
+    double velocity; // rad/s
+    double position; // cumulative position, rad
 
     /**
      * @brief Construct a new MotorData object.
@@ -31,15 +31,15 @@ public:
      * @brief Update the cumulative position of the motor.
      * @param pos The new feedback position.
      */
-    void update_pos(float pos) // MY_TODO: check the first usage of this function
+    void update_pos(double pos) // MY_TODO: check the first usage of this function
     {
         int round = std::floor(position / 2 / PI);
 
-        float up = 2 * PI * (round + 1) + pos;
-        float mid = 2 * PI * round + pos;
-        float down = 2 * PI * (round - 1) + pos;
+        double up = 2 * PI * (round + 1) + pos;
+        double mid = 2 * PI * round + pos;
+        double down = 2 * PI * (round - 1) + pos;
 
-        auto comparison = [this](float a, float b)
+        auto comparison = [this](double a, double b)
         {
             return std::abs(a - position) < std::abs(b - position);
         };
@@ -54,11 +54,11 @@ public:
 struct PidParam
 {
 public:
-    float kp;
-    float ki;
-    float kd;
+    double kp;
+    double ki;
+    double kd;
 
-    PidParam(float kp, float ki, float kd)
+    PidParam(double kp, double ki, double kd)
     {
         this->kp = kp;
         this->ki = ki;
@@ -72,11 +72,11 @@ public:
 struct PidOutput
 {
 public:
-    float p;
-    float i;
-    float d;
+    double p;
+    double i;
+    double d;
 
-    float sum()
+    double sum()
     {
         return p + i + d;
     }

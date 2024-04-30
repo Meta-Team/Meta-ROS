@@ -8,6 +8,7 @@
 #include <linux/can.h>
 #include <memory>
 #include <queue>
+#include <thread>
 
 #define CALC_FREQ 1 // ms
 
@@ -16,7 +17,7 @@
 
 #define NaN std::nan("")
 
-using std::array;
+using std::vector;
 using std::unique_ptr;
 using std::string;
 
@@ -36,7 +37,15 @@ enum MotorType
 class DjiDriver
 {
 private:
-    static array<unique_ptr<CanPort>, 2> can_ports; /**< Array of pointers to the CAN port instances. */
+    static vector<unique_ptr<CanPort>> can_ports; /**< Array of pointers to the CAN port instances. */
+    static vector<int> port_ids; /**< Array of CAN port IDs. */
+    static vector<std::thread> rx_threads; /**< Array of threads for the feedback loop. */
+
+    /**
+     * @brief A vector of shared pointers to the DjiDriver instances.
+     * Used for feedback loop for processing received data.
+     */
+    static vector<std::shared_ptr<DjiDriver>> instances;
 
     uint8_t port; /**< CAN port number. */
     MotorType motor_type; /**< Type of the motor. */
@@ -45,11 +54,11 @@ private:
 
     MotorData present_data{}; /**< Data representing the current state of the motor. */
 
-    float vel_error{}; /**< Error in velocity. */
-    float pos_error{}; /**< Error in position. */
-    float goal_pos{}; /**< Desired position of the motor. */
-    float goal_vel{}; /**< Desired velocity of the motor. */
-    float current{}; /**< Current value of the motor. */
+    double vel_error{}; /**< Error in velocity. */
+    double pos_error{}; /**< Error in position. */
+    double goal_pos{}; /**< Desired position of the motor. */
+    double goal_vel{}; /**< Desired velocity of the motor. */
+    double current{}; /**< Current value of the motor. */
 
     /**
      * @brief Convert velocity to current using PID control.
@@ -65,6 +74,18 @@ private:
      * @note To realize position control, this function should be executed before vel2current().
      */
     void pos2velocity();
+
+    /**
+     * @brief Set the CAN port number of this motor, and add it to the array of CAN ports.
+     * @param port The port number.
+     */
+    void set_port(int port);
+
+    /**
+     * @brief Receive loop for processing received data.
+     * @param port The port number of the CAN bus.
+     */
+    void rx_loop(int port);
 
 public:
     int hid; /**< Hardware ID of the motor. */
@@ -84,7 +105,7 @@ public:
      * @param goal_pos The desired position.
      * @param goal_vel The desired velocity.
      */
-    void set_goal(float goal_pos, float goal_vel, float goal_cur);
+    void set_goal(double goal_pos, double goal_vel, double goal_cur);
 
     /**
      * @brief Set the PID parameters for position-to-velocity conversion.
@@ -92,7 +113,7 @@ public:
      * @param ki The desired integral gain.
      * @param kd The desired derivative gain.
      */
-    void set_p2v_pid(float kp, float ki, float kd);
+    void set_p2v_pid(double kp, double ki, double kd);
 
     /**
      * @brief Set the PID parameters for velocity-to-current conversion.
@@ -100,7 +121,7 @@ public:
      * @param ki The desired integral gain.
      * @param kd The desired derivative gain.
      */
-    void set_v2c_pid(float kp, float ki, float kd);
+    void set_v2c_pid(double kp, double ki, double kd);
 
     /**
      * @brief Write the transmit frames.
@@ -118,20 +139,6 @@ public:
     static void tx();
 
     /**
-     * @brief Get the receive frame of CAN0.
-     * This would write the received frame to the rx_frame variable.
-     * @note This function should be executed before calling process_rx().
-     */
-    static void rx0();
-
-    /**
-     * @brief Get the receive frame of CAN1.
-     * This would write the received frame to the rx_frame variable.
-     * @note This function should be executed before calling process_rx().
-     */
-    static void rx1();
-
-    /**
      * @brief Process the receive frame.
      * This updates the present data of the motor according to the rx_frame variable.
      * @note rx() should be executed before calling this function.
@@ -142,7 +149,7 @@ public:
      * @brief Get the current state of the motor.
      * @return A tuple containing the position, velocity, and current of the motor.
      */
-    [[nodiscard]] std::tuple<float, float, float> get_state();
+    [[nodiscard]] std::tuple<double, double, double> get_state();
 
     /**
      * @brief Limits the value of a variable to a specified range.
@@ -150,7 +157,7 @@ public:
      * @param limit The upper and lower limit for the value.
      * @note Limit must be positive.
      */
-    void curb(float &val, float limit);
+    void curb(double &val, double limit);
 
     /**
      * @brief Get the port number of the CAN bus.

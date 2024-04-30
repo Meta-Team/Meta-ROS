@@ -35,11 +35,6 @@ public:
                 control_timer_callback();
             });
 
-        // start the feedback threads
-        // two separate threads so that they don't block each other
-        feedback_thread_0 = std::thread(&DjiController::feedback_loop_0, this);
-        feedback_thread_1 = std::thread(&DjiController::feedback_loop_1, this);
-
 #if ENABLE_PUB == true
         // create a timer for publishing motor state
         pub_timer_ = this->create_wall_timer(
@@ -56,8 +51,6 @@ public:
 private:
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
-    rclcpp::TimerBase::SharedPtr feedback_timer_; // receive feedback frame regularly
-    std::thread feedback_thread_0, feedback_thread_1;
 #if ENABLE_PUB == true
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
@@ -75,24 +68,6 @@ private:
 #endif
     }
 
-    void feedback_loop_0()
-    {
-        while (rclcpp::ok())
-        {
-            DjiDriver::rx0();
-            for (auto& driver : drivers_) driver->process_rx();
-        }
-    }
-
-    void feedback_loop_1()
-    {
-        while (rclcpp::ok())
-        {
-            DjiDriver::rx1();
-            for (auto& driver : drivers_) driver->process_rx();
-        }
-    }
-    
     void goal_callback(const motor_interface::msg::MotorGoal::SharedPtr msg)
     {
         // RCLCPP_INFO(this->get_logger(), "Received motor goal");
@@ -100,9 +75,9 @@ private:
         for (int i = 0; i < count; i++)
         {
             std::string rid = msg->motor_id[i];
-            float pos = msg->goal_pos[i];
-            float vel = msg->goal_vel[i];
-            float cur = msg->goal_tor[i];
+            double pos = msg->goal_pos[i];
+            double vel = msg->goal_vel[i];
+            double cur = msg->goal_tor[i];
 
             // find corresponding driver
             auto iter = std::find_if(drivers_.begin(), drivers_.end(),

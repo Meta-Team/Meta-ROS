@@ -7,6 +7,8 @@
 class CanPort
 {
 private:
+    std::unique_ptr<CanDriver> can_driver_; /**< Pointer to the CAN driver instance. */
+
     /**
      * @brief Initialize a CAN frame.
      * @param frame_id The ID of the frame.
@@ -22,7 +24,6 @@ private:
     }
 
 public:
-    std::unique_ptr<CanDriver> can_driver_; /**< Pointer to the CAN driver instance. */
     can_frame tx_frame_200, tx_frame_1ff, tx_frame_2ff; /**< CAN frames for transmitting data. */
     can_frame rx_frame; /**< CAN frame for receiving data. */
 
