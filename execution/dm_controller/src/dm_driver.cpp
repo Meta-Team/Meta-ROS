@@ -66,10 +66,15 @@ void DmDriver::rx()
 
 void DmDriver::process_rx()
 {
+    // check if the frame is for this driver
+    if (static_cast<int>(rx_frame.can_id) != this->hid) return;
+
+    // get raw data from the frame
     float pos_raw = rx_frame.data[1]<<8 | rx_frame.data[2];
     float vel_raw = rx_frame.data[3]<<4 | rx_frame.data[4]>>4;
     float tor_raw = rx_frame.data[5];
 
+    // write the data to the present_data
     position = uint_to_float(pos_raw, -P_MAX, P_MAX, 16);
     velocity = uint_to_float(vel_raw, -V_MAX, V_MAX, 12);
     torque = uint_to_float(tor_raw, -T_MAX, T_MAX, 12);
