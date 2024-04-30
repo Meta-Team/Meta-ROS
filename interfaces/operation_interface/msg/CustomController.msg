@@ -1,0 +1,13 @@
+# translation
+float64 x_vel
+float64 y_vel
+float64 z_vel
+# rotation
+float64 yaw_vel
+float64 pitch_vel
+float64 roll_vel
+# button
+bool bt1
+bool bt2
+bool bt3
+bool bt4

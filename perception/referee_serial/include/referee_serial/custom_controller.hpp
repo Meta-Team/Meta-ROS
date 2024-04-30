@@ -27,8 +27,16 @@ public:
 
         struct [[gnu::packed]] Data
         {
-            // to be defined
-            std::array<uint8_t, 30> data;
+            float x;
+            float y;
+            float z;
+            float yaw;
+            float pitch;
+            float roll;
+            bool bt1;
+            bool bt2;
+            bool bt3;
+            bool bt4;
         };
 
         Header header;

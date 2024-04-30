@@ -14,12 +14,21 @@ bool CustomController::is_wanted_pre(const std::vector<uint8_t> &prefix)
 CustomController::CustomController(const std::vector<uint8_t> &frame)
 {
     // copy the uint8_t vector to the struct
-    std::copy(frame.begin(), frame.end(), reinterpret_cast<uint8_t *>(&interpreted));
+    std::copy(frame.begin(), frame.end(), reinterpret_cast<uint8_t*>(&interpreted));
 }
 
 operation_interface::msg::CustomController CustomController::msg()
 {
     operation_interface::msg::CustomController msg;
-    // to be defined
+    msg.x_vel = this->interpreted.data.x;
+    msg.y_vel = this->interpreted.data.y;
+    msg.z_vel = this->interpreted.data.z;
+    msg.yaw_vel = this->interpreted.data.yaw;
+    msg.pitch_vel = this->interpreted.data.pitch;
+    msg.roll_vel = this->interpreted.data.roll;
+    msg.bt1 = this->interpreted.data.bt1;
+    msg.bt2 = this->interpreted.data.bt2;
+    msg.bt3 = this->interpreted.data.bt3;
+    msg.bt4 = this->interpreted.data.bt4;
     return msg;
 }

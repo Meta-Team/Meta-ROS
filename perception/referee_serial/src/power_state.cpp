@@ -17,7 +17,7 @@ bool PowerState::is_wanted_pre(const std::vector<uint8_t> &prefix)
 PowerState::PowerState(const std::vector<uint8_t> &frame)
 {
     // copy the uint8_t vector to the struct
-    std::copy(frame.begin(), frame.end(), reinterpret_cast<uint8_t *>(&interpreted));
+    std::copy(frame.begin(), frame.end(), reinterpret_cast<uint8_t*>(&interpreted));
 }
 
 operation_interface::msg::PowerState PowerState::msg()

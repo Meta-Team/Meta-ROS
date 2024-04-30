@@ -17,7 +17,7 @@ bool KeyMouse::is_wanted_pre(const std::vector<uint8_t> &prefix)
 KeyMouse::KeyMouse(const std::vector<uint8_t> &frame)
 {
     // copy the uint8_t vector to the struct
-    std::copy(frame.begin(), frame.end(), reinterpret_cast<uint8_t *>(&interpreted));
+    std::copy(frame.begin(), frame.end(), reinterpret_cast<uint8_t*>(&interpreted));
 }
 
 operation_interface::msg::KeyMouse KeyMouse::msg()
