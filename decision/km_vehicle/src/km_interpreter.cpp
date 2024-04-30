@@ -69,7 +69,7 @@ void KmInterpreter::interpret()
     move_->vel_y = max_vel * (a - d);
     move_->omega = max_omega * (q - e);
     // shoot
-    shoot_->fric_state = shift;
+    if (r) shoot_->fric_state = !shoot_->fric_state; // toggle fric
     shoot_->feed_state = left_button;
     // aim
     mode = right_button ? AUTO : MANUAL;
@@ -85,6 +85,10 @@ void KmInterpreter::interpret()
         aim_->yaw += mouse_x * aim_sensitive * PERIOD / 1000;
         aim_->pitch += mouse_y * aim_sensitive * PERIOD / 1000;
     }
+
+    // curb values
+    my_mod(aim_->yaw, 2 * M_PI);
+    curb(aim_->pitch, M_PI / 2);
 }
 
 void KmInterpreter::curb(double &val, double max_val)

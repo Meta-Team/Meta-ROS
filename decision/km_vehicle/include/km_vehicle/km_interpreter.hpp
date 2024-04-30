@@ -95,7 +95,7 @@ private:
     // buttons and axes
     bool w, a, s, d, shift, ctrl, q, e, r, f, g, z, x, c, v, b;
     bool left_button, right_button;
-    int16_t mouse_x, mouse_y, mouse_z;
+    double mouse_x, mouse_y, mouse_z;
 
     // params
     double max_vel, max_omega, max_feed, mac_shoot, aim_sensitive, interfere_sensitive;

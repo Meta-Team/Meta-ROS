@@ -25,7 +25,7 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     node_ = rclcpp::Node::make_shared("referee_serial", options);
 
     // create serial port
-    dev_name = node_->declare_parameter("serial_path", "/dev/ttyUSB0");
+    dev_name = node_->declare_parameter("serial_path", "/dev/ttyUSB1");
     ctx_ = std::make_unique<IoContext>(2);
     config_ = std::make_unique<SerialPortConfig>(baud, fc, pt, sb);
     port_ = std::make_unique<SerialPort>(*ctx_, dev_name, *config_);
