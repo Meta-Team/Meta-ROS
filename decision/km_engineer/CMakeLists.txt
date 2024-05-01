@@ -16,7 +16,8 @@ ament_auto_find_build_dependencies()
 include_directories(include)
 
 add_executable(km_engineer
-  src/km_engineer.cpp)
+  src/km_engineer.cpp
+  src/km_interpreter.cpp)
 ament_target_dependencies(km_engineer
   rclcpp
   behavior_interface
