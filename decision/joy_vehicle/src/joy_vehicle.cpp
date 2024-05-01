@@ -1,5 +1,5 @@
 #include "rclcpp/rclcpp.hpp"
-#include "joy_vehicle/joy_interpreter.hpp"
+#include "joy_vehicle/joy_interpreter.h"
 #include <memory>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/publisher.hpp>

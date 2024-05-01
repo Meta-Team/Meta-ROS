@@ -1,5 +1,5 @@
-#ifndef JOY_INTERPRETER_HPP
-#define JOY_INTERPRETER_HPP
+#ifndef JOY_INTERPRETER_H
+#define JOY_INTERPRETER_H
 
 #include "sensor_msgs/msg/joy.hpp"
 #include "behavior_interface/msg/move.hpp"
@@ -44,4 +44,4 @@ private:
     void curb(double& val, double max_val);
 };
 
-#endif // JOY_INTERPRETER_HPP
+#endif // JOY_INTERPRETER_H

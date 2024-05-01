@@ -1,4 +1,4 @@
-#include "joy_vehicle/joy_interpreter.hpp"
+#include "joy_vehicle/joy_interpreter.h"
 
 JoyInterpreter::JoyInterpreter(float max_vel, float max_omega, float aim_sens, float deadzone)
     : max_vel(max_vel), max_omega(max_omega), aim_sensitive(aim_sens), deadzone(deadzone)
