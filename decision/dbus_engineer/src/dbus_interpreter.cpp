@@ -1,6 +1,6 @@
-#include "km_engineer/km_interpreter.h"
+#include "dbus_engineer/dbus_interpreter.h"
 
-KmInterpreter::KmInterpreter(double vel, double aim_sens)
+DbusInterpreter::DbusInterpreter(double vel, double aim_sens)
     : max_vel(vel), aim_sens(aim_sens)
 {
     move_msg_ = std::make_shared<Move>();
@@ -10,24 +10,24 @@ KmInterpreter::KmInterpreter(double vel, double aim_sens)
     active = false;
 
     last_op = 0.0;
-    timeout_thread = std::thread(&KmInterpreter::check_timeout, this);
+    timeout_thread = std::thread(&DbusInterpreter::check_timeout, this);
 }
 
-KmInterpreter::~KmInterpreter()
+DbusInterpreter::~DbusInterpreter()
 {
     if (timeout_thread.joinable()) timeout_thread.join();
 }
 
-void KmInterpreter::km_input(const KeyMouse::SharedPtr km_msg)
+void DbusInterpreter::dbus_input(const DbusControl::SharedPtr dbus_msg)
 {
     last_op = rclcpp::Clock().now().seconds();
-    active = km_msg->active;
-    move_msg_->vel_x = (km_msg->w - km_msg->s) * max_vel;
-    move_msg_->vel_y = (km_msg->a - km_msg->d) * max_vel;
-    move_msg_->omega = km_msg->mouse_x * aim_sens;
+    active = dbus_msg->rsw == 2 ? false : true; // MY_TODO: check the value
+    move_msg_->vel_x = dbus_msg->ls_x * max_vel;
+    move_msg_->vel_y = dbus_msg->ls_y * max_vel;
+    move_msg_->omega = dbus_msg->rs_x * aim_sens;
 }
 
-void KmInterpreter::check_timeout()
+void DbusInterpreter::check_timeout()
 {
     // wait for receiving the first message
     rclcpp::sleep_for(std::chrono::seconds(1));
@@ -40,7 +40,7 @@ void KmInterpreter::check_timeout()
             move_msg_->vel_x = 0.0;
             move_msg_->vel_y = 0.0;
             move_msg_->omega = 0.0;
-            RCLCPP_WARN(rclcpp::get_logger("km_interpreter"), "Operation timeout.");
+            RCLCPP_WARN(rclcpp::get_logger("dbus_interpreter"), "Operation timeout.");
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }

@@ -24,7 +24,7 @@ public:
     {
         double max_vel = this->declare_parameter("control.trans_vel", 2.0);
         double max_omega = this->declare_parameter("control.rot_vel", 3.0);
-        double aim_sens = this->declare_parameter("control.aim_sensitivity", 100);
+        double aim_sens = this->declare_parameter("control.mouse_sens", 100);
         double interfere_sens = this->declare_parameter("control.interfere_sensitivity", 0.2);
         RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, aim_sens: %f, interfere_sens: %f",
             max_vel, max_omega, aim_sens, interfere_sens);

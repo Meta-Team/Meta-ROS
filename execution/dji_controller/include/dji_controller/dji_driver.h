@@ -6,6 +6,7 @@
 #include "dji_controller/can_port.hpp"
 #include <linux/can.h>
 #include <memory>
+#include <vector>
 #include <thread>
 #include <unordered_map>
 

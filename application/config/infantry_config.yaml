@@ -8,7 +8,8 @@
     control:
       trans_vel: 2.5 # m/s
       rot_vel: 8.0 # rad/s
-      aim_sensitivity: 3.14 # rad/s
+      stick_sens: 3.14 # rad/s
+      mouse_sens: 10.0
       interfere_sensitivity: 0.628 # rad/s
       deadzone: 0.15 # percentage
     

@@ -1,22 +1,22 @@
-#ifndef KM_INTERPRETER_H
-#define KM_INTERPRETER_H
+#ifndef DBUS_INTERPRETER_H
+#define DBUS_INTERPRETER_H
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "operation_interface/msg/key_mouse.hpp"
+#include "operation_interface/msg/dbus_control.hpp"
 #include "behavior_interface/msg/move.hpp"
 
 using behavior_interface::msg::Move;
-using operation_interface::msg::KeyMouse;
+using operation_interface::msg::DbusControl;
 
-class KmInterpreter
+class DbusInterpreter
 {
 public:
-    KmInterpreter(double vel, double aim_sens);
+    DbusInterpreter(double vel, double aim_sens);
 
-    ~KmInterpreter();
+    ~DbusInterpreter();
 
-    void km_input(const KeyMouse::SharedPtr km_msg);
+    void dbus_input(const DbusControl::SharedPtr dbus_msg);
 
     Move get_move() { return *move_msg_; }
 
@@ -35,4 +35,4 @@ private:
     void check_timeout();
 };
 
-#endif // KM_INTERPRETER_H
+#endif // DBUS_INTERPRETER_H

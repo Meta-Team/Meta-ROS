@@ -14,7 +14,7 @@ public:
     KmEngineer() : Node("km_engineer")
     {
         double max_vel = this->declare_parameter("control.trans_vel", 2.0);
-        double aim_sens = this->declare_parameter("control.aim_sensitivity", 1.57);
+        double aim_sens = this->declare_parameter("control.mouse_sens", 1.57);
         RCLCPP_INFO(get_logger(), "max_vel: %f, aim_sens: %f", max_vel, aim_sens);
 
         interpreter_ = std::make_unique<KmInterpreter>(max_vel, aim_sens);

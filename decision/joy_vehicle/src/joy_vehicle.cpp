@@ -13,7 +13,7 @@ public:
         // get param
         double max_vel = this->declare_parameter("control.trans_vel", 2.0);
         double max_omega = this->declare_parameter("control.rot_vel", 3.0);
-        double aim_sens = this->declare_parameter("control.aim_sensitivity", 1.57);
+        double aim_sens = this->declare_parameter("control.stick_sens", 1.57);
         double deadzone = this->declare_parameter("control.deadzone", 0.05);
         RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, aim_sens: %f, deadzone: %f",
             max_vel, max_omega, aim_sens, deadzone);
