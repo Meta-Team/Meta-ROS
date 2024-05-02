@@ -2,12 +2,14 @@
 #include "dji_controller/can_driver.hpp"
 #include "dji_controller/can_port.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include <chrono>
 #include <cstdint>
 #include <cstdio>
 #include <linux/can.h>
 #include <memory>
 #include <queue>
 #include <rclcpp/logging.hpp>
+#include <rclcpp/utilities.hpp>
 #include <string>
 #include <tuple>
 
@@ -34,6 +36,28 @@ DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_p
 
     instances.push_back(std::shared_ptr<DjiDriver>(this));
     set_port(can_port.back() - '0');
+
+    last_command = 0.0;
+    timeout_thread = std::thread(&DjiDriver::check_timeout, this);
+}
+
+DjiDriver::~DjiDriver()
+{
+    if (timeout_thread.joinable()) timeout_thread.join();
+}
+
+void DjiDriver::check_timeout()
+{
+    rclcpp::sleep_for(std::chrono::seconds(1));
+    while (rclcpp::ok())
+    {
+        if (rclcpp::Clock().now().seconds() - last_command > 1.0)
+        {
+            current = 0.0;
+            RCLCPP_INFO(rclcpp::get_logger("dji_driver"), "Motor %s timeout, stop the motor", rid.c_str());
+        }
+        rclcpp::sleep_for(std::chrono::milliseconds(100));
+    }
 }
 
 void DjiDriver::set_port(int port)
@@ -59,6 +83,7 @@ void DjiDriver::rx_loop(int port)
 
 void DjiDriver::set_goal(double goal_pos, double goal_vel, double goal_cur)
 {
+    last_command = rclcpp::Clock().now().seconds();
     this->goal_pos = goal_pos;
     this->goal_vel = goal_vel;
     this->current = goal_cur;

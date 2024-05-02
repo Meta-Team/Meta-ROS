@@ -42,7 +42,6 @@ class DjiDriver
 private:
     static umap<int, unique_ptr<CanPort>> can_ports; /**< Array of pointers to the CAN port instances. */
     static umap<int, std::thread> rx_threads; /**< Array of threads for the feedback loop. */
-
     /**
      * @brief A vector of shared pointers to the DjiDriver instances.
      * Used for feedback loop for processing received data.
@@ -62,6 +61,15 @@ private:
     double goal_vel{}; /**< Desired velocity of the motor. */
     double current{}; /**< Current value of the motor. */
 
+    double last_command; /**< When the motor receives the last command. */
+    std::thread timeout_thread; /**< Thread for checking timeout. */
+
+    /**
+     * @brief Check if the motor is timed out.
+     * If the motor is timed out, the current value is set to zero.
+     */
+    void check_timeout(); /**< Check if the motor is timed out. */
+
     /**
      * @brief Convert velocity to current using PID control.
      * This depends on member variables `goal_vel`, `present_data.velocity`.
@@ -80,6 +88,7 @@ private:
     /**
      * @brief Set the CAN port number of this motor, and add it to the array of CAN ports.
      * @param port The port number.
+     * @note This create a new feedback loop thread if the port is not in the array.
      */
     void set_port(int port);
 
@@ -101,6 +110,11 @@ public:
      * @param port The port name of the CAN bus.
      */
     DjiDriver(const string& rid, int hid, string type, string port);
+
+    /**
+     * @brief Destructor for DjiDriver class.
+     */
+    ~DjiDriver();
     
     /**
      * @brief Set the desired position and velocity for the motor.

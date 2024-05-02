@@ -2,6 +2,7 @@
 #define DM_DRIVER_H
 
 #include "can_driver.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 #include "cstdint"
 #include <bits/stdint-uintn.h>
@@ -11,6 +12,8 @@
 #include <string>
 #include <thread>
 #include <tuple>
+#include <unordered_map>
+#include <vector>
 
 #define START_CMD {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfc}
 #define STOP_CMD {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfd}
@@ -27,32 +30,43 @@
 #define KD_MIN 0.0
 #define KD_MAX 5.0
 
+#define umap std::unordered_map
+
 /**
  * @brief The DmDriver class represents a driver for a DM motor.
- * 
- * This class provides functionality to control a DM motor, including turning it on and off,
- * setting the mode, velocity, and position of the motor, and performing data conversion.
- * 
  * The DmDriver class is an abstract base class, which means it cannot be instantiated directly.
  * Derived classes must implement the pure virtual functions set_mode(), set_velocity(), and set_position().
- * 
- * The DmDriver class also contains a static member variable can_0, which represents the CAN driver used for communication.
- * 
- * @note The DmDriver class assumes the use of the can_frame structure for CAN communication.
  */
 class DmDriver
 {
 protected:
-    static std::unique_ptr<CanDriver> can_0; ///< The CAN driver used for communication.
+    static umap<int, std::unique_ptr<CanDriver>> can_drivers; /**< Array of pointers to the CAN port instances. */
+    static umap<int, can_frame> rx_frames; /**< Array of receiving frames. */
+    static umap<int, std::thread> rx_threads; /**< Array of threads for the feedback loop. */
+    /**
+     * @brief A vector of shared pointers to the DjiDriver instances.
+     * Used for feedback loop for processing received data.
+     */
+    static std::vector<std::shared_ptr<DmDriver>> instances;
+
     can_frame tx_frame; ///< The CAN frame used for transmitting data.
-    can_frame rx_frame; ///< The CAN frame used for receiving data.
     float position; ///< The current position of the motor in rad.
     float velocity; ///< The current velocity of the motor in rad/s.
     float torque; ///< The current torque of the motor.
+    int port; ///< The port number of the CAN driver.
+
+    float last_command; ///< When the motor receives the last command.
+    std::thread timeout_thread; ///< The thread for the timeout.
 
 public:
     int hid; ///< Hardware ID of the motor controlled by the driver.
     std::string rid; ///< ROS ID of the motor controlled by the driver.
+
+    /**
+     * @brief Constructor for the DmDriver class.
+     * Start the timeout thread.
+     */
+    DmDriver(std::string port);
 
     /**
      * @brief Destructor for the DmDriver class.
@@ -97,15 +111,15 @@ public:
     void tx() const;
 
     /**
-     * @brief Receive the frame.
-     * This would write the received frame to the rx_frame.
-     */
-    void rx();
-
-    /**
      * @brief Processes the received frame and updates the present data.
      */
     void process_rx();
+
+    /**
+     * @brief Checks if the motor has timed out.
+     * @note This function is called by the timeout_thread.
+     */
+    void check_timeout();
 
     /**
      * @brief Gets the state of the motor.
@@ -134,6 +148,19 @@ public:
      * @return The converted integer value.
      */
     static int float_to_uint(float x, float x_min, float x_max, int bits);
+
+private:
+    /**
+     * @brief Set the CAN port number of this motor, and add it to the array of CAN ports.
+     * @param port The port number.
+     * @note This create a new feedback loop thread if the port is not in the array.
+     */
+    void set_port(int port);
+
+    /**
+     * @brief The feedback loop for the CAN driver.
+     */
+    void rx_loop(int port);
 };
 
 /**
@@ -155,7 +182,7 @@ public:
      * @param kp The proportional gain value.
      * @param kd The derivative gain value.
      */
-    DmMitDriver(const std::string& rid, int hid, float kp, float kd);
+    DmMitDriver(const std::string& rid, int hid, float kp, float kd, std::string port);
 
     /**
      * @brief Sets the mode of the DM device.
@@ -199,7 +226,7 @@ public:
      * @param rid The ID of the DM motor.
      * @param hid The hardware ID of the DM motor.
      */
-    DmVelDriver(const std::string& rid, int hid);
+    DmVelDriver(const std::string& rid, int hid, std::string port);
 
     /**
      * @brief Sets the mode of the DM motor.

@@ -62,6 +62,8 @@ private:
         motor_hids = this->declare_parameter("motor.hids", motor_hids);
         std::vector<std::string> motor_types{};
         motor_types= this->declare_parameter("motor.types", motor_types);
+        std::vector<std::string> motor_ports{};
+        motor_ports = this->declare_parameter("motor.ports", motor_ports);
         kps = this->declare_parameter("motor.p2v.kps", kps);
         kis = this->declare_parameter("motor.p2v.kis", kis);
 
@@ -72,14 +74,15 @@ private:
             dm_motor_count++;
             std::string rid = motor_rids[i];
             int hid = motor_hids[i];
+            std::string port = motor_ports[i];
 
             if (motor_types[i] == "VEL")
             {
-                dm_driver_.push_back(std::make_unique<DmVelDriver>(rid, hid));
+                dm_driver_.push_back(std::make_unique<DmVelDriver>(rid, hid, port));
             }
             else if (motor_types[i] == "MIT")
             {
-                dm_driver_.push_back(std::make_unique<DmMitDriver>(rid, hid, kps[i], kis[i]));
+                dm_driver_.push_back(std::make_unique<DmMitDriver>(rid, hid, kps[i], kis[i], port));
             }
             else {
                 RCLCPP_WARN(this->get_logger(), "Motor %s type %s not supported", rid.c_str(), motor_types[i].c_str());

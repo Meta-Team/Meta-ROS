@@ -1,11 +1,16 @@
 #include "dm_controller/dm_driver.h"
+#include <chrono>
 #include <cstdio>
+#include <string>
 
 /***********************************************
  * DmDriver is the base class for all drivers.
  ***********************************************/
 
-std::unique_ptr<CanDriver> DmDriver::can_0 = std::make_unique<CanDriver>(0);
+umap<int, std::unique_ptr<CanDriver>> DmDriver::can_drivers;
+umap<int, can_frame> DmDriver::rx_frames;
+umap<int, std::thread> DmDriver::rx_threads;
+std::vector<std::shared_ptr<DmDriver>> DmDriver::instances;
 
 float DmDriver::uint_to_float(int x_int, float x_min, float x_max, int bits)
 {
@@ -22,6 +27,28 @@ int DmDriver::float_to_uint(float x, float x_min, float x_max, int bits){
     return (int) ((x-offset)*((float)((1<<bits)-1))/span);
 }
 
+DmDriver::DmDriver(std::string port)
+{
+    instances.push_back(std::shared_ptr<DmDriver>(this));
+    set_port(port.back() - '0');
+    last_command = 0.0;
+    timeout_thread = std::thread(&DmDriver::check_timeout, this);
+}
+
+void DmDriver::check_timeout()
+{
+    rclcpp::sleep_for(std::chrono::seconds(1));
+    while (rclcpp::ok())
+    {
+        if (rclcpp::Clock().now().seconds() - last_command > 1.0)
+        {
+            turn_off();
+            RCLCPP_INFO(rclcpp::get_logger("dm_driver"), "Motor %s timeout, stop the motor", rid.c_str());
+        }
+        rclcpp::sleep_for(std::chrono::milliseconds(100));
+    }
+}
+
 void DmDriver::turn_on()
 {
     auto frame_temp = tx_frame;
@@ -30,8 +57,6 @@ void DmDriver::turn_on()
     tx_frame.can_dlc = 0x08;
     memcpy(tx_frame.data, start_cmd, sizeof(start_cmd));
     tx();
-        
-    // printf("turn-on frame sent\n");
     tx_frame = frame_temp;
 }
 
@@ -43,29 +68,24 @@ void DmDriver::turn_off()
     tx_frame.can_dlc = 0x08;
     memcpy(tx_frame.data, stop_cmd, sizeof(stop_cmd));
     tx();
-
-    // printf("turn-off frmae sent\n");
     tx_frame.can_dlc = dlc_temp;
 }
 
 DmDriver::~DmDriver()
 {
     turn_off();
-    // printf("DmDriver deleted\n");
+    if (timeout_thread.joinable()) timeout_thread.join();
 }
 
 void DmDriver::tx() const
 {
-    can_0->send_frame(tx_frame);
-}
-
-void DmDriver::rx()
-{
-    can_0->get_frame(rx_frame);
+    can_drivers[port]->send_frame(tx_frame);
 }
 
 void DmDriver::process_rx()
 {
+    auto& rx_frame = rx_frames[port];
+
     // check if the frame is for this driver
     if (static_cast<int>(rx_frame.can_id) != this->hid) return;
 
@@ -85,11 +105,34 @@ std::tuple<float, float, float> DmDriver::get_state() const
     return std::make_tuple(position, velocity, torque);
 }
 
+void DmDriver::set_port(int port)
+{
+    this->port = port;
+    if (can_drivers.find(port) == can_drivers.end())
+    {
+        can_drivers[port] = std::make_unique<CanDriver>(port);
+        rx_threads[port] = std::thread(&DmDriver::rx_loop, this, port);
+    }
+}
+
+void DmDriver::rx_loop(int port)
+{
+    auto& can_driver = can_drivers[port];
+    auto& can_frame = rx_frames[port];
+    while (rclcpp::ok())
+    {
+        can_driver->get_frame(can_frame);
+        for (auto& instance : instances)
+            instance->process_rx();
+    }
+}
+
 /*************************************************************************************
  * DmMitDriver is a subclass of DmDriver that represents a specific type of driver.
  ************************************************************************************/
 
-DmMitDriver::DmMitDriver(const std::string& rid, int hid, float kp, float kd)
+DmMitDriver::DmMitDriver(const std::string& rid, int hid, float kp, float kd, std::string port)
+    : DmDriver(port)
 {
     printf("DmMitDriver created\n");
     this->rid = rid;
@@ -123,6 +166,7 @@ void DmMitDriver::set_param_mit(float kp, float kd)
 
 void DmMitDriver::set_velocity(float goal_vel)
 {
+    last_command = rclcpp::Clock().now().seconds();
     uint32_t uint_vel = float_to_uint(goal_vel, -V_MAX, V_MAX, 12);
     tx_frame.data[3] &= 0x0f;
     tx_frame.data[3] |= (uint_vel & 0x0f) << 4;
@@ -132,22 +176,19 @@ void DmMitDriver::set_velocity(float goal_vel)
 
 void DmMitDriver::set_position(float goal_pos)
 {
+    last_command = rclcpp::Clock().now().seconds();
     uint32_t uint_pos = float_to_uint(goal_pos, -P_MAX, P_MAX, 16);
     tx_frame.data[1] = uint_pos & 0x0ff;
     tx_frame.data[0] = uint_pos >> 8;
     tx();
-    printf("frame sent: ");
-    for (int i = 0; i < 8; i++) {
-        printf("%02X ", tx_frame.data[i]);
-    }
-    printf("\n");
 }
 
 /*************************************************************************************
  * DmVelDriver is a subclass of DmDriver that represents a specific type of driver.
  ************************************************************************************/
 
-DmVelDriver::DmVelDriver(const std::string& rid, int hid)
+DmVelDriver::DmVelDriver(const std::string& rid, int hid, std::string port)
+    : DmDriver(port)
 {
     this->hid = hid;
     this->rid = rid;
@@ -162,6 +203,7 @@ void DmVelDriver::set_mode()
 
 void DmVelDriver::set_velocity(float goal_vel)
 {
+    last_command = rclcpp::Clock().now().seconds();
     float temp_vel = goal_vel;
     uint32_t* pvel;
     pvel = (uint32_t*) &temp_vel;
@@ -171,6 +213,7 @@ void DmVelDriver::set_velocity(float goal_vel)
 
 void DmVelDriver::set_position(float /*goal_pos*/)
 {
+    last_command = rclcpp::Clock().now().seconds();
     // set_position invalid for velocity mode, do nothing
     return;
 }
