@@ -37,6 +37,7 @@ void DbusInterpreter::check_timeout()
     {
         if (rclcpp::Clock().now().seconds() - last_op > 0.5)
         {
+            active = false;
             move_msg_->vel_x = 0.0;
             move_msg_->vel_y = 0.0;
             move_msg_->omega = 0.0;

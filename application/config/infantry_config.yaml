@@ -10,7 +10,7 @@
       rot_vel: 8.0 # rad/s
       stick_sens: 3.14 # rad/s
       mouse_sens: 10.0
-      interfere_sensitivity: 0.628 # rad/s
+      interfere_sens: 0.05 # ratio
       deadzone: 0.15 # percentage
     
     chassis:

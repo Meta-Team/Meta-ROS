@@ -98,7 +98,7 @@ private:
     double mouse_x, mouse_y, mouse_z;
 
     // params
-    double max_vel, max_omega, max_feed, mac_shoot, aim_sensitive, interfere_sensitive;
+    double max_vel, max_omega, max_feed, mac_shoot, aim_sens, itf_sens;
 
     // buffers
     double manual_yaw = 0, manual_pitch = 0;

@@ -1,7 +1,8 @@
 #include "joy_vehicle/joy_interpreter.h"
+#include <cmath>
 
 JoyInterpreter::JoyInterpreter(float max_vel, float max_omega, float aim_sens, float deadzone)
-    : max_vel(max_vel), max_omega(max_omega), aim_sensitive(aim_sens), deadzone(deadzone)
+    : max_vel(max_vel), max_omega(max_omega), aim_sens(aim_sens), deadzone(deadzone)
 {
     // initialize buttons and axes
     lb = rb = a = b = x = y = up = down = left = right = false;
@@ -11,6 +12,20 @@ JoyInterpreter::JoyInterpreter(float max_vel, float max_omega, float aim_sens, f
     move_ = std::make_shared<Move>();
     shoot_ = std::make_shared<Shoot>();
     aim_ = std::make_shared<Aim>();
+
+    // initialize update thread
+    update_thread = std::thread([this](){
+        while (rclcpp::ok())
+        {
+            update();
+            std::this_thread::sleep_for(std::chrono::milliseconds(PERIOD));
+        }
+    });
+}
+
+JoyInterpreter::~JoyInterpreter()
+{
+    if (update_thread.joinable()) update_thread.join();
 }
 
 void JoyInterpreter::input(const sensor_msgs::msg::Joy::SharedPtr msg)
@@ -36,8 +51,8 @@ void JoyInterpreter::update()
     move_->vel_x = max_vel * ls_x;
     move_->vel_y = max_vel * ls_y;
     move_->omega = max_omega * (rt - lt) / 2;
-    aim_->pitch += aim_sensitive * rs_x * PERIOD / 1000; curb(aim_->pitch, PI / 2);
-    aim_->yaw += aim_sensitive * rs_y * PERIOD / 1000;
+    aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_2);
+    aim_->yaw += aim_sens * rs_y * PERIOD / 1000;
     shoot_->fric_state = lb;
     shoot_->feed_state = rb;
 }

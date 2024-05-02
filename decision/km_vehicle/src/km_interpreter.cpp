@@ -2,7 +2,7 @@
 #include <cmath>
 
 KmInterpreter::KmInterpreter(double max_vel, double max_omega, double aim_sens, double interfere_sens)
-    : max_vel(max_vel), max_omega(max_omega), aim_sensitive(aim_sens), interfere_sensitive(interfere_sens)
+    : max_vel(max_vel), max_omega(max_omega), aim_sens(aim_sens), itf_sens(interfere_sens)
 {
     // initialize buttons and axes
     w = a = s = d = shift = ctrl = q = e = r = f = g = z = x = c = v = b = false;
@@ -71,19 +71,20 @@ void KmInterpreter::interpret()
     // shoot
     if (r) shoot_->fric_state = !shoot_->fric_state; // toggle fric
     shoot_->feed_state = left_button;
+    if (shoot_->feed_state) shoot_->fric_state = true; // fric must be on when feeding
     // aim
     mode = right_button ? AUTO : MANUAL;
     if (mode == AUTO && rclcpp::Clock().now().seconds() - last_auto_time < 0.2)
     {
-        manual_yaw += mouse_x * interfere_sensitive * PERIOD / 1000;
-        manual_pitch += mouse_y * interfere_sensitive * PERIOD / 1000;
+        manual_yaw += mouse_x * itf_sens * aim_sens * PERIOD / 1000;
+        manual_pitch += mouse_y * itf_sens * aim_sens * PERIOD / 1000;
         aim_->yaw = auto_yaw + manual_yaw;
         aim_->pitch = auto_pitch + manual_pitch;
     }
     else // auto aim inactive, or timeout
     {
-        aim_->yaw += mouse_x * aim_sensitive * PERIOD / 1000;
-        aim_->pitch += mouse_y * aim_sensitive * PERIOD / 1000;
+        aim_->yaw += mouse_x * aim_sens * PERIOD / 1000;
+        aim_->pitch += mouse_y * aim_sens * PERIOD / 1000;
     }
 
     // curb values

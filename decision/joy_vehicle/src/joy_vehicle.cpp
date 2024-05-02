@@ -1,9 +1,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "joy_vehicle/joy_interpreter.h"
 #include <memory>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/publisher.hpp>
-#include <rclcpp/timer.hpp>
+
+#define UPDATE_RATE 15 // ms
 
 class JoyVehicle : public rclcpp::Node
 {
@@ -30,7 +29,7 @@ public:
 
         // timer
         timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(PERIOD), [this](){
+            std::chrono::milliseconds(UPDATE_RATE), [this](){
                 timer_callback();
             });
 
@@ -52,7 +51,6 @@ private:
 
     void timer_callback()
     {
-        interpreter_->update();
         move_pub_->publish(*interpreter_->get_move());
         shoot_pub_->publish(*interpreter_->get_shoot());
         aim_pub_->publish(*interpreter_->get_aim());
