@@ -91,10 +91,10 @@ public:
 
     void get_offsets()
     {
-        double lf = this->declare_parameter("offsets.LF", 0.0);
-        double rf = this->declare_parameter("offsets.RF", 0.0);
-        double lb = this->declare_parameter("offsets.LB", 0.0);
-        double rb = this->declare_parameter("offsets.RB", 0.0);
+        double lf = this->declare_parameter("chassis.offsets.LF", 0.0);
+        double rf = this->declare_parameter("chassis.offsets.RF", 0.0);
+        double lb = this->declare_parameter("chassis.offsets.LB", 0.0);
+        double rb = this->declare_parameter("chassis.offsets.RB", 0.0);
         AgvKinematics::offsets["LF_D"] = lf;
         AgvKinematics::offsets["RF_D"] = rf;
         AgvKinematics::offsets["LB_D"] = lb;

@@ -120,14 +120,9 @@ void AgvKinematics::add_group_goal(MotorGoal &motor_goal, const string& which, d
         // pos[dir_id] does not change
         vel[vel_id] = 0;
     }
-    else if (is_zero(vx)) // left or right
+    else
     {
-        pos[dir_id] = M_PI_2;
-        vel[vel_id] = vy;
-    }
-    else // general case
-    {
-        pos[dir_id] = atan(vy / vx);
+        pos[dir_id] = atan2(vy, vx);
         vel[vel_id] = velocity;
     }
 

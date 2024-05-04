@@ -1,7 +1,10 @@
 /agv_chassis:
   ros__parameters:
-    offsets:
-      LF: 0.0
-      LB: 0.0
-      RB: 0.0
-      RF: 0.0
+
+    chassis:
+      move_mode: "chassis"
+      offsets:
+        LF: 0.0
+        LB: 0.0
+        RB: 0.0
+        RF: 0.0

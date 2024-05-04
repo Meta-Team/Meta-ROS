@@ -17,6 +17,14 @@ public:
         RCLCPP_INFO(get_logger(), "max_vel: %f, aim_sens: %f", max_vel, aim_sens);
 
         interpreter_ = std::make_unique<DbusInterpreter>(max_vel, aim_sens);
+
+        move_pub_ = this->create_publisher<behavior_interface::msg::Move>("move", 10);
+        dbus_control_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
+            "dbus_control", 10, std::bind(&DbusEngineer::dbus_callback, this, std::placeholders::_1));
+        pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_RATE),
+            std::bind(&DbusEngineer::pub_callback, this));
+
+        RCLCPP_INFO(get_logger(), "DbusEngineer initialized");
     };
 
 private:

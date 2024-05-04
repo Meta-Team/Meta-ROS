@@ -13,7 +13,7 @@
 
 #define NaN std::nan("")
 
-#define TRIGGER 0.05 // a vel is considered to be zero if its absolute value is less than TRIGGER
+#define TRIGGER 0.2 // a vel is considered to be zero if its absolute value is less than TRIGGER
 
 #define DIR -1 // -1 if direction motors take clockwise as positive, 1 if counterclockwise
 

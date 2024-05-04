@@ -5,7 +5,7 @@
 DbusControl::DbusControl(const rclcpp::NodeOptions & options)
 {
     node_ = rclcpp::Node::make_shared("dbus_control", options);
-    std::string port = node_->declare_parameter("dbus_port", "ttyUSB1");
+    std::string port = node_->declare_parameter("dbus_port", "ttyUSB0");
     dbus = std::make_unique<Dbus>("/dev/" + port);
 
     dbus_pub_ = node_->create_publisher<operation_interface::msg::DbusControl>("dbus_control", 10);

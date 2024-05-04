@@ -22,10 +22,4 @@ def generate_launch_description():
             name='dji_controller',
             parameters=[config],
         ),
-        # Node(
-        #     package='dm_controller',
-        #     executable='dm_controller',
-        #     name='dm_controller',
-        #     parameters=[config],
-        # )
     ])

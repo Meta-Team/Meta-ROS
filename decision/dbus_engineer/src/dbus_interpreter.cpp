@@ -24,7 +24,7 @@ void DbusInterpreter::dbus_input(const DbusControl::SharedPtr dbus_msg)
     active = dbus_msg->rsw == 2 ? false : true; // MY_TODO: check the value
     move_msg_->vel_x = dbus_msg->ls_x * max_vel;
     move_msg_->vel_y = dbus_msg->ls_y * max_vel;
-    move_msg_->omega = dbus_msg->rs_x * aim_sens;
+    move_msg_->omega = dbus_msg->rs_y * aim_sens;
 }
 
 void DbusInterpreter::check_timeout()
