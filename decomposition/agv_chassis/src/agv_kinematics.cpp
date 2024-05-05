@@ -120,11 +120,17 @@ void AgvKinematics::add_group_goal(MotorGoal &motor_goal, const string& which, d
         // pos[dir_id] does not change
         vel[vel_id] = 0;
     }
-    else
+    else if (vx >= 0)
     {
         pos[dir_id] = atan2(vy, vx);
         vel[vel_id] = velocity;
     }
+    else // vx < 0
+    {
+        pos[dir_id] = atan2(-vy, -vx);
+        vel[vel_id] = -velocity;
+    }
+    // pos is kept between -pi/2 and pi/2
 
     add_vel_goal(motor_goal, vel_id, vel[vel_id]); // MY_TODO: check this
     add_pos_goal(motor_goal, dir_id, pos[dir_id]);
