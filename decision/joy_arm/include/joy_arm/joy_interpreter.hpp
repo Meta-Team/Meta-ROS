@@ -3,10 +3,9 @@
 
 #include "sensor_msgs/msg/joy.hpp"
 #include "behavior_interface/msg/end_vel.hpp"
-#include <behavior_interface/msg/detail/end_vel__struct.hpp>
+#include <thread>
 
 #define PERIOD 10 // ms
-#define PI 3.1415926f
 
 using sensor_msgs::msg::Joy;
 using behavior_interface::msg::EndVel;
@@ -16,9 +15,9 @@ class JoyInterpreter
 public:
     JoyInterpreter(double linear, double angular, double deadzone);
 
-    void input(const Joy::SharedPtr msg);
+    ~JoyInterpreter();
 
-    void update();
+    void input(const Joy::SharedPtr msg);
 
     EndVel::SharedPtr get_end_vel() const;
 
@@ -33,6 +32,10 @@ private:
     void apply_deadzone(double& val);
 
     void curb(double& val, double max_val);
+
+    std::thread update_thread;
+
+    void update();
 };
 
 #endif // JOY_INTERPRETER_HPP

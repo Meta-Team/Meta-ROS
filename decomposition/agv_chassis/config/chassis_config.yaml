@@ -5,6 +5,6 @@
       move_mode: "chassis"
       offsets:
         LF: 0.0
-        LB: 0.0
-        RB: 0.0
-        RF: 0.0
+        LB: 0.48
+        RB: -2.67
+        RF: -3.14

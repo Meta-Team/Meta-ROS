@@ -1,12 +1,11 @@
 #include "rclcpp/rclcpp.hpp"
-#include "joy_arm/joy_interpreter.hpp"
+#include "dbus_arm/dbus_interpreter.h"
+#include <operation_interface/msg/detail/dbus_control__struct.hpp>
 
-#define PUB_RATE 15 // ms
-
-class JoyArm : public rclcpp::Node
+class DbusArm : public rclcpp::Node
 {
 public:
-    JoyArm() : Node("joy_arm")
+    DbusArm() : Node("dbus_arm")
     {
         // get param
         double linear_vel = this->declare_parameter("control.end_linear_vel", 0.3);
@@ -15,30 +14,29 @@ public:
         RCLCPP_INFO(this->get_logger(), "linear_vel: %f, angular_vel: %f, deadzone: %f",
             linear_vel, angular_vel, deadzone);
 
-        interpreter_ = std::make_unique<JoyInterpreter>(linear_vel, angular_vel, deadzone);
+        interpreter_ = std::make_unique<DbusInterpreter>(linear_vel, angular_vel, deadzone);
 
         // pub and sub
         end_vel_pub_ = this->create_publisher<behavior_interface::msg::EndVel>("end_vel", 10);
-        joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
-            "joy", 10,
-            std::bind(&JoyArm::joy_callback, this, std::placeholders::_1));
+        dbus_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
+            "dbus_control", 10,
+            std::bind(&DbusArm::dbus_callback, this, std::placeholders::_1));
 
         // timer
         timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(PUB_RATE), [this](){
+            std::chrono::milliseconds(PERIOD), [this](){
                 timer_callback();
             });
 
-        RCLCPP_INFO(this->get_logger(), "JoyArm initialized.");
+        RCLCPP_INFO(this->get_logger(), "DbusArm initialized.");
     }
-
 private:
-    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
-    std::unique_ptr<JoyInterpreter> interpreter_;
+    rclcpp::Subscription<operation_interface::msg::DbusControl>::SharedPtr dbus_sub_;
+    std::unique_ptr<DbusInterpreter> interpreter_;
     rclcpp::Publisher<behavior_interface::msg::EndVel>::SharedPtr end_vel_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
-    void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
+    void dbus_callback(const operation_interface::msg::DbusControl msg)
     {
         interpreter_->input(msg);
     }
@@ -52,7 +50,7 @@ private:
 int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
-    auto node_ = std::make_shared<JoyArm>();
+    auto node_ = std::make_shared<DbusArm>();
     rclcpp::spin(node_);
     rclcpp::shutdown();
     return 0;

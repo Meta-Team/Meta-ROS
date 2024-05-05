@@ -1,4 +1,5 @@
 #include "joy_arm/joy_interpreter.hpp"
+#include <rclcpp/utilities.hpp>
 
 JoyInterpreter::JoyInterpreter(double linear, double angular, double deadzone)
     : linear_v(linear), angular_v(angular), deadzone(deadzone)
@@ -9,6 +10,20 @@ JoyInterpreter::JoyInterpreter(double linear, double angular, double deadzone)
 
     // initialize end_vel
     end_vel_ = std::make_shared<EndVel>();
+
+    // start update thread
+    update_thread = std::thread([this](){
+        while (rclcpp::ok())
+        {
+            update();
+            std::this_thread::sleep_for(std::chrono::milliseconds(PERIOD));
+        }
+    });
+}
+
+JoyInterpreter::~JoyInterpreter()
+{
+    if (update_thread.joinable()) update_thread.join();
 }
 
 void JoyInterpreter::input(const sensor_msgs::msg::Joy::SharedPtr msg)
