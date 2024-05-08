@@ -3,7 +3,7 @@
 #include <cmath>
 
 #if IMU_FB == false
-Gimbal::Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, float comp)
+Gimbal::Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, double comp)
 {
     yaw_p2v_param = yaw_p2v;
     pitch_p2v_param = pitch_p2v;
@@ -34,56 +34,50 @@ Gimbal::Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, PidParam yaw_v2v, PidParam 
 }
 #endif // IMU_FB
 
-void Gimbal::set_goal(float goal_yaw_pos, float goal_pitch_pos)
+void Gimbal::set_goal(double goal_yaw_pos, double goal_pitch_pos)
 {
     this->goal_yaw_pos = goal_yaw_pos;
     this->goal_pitch_pos = goal_pitch_pos;
     curb(goal_pitch_pos, 15.0f / 180.0f * 3.1415926f); // 15 degree
 }
 
-void Gimbal::update_omega(float omega)
+void Gimbal::update_omega(double omega)
 {
     this->omega = omega;
 }
 
-void Gimbal::update_pos_feedback(float yaw_pos, float pitch_pos)
+void Gimbal::update_pos_feedback(double yaw_pos, double pitch_pos)
 {
     this->current_pitch_pos = pitch_pos;
     this->current_yaw_pos = yaw_pos;
 }
 
 #if IMU_FB == true
-void Gimbal::update_vel_feedback(float yaw_vel, float pitch_vel)
+void Gimbal::update_vel_feedback(double yaw_vel, double pitch_vel)
 {
     this->current_pitch_vel = pitch_vel;
     this->current_yaw_vel = yaw_vel;
 }
 #endif // IMU_FB
 
-void Gimbal::curb(float &val, float max)
+void Gimbal::curb(double &val, double max)
 {
     if (val > max) val = max;
     else if (val < -max) val = -max;
 }
 
-float Gimbal::min_error(float goal, float current)
+double Gimbal::min_error(double goal, double current)
 {
-    float upper_goal = goal + 2 * M_PI;
-    float lower_goal = goal - 2 * M_PI;
-
-    auto closer = [current](const float a, const float b) -> bool {
-        return std::abs(a - current) < std::abs(b - current);
-    };
-
-    const auto real_goal = std::min({upper_goal, goal, lower_goal}, closer);
-
-    return real_goal - current;
+    double diff = goal - current;
+    while (diff > M_PI) diff -= 2 * M_PI;
+    while (diff < -M_PI) diff += 2 * M_PI;
+    return diff;
 }
 
 void Gimbal::calc_vel()
 {
     // yaw
-    float prev_yaw_pos_error = yaw_pos_error;
+    double prev_yaw_pos_error = yaw_pos_error;
     yaw_pos_error = min_error(goal_yaw_pos, current_yaw_pos);
     yaw_p2v_output.p = yaw_p2v_param.kp * yaw_pos_error;
     yaw_p2v_output.i += yaw_p2v_param.ki * yaw_pos_error * DT; curb(yaw_p2v_output.i, V_MAX / 2.0f);
@@ -96,7 +90,7 @@ void Gimbal::calc_vel()
     curb(goal_yaw_vel, V_MAX);
 
     // pitch
-    float prev_pitch_pos_error = pitch_pos_error;
+    double prev_pitch_pos_error = pitch_pos_error;
     pitch_pos_error = min_error(goal_pitch_pos, current_pitch_pos); // not that necessary
     pitch_p2v_output.p = pitch_p2v_param.kp * pitch_pos_error;
     pitch_p2v_output.i += pitch_p2v_param.ki * pitch_pos_error * DT; curb(pitch_p2v_output.i, V_MAX / 2.0f);
@@ -109,7 +103,7 @@ void Gimbal::calc_vel()
 void Gimbal::calc_vol()
 {
     // yaw
-    float prev_yaw_vel_error = yaw_vel_error;
+    double prev_yaw_vel_error = yaw_vel_error;
     yaw_vel_error = goal_yaw_vel - current_yaw_vel;
     yaw_v2v_output.p = yaw_v2v_param.kp * yaw_vel_error;
     yaw_v2v_output.i += yaw_v2v_param.ki * yaw_vel_error * DT; curb(yaw_v2v_output.i, V_MAX / 2.0f);
@@ -118,7 +112,7 @@ void Gimbal::calc_vol()
     curb(goal_yaw_vol, V_MAX);
 
     // pitch
-    float prev_pitch_vel_error = pitch_vel_error;
+    double prev_pitch_vel_error = pitch_vel_error;
     pitch_vel_error = goal_pitch_vel - current_pitch_vel;
     pitch_v2v_output.p = pitch_v2v_param.kp * pitch_vel_error;
     pitch_v2v_output.i += pitch_v2v_param.ki * pitch_vel_error * DT; curb(pitch_v2v_output.i, V_MAX / 2.0f);

@@ -16,13 +16,13 @@ unordered_map<string, double> AgvKinematics::vel =
     {"RB_V", 0.0},
 }; // m/s
 
-unordered_map<string, double> AgvKinematics::pos = 
+unordered_map<string, pair<int, double>> AgvKinematics::pos = 
 {
-    // {rid, pos}
-    {"LF_D", 0.0},
-    {"RF_D", 0.0},
-    {"LB_D", 0.0},
-    {"RB_D", 0.0},
+    // {rid, {round, angle}}
+    {"LF_D", {0, 0.0}},
+    {"RF_D", {0, 0.0}},
+    {"LB_D", {0, 0.0}},
+    {"RB_D", {0, 0.0}},
 }; // rad
 
 unordered_map<string, double> AgvKinematics::offsets =
@@ -120,20 +120,16 @@ void AgvKinematics::add_group_goal(MotorGoal &motor_goal, const string& which, d
         // pos[dir_id] does not change
         vel[vel_id] = 0;
     }
-    else if (vx >= 0)
+    else
     {
-        pos[dir_id] = atan2(vy, vx);
-        vel[vel_id] = velocity;
+        const auto& [round, angle, reverse] = closest_angle(std::atan2(vy, vx), pos[dir_id]);
+        vel[vel_id] = reverse ? -velocity : velocity;
+        pos[dir_id] = {round, angle};
     }
-    else // vx < 0
-    {
-        pos[dir_id] = atan2(-vy, -vx);
-        vel[vel_id] = -velocity;
-    }
-    // pos is kept between -pi/2 and pi/2
 
-    add_vel_goal(motor_goal, vel_id, vel[vel_id]); // MY_TODO: check this
-    add_pos_goal(motor_goal, dir_id, pos[dir_id]);
+    add_vel_goal(motor_goal, vel_id, vel[vel_id]);
+    auto cumu_pos = pos[dir_id].first * 2 * M_PI + pos[dir_id].second;
+    add_pos_goal(motor_goal, dir_id, cumu_pos);
 }
 
 double AgvKinematics::rss(double x, double y)
@@ -144,4 +140,50 @@ double AgvKinematics::rss(double x, double y)
 bool AgvKinematics::is_zero(double x)
 {
     return std::abs(x) < TRIGGER;
+}
+
+double AgvKinematics::min_diff(const double& a, const double& b)
+{
+    double diff = a - b;
+    while (diff > M_PI) diff -= 2 * M_PI;
+    while (diff < -M_PI) diff += 2 * M_PI;
+    return diff;
+}
+
+void AgvKinematics::normalize(pair<int, double>& pos)
+{
+    auto& [round, angle] = pos;
+    while (angle < 0)
+    {
+        --round;
+        angle += 2 * M_PI;
+    }
+    while (angle >= 2 * M_PI)
+    {
+        ++round;
+        angle -= 2 * M_PI;
+    }
+}
+
+tuple<int, double, bool> AgvKinematics::closest_angle(const double& new_goal, const pair<int, double>& prev_pos)
+{
+    auto result = prev_pos;
+    const auto& [prev_round, prev_angle] = prev_pos;
+    const auto diff = min_diff(prev_angle, new_goal); // prev_angle - new_goal
+
+    if (std::abs(diff) < M_PI / 2) // don't need to reverse
+    {
+        result.second = prev_angle - diff;
+        normalize(result);
+        return {result.first, result.second, false};
+    }
+    else // need to reverse
+    {
+        auto reverse_goal = new_goal + M_PI;
+        if (reverse_goal >= 2 * M_PI) reverse_goal -= 2 * M_PI;
+        const auto reverse_diff = min_diff(prev_angle, reverse_goal);
+        result.second = prev_angle - reverse_diff;
+        normalize(result);
+        return {result.first, result.second, true};
+    }
 }

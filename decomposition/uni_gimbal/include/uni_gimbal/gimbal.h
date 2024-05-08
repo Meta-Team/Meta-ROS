@@ -12,21 +12,21 @@
 
 struct PidParam
 {
-    float kp = 0.0; ///< The proportional gain of the PID controller.
-    float ki = 0.0; ///< The integral gain of the PID controller.
-    float kd = 0.0; ///< The derivative gain of the PID controller.
+    double kp = 0.0; ///< The proportional gain of the PID controller.
+    double ki = 0.0; ///< The integral gain of the PID controller.
+    double kd = 0.0; ///< The derivative gain of the PID controller.
 
-    PidParam(float kp, float ki, float kd) : kp(kp), ki(ki), kd(kd) {}
+    PidParam(double kp, double ki, double kd) : kp(kp), ki(ki), kd(kd) {}
     PidParam() : kp(0), ki(0), kd(0) {}
 };
 
 struct PidOutput
 {
-    float p = 0.0; ///< The proportional term of the PID controller.
-    float i = 0.0; ///< The integral term of the PID controller.
-    float d = 0.0; ///< The derivative term of the PID controller.
+    double p = 0.0; ///< The proportional term of the PID controller.
+    double i = 0.0; ///< The integral term of the PID controller.
+    double d = 0.0; ///< The derivative term of the PID controller.
 
-    float sum() { return p + i + d; }
+    double sum() { return p + i + d; }
 };
 
 /**
@@ -42,7 +42,7 @@ public:
      * @param pitch_p2v The position-to-velocity PID parameters for the pitch axis.
      * @param comp The ratio of compensate omega.
      */
-    Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, float comp);
+    Gimbal(PidParam yaw_p2v, PidParam pitch_p2v, double comp);
 #else // IMU_FB == true
     /**
      * @brief Construct a new Gimbal object.
@@ -64,20 +64,20 @@ public:
      * @param goal_yaw_pos The goal yaw position of the gimbal, in radians, relative to north.
      * @param goal_pitch_pos The goal pitch position of the gimbal, in radians.
      */
-    void set_goal(float goal_yaw_pos, float goal_pitch_pos);
+    void set_goal(double goal_yaw_pos, double goal_pitch_pos);
 
     /**
      * @brief Update the angular velocity of the chassis.
      * @param omega The angular velocity of the chassis, in rad/s. Positive for counterclockwise.
      */
-    void update_omega(float omega);
+    void update_omega(double omega);
 
     /**
      * @brief Update the position feedback from ahrs.
      * @param yaw_pos The current yaw position of the gimbal, in radians, relative to north.
      * @param pitch_pos The current pitch position of the gimbal, in radians.
      */
-    void update_pos_feedback(float yaw_pos, float pitch_pos);
+    void update_pos_feedback(double yaw_pos, double pitch_pos);
 
 #if IMU_FB == true
     /**
@@ -85,7 +85,7 @@ public:
      * @param yaw_vel The current yaw velocity of the gimbal, in rad/s.
      * @param pitch_vel The current pitch velocity of the gimbal, in rad/s.
      */
-    void update_vel_feedback(float yaw_vel, float pitch_vel);
+    void update_vel_feedback(double yaw_vel, double pitch_vel);
 #endif // IMU_FB
 
     /**
@@ -93,55 +93,56 @@ public:
      * @param val The value to curb.
      * @param max The maximum value.
      */
-    void curb(float &val, float max);
+    void curb(double &val, double max);
 
     /**
      * @brief Calculate the minimum error between the goal and the current position.
      * @param goal The goal position.
      * @param current The current position.
      * @return The minimum error.
+     * @note Both goal and current should be in [0, 2*M_PI).
      */
-    float min_error(float goal, float current);
+    double min_error(double goal, double current);
 
 #if IMU_FB == false
     /**
      * @brief Get the velocity of the gimbal.
      * @return The velocity of the yaw axis, in rad/s.
      */
-    [[nodiscard]] float get_yaw_vel() const { return goal_yaw_vel; }
+    [[nodiscard]] double get_yaw_vel() const { return goal_yaw_vel; }
 
     /**
      * @brief Get the velocity of the gimbal.
      * @return The velocity of the pitch axis, in rad/s.
      */
-    [[nodiscard]] float get_pitch_vel() const { return goal_pitch_vel; }
+    [[nodiscard]] double get_pitch_vel() const { return goal_pitch_vel; }
 #else // IMU_FB == true
 
     /**
      * @brief Get the voltage of the gimbal.
      * @return The voltage of the yaw axis, in V.
      */
-    [[nodiscard]] float get_yaw_vol() const { return goal_yaw_vol; }
+    [[nodiscard]] double get_yaw_vol() const { return goal_yaw_vol; }
 
     /**
      * @brief Get the voltage of the gimbal.
      * @return The voltage of the pitch axis, in V.
      */
-    [[nodiscard]] float get_pitch_vol() const { return goal_pitch_vol; }
+    [[nodiscard]] double get_pitch_vol() const { return goal_pitch_vol; }
 #endif // IMU_FB
 
 private:
-    float goal_yaw_vel = 0.0; ///< The goal yaw velocity of the gimbal, in rad/s.
-    float goal_pitch_vel = 0.0; ///< The goal pitch velocity of the gimbal, in rad/s.
+    double goal_yaw_vel = 0.0; ///< The goal yaw velocity of the gimbal, in rad/s.
+    double goal_pitch_vel = 0.0; ///< The goal pitch velocity of the gimbal, in rad/s.
 
-    float current_yaw_pos = 0.0; ///< The current yaw position of the gimbal, in radians, relative to north.
-    float current_pitch_pos = 0.0; ///< The current pitch position of the gimbal, in radians.
+    double current_yaw_pos = 0.0; ///< The current yaw position of the gimbal, in radians, relative to north.
+    double current_pitch_pos = 0.0; ///< The current pitch position of the gimbal, in radians.
 
-    float goal_yaw_pos = 0.0; ///< The goal yaw position of the gimbal, in radians, relative to north.
-    float goal_pitch_pos = 0.0; ///< The goal pitch position of the gimbal, in radians.
+    double goal_yaw_pos = 0.0; ///< The goal yaw position of the gimbal, in radians, relative to north.
+    double goal_pitch_pos = 0.0; ///< The goal pitch position of the gimbal, in radians.
 
-    float yaw_pos_error; ///< The error of the yaw position of the gimbal, in radians.
-    float pitch_pos_error; ///< The error of the pitch position of the gimbal, in radians.
+    double yaw_pos_error; ///< The error of the yaw position of the gimbal, in radians.
+    double pitch_pos_error; ///< The error of the pitch position of the gimbal, in radians.
 
     PidParam yaw_p2v_param;
     PidParam pitch_p2v_param;
@@ -150,14 +151,14 @@ private:
     PidOutput pitch_p2v_output;
 
 #if IMU_FB == true
-    float current_yaw_vel = 0.0;
-    float current_pitch_vel = 0.0;
+    double current_yaw_vel = 0.0;
+    double current_pitch_vel = 0.0;
 
-    float yaw_vel_error;
-    float pitch_vel_error;
+    double yaw_vel_error;
+    double pitch_vel_error;
 
-    float goal_yaw_vol = 0.0; ///< The goal yaw voltage of the gimbal, in rad/s.
-    float goal_pitch_vol = 0.0; ///< The goal pitch voltage of the gimbal, in rad/s.
+    double goal_yaw_vol = 0.0; ///< The goal yaw voltage of the gimbal, in rad/s.
+    double goal_pitch_vol = 0.0; ///< The goal pitch voltage of the gimbal, in rad/s.
 
     PidParam yaw_v2v_param;
     PidParam pitch_v2v_param;
@@ -166,9 +167,9 @@ private:
     PidOutput pitch_v2v_output;
 #endif // IMU_FB
 
-    float omega = 0.0; ///< The angular velocity of the chassis, in rad/s.
+    double omega = 0.0; ///< The angular velocity of the chassis, in rad/s.
 #if IMU_FB == false
-    float ratio = 0.7; ///< Ratio of compensate omega.
+    double ratio = 0.7; ///< Ratio of compensate omega.
 #endif // IMU_FB
 
     std::thread calc_thread; ///< The thread for PID calculation.

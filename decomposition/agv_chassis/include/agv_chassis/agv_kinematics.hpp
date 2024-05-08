@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <map>
+#include <tuple>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -17,7 +18,7 @@
 
 #define DIR -1 // -1 if direction motors take clockwise as positive, 1 if counterclockwise
 
-using std::string, std::unordered_map;
+using std::string, std::unordered_map, std::pair, std::tuple;
 using motor_interface::msg::MotorGoal;
 
 /**
@@ -34,7 +35,7 @@ namespace AgvKinematics
     extern double yaw_offset; ///< The feedback angle of yaw motor, when gimbal is parallel to the chassis front.
 
     extern unordered_map<string, double> vel; ///< The velocities of the motors.
-    extern unordered_map<string, double> pos; ///< The positions of the motors.
+    extern unordered_map<string, pair<int, double>> pos; ///< The positions of the motors.
     extern unordered_map<string, double> offsets; ///< The offsets of the motors.
     /**
      * @brief Decomposes a natural move message into motor goals.
@@ -108,6 +109,36 @@ namespace AgvKinematics
      * @return True if the double is zero, false otherwise.
      */
     bool is_zero(double x);
+
+    /**
+     * @brief Calculates the minimum difference between two angles.
+     * This function takes two angles a and b (in radians) and calculates the difference between them.
+     * The result is adjusted to be in the range of [-M_PI, M_PI].
+     * @param a The first angle in radians.
+     * @param b The second angle in radians.
+     * @return The minimum difference between a and b in the range of [-M_PI, M_PI].
+     */
+    double min_diff(const double& a, const double& b);
+
+    /**
+     * @brief Normalizes the angle of a position.
+     * This function takes a position represented as a pair of round and angle.
+     * It adjusts the angle to be in the range of [0, 2 * M_PI] and updates the round accordingly. 
+     * @param pos The position to be normalized, represented as a pair of round and angle.
+     */
+    void normalize(pair<int, double>& pos);
+
+    /**
+     * @brief Calculates the closest angle to a new goal from a previous position.
+     * This function takes a new goal angle and a previous position (round and angle),
+     * and calculates the closest angle to the new goal from the previous position.
+     * It also determines whether a reverse is needed based on the difference between the previous angle and the new goal.
+     * @param new_goal The new goal angle in radians.
+     * @param prev_pos The previous position, represented as a pair of [round, angle].
+     * @return A tuple [round, angle, reverse] containing the round, the closest angle to the new goal,
+     *         and a boolean indicating whether a reverse is needed.
+     */
+    tuple<int, double, bool> closest_angle(const double& new_goal, const pair<int, double>& prev_pos);
 }
 
 #endif // AGV_KINEMATICS_HPP
