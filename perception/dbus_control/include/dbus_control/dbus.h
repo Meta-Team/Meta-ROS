@@ -45,16 +45,20 @@ public:
 
 private:
     int port;
+    std::string dev_path;
     DbusData data{};
     std::array<int16_t, 18> buf{};
     bool success = false;
-    bool update = false;
+    double last_read = 0.0;
 
     std::thread read_thread;
+    std::thread timeout_thread;
 
     void unpack();
 
     void read();
+
+    void check_timeout();
 };
 
 #endif // DBUS_H

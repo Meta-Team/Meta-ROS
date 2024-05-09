@@ -4,6 +4,7 @@
     north_offset: 0.0 # rad, north against the desired front
     trans_vel: 3.0 # m/s
     rot_vel: 6.0 # rad/s
+    dbus_port: "ttyUSB1"
 
     control:
       end_linear_vel: 0.0 # m/s

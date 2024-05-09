@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <fcntl.h>
+#include <rclcpp/clock.hpp>
 #include <rclcpp/logging.hpp>
 #include <unistd.h>
 #include <cstring>
@@ -18,6 +19,7 @@ extern int ioctl(int __fd, unsigned long int __request, ...) throw();
 
 Dbus::Dbus(std::string dev_path)
 {
+    this->dev_path = dev_path;
     auto fd = open(dev_path.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
 
     termios2 options{};
@@ -25,7 +27,7 @@ Dbus::Dbus(std::string dev_path)
 
     if (fd == -1)
     {
-        RCLCPP_ERROR(rclcpp::get_logger("Dbus"), "Failed to open device %s", dev_path.c_str());
+        RCLCPP_ERROR(rclcpp::get_logger("Dbus"), "\033[31mFailed to open device %s\033[0m", dev_path.c_str());
         return;
     }
 
@@ -160,7 +162,7 @@ void Dbus::unpack()
     data.l = buf[12];
     data.r = buf[13];
     // RCLCPP_INFO(rclcpp::get_logger("Dbus"), "x: %d, y: %d, z: %d, l: %d, r: %d", data.x, data.y, data.z, data.l, data.r);
-    data.key = buf[14] | buf[15] << 8;  // key board code
+    data.key = buf[14] | buf[15] << 8;  // keyboard code
     data.wheel = (buf[16] | buf[17] << 8) - 1024;
     success = true;
 }
@@ -172,8 +174,9 @@ void Dbus::read()
     int count = 0;    // count of bit of one package
     while (timeout < 10)
     {
-        // Read a byte //
+        // Read a byte
         size_t n = ::read(port, &read_byte, sizeof(read_byte));
+        last_read = rclcpp::Clock().now().seconds();
         if (n == 0)
         {
             timeout++;
@@ -193,9 +196,19 @@ void Dbus::read()
     if (count < 17)
     {
         memset(&data, 0, sizeof(data));
-        update = false;
     }
-    else {
-        update = true;
+}
+
+void Dbus::check_timeout()
+{
+    rclcpp::sleep_for(std::chrono::seconds(1));
+    while (rclcpp::ok())
+    {
+        if (rclcpp::Clock().now().seconds() - last_read > 1.0)
+        {
+            success = false;
+            RCLCPP_WARN(rclcpp::get_logger("Dbus"), "Reading from %s timeout.", dev_path.c_str());
+        }
+        rclcpp::sleep_for(std::chrono::milliseconds(100));
     }
 }

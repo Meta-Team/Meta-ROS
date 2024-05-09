@@ -14,20 +14,33 @@ def generate_launch_description():
         'engineer_config.yaml'
     )
 
+    moveit_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('scara_moveit'),
+                        'launch/scara.py')
+        )
+    )
+
     ld = LaunchDescription([
         # percep
         Node(
-            package='dbus_control',
-            executable='dbus_control_node',
-            name='dbus_control_node',
+            package='referee_serial',
+            executable='referee_serial_node',
+            name='referee_serial_node',
             parameters=[config],
         ),
 
         # deci
         Node(
-            package='dbus_engineer',
-            executable='dbus_engineer',
-            name='dbus_engineer',
+            package='km_engineer',
+            executable='km_engineer',
+            name='km_engineer',
+            parameters=[config],
+        ),
+        Node(
+            package='cc_arm',
+            executable='cc_arm',
+            name='cc_arm',
             parameters=[config],
         ),
 
@@ -46,6 +59,14 @@ def generate_launch_description():
             name='dji_controller',
             parameters=[config],
         ),
+        Node(
+            package='unitree_controller',
+            executable='unitree_controller',
+            name='unitree_controller',
+            parameters=[config],
+        )
     ])
+
+    ld.add_action(moveit_launch)
 
     return ld
