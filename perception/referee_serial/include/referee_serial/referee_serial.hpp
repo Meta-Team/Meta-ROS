@@ -52,6 +52,8 @@ public:
      */
     rclcpp::node_interfaces::NodeBaseInterface::SharedPtr get_node_base_interface() const;
 
+private:
+
     /**
      * @brief Method to receive data from the serial port.
      * Interprets the received data and publishes it to the appropriate topic.
@@ -78,7 +80,6 @@ public:
         typename rclcpp::Publisher<MSG>::SharedPtr pub,
         const std::string frame_type);
 
-private:
     rclcpp::Node::SharedPtr node_; ///< Pointer to the ROS2 node.
     rclcpp::Publisher<operation_interface::msg::KeyMouse>::SharedPtr key_mouse_pub_;
     rclcpp::Publisher<operation_interface::msg::GameInfo>::SharedPtr game_info_pub_;
