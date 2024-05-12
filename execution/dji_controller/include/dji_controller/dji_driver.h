@@ -11,6 +11,7 @@
 #include <unordered_map>
 
 #define CALC_FREQ 1 // ms
+#define TX_FREQ 2 // ms
 
 #define I_MAX 20 // Ampere, current limit
 #define V_MAX 300 // to be tuned, velocity limit
@@ -42,6 +43,7 @@ class DjiDriver
 private:
     static umap<int, unique_ptr<CanPort>> can_ports; /**< Array of pointers to the CAN port instances. */
     static umap<int, std::thread> rx_threads; /**< Array of threads for the feedback loop. */
+    static umap<int, std::thread> tx_threads; /**< Array of threads for the transmit loop. */
     /**
      * @brief A vector of shared pointers to the DjiDriver instances.
      * Used for feedback loop for processing received data.
@@ -63,6 +65,7 @@ private:
 
     double last_command; /**< When the motor receives the last command. */
     std::thread timeout_thread; /**< Thread for checking timeout. */
+    std::thread calc_thread; /**< Thread for calculating PID control. */
 
     /**
      * @brief Check if the motor is timed out.
@@ -95,8 +98,23 @@ private:
     /**
      * @brief Receive loop for processing received data.
      * @param port The port number of the CAN bus.
+     * @note Each port should have a separate thread for receiving data.
      */
-    void rx_loop(int port);
+    static void rx_loop(int port);
+
+    /**
+     * @brief Transmit loop for sending data to the motor.
+     * @param port The port number of the CAN bus.
+     * @note Each port should have a separate thread for transmitting data.
+     */
+    static void tx_loop(int port);
+
+    /**
+     * @brief Calculate the PID control.
+     * This function is executed in a separate thread.
+     * @note Each motor should have a separate thread for calculating PID control.
+     */
+    void calc_loop(); /**< Loop for calculating PID control. */
 
 public:
     int hid; /**< Hardware ID of the motor. */
@@ -140,19 +158,12 @@ public:
     void set_v2c_pid(double kp, double ki, double kd);
 
     /**
-     * @brief Write the transmit frames.
+     * @brief Calculate and write the transmit frames.
      * PID control is executed in this function.
      * Position-to-velocity conversion is executed iff goal_pos is not zero.
      * @note This function should be executed before sending the transmit frame.
      */
-    void write_tx();
-
-    /**
-     * @brief Send the transmit frame.
-     * This would send all three transmit frames to the motor at once.
-     * @note write_tx() should be executed before calling this function.
-     */
-    static void tx();
+    void calc_tx();
 
     /**
      * @brief Process the receive frame.

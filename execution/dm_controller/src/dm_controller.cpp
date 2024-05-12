@@ -10,7 +10,6 @@
 #include "motor_interface/msg/motor_state.hpp"
 
 #define PUB_R 20
-#define ENABLE_PUB TRUE
 
 class DmController : public rclcpp::Node
 {
@@ -22,12 +21,10 @@ public:
             "motor_goal", 10, [this](motor_interface::msg::MotorGoal::SharedPtr msg){
                 this->goal_callback(msg);
             });
-#if ENABLE_PUB == TRUE
         state_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
         pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_R), [this](){
             this->state_callback();
         });
-#endif
 
         RCLCPP_INFO(this->get_logger(), "DmController initialized");
     }
@@ -43,10 +40,8 @@ public:
 private:
     int dm_motor_count = 0;
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
-#if ENABLE_PUB == TRUE
     rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
-#endif
     std::vector<std::unique_ptr<DmDriver>> dm_driver_;
     std::vector<double> kps{}, kis{};
 
@@ -124,7 +119,6 @@ private:
         }
     }
 
-#if ENABLE_PUB == TRUE
     void state_callback()
     {
         motor_interface::msg::MotorState state_msg;
@@ -138,7 +132,6 @@ private:
         }
         state_pub_->publish(state_msg);
     }
-#endif
 };
 
 int main(int argc, char *argv[])

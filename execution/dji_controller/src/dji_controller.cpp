@@ -13,7 +13,6 @@
 #include "motor_interface/msg/motor_state.hpp"
 
 #define DISABLE_CONTROL false
-#define ENABLE_PUB true
 #define PUB_R 10 // ms
 #define CONTROL_R 3 // ms
 
@@ -30,19 +29,13 @@ public:
             "motor_goal", 10, [this](const motor_interface::msg::MotorGoal::SharedPtr msg){
                 goal_callback(msg);
             });
-        control_timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(CONTROL_R), [this](){
-                control_timer_callback();
-            });
 
-#if ENABLE_PUB == true
         // create a timer for publishing motor state
         pub_timer_ = this->create_wall_timer(
             std::chrono::milliseconds(PUB_R), [this](){
                 pub_timer_callback();
             });
         state_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
-#endif
 
         // complete initialization
         RCLCPP_INFO(this->get_logger(), "DjiController initialized");
@@ -51,22 +44,12 @@ public:
 private:
     rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
-#if ENABLE_PUB == true
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
-#endif
     int dji_motor_count;
     std::vector<std::unique_ptr<DjiDriver>> drivers_; // std::unique_ptr<DjiDriver> drivers_[8];
     std::vector<double> p2v_kps{}, p2v_kis{}, p2v_kds{};
     std::vector<double> v2c_kps{}, v2c_kis{}, v2c_kds{};
-
-    void control_timer_callback()
-    {
-        for (auto& driver : drivers_) driver->write_tx();
-#if DISABLE_CONTROL == false
-        DjiDriver::tx();
-#endif
-    }
 
     void goal_callback(const motor_interface::msg::MotorGoal::SharedPtr msg)
     {
@@ -99,7 +82,6 @@ private:
         }
     }
 
-#if ENABLE_PUB == true
     void pub_timer_callback()
     {
         // publish feedback
@@ -114,7 +96,6 @@ private:
         }
         state_pub_->publish(msg);
     }
-#endif
 
     void motor_init()
     {

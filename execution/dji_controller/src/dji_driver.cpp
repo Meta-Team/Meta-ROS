@@ -18,6 +18,7 @@
 // static members
 umap<int, unique_ptr<CanPort>> DjiDriver::can_ports{};
 umap<int, std::thread> DjiDriver::rx_threads{};
+umap<int, std::thread> DjiDriver::tx_threads{};
 vector<std::shared_ptr<DjiDriver>> DjiDriver::instances{};
 
 DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_port) :
@@ -39,6 +40,7 @@ DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_p
 
     last_command = 0.0;
     timeout_thread = std::thread(&DjiDriver::check_timeout, this);
+    calc_thread = std::thread(&DjiDriver::calc_loop, this);
 }
 
 DjiDriver::~DjiDriver()
@@ -66,7 +68,8 @@ void DjiDriver::set_port(int port)
     if (can_ports.find(port) == can_ports.end())
     {
         can_ports[port] = std::make_unique<CanPort>(port);
-        rx_threads[port] = std::thread(&DjiDriver::rx_loop, this, port);
+        rx_threads[port] = std::thread(&DjiDriver::rx_loop, port);
+        tx_threads[port] = std::thread(&DjiDriver::tx_loop, port);
     }
 }
 
@@ -79,6 +82,27 @@ void DjiDriver::rx_loop(int port)
         for (auto& instance : instances)
             instance->process_rx();
     }
+}
+
+void DjiDriver::tx_loop(int port)
+{
+    auto& can_port = can_ports[port];
+    while (rclcpp::ok())
+    {
+        // calculate in another thread
+        can_port->tx();
+        rclcpp::sleep_for(std::chrono::milliseconds(TX_FREQ));
+    }
+}
+
+void DjiDriver::calc_loop()
+{
+    while (rclcpp::ok())
+    {
+        calc_tx();
+        rclcpp::sleep_for(std::chrono::milliseconds(CALC_FREQ));
+    }
+
 }
 
 void DjiDriver::set_goal(double goal_pos, double goal_vel, double goal_cur)
@@ -163,7 +187,7 @@ void DjiDriver::process_rx()
     present_data.torque = (double)tor_raw / 16384 * 20; // actually current, Ampere
 }
 
-void DjiDriver::write_tx()
+void DjiDriver::calc_tx() // calc and write
 {
     if (!std::isnan(goal_pos)) pos2velocity(); // this would overwrite goal_vel
     if (!std::isnan(goal_vel)) vel2current(); // this would overwrite current
@@ -218,12 +242,6 @@ void DjiDriver::write_tx()
     default:
         break;
     }
-}
-
-void DjiDriver::tx()
-{
-    for (auto& [_, can_port] : can_ports)
-        can_port->tx();
 }
 
 std::tuple<double, double, double> DjiDriver::get_state()
