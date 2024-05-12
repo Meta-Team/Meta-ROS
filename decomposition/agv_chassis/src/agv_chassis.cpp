@@ -99,6 +99,7 @@ public:
         AgvKinematics::offsets["RF_D"] = rf;
         AgvKinematics::offsets["LB_D"] = lb;
         AgvKinematics::offsets["RB_D"] = rb;
+        RCLCPP_INFO(this->get_logger(), "Offsets: LF=%f, RF=%f, LB=%f, RB=%f", lf, rf, lb, rb);
     }
 };
 
