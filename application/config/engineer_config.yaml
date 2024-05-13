@@ -45,5 +45,5 @@
 
     relay:
       count: 2
-      names: ["R1", "R2"]
+      names: ["VALVE", "PUMP"]
       ports: ["ttyUSB1", "ttyUSB2"]

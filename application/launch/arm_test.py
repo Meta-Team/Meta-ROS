@@ -34,6 +34,18 @@ def generate_launch_description():
             name="unitree_controller",
             parameters=[config],
         ),
+        Node(
+            package="serial_relay",
+            executable="serial_relay",
+            name="serial_relay",
+            parameters=[config],
+        ),
+        Node(
+            package="relay_sucker",
+            executable="relay_sucker",
+            name="relay_sucker",
+            parameters=[config],
+        ),
     ])
     
     ld.add_action(moveit_launch)

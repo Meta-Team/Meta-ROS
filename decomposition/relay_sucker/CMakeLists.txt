@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(agv_chassis)
+project(relay_sucker)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -13,31 +13,30 @@ find_package(ament_cmake REQUIRED)
 find_package(device_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(behavior_interface REQUIRED)
-find_package(geometry_msgs REQUIRED)
 
 include_directories(include)
 
-add_executable(agv_chassis
-  src/agv_chassis.cpp
-  src/agv_kinematics.cpp)
+add_executable(relay_sucker
+  src/relay_sucker.cpp
+  src/sucker.cpp
+)
 
-ament_target_dependencies(agv_chassis
+ament_target_dependencies(relay_sucker
   rclcpp
   device_interface
   behavior_interface
-  geometry_msgs
 )
 
 install(TARGETS
-  agv_chassis
+  relay_sucker
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY
-  launch
-  config
-  DESTINATION share/${PROJECT_NAME}/
-)
+# install(DIRECTORY
+#   launch
+#   config
+#   DESTINATION share/${PROJECT_NAME}
+# )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
