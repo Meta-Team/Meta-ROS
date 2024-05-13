@@ -3,8 +3,8 @@
 #include "omni_chassis/omni_kinematics.hpp"
 
 #include "behavior_interface/msg/move.hpp"
-#include "motor_interface/msg/motor_state.hpp"
-#include "motor_interface/msg/motor_goal.hpp"
+#include "device_interface/msg/motor_state.hpp"
+#include "device_interface/msg/motor_goal.hpp"
 #include "geometry_msgs/msg/vector3.hpp"
 
 class OmniChassis : public rclcpp::Node
@@ -21,8 +21,8 @@ public:
         OmniKinematics::yaw_offset = this->declare_parameter("chassis.yaw_offset", OmniKinematics::yaw_offset);
 
         // init publisher and subscribers
-        motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
-        motor_sub_ = this->create_subscription<motor_interface::msg::MotorState>("motor_state",
+        motor_pub_ = this->create_publisher<device_interface::msg::MotorGoal>("motor_goal", 10);
+        motor_sub_ = this->create_subscription<device_interface::msg::MotorState>("motor_state",
             10, std::bind(&OmniChassis::motor_callback, this, std::placeholders::_1));
         gimbal_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>("euler_angles",
             10, std::bind(&OmniChassis::gimbal_callback, this, std::placeholders::_1));
@@ -44,8 +44,8 @@ public:
 
 private:
     rclcpp::Subscription<behavior_interface::msg::Move>::SharedPtr move_sub_;
-    rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
-    rclcpp::Subscription<motor_interface::msg::MotorState>::SharedPtr motor_sub_;
+    rclcpp::Publisher<device_interface::msg::MotorGoal>::SharedPtr motor_pub_;
+    rclcpp::Subscription<device_interface::msg::MotorState>::SharedPtr motor_sub_;
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr gimbal_sub_; // ahrs feedback on gimbal
 
     float gimbal_yaw_pos = 0.0; // The yaw position of the gimbal against the ground, in radians.
@@ -69,7 +69,7 @@ private:
         motor_pub_->publish(tx_msg);
     }
 
-    void motor_callback(const motor_interface::msg::MotorState::SharedPtr motor_msg)
+    void motor_callback(const device_interface::msg::MotorState::SharedPtr motor_msg)
     {
         // update motor_yaw_pos
         int count = motor_msg->motor_id.size();

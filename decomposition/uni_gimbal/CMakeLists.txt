@@ -12,7 +12,7 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 
 find_package(rclcpp REQUIRED)
-find_package(motor_interface REQUIRED)
+find_package(device_interface REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(behavior_interface REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -26,7 +26,7 @@ add_executable(uni_gimbal
 ament_target_dependencies(uni_gimbal
   rclcpp
   geometry_msgs
-  motor_interface
+  device_interface
   behavior_interface
   sensor_msgs)
 

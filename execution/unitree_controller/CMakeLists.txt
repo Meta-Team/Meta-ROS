@@ -15,7 +15,7 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(motor_interface REQUIRED)
+find_package(device_interface REQUIRED)
 
 include_directories(include)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
@@ -29,7 +29,7 @@ add_executable(unitree_controller src/unitree_controller.cpp src/unitree_driver.
 target_link_libraries(unitree_controller ${EXTRA_LIBS})
 ament_target_dependencies(unitree_controller
   rclcpp
-  motor_interface)
+  device_interface)
 
 set_target_properties(unitree_controller PROPERTIES INSTALL_RPATH "$ORIGIN")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)

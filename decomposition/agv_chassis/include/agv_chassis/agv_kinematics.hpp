@@ -9,8 +9,7 @@
 #include <vector>
 
 #include "behavior_interface/msg/move.hpp"
-#include "motor_interface/msg/motor_goal.hpp"
-#include "motor_interface/srv/motor_state.hpp"
+#include "device_interface/msg/motor_goal.hpp"
 
 #define NaN std::nan("")
 
@@ -19,7 +18,7 @@
 #define DIR -1 // -1 if direction motors take clockwise as positive, 1 if counterclockwise
 
 using std::string, std::unordered_map, std::pair, std::tuple;
-using motor_interface::msg::MotorGoal;
+using device_interface::msg::MotorGoal;
 
 /**
  * @brief Namespace containing functions and types related to AGV kinematics.

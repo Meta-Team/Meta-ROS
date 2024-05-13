@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(motor_interface)
+project(device_interface)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -24,7 +24,8 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/MotorGoal.msg"
   "msg/MotorState.msg"
-  "srv/MotorState.srv"
+  "msg/AngularPosition.msg"
+  "srv/CapacitorState.srv"
 )
 ament_export_dependencies(rosidl_default_runtime)
 

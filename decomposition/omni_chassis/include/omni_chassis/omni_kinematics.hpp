@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "behavior_interface/msg/move.hpp"
-#include "motor_interface/msg/motor_goal.hpp"
+#include "device_interface/msg/motor_goal.hpp"
 
 #define NaN std::nan("")
 
@@ -33,7 +33,7 @@ namespace OmniKinematics
      * @param motor The yaw position of the gimbal against the chassis, in radians.
      * @return The motor goals.
      */
-    motor_interface::msg::MotorGoal absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg,
+    device_interface::msg::MotorGoal absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg,
                                                      float gimbal, float motor);
 
     /**
@@ -43,7 +43,7 @@ namespace OmniKinematics
      * @return The motor goals.
      * @note This is independent of any feedback and is recommended in testing.
      */
-    motor_interface::msg::MotorGoal chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg);
+    device_interface::msg::MotorGoal chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg);
 
     /**
      * @brief Decompose a natural movement command into motor goals.
@@ -52,14 +52,14 @@ namespace OmniKinematics
      * @param motor The yaw position of the gimbal against the chassis, in radians.
      * @return The motor goals.
      */
-    motor_interface::msg::MotorGoal natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float motor);
+    device_interface::msg::MotorGoal natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float motor);
 
     /**
      * @brief Clear the motor goals.
      * @param motor_goal The motor goals to be cleared.
      * @return The DM goal.
      */
-    void clear_goal(motor_interface::msg::MotorGoal &motor_goal);
+    void clear_goal(device_interface::msg::MotorGoal &motor_goal);
 
     /**
      * @brief Add the goal velocity and position of a motor.
@@ -68,7 +68,7 @@ namespace OmniKinematics
      * @param goal_vel The goal velocity of the wheels in m/s.
      * @note Goal positions would be set zero.
      */
-    void add_goal(motor_interface::msg::MotorGoal &motor_goals,
+    void add_goal(device_interface::msg::MotorGoal &motor_goals,
                   const std::string& rid, const float goal_vel);
 }
 

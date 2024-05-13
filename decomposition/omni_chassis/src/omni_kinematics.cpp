@@ -8,9 +8,9 @@ float OmniKinematics::decel_ratio = 20.0;
 float OmniKinematics::n_offset = 0.0;
 float OmniKinematics::yaw_offset = 0.0;
 
-motor_interface::msg::MotorGoal OmniKinematics::absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, float gimbal, float motor)
+device_interface::msg::MotorGoal OmniKinematics::absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, float gimbal, float motor)
 {
-    motor_interface::msg::MotorGoal motor_goal;
+    device_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);
     float rot = msg->omega * cha_r; // m/s
     float dir = gimbal + (motor - yaw_offset) - n_offset; // direction of the movement against chassis in rad
@@ -25,9 +25,9 @@ motor_interface::msg::MotorGoal OmniKinematics::absolute_decompo(const behavior_
     return motor_goal;
 }
 
-motor_interface::msg::MotorGoal OmniKinematics::chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg)
+device_interface::msg::MotorGoal OmniKinematics::chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg)
 {
-    motor_interface::msg::MotorGoal motor_goal;
+    device_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);
     float rot = msg->omega * cha_r;
     float vx = msg->vel_x;
@@ -41,9 +41,9 @@ motor_interface::msg::MotorGoal OmniKinematics::chassis_decompo(const behavior_i
     return motor_goal;
 }
 
-motor_interface::msg::MotorGoal OmniKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float motor)
+device_interface::msg::MotorGoal OmniKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float motor)
 {
-    motor_interface::msg::MotorGoal motor_goal;
+    device_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);
     float rot = msg->omega * cha_r;
     float dir = motor - yaw_offset;
@@ -58,14 +58,14 @@ motor_interface::msg::MotorGoal OmniKinematics::natural_decompo(const behavior_i
     return motor_goal;
 }
 
-void OmniKinematics::clear_goal(motor_interface::msg::MotorGoal &motor_goal)
+void OmniKinematics::clear_goal(device_interface::msg::MotorGoal &motor_goal)
 {
     motor_goal.motor_id.clear();
     motor_goal.goal_vel.clear();
     motor_goal.goal_pos.clear();
 }
 
-void OmniKinematics::add_goal(motor_interface::msg::MotorGoal &motor_goal, const std::string& rid, const float goal_vel)
+void OmniKinematics::add_goal(device_interface::msg::MotorGoal &motor_goal, const std::string& rid, const float goal_vel)
 {
     motor_goal.motor_id.push_back(rid);
     motor_goal.goal_vel.push_back(DIRE * goal_vel / wheel_r * decel_ratio); // convert to rad/s

@@ -11,9 +11,9 @@ PidParam MecanumKinematics::cha_param;
 PidOutput MecanumKinematics::cha_output;
 double MecanumKinematics::yaw_error = 0.0;
 
-motor_interface::msg::MotorGoal MecanumKinematics::chassis_decompo(const double v_x, const double v_y, const double omega)
+device_interface::msg::MotorGoal MecanumKinematics::chassis_decompo(const double v_x, const double v_y, const double omega)
 {
-    motor_interface::msg::MotorGoal motor_goal;
+    device_interface::msg::MotorGoal motor_goal;
     clear_goal(motor_goal);
     double tangent = tan(wheel_angle);
     double L = cha_len / 2;
@@ -27,7 +27,7 @@ motor_interface::msg::MotorGoal MecanumKinematics::chassis_decompo(const double 
     return motor_goal;
 }
 
-motor_interface::msg::MotorGoal MecanumKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, double yaw)
+device_interface::msg::MotorGoal MecanumKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, double yaw)
 {
     if (msg->omega == 0.0) // chassis follow the gimbal
     {
@@ -52,7 +52,7 @@ motor_interface::msg::MotorGoal MecanumKinematics::natural_decompo(const behavio
     }
 }
 
-void MecanumKinematics::clear_goal(motor_interface::msg::MotorGoal &motor_goal)
+void MecanumKinematics::clear_goal(device_interface::msg::MotorGoal &motor_goal)
 {
     motor_goal.motor_id.clear();
     motor_goal.goal_tor.clear();
@@ -60,7 +60,7 @@ void MecanumKinematics::clear_goal(motor_interface::msg::MotorGoal &motor_goal)
     motor_goal.goal_pos.clear();
 }
 
-void MecanumKinematics::add_goal(motor_interface::msg::MotorGoal &motor_goal, const std::string& rid, const double goal_vel)
+void MecanumKinematics::add_goal(device_interface::msg::MotorGoal &motor_goal, const std::string& rid, const double goal_vel)
 {
     motor_goal.motor_id.push_back(rid);
     motor_goal.goal_tor.push_back(NaN);

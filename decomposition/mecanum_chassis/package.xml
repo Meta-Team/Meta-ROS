@@ -9,7 +9,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>motor_interface</depend>
+  <depend>device_interface</depend>
   <depend>behavior_interface</depend>
 
   <test_depend>ament_lint_auto</test_depend>

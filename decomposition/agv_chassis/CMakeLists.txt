@@ -10,7 +10,7 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-find_package(motor_interface REQUIRED)
+find_package(device_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(behavior_interface REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -23,7 +23,7 @@ add_executable(agv_chassis
 
 ament_target_dependencies(agv_chassis
   rclcpp
-  motor_interface
+  device_interface
   behavior_interface
   geometry_msgs
   )

@@ -12,7 +12,7 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 
 find_package(rclcpp REQUIRED)
-find_package(motor_interface REQUIRED)
+find_package(device_interface REQUIRED)
 
 include_directories(include)
 
@@ -22,7 +22,7 @@ add_executable(dm_controller
 
 ament_target_dependencies(dm_controller
   rclcpp
-  motor_interface)
+  device_interface)
 
 install(TARGETS
   dm_controller

@@ -6,8 +6,8 @@
 #include "dm_controller/can_driver.hpp"
 #include "dm_controller/dm_driver.h"
 
-#include "motor_interface/msg/motor_goal.hpp"
-#include "motor_interface/msg/motor_state.hpp"
+#include "device_interface/msg/motor_goal.hpp"
+#include "device_interface/msg/motor_state.hpp"
 
 #define PUB_R 20
 
@@ -17,11 +17,11 @@ public:
     DmController() : Node("dm_controller")
     {
         motor_init();
-        goal_sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
-            "motor_goal", 10, [this](motor_interface::msg::MotorGoal::SharedPtr msg){
+        goal_sub_ = this->create_subscription<device_interface::msg::MotorGoal>(
+            "motor_goal", 10, [this](device_interface::msg::MotorGoal::SharedPtr msg){
                 this->goal_callback(msg);
             });
-        state_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
+        state_pub_ = this->create_publisher<device_interface::msg::MotorState>("motor_state", 10);
         pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_R), [this](){
             this->state_callback();
         });
@@ -39,8 +39,8 @@ public:
 
 private:
     int dm_motor_count = 0;
-    rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
-    rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
+    rclcpp::Subscription<device_interface::msg::MotorGoal>::SharedPtr goal_sub_;
+    rclcpp::Publisher<device_interface::msg::MotorState>::SharedPtr state_pub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
     std::vector<std::unique_ptr<DmDriver>> dm_driver_;
     std::vector<double> kps{}, kis{};
@@ -90,7 +90,7 @@ private:
         }
     }
 
-    void goal_callback(motor_interface::msg::MotorGoal::SharedPtr msg)
+    void goal_callback(device_interface::msg::MotorGoal::SharedPtr msg)
     {
         int count = msg->motor_id.size();
         for (int i = 0; i < count; i++)
@@ -121,7 +121,7 @@ private:
 
     void state_callback()
     {
-        motor_interface::msg::MotorState state_msg;
+        device_interface::msg::MotorState state_msg;
         for (auto& driver : dm_driver_)
         {
             auto [pos, vel, tor] = driver->get_state();

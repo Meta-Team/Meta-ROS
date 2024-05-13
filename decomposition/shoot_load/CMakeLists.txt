@@ -11,7 +11,7 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(motor_interface REQUIRED)
+find_package(device_interface REQUIRED)
 find_package(behavior_interface REQUIRED)
 
 add_executable(shoot_load
@@ -19,7 +19,7 @@ add_executable(shoot_load
 ament_target_dependencies(shoot_load
   rclcpp
   behavior_interface
-  motor_interface)
+  device_interface)
 
 install(TARGETS
   shoot_load

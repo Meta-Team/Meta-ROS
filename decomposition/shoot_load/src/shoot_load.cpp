@@ -6,8 +6,8 @@
 #include <rclcpp/timer.hpp>
 
 #include "behavior_interface/msg/shoot.hpp"
-#include "motor_interface/msg/motor_goal.hpp"
-#include "motor_interface/msg/motor_state.hpp"
+#include "device_interface/msg/motor_goal.hpp"
+#include "device_interface/msg/motor_state.hpp"
 
 #define NaN std::nan("")
 
@@ -22,9 +22,9 @@ public:
 
         shoot_sub_ = this->create_subscription<behavior_interface::msg::Shoot>("shoot",
             10, std::bind(&ShootLoad::goal_callback, this, std::placeholders::_1));
-        feeback_sub_ = this->create_subscription<motor_interface::msg::MotorState>("motor_state",
+        feeback_sub_ = this->create_subscription<device_interface::msg::MotorState>("motor_state",
             10, std::bind(&ShootLoad::feedback_callback, this, std::placeholders::_1));
-        motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
+        motor_pub_ = this->create_publisher<device_interface::msg::MotorGoal>("motor_goal", 10);
         pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_FREQ),
             std::bind(&ShootLoad::pub_timer_callback, this)
         );
@@ -37,8 +37,8 @@ public:
 
 private:
     rclcpp::Subscription<behavior_interface::msg::Shoot>::SharedPtr shoot_sub_;
-    rclcpp::Subscription<motor_interface::msg::MotorState>::SharedPtr feeback_sub_;
-    rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
+    rclcpp::Subscription<device_interface::msg::MotorState>::SharedPtr feeback_sub_;
+    rclcpp::Publisher<device_interface::msg::MotorGoal>::SharedPtr motor_pub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::TimerBase::SharedPtr update_timer_;
 
@@ -75,7 +75,7 @@ private:
         active_fric = msg->fric_state;
     }
 
-    void feedback_callback(motor_interface::msg::MotorState::SharedPtr feedback)
+    void feedback_callback(device_interface::msg::MotorState::SharedPtr feedback)
     {
         for (auto i = 0; i < static_cast<int>(feedback->motor_id.size()); i++)
         {
@@ -136,7 +136,7 @@ private:
 
     void pub_timer_callback()
     {
-        motor_interface::msg::MotorGoal motor_msg;
+        device_interface::msg::MotorGoal motor_msg;
         clear(motor_msg);
 
         motor_msg.motor_id.push_back("FRIC_U");
@@ -162,7 +162,7 @@ private:
         motor_pub_->publish(motor_msg);
     }
 
-    void clear(motor_interface::msg::MotorGoal msg)
+    void clear(device_interface::msg::MotorGoal msg)
     {
         msg.motor_id.clear();
         msg.goal_vel.clear();

@@ -11,7 +11,7 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(motor_interface REQUIRED)
+find_package(device_interface REQUIRED)
 find_package(behavior_interface REQUIRED)
 
 include_directories(include)
@@ -23,7 +23,7 @@ add_executable(mecanum_chassis
 ament_target_dependencies(mecanum_chassis
   rclcpp
   behavior_interface
-  motor_interface)
+  device_interface)
 
 install(TARGETS
   mecanum_chassis

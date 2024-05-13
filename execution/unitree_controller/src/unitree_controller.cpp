@@ -2,14 +2,14 @@
 #include "unitree_controller/unitree_driver.hpp"
 #include <cstdint>
 #include <memory>
-#include <motor_interface/msg/detail/motor_goal__struct.hpp>
-#include <motor_interface/msg/detail/motor_state__struct.hpp>
+#include <device_interface/msg/detail/motor_goal__struct.hpp>
+#include <device_interface/msg/detail/motor_state__struct.hpp>
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/subscription.hpp>
 #include <vector>
 
-#include "motor_interface/msg/motor_goal.hpp"
-#include "motor_interface/msg/motor_state.hpp"
+#include "device_interface/msg/motor_goal.hpp"
+#include "device_interface/msg/motor_state.hpp"
 
 #define PUB_R 20 // ms
 
@@ -19,11 +19,11 @@ public:
     UnitreeController() : Node("unitree_controller")
     {
         motor_init();
-        goal_sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
-            "motor_goal", 10, [this](const motor_interface::msg::MotorGoal::SharedPtr msg){
+        goal_sub_ = this->create_subscription<device_interface::msg::MotorGoal>(
+            "motor_goal", 10, [this](const device_interface::msg::MotorGoal::SharedPtr msg){
             goal_callback(msg);
         });
-        feedback_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
+        feedback_pub_ = this->create_publisher<device_interface::msg::MotorState>("motor_state", 10);
         pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_R), [this](){
             pub_timer_callback();
         });
@@ -32,13 +32,13 @@ public:
 
 private:
     std::vector<std::unique_ptr<UnitreeDriver>> drivers_;
-    rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
-    rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr feedback_pub_;
+    rclcpp::Subscription<device_interface::msg::MotorGoal>::SharedPtr goal_sub_;
+    rclcpp::Publisher<device_interface::msg::MotorState>::SharedPtr feedback_pub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
     std::vector<double> p2v_kps{}, p2v_kds{};
     int unitree_motor_count;
 
-    void goal_callback(const motor_interface::msg::MotorGoal::SharedPtr msg)
+    void goal_callback(const device_interface::msg::MotorGoal::SharedPtr msg)
     {
         int count = msg->motor_id.size();
         for (int i = 0; i < count; i++)
@@ -70,7 +70,7 @@ private:
     void pub_timer_callback()
     {   
         // publish feedback
-        motor_interface::msg::MotorState msg;
+        device_interface::msg::MotorState msg;
         for (auto& driver : drivers_)
         {
             msg.motor_id.push_back(driver->rid);

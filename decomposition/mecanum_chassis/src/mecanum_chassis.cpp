@@ -3,8 +3,8 @@
 #include "mecanum_chassis/mecanum_kinematics.hpp"
 
 #include "behavior_interface/msg/move.hpp"
-#include "motor_interface/msg/motor_state.hpp"
-#include "motor_interface/msg/motor_goal.hpp"
+#include "device_interface/msg/motor_state.hpp"
+#include "device_interface/msg/motor_goal.hpp"
 
 class MecanumChassis : public rclcpp::Node
 {
@@ -25,8 +25,8 @@ public:
         MecanumKinematics::cha_param.kd = this->declare_parameter("chassis.pid.kd", MecanumKinematics::cha_param.kd);
 
         // init publisher and subscribers
-        motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
-        motor_sub_ = this->create_subscription<motor_interface::msg::MotorState>("motor_state",
+        motor_pub_ = this->create_publisher<device_interface::msg::MotorGoal>("motor_goal", 10);
+        motor_sub_ = this->create_subscription<device_interface::msg::MotorState>("motor_state",
             10, std::bind(&MecanumChassis::motor_callback, this, std::placeholders::_1));
         if (move_mode == "chassis")
             move_sub_ = this->create_subscription<behavior_interface::msg::Move>("move",
@@ -43,8 +43,8 @@ public:
 
 private:
     rclcpp::Subscription<behavior_interface::msg::Move>::SharedPtr move_sub_;
-    rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
-    rclcpp::Subscription<motor_interface::msg::MotorState>::SharedPtr motor_sub_;
+    rclcpp::Publisher<device_interface::msg::MotorGoal>::SharedPtr motor_pub_;
+    rclcpp::Subscription<device_interface::msg::MotorState>::SharedPtr motor_sub_;
 
     std::string move_mode;
     double motor_yaw_pos = 0.0; // The yaw position of the gimbal against the chassis, in radians.
@@ -61,7 +61,7 @@ private:
         motor_pub_->publish(tx_msg);
     }
 
-    void motor_callback(const motor_interface::msg::MotorState::SharedPtr motor_msg)
+    void motor_callback(const device_interface::msg::MotorState::SharedPtr motor_msg)
     {
         int count = motor_msg->motor_id.size();
         for (int i = 0; i < count; i++)

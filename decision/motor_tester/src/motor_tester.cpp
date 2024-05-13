@@ -1,6 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 
-#include "motor_interface/msg/motor_goal.hpp"
+#include "device_interface/msg/motor_goal.hpp"
 #include "sensor_msgs/msg/joy.hpp"
 #include <string>
 
@@ -28,7 +28,7 @@ public:
         }
 
         // pub and sub
-        motor_pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
+        motor_pub_ = this->create_publisher<device_interface::msg::MotorGoal>("motor_goal", 10);
         joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
             "joy", 10,
             std::bind(&MotorTester::joy_callback, this, std::placeholders::_1));
@@ -39,7 +39,7 @@ public:
 
 private:
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
-    rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr motor_pub_;
+    rclcpp::Publisher<device_interface::msg::MotorGoal>::SharedPtr motor_pub_;
 
     std::string motor_id; // id of motor
     double goal = 0.0; // goal of motor, vel or pos
@@ -65,7 +65,7 @@ private:
         goal += apply_deadzone(msg->axes[1], deadzone) * goal_sens * interval;
         curb(goal, upper_bound, lower_bound);
 
-        motor_interface::msg::MotorGoal motor_goal{};
+        device_interface::msg::MotorGoal motor_goal{};
         motor_goal.motor_id.push_back(motor_id);
         switch (mode)
         {

@@ -9,8 +9,8 @@
 #include <thread>
 #include <vector>
 
-#include "motor_interface/msg/motor_goal.hpp"
-#include "motor_interface/msg/motor_state.hpp"
+#include "device_interface/msg/motor_goal.hpp"
+#include "device_interface/msg/motor_state.hpp"
 
 #define DISABLE_CONTROL false
 #define PUB_R 10 // ms
@@ -25,8 +25,8 @@ public:
         motor_init();
 
         // create subscriptions and timers
-        goal_sub_ = this->create_subscription<motor_interface::msg::MotorGoal>(
-            "motor_goal", 10, [this](const motor_interface::msg::MotorGoal::SharedPtr msg){
+        goal_sub_ = this->create_subscription<device_interface::msg::MotorGoal>(
+            "motor_goal", 10, [this](const device_interface::msg::MotorGoal::SharedPtr msg){
                 goal_callback(msg);
             });
 
@@ -35,23 +35,23 @@ public:
             std::chrono::milliseconds(PUB_R), [this](){
                 pub_timer_callback();
             });
-        state_pub_ = this->create_publisher<motor_interface::msg::MotorState>("motor_state", 10);
+        state_pub_ = this->create_publisher<device_interface::msg::MotorState>("motor_state", 10);
 
         // complete initialization
         RCLCPP_INFO(this->get_logger(), "DjiController initialized");
     }
 
 private:
-    rclcpp::Subscription<motor_interface::msg::MotorGoal>::SharedPtr goal_sub_;
+    rclcpp::Subscription<device_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr control_timer_; // send control frame regularly
     rclcpp::TimerBase::SharedPtr pub_timer_;
-    rclcpp::Publisher<motor_interface::msg::MotorState>::SharedPtr state_pub_;
+    rclcpp::Publisher<device_interface::msg::MotorState>::SharedPtr state_pub_;
     int dji_motor_count;
     std::vector<std::unique_ptr<DjiDriver>> drivers_; // std::unique_ptr<DjiDriver> drivers_[8];
     std::vector<double> p2v_kps{}, p2v_kis{}, p2v_kds{};
     std::vector<double> v2c_kps{}, v2c_kis{}, v2c_kds{};
 
-    void goal_callback(const motor_interface::msg::MotorGoal::SharedPtr msg)
+    void goal_callback(const device_interface::msg::MotorGoal::SharedPtr msg)
     {
         // RCLCPP_INFO(this->get_logger(), "Received motor goal");
         int count = msg->motor_id.size();
@@ -85,7 +85,7 @@ private:
     void pub_timer_callback()
     {
         // publish feedback
-        motor_interface::msg::MotorState msg;
+        device_interface::msg::MotorState msg;
         for (auto& driver : drivers_)
         {
             msg.motor_id.push_back(driver->rid);

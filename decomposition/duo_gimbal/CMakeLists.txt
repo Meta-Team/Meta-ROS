@@ -12,7 +12,7 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 
 find_package(rclcpp REQUIRED)
-find_package(motor_interface REQUIRED)
+find_package(device_interface REQUIRED)
 
 include_directories(include)
 
@@ -21,7 +21,7 @@ add_executable(duo_gimbal_node
 
 ament_target_dependencies(duo_gimbal_node
   rclcpp
-  motor_interface)
+  device_interface)
 
 install(TARGETS duo_gimbal_node
   DESTINATION lib/${PROJECT_NAME})

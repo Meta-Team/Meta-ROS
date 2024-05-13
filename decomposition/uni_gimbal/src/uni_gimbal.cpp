@@ -6,7 +6,7 @@
 #include "behavior_interface/msg/aim.hpp"
 #include "behavior_interface/msg/move.hpp"
 #include "geometry_msgs/msg/vector3.hpp"
-#include "motor_interface/msg/motor_goal.hpp"
+#include "device_interface/msg/motor_goal.hpp"
 #include "sensor_msgs/msg/imu.hpp"
 
 #define NaN std::nan("")
@@ -32,7 +32,7 @@ public:
             "euler_angles", 10, [this](const geometry_msgs::msg::Vector3::SharedPtr msg){
                 feedback_callback(msg);
             });
-        pub_ = this->create_publisher<motor_interface::msg::MotorGoal>("motor_goal", 10);
+        pub_ = this->create_publisher<device_interface::msg::MotorGoal>("motor_goal", 10);
         control_timer_ = this->create_wall_timer(
             std::chrono::milliseconds(CONTROL_R), [this](){
                 pub_callback();
@@ -48,7 +48,7 @@ private:
 #if IMU_FB == true
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
 #endif // IMU_FB
-    rclcpp::Publisher<motor_interface::msg::MotorGoal>::SharedPtr pub_;
+    rclcpp::Publisher<device_interface::msg::MotorGoal>::SharedPtr pub_;
     rclcpp::TimerBase::SharedPtr control_timer_;
 
     std::unique_ptr<Gimbal> gimbal_;
@@ -89,7 +89,7 @@ private:
 
     void pub_callback()
     {
-        auto msg = motor_interface::msg::MotorGoal();
+        auto msg = device_interface::msg::MotorGoal();
 #if IMU_FB == false
         double yaw_vel = gimbal_->get_yaw_vel();
         double pitch_vel = gimbal_->get_pitch_vel();
