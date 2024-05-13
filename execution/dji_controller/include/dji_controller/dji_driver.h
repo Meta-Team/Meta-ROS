@@ -13,10 +13,15 @@
 #define CALC_FREQ 1 // ms
 #define TX_FREQ 2 // ms
 
+#define CALI_TIMEOUT 5 // seconds
+#define JAMMED_THRESHOLD 0.3 // s
+
 #define I_MAX 20 // Ampere, current limit
 #define V_MAX 300 // to be tuned, velocity limit
 
 #define NaN std::nan("")
+
+#define ENABLE_TIMEOUT false
 
 using std::vector;
 using std::unique_ptr;
@@ -40,6 +45,60 @@ enum MotorType
  */
 class DjiDriver
 {
+public:
+    int hid; /**< Hardware ID of the motor. */
+    string rid; /**< ROS ID of the motor. */
+
+    /**
+     * @brief Constructor for DjiDriver class.
+     * @param rid The ROS ID of the motor.
+     * @param hid The hardware ID of the motor.
+     * @param type The type of the motor.
+     * @param port The port name of the CAN bus.
+     * @param cali The direction of how to calibrate the motor's zero position.
+     */
+    DjiDriver(const string& rid, int hid, string type, string port, int cali);
+
+    /**
+     * @brief Destructor for DjiDriver class.
+     */
+    ~DjiDriver();
+    
+    /**
+     * @brief Set the desired position and velocity for the motor.
+     * @param goal_pos The desired position.
+     * @param goal_vel The desired velocity.
+     */
+    void set_goal(double goal_pos, double goal_vel, double goal_cur);
+
+    /**
+     * @brief Set the PID parameters for position-to-velocity conversion.
+     * @param kp The desired proportional gain.
+     * @param ki The desired integral gain.
+     * @param kd The desired derivative gain.
+     */
+    void set_p2v_pid(double kp, double ki, double kd);
+
+    /**
+     * @brief Set the PID parameters for velocity-to-current conversion.
+     * @param kp The desired proportional gain.
+     * @param ki The desired integral gain.
+     * @param kd The desired derivative gain.
+     */
+    void set_v2c_pid(double kp, double ki, double kd);
+
+    /**
+     * @brief Get the current state of the motor.
+     * @return A tuple containing the position, velocity, and current of the motor.
+     */
+    [[nodiscard]] std::tuple<double, double, double> get_state();
+
+    /**
+     * @brief Get the port number of the CAN bus.
+     * @return The port number.
+     */
+    [[nodiscard]] int get_port() const { return port; }
+
 private:
     static umap<int, unique_ptr<CanPort>> can_ports; /**< Array of pointers to the CAN port instances. */
     static umap<int, std::thread> rx_threads; /**< Array of threads for the feedback loop. */
@@ -62,16 +121,23 @@ private:
     double goal_pos{}; /**< Desired position of the motor. */
     double goal_vel{}; /**< Desired velocity of the motor. */
     double current{}; /**< Current value of the motor. */
+    double zero = 0.0; /**< Zero position of the motor. */
 
     double last_command; /**< When the motor receives the last command. */
+    bool ready; /**< Flag to indicate if the motor is ready to receive commands. */
+#if ENABLE_TIMEOUT
     std::thread timeout_thread; /**< Thread for checking timeout. */
+#endif
     std::thread calc_thread; /**< Thread for calculating PID control. */
+    std::thread cali_thread; /**< Thread for calibrating the motor. */
 
+#if ENABLE_TIMEOUT
     /**
      * @brief Check if the motor is timed out.
      * If the motor is timed out, the current value is set to zero.
      */
     void check_timeout(); /**< Check if the motor is timed out. */
+#endif
 
     /**
      * @brief Convert velocity to current using PID control.
@@ -110,52 +176,18 @@ private:
     static void tx_loop(int port);
 
     /**
+     * @brief Calibration loop for measuring the zero position of the motor.
+     * @param dir The direction of calibration.
+     * @note This function is executed once when the motor is initialized.
+     */
+    void cali_loop(int dir);
+
+    /**
      * @brief Calculate the PID control.
      * This function is executed in a separate thread.
      * @note Each motor should have a separate thread for calculating PID control.
      */
     void calc_loop(); /**< Loop for calculating PID control. */
-
-public:
-    int hid; /**< Hardware ID of the motor. */
-    string rid; /**< ROS ID of the motor. */
-
-    /**
-     * @brief Constructor for DjiDriver class.
-     * @param rid The ROS ID of the motor.
-     * @param hid The hardware ID of the motor.
-     * @param type The type of the motor.
-     * @param port The port name of the CAN bus.
-     */
-    DjiDriver(const string& rid, int hid, string type, string port);
-
-    /**
-     * @brief Destructor for DjiDriver class.
-     */
-    ~DjiDriver();
-    
-    /**
-     * @brief Set the desired position and velocity for the motor.
-     * @param goal_pos The desired position.
-     * @param goal_vel The desired velocity.
-     */
-    void set_goal(double goal_pos, double goal_vel, double goal_cur);
-
-    /**
-     * @brief Set the PID parameters for position-to-velocity conversion.
-     * @param kp The desired proportional gain.
-     * @param ki The desired integral gain.
-     * @param kd The desired derivative gain.
-     */
-    void set_p2v_pid(double kp, double ki, double kd);
-
-    /**
-     * @brief Set the PID parameters for velocity-to-current conversion.
-     * @param kp The desired proportional gain.
-     * @param ki The desired integral gain.
-     * @param kd The desired derivative gain.
-     */
-    void set_v2c_pid(double kp, double ki, double kd);
 
     /**
      * @brief Calculate and write the transmit frames.
@@ -173,24 +205,12 @@ public:
     void process_rx();
 
     /**
-     * @brief Get the current state of the motor.
-     * @return A tuple containing the position, velocity, and current of the motor.
-     */
-    [[nodiscard]] std::tuple<double, double, double> get_state();
-
-    /**
      * @brief Limits the value of a variable to a specified range.
      * @param val Reference to the variable to be limited.
      * @param limit The upper and lower limit for the value.
      * @note Limit must be positive.
      */
     void curb(double &val, double limit);
-
-    /**
-     * @brief Get the port number of the CAN bus.
-     * @return The port number.
-     */
-    [[nodiscard]] int get_port() const { return port; }
 };
 
 #endif // DJI_DRIVER_H

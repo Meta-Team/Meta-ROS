@@ -15,17 +15,19 @@
 
 #define DT CALC_FREQ / 1000 // the time interval, in seconds
 
+#define TRY_VEL std::map<MotorType, double>{{M3508, 50.0}, {M6020, 1.0}, {M2006, 100.0}}[motor_type]
+
 // static members
 umap<int, unique_ptr<CanPort>> DjiDriver::can_ports{};
 umap<int, std::thread> DjiDriver::rx_threads{};
 umap<int, std::thread> DjiDriver::tx_threads{};
 vector<std::shared_ptr<DjiDriver>> DjiDriver::instances{};
 
-DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_port) :
-    p2v_prm(0.1, 0.01, 0.1),
-    v2c_prm(0.004, 0.00003, 0.1),
+DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_port, int cali) :
     hid(hid),
-    rid(rid)
+    rid(rid),
+    p2v_prm(0.1, 0.01, 0.1),
+    v2c_prm(0.004, 0.00003, 0.1)
 {
     if (type == "3508") motor_type = M3508;
     else if (type == "6020") motor_type = M6020;
@@ -39,15 +41,23 @@ DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_p
     set_port(can_port.back() - '0');
 
     last_command = 0.0;
+#if ENABLE_TIMEOUT
     timeout_thread = std::thread(&DjiDriver::check_timeout, this);
+#endif
     calc_thread = std::thread(&DjiDriver::calc_loop, this);
+    cali_thread = std::thread(&DjiDriver::cali_loop, this, cali);
 }
 
 DjiDriver::~DjiDriver()
 {
+#if ENABLE_TIMEOUT
     if (timeout_thread.joinable()) timeout_thread.join();
+#endif
+    if (calc_thread.joinable()) calc_thread.join();
+    if (cali_thread.joinable()) cali_thread.join();
 }
 
+#if ENABLE_TIMEOUT
 void DjiDriver::check_timeout()
 {
     rclcpp::sleep_for(std::chrono::seconds(1));
@@ -61,6 +71,7 @@ void DjiDriver::check_timeout()
         rclcpp::sleep_for(std::chrono::milliseconds(100));
     }
 }
+#endif
 
 void DjiDriver::set_port(int port)
 {
@@ -95,6 +106,60 @@ void DjiDriver::tx_loop(int port)
     }
 }
 
+void DjiDriver::cali_loop(int dir)
+{
+    auto log = rclcpp::get_logger("dji_driver");
+
+    if (dir == 0)
+    {
+        RCLCPP_INFO(log, "Motor %s zero calibration disabled", rid.c_str());
+        zero = 0.0;
+        ready = true;
+        return;
+    }
+
+#define NOW rclcpp::Clock().now().seconds()
+
+    bool found = false;
+    const auto start = NOW;
+    auto last_not_jammed_moment = NOW;
+
+    while (NOW - start < CALI_TIMEOUT)
+    {
+        // set goal and get feedback
+        goal_pos = NaN;
+        goal_vel = dir * TRY_VEL;
+        auto fb_vel = present_data.velocity;
+
+        // check if the motor is jammed
+        if (std::abs(fb_vel) > TRY_VEL / 5) last_not_jammed_moment = NOW;
+
+        // if jammed long enough
+        if (NOW - last_not_jammed_moment > JAMMED_THRESHOLD)
+        {
+            found = true;
+            break;
+        }
+
+        // sleep
+        rclcpp::sleep_for(std::chrono::milliseconds(CALC_FREQ));
+    }
+
+    ready = true;
+    if (found)
+    {
+        zero = present_data.position;
+        set_goal(0.0, NaN, NaN); // keep the motor still at zero
+        RCLCPP_INFO(log, "Motor %s zero found: %f", rid.c_str(), zero);
+    } else {
+        zero = 0.0;
+        set_goal(NaN, 0.0, NaN); // keep the motor still
+        RCLCPP_WARN(log, "Motor %s zero not found", rid.c_str());
+    }
+
+#undef NOW
+}
+
 void DjiDriver::calc_loop()
 {
     while (rclcpp::ok())
@@ -107,8 +172,9 @@ void DjiDriver::calc_loop()
 
 void DjiDriver::set_goal(double goal_pos, double goal_vel, double goal_cur)
 {
+    if (!ready) return;
     last_command = rclcpp::Clock().now().seconds();
-    this->goal_pos = goal_pos;
+    this->goal_pos = goal_pos + zero;
     this->goal_vel = goal_vel;
     this->current = goal_cur;
 }
@@ -247,7 +313,7 @@ void DjiDriver::calc_tx() // calc and write
 std::tuple<double, double, double> DjiDriver::get_state()
 {
     return std::make_tuple(
-        present_data.position,
+        present_data.position - zero,
         present_data.velocity,
         present_data.torque
     );

@@ -111,6 +111,8 @@ private:
         motor_ports = this->declare_parameter("motor.ports", motor_ports);
         std::vector<std::string> motor_types{};
         motor_types = this->declare_parameter("motor.types", motor_types);
+        std::vector<int64_t> motor_cali(motor_count, 0); // default to 0, in case it is not configured
+        motor_cali = this->declare_parameter("motor.cali", motor_cali);
         
         p2v_kps = this->declare_parameter("motor.p2v.kps", p2v_kps);
         p2v_kis = this->declare_parameter("motor.p2v.kis", p2v_kis);
@@ -129,7 +131,8 @@ private:
             std::string rid = motor_rids[i];
             std::string port = motor_ports[i];
             int hid = motor_hids[i];
-            drivers_.push_back(std::make_unique<DjiDriver>(rid, hid, type, port));
+            int cali = motor_cali[i];
+            drivers_.push_back(std::make_unique<DjiDriver>(rid, hid, type, port, cali));
             drivers_.back()->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
             drivers_.back()->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
 

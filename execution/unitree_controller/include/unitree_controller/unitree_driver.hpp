@@ -10,7 +10,6 @@
 #define NaN std::nan("")
 #define UPDATE_FREQ 20 // ms
 
-#define CALI true
 #define CALI_TIMEOUT 5 // seconds
 #define TRY_VEL 1.5
 #define JAMMED_THRESHOLD 0.3 // s
@@ -30,7 +29,7 @@ public:
     /**
      * @brief Construct a new UnitreeDriver object.
      */
-    UnitreeDriver(std::string rid, int hid, std::string port);
+    UnitreeDriver(std::string rid, int hid, std::string port, int cali);
 
     /**
      * @brief Destroy the UnitreeDriver object.
@@ -90,7 +89,6 @@ private:
      */
     void control_loop();
 
-#if CALI == true
     bool ready = false; ///< A flag to indicate if the motor has finished calibration, and is ready to receive commands.
     double zero = 0.0; ///< The zero position of the motor.
 
@@ -102,8 +100,7 @@ private:
      * Set that position as the zero position.
      * @note This and control_loop() should not be running at the same time.
      */
-    void calibrate();
-#endif // CALI == true
+    void calibrate(int dir);
 };
 
 #endif // UNITREE_DRIVER_HPP
