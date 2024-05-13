@@ -17,7 +17,7 @@ SerialRelay::SerialRelay(const rclcpp::NodeOptions& options)
         relays[relay_names[i]] = std::make_unique<RelayPort>(relay_ports[i], relay_names[i]);
     }
 
-    relay_sub_ = node_->create_subscription<behavior_interface::msg::Relay>(
+    relay_sub_ = node_->create_subscription<device_interface::msg::Relay>(
         "relay", 10, std::bind(&SerialRelay::relay_callback, this, std::placeholders::_1));
 
     RCLCPP_INFO(node_->get_logger(), "SerialRelay initialized.");
@@ -32,7 +32,7 @@ auto SerialRelay::get_node_base_interface() const
     return node_->get_node_base_interface();
 }
 
-void SerialRelay::relay_callback(const behavior_interface::msg::Relay::SharedPtr msg)
+void SerialRelay::relay_callback(const device_interface::msg::Relay::SharedPtr msg)
 {
     if (relays.find(msg->relay_id) != relays.end())
     {

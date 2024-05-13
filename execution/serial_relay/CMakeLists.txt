@@ -28,7 +28,7 @@ rclcpp_components_register_node(serial_relay
 ament_target_dependencies(serial_relay
   rclcpp
   rclcpp_components
-  behavior_interface
+  device_interface
   serial_driver
 )
 

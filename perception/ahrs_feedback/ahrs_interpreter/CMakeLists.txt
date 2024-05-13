@@ -10,7 +10,7 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-find_package(hardware_interface REQUIRED)
+find_package(device_interface REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 
@@ -18,7 +18,7 @@ add_executable(ahrs_interpreter
   src/ahrs_interpreter.cpp)
 
 ament_target_dependencies(ahrs_interpreter
-  hardware_interface
+  device_interface
   geometry_msgs
   rclcpp
 )

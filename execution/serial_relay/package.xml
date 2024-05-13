@@ -10,7 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
-  <depend>behavior_interface</depend>
+  <depend>device_interface</depend>
   <depend>serial_driver</depend>
 
   <test_depend>ament_lint_auto</test_depend>
