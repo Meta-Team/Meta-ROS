@@ -29,6 +29,7 @@ void KmInterpreter::km_input(const KeyMouse::SharedPtr km_msg)
     move_msg_->vel_x = (km_msg->w - km_msg->s) * max_vel;
     move_msg_->vel_y = (km_msg->a - km_msg->d) * max_vel;
     move_msg_->omega = km_msg->mouse_x * aim_sens;
+    grasp_msg_->enable = km_msg->left_button;
 
     if (warned)
     {

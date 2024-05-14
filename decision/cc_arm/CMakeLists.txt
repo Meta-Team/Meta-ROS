@@ -10,6 +10,28 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(operation_interface REQUIRED)
+find_package(behavior_interface REQUIRED)
+
+include_directories(
+  include
+)
+
+add_executable(cc_arm
+  src/cc_arm.cpp
+)
+
+ament_target_dependencies(cc_arm
+  rclcpp
+  operation_interface
+  behavior_interface
+)
+
+install(TARGETS
+  cc_arm
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
