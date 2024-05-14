@@ -12,7 +12,6 @@
 #include "device_interface/msg/motor_goal.hpp"
 #include "device_interface/msg/motor_state.hpp"
 
-#define DISABLE_CONTROL false
 #define PUB_R 10 // ms
 #define CONTROL_R 3 // ms
 

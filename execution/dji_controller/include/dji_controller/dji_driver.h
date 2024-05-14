@@ -21,7 +21,7 @@
 
 #define NaN std::nan("")
 
-#define ENABLE_TIMEOUT false
+#define ENABLE_TIMEOUT true
 
 using std::vector;
 using std::unique_ptr;

@@ -22,6 +22,8 @@ public:
 
     Move get_move() { return *move_msg_; }
 
+    Grasp get_grasp() { return *grasp_msg_; }
+
     bool is_active() { return active; }
 
 private:
