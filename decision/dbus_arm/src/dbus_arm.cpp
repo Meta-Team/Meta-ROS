@@ -8,8 +8,8 @@ public:
     DbusArm() : Node("dbus_arm")
     {
         // get param
-        double linear_vel = this->declare_parameter("control.end_linear_vel", 0.3);
-        double angular_vel = this->declare_parameter("control.end_angular_vel", 0.3);
+        double linear_vel = this->declare_parameter("control.end_linear_vel", 1.0);
+        double angular_vel = this->declare_parameter("control.end_angular_vel", 1.0);
         double deadzone = this->declare_parameter("control.deadzone", 0.05);
         RCLCPP_INFO(this->get_logger(), "linear_vel: %f, angular_vel: %f, deadzone: %f",
             linear_vel, angular_vel, deadzone);
