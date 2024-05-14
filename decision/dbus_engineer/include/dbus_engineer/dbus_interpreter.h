@@ -6,6 +6,13 @@
 #include "operation_interface/msg/dbus_control.hpp"
 #include "behavior_interface/msg/move.hpp"
 
+enum Switch
+{
+    UP = 1,
+    MID = 3,
+    DOWN = 2
+};
+
 using behavior_interface::msg::Move;
 using operation_interface::msg::DbusControl;
 
@@ -24,6 +31,7 @@ public:
 
 private:
     bool active;
+    bool warned;
     Move::SharedPtr move_msg_;
 
     double max_vel;

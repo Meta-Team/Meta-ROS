@@ -24,3 +24,8 @@
         kds:   [0.0E+3,    0.0E+3,    0.0E+3,    0.0E+3,    0.0E+3,    0.0E+3,    1.0E+1]
 
       cali:    [0,         1,         -1,        1,         1,         1,         -1]
+
+    relay:
+      count: 2
+      names: ["VALVE", "PUMP"]
+      ports: ["ttyUSB1", "ttyUSB2"]

@@ -10,6 +10,13 @@
 #include "operation_interface/msg/dbus_control.hpp"
 #include "operation_interface/msg/key_mouse.hpp"
 
+enum Switch
+{
+    UP = 1,
+    MID = 3,
+    DOWN = 2
+};
+
 struct DbusData
 {
     // controller
@@ -17,8 +24,8 @@ struct DbusData
     int16_t ch1;
     int16_t ch2;
     int16_t ch3;
-    uint8_t s0;
-    uint8_t s1;
+    uint8_t s0; // right switch
+    uint8_t s1; // left switch
     int16_t wheel;
 
     // mouse

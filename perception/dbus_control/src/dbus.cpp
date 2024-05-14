@@ -85,8 +85,8 @@ operation_interface::msg::DbusControl Dbus::controller_msg()
     msg.ls_y = static_cast<double>(-data.ch2) / 660.0; // left stick horizontal, left positive
     msg.ls_x = static_cast<double>(data.ch3) / 660.0; // left stick vertical, up positive
     msg.wheel = static_cast<double>(data.wheel) / 660.0; // wheel
-    if (data.s1 != 0) msg.lsw = data.s1;
-    if (data.s0 != 0) msg.rsw = data.s0;
+    if (data.s1 != 0) msg.lsw = data.s1; // left switch
+    if (data.s0 != 0) msg.rsw = data.s0; // right switch
 
     return msg;
 }
@@ -96,8 +96,8 @@ operation_interface::msg::KeyMouse Dbus::keymouse_msg()
     if (!success) return operation_interface::msg::KeyMouse();
 
     operation_interface::msg::KeyMouse msg;
-    // only valid when right switch is at the bottom
-    if (data.s0 == 2) msg.active = true;
+    // only valid when left switch is at the bottom
+    if (data.s1 == Switch::DOWN) msg.active = true;
     else msg.active = false;
 
     msg.left_button = data.l;

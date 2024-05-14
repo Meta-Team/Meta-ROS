@@ -5,7 +5,9 @@
 
 #include "operation_interface/msg/key_mouse.hpp"
 #include "behavior_interface/msg/move.hpp"
+#include "behavior_interface/msg/grasp.hpp"
 
+using behavior_interface::msg::Grasp;
 using behavior_interface::msg::Move;
 using operation_interface::msg::KeyMouse;
 
@@ -24,7 +26,9 @@ public:
 
 private:
     bool active;
+    bool warned;
     Move::SharedPtr move_msg_;
+    Grasp::SharedPtr grasp_msg_;
 
     double max_vel;
     double aim_sens;
