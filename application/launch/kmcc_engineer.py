@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from struct import pack
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (DeclareLaunchArgument, GroupAction,
@@ -64,7 +65,13 @@ def generate_launch_description():
             executable='unitree_controller',
             name='unitree_controller',
             parameters=[config],
-        )
+        ),
+        Node(
+            package='serial_relay',
+            executable='serial_relay_node',
+            name='serial_relay_node',
+            parameters=[config],
+        ),
     ])
 
     ld.add_action(moveit_launch)

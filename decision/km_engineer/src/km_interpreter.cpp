@@ -11,6 +11,7 @@ KmInterpreter::KmInterpreter(double vel, double aim_sens)
     warned = false;
 
     last_op = 0.0;
+    last_suck_toggle = 0.0;
     timeout_thread = std::thread(&KmInterpreter::check_timeout, this);
 }
 
@@ -29,7 +30,10 @@ void KmInterpreter::km_input(const KeyMouse::SharedPtr km_msg)
     move_msg_->vel_x = (km_msg->w - km_msg->s) * max_vel;
     move_msg_->vel_y = (km_msg->a - km_msg->d) * max_vel;
     move_msg_->omega = km_msg->mouse_x * aim_sens;
-    grasp_msg_->enable = km_msg->left_button;
+    // if (km_msg->q)
+    // {
+    //     if 
+    // }
 
     if (warned)
     {

@@ -36,6 +36,7 @@ private:
     double aim_sens;
 
     double last_op;
+    double last_suck_toggle;
     std::thread timeout_thread;
 
     void check_timeout();
