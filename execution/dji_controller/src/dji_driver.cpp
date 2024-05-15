@@ -172,8 +172,8 @@ void DjiDriver::calc_loop()
 
 void DjiDriver::set_goal(double goal_pos, double goal_vel, double goal_cur)
 {
-    if (!ready) return;
     last_command = rclcpp::Clock().now().seconds();
+    if (!ready) return;
     this->goal_pos = goal_pos + zero;
     this->goal_vel = goal_vel;
     this->current = goal_cur;

@@ -4,6 +4,7 @@ DbusInterpreter::DbusInterpreter(double vel, double aim_sens)
     : max_vel(vel), aim_sens(aim_sens)
 {
     move_msg_ = std::make_shared<Move>();
+    grasp_msg_ = std::make_shared<Grasp>();
     move_msg_->vel_x = 0.0;
     move_msg_->vel_y = 0.0;
     move_msg_->omega = 0.0;
