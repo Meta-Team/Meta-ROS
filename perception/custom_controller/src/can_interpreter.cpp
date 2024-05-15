@@ -28,6 +28,8 @@ CanInterpreter::CanInterpreter()
     this->can_driver_ = std::make_unique<CanDriver>(0);
     this->rx_thread = std::thread(&CanInterpreter::rx_loop, this);
     this->calc_thread = std::thread(&CanInterpreter::calc_loop, this);
+
+    // this->msg.x_vel = 1.0;
 }
 
 CanInterpreter::~CanInterpreter()
@@ -130,9 +132,14 @@ void CanInterpreter::position_calculation()
     calculate_rotation_matrix(angle[0], angle[1], angle[2], T_zero);
     multiply_matrices(T_first, End_position, temp);
     multiply_matrices(T_zero, temp, result);
-    msg.x_vel = (result[0]-result_old[0])/DT;
-    msg.y_vel = (result[1]-result_old[1])/DT;
-    msg.z_vel = (result[2]-result_old[2])/DT;
+    // msg.x_vel = (result[0]-result_old[0])/DT;
+    // msg.y_vel = (result[1]-result_old[1])/DT;
+    // msg.z_vel = (result[2]-result_old[2])/DT;
+    msg.x_vel = result[0];
+    msg.y_vel = result[1];
+    msg.z_vel = result[2];
+
+
     msg.pitch_vel = (angle[6] - rotation_old[0])/DT;
     msg.yaw_vel = (angle[7] - rotation_old[1])/DT;
     msg.roll_vel = (angle[8] - rotation_old[2])/DT;

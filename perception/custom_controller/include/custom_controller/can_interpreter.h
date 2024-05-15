@@ -27,7 +27,7 @@ private:
     std::thread rx_thread;
     std::thread calc_thread;
 
-    CC msg;
+    CC msg{};
 
     void rx_loop();
     void calc_loop();
@@ -44,9 +44,9 @@ private:
 
 
     //To Zhizhan: length0 = base->startpoint, length[1] = starpoint->First pivitol, etc.
-    double length0[3] = {0};
-    double length1[3] = {0};
-    double length2[3] = {0};
+    double length0[3] = {1,0,0};
+    double length1[3] = {1,0,0};
+    double length2[3] = {1,0,0};
 
     double T_second[4][4] = {
         {0, 0, 0, length2[0]},
