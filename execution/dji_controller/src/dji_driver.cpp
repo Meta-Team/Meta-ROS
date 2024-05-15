@@ -15,7 +15,7 @@
 
 #define DT CALC_FREQ / 1000 // the time interval, in seconds
 
-#define TRY_VEL std::map<MotorType, double>{{M3508, 50.0}, {M6020, 1.0}, {M2006, 100.0}}[motor_type]
+#define TRY_VEL std::map<MotorType, double>{{M3508, 50.0}, {M6020, 1.0}, {M2006, 50.0}}[motor_type]
 
 // static members
 umap<int, unique_ptr<CanPort>> DjiDriver::can_ports{};
