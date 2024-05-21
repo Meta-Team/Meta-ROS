@@ -130,8 +130,8 @@ void CanInterpreter::position_calculation()
 
     calculate_rotation_matrix(angle[3], angle[4], angle[5], T_first);
     calculate_rotation_matrix(angle[0], angle[1], angle[2], T_zero);
-    multiply_matrices(T_first, End_position, temp);
-    multiply_matrices(T_zero, temp, result);
+    multiply_matrices(T_first, End_position, result);
+    // multiply_matrices(T_zero, temp, result);
     // msg.x_vel = (result[0]-result_old[0])/DT;
     // msg.y_vel = (result[1]-result_old[1])/DT;
     // msg.z_vel = (result[2]-result_old[2])/DT;
@@ -140,9 +140,12 @@ void CanInterpreter::position_calculation()
     msg.z_vel = result[2];
 
 
-    msg.pitch_vel = (angle[6] - rotation_old[0])/DT;
-    msg.yaw_vel = (angle[7] - rotation_old[1])/DT;
-    msg.roll_vel = (angle[8] - rotation_old[2])/DT;
+    // msg.pitch_vel = (angle[6] - rotation_old[0])/DT;
+    // msg.yaw_vel = (angle[7] - rotation_old[1])/DT;
+    // msg.roll_vel = (angle[8] - rotation_old[2])/DT;
+    msg.pitch_vel = angle[6];
+    msg.yaw_vel = angle[7];
+    msg.roll_vel = angle[8];
 }
 
 void CanInterpreter::calc_loop()

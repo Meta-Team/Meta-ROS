@@ -40,13 +40,13 @@ private:
     double rotation_old[3];
 
     // End position of the handle(controller)
-    double position[3];
+    double position[3] = {28,0,0};
 
 
     //To Zhizhan: length0 = base->startpoint, length[1] = starpoint->First pivitol, etc.
-    double length0[3] = {1,0,0};
-    double length1[3] = {1,0,0};
-    double length2[3] = {1,0,0};
+    double length0[3] = {0,0,0};
+    double length1[3] = {28,0,0};
+    double length2[3] = {28,0,0};
 
     double T_second[4][4] = {
         {0, 0, 0, length2[0]},
