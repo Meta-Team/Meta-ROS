@@ -85,21 +85,30 @@ void UnitreeDriver::calibrate(int dir)
 {
     auto log = rclcpp::get_logger("unitree_driver");
 
+#define NOW rclcpp::Clock().now().seconds()
+    const auto start = NOW;
+
+    // if dir == 0, disable calibration
     if (dir == 0)
     {
         RCLCPP_INFO(log, "Motor %s zero calibration disabled", rid.c_str());
         zero = 0.0;
+        // delay for a while
+        ready = false;
+        while (NOW - start < CALI_TIMEOUT && rclcpp::ok())
+        {
+            rclcpp::sleep_for(std::chrono::milliseconds(UPDATE_FREQ));
+        }
         ready = true;
         return;
     }
 
-#define NOW rclcpp::Clock().now().seconds()
-
+    // if dir == 1 or -1, try to find zero
     bool found = false;
-    const auto start = NOW;
     auto last_not_jammed_moment = NOW;
 
-    while (NOW - start < CALI_TIMEOUT)
+    // try to find zero
+    while (NOW - start < CALI_TIMEOUT && rclcpp::ok())
     {
         // set goal and get feedback
         goal_cmd.kd = this->kd;
@@ -120,7 +129,7 @@ void UnitreeDriver::calibrate(int dir)
         std::this_thread::sleep_for(std::chrono::milliseconds(UPDATE_FREQ));
     }
 
-    ready = true;
+    ready = true; // tempalily set to true to send goal
     if (found)
     {
         zero = feedback_data.q;
@@ -132,6 +141,14 @@ void UnitreeDriver::calibrate(int dir)
         set_goal(NaN, 0.0); // keep the motor still
         RCLCPP_WARN(log, "Motor %s zero not found", rid.c_str());
     }
+
+    // delay for a while
+    ready = false;
+    while (NOW - start < CALI_TIMEOUT && rclcpp::ok())
+    {
+        rclcpp::sleep_for(std::chrono::milliseconds(UPDATE_FREQ));
+    }
+    ready = true;
 
 #undef NOW
 }

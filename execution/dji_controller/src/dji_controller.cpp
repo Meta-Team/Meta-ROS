@@ -46,7 +46,7 @@ private:
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::Publisher<device_interface::msg::MotorState>::SharedPtr state_pub_;
     int dji_motor_count;
-    std::vector<std::unique_ptr<DjiDriver>> drivers_; // std::unique_ptr<DjiDriver> drivers_[8];
+    std::unordered_map<std::string, std::unique_ptr<DjiDriver>> drivers_; // std::unique_ptr<DjiDriver> drivers_[8];
     std::vector<double> p2v_kps{}, p2v_kis{}, p2v_kds{};
     std::vector<double> v2c_kps{}, v2c_kis{}, v2c_kds{};
 
@@ -62,15 +62,12 @@ private:
             double cur = msg->goal_tor[i];
 
             // find corresponding driver
-            auto iter = std::find_if(drivers_.begin(), drivers_.end(),
-                [rid](const std::unique_ptr<DjiDriver>& driver){
-                    return driver->rid == rid;
-                });
+            auto iter = drivers_.find(rid);
 
             // set goal
             if (iter != drivers_.end())
             {
-                auto driver = iter->get();
+                auto& driver = iter->second;
                 driver->set_goal(pos, vel, cur);
                 // RCLCPP_INFO(this->get_logger(), "%s receive goal", rid.c_str());
             }
@@ -84,8 +81,19 @@ private:
     void pub_timer_callback()
     {
         // publish feedback
-        device_interface::msg::MotorState msg;
-        for (auto& driver : drivers_)
+        static device_interface::msg::MotorState msg;
+
+        msg.motor_id.clear();
+        msg.present_pos.clear();
+        msg.present_vel.clear();
+        msg.present_tor.clear();
+
+        msg.motor_id.reserve(drivers_.size());
+        msg.present_pos.reserve(drivers_.size());
+        msg.present_vel.reserve(drivers_.size());
+        msg.present_tor.reserve(drivers_.size());
+
+        for (auto& [_, driver] : drivers_)
         {
             msg.motor_id.push_back(driver->rid);
             auto [pos, vel, cur] = driver->get_state();
@@ -131,12 +139,12 @@ private:
             std::string port = motor_ports[i];
             int hid = motor_hids[i];
             int cali = motor_cali[i];
-            drivers_.push_back(std::make_unique<DjiDriver>(rid, hid, type, port, cali));
-            drivers_.back()->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
-            drivers_.back()->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
+            drivers_[rid] = std::make_unique<DjiDriver>(rid, hid, type, port, cali);
+            drivers_[rid]->set_p2v_pid(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
+            drivers_[rid]->set_v2c_pid(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
 
             RCLCPP_INFO(this->get_logger(), "Motor rid %s hid %d port %d initialized, with %f %f %f %f %f %f",
-                drivers_.back()->rid.c_str(), drivers_.back()->hid, drivers_.back()->get_port(),
+                drivers_[rid]->rid.c_str(), drivers_[rid]->hid, drivers_[rid]->get_port(),
                 p2v_kps[i], p2v_kis[i], p2v_kds[i], v2c_kps[i], v2c_kis[i], v2c_kds[i]);
         }
     }

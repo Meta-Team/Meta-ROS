@@ -13,7 +13,7 @@
 #define CALC_FREQ 1 // ms
 #define TX_FREQ 2 // ms
 
-#define CALI_TIMEOUT 5 // seconds
+#define CALI_TIMEOUT 3 // seconds
 #define JAMMED_THRESHOLD 0.3 // s
 
 #define I_MAX 20 // Ampere, current limit

@@ -10,7 +10,7 @@
 #define NaN std::nan("")
 #define UPDATE_FREQ 20 // ms
 
-#define CALI_TIMEOUT 5 // seconds
+#define CALI_TIMEOUT 3 // seconds
 #define TRY_VEL 1.5
 #define JAMMED_THRESHOLD 0.3 // s
 

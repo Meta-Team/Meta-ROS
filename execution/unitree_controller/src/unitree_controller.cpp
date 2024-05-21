@@ -2,10 +2,9 @@
 #include "unitree_controller/unitree_driver.hpp"
 #include <cstdint>
 #include <memory>
-#include <device_interface/msg/detail/motor_goal__struct.hpp>
-#include <device_interface/msg/detail/motor_state__struct.hpp>
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/subscription.hpp>
+#include <unordered_map>
 #include <vector>
 
 #include "device_interface/msg/motor_goal.hpp"
@@ -31,7 +30,7 @@ public:
     }
 
 private:
-    std::vector<std::unique_ptr<UnitreeDriver>> drivers_;
+    std::unordered_map<std::string, std::unique_ptr<UnitreeDriver>> drivers_;
     rclcpp::Subscription<device_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::Publisher<device_interface::msg::MotorState>::SharedPtr feedback_pub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
@@ -48,30 +47,36 @@ private:
             double vel = msg->goal_vel[i];
 
             // find corresponding driver
-            auto iter = std::find_if(drivers_.begin(), drivers_.end(),
-                [rid](const std::unique_ptr<UnitreeDriver>& driver){
-                    return driver->rid == rid;
-                });
+            auto iter = drivers_.find(rid);
 
             // set goal
             if (iter != drivers_.end())
             {
-                // RCLCPP_INFO(this->get_logger(), "Motor %s set goal", rid.c_str());
-                auto driver = iter->get();
+                auto& driver = iter->second;
                 driver->set_goal(pos, vel);
             }
             else {
                 // not found, may be a dm or dji motor
-                // RCLCPP_WARN(this->get_logger(), "Motor %s not found", rid.c_str);
+                // RCLCPP_WARN(this->get_logger(), "Motor %s not found", rid.c_str());
             }
         }
     }
 
     void pub_timer_callback()
     {   
-        // publish feedback
-        device_interface::msg::MotorState msg;
-        for (auto& driver : drivers_)
+        static device_interface::msg::MotorState msg;
+
+        msg.motor_id.clear();
+        msg.present_pos.clear();
+        msg.present_vel.clear();
+        msg.present_tor.clear();
+
+        msg.motor_id.reserve(drivers_.size());
+        msg.present_pos.reserve(drivers_.size());
+        msg.present_vel.reserve(drivers_.size());
+        msg.present_tor.reserve(drivers_.size());
+
+        for (auto& [_, driver] : drivers_)
         {
             msg.motor_id.push_back(driver->rid);
             auto [pos, vel, tor] = driver->get_state();
@@ -112,8 +117,8 @@ private:
             std::string port = motor_ports[i];
             int cali = motor_cali[i];
 
-            drivers_.push_back(std::make_unique<UnitreeDriver>(rid, hid, port, cali));
-            drivers_.back()->set_pid(p2v_kps[i], p2v_kds[i]);
+            drivers_[rid] = std::make_unique<UnitreeDriver>(rid, hid, port, cali);
+            drivers_[rid]->set_pid(p2v_kps[i], p2v_kds[i]);
             RCLCPP_INFO(this->get_logger(), "Motor rid %s hid %d initialized with kp %f kd %f",
                 rid.c_str(), hid, p2v_kps[i], p2v_kds[i]);
         }

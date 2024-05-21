@@ -12,10 +12,11 @@
 #include <rclcpp/utilities.hpp>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 
 #define DT CALC_FREQ / 1000 // the time interval, in seconds
 
-#define TRY_VEL std::map<MotorType, double>{{M3508, 50.0}, {M6020, 1.0}, {M2006, 50.0}}[motor_type]
+#define TRY_VEL std::unordered_map<MotorType, double>{{M3508, 50.0}, {M6020, 1.0}, {M2006, 50.0}}[motor_type]
 
 // static members
 umap<int, unique_ptr<CanPort>> DjiDriver::can_ports{};
@@ -32,7 +33,7 @@ DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_p
     if (type == "3508") motor_type = M3508;
     else if (type == "6020") motor_type = M6020;
     else if (type == "2006") motor_type = M2006;
-    else std::cerr << "Unknown motor type: " << type << std::endl;
+    else RCLCPP_ERROR(rclcpp::get_logger("dji_driver"), "Unknown motor type: %s", type.c_str());
     
     this->p2v_out = PidOutput();
     this->v2c_out = PidOutput();
@@ -110,18 +111,25 @@ void DjiDriver::cali_loop(int dir)
 {
     auto log = rclcpp::get_logger("dji_driver");
 
+#define NOW rclcpp::Clock().now().seconds()
+    const auto start = NOW;
+
     if (dir == 0)
     {
         RCLCPP_INFO(log, "Motor %s zero calibration disabled", rid.c_str());
         zero = 0.0;
+        // delay for a while
+        ready = false;
+        while (NOW - start < CALI_TIMEOUT && rclcpp::ok())
+        {
+            rclcpp::sleep_for(std::chrono::milliseconds(CALC_FREQ));
+        }
         ready = true;
         return;
     }
 
-#define NOW rclcpp::Clock().now().seconds()
-
+    // if dir == 1 or -1, try to find zero
     bool found = false;
-    const auto start = NOW;
     auto last_not_jammed_moment = NOW;
 
     while (NOW - start < CALI_TIMEOUT)
@@ -156,6 +164,14 @@ void DjiDriver::cali_loop(int dir)
         set_goal(NaN, 0.0, NaN); // keep the motor still
         RCLCPP_WARN(log, "Motor %s zero not found", rid.c_str());
     }
+
+    // delay for a while
+    ready = false;
+    while (NOW - start < CALI_TIMEOUT && rclcpp::ok())
+    {
+        rclcpp::sleep_for(std::chrono::milliseconds(CALC_FREQ));
+    }
+    ready = true;
 
 #undef NOW
 }

@@ -1,6 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include <cstdint>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "dm_controller/can_driver.hpp"
@@ -31,7 +32,7 @@ public:
 
     ~DmController()
     {
-        for (auto& driver : dm_driver_)
+        for (auto& [_, driver] : dm_driver_)
         {
             driver->turn_off();
         }
@@ -42,7 +43,7 @@ private:
     rclcpp::Subscription<device_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::Publisher<device_interface::msg::MotorState>::SharedPtr state_pub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
-    std::vector<std::unique_ptr<DmDriver>> dm_driver_;
+    std::unordered_map<std::string, std::unique_ptr<DmDriver>> dm_driver_;
     std::vector<double> kps{}, kis{};
 
     void motor_init()
@@ -73,18 +74,18 @@ private:
 
             if (motor_types[i] == "VEL")
             {
-                dm_driver_.push_back(std::make_unique<DmVelDriver>(rid, hid, port));
+                dm_driver_[rid] = std::make_unique<DmVelDriver>(rid, hid, port);
             }
             else if (motor_types[i] == "MIT")
             {
-                dm_driver_.push_back(std::make_unique<DmMitDriver>(rid, hid, kps[i], kis[i], port));
+                dm_driver_[rid] = std::make_unique<DmMitDriver>(rid, hid, kps[i], kis[i], port);
             }
             else {
                 RCLCPP_WARN(this->get_logger(), "Motor %s type %s not supported", rid.c_str(), motor_types[i].c_str());
             }
         }
 
-        for (auto& driver : dm_driver_)
+        for (auto& [_, driver] : dm_driver_)
         {
             driver->turn_on();
         }
@@ -100,15 +101,12 @@ private:
             float vel = msg->goal_vel[i];
 
             // find corresponding driver
-            auto iter = std::find_if(dm_driver_.begin(), dm_driver_.end(),
-                [rid](const std::unique_ptr<DmDriver>& driver){
-                    return driver->rid == rid;
-                });
+            auto iter = dm_driver_.find(rid);
 
             // set goal
             if (iter != dm_driver_.end())
             {
-                auto driver = iter->get();
+                auto& driver = iter->second;
                 driver->set_position(pos);
                 driver->set_velocity(vel);
             }
@@ -122,7 +120,7 @@ private:
     void state_callback()
     {
         device_interface::msg::MotorState state_msg;
-        for (auto& driver : dm_driver_)
+        for (auto& [_, driver] : dm_driver_)
         {
             auto [pos, vel, tor] = driver->get_state();
             state_msg.motor_id.push_back(driver->rid);
