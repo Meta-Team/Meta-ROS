@@ -33,9 +33,9 @@ def generate_launch_description():
 
         # decomp
         Node(
-            package='agv_chassis',
-            executable='agv_chassis',
-            name='agv_chassis',
+            package='omni_chassis',
+            executable='omni_chassis',
+            name='omni_chassis',
             parameters=[config],
         ),
 

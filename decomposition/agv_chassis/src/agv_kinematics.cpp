@@ -10,10 +10,10 @@ MotorGoal AgvKinematics::stop = [] {
         stop_.goal_vel.push_back(0.0);
         stop_.goal_pos.push_back(NaN);
     };
-    std::array rid = {"LF_V", "RF_V", "LB_V", "RB_V",
+    std::array rids = {"LF_V", "RF_V", "LB_V", "RB_V",
         "LF_D", "RF_D", "LB_D", "RB_D"
     };
-    for (const auto &r : rid) set_zero_vel(r);
+    for (const auto &id : rids) set_zero_vel(id);
     return stop_;
 }();
 
@@ -104,7 +104,7 @@ void AgvKinematics::chassis_decompo(const behavior_interface::msg::Move::SharedP
 MotorGoal AgvKinematics::get_motor_goal() const
 {
     auto now = rclcpp::Clock().now().seconds();
-    if (now - last_rec > 0.3) return stop;
+    if (now - last_rec > 0.25) return stop;
     return motor_goal;
 }
 
