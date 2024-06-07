@@ -18,6 +18,7 @@ class ShootLoad : public rclcpp::Node
 public:
     ShootLoad() : Node("shoot_load")
     {
+        init_stop_command();
         get_param();
 
         shoot_sub_ = this->create_subscription<behavior_interface::msg::Shoot>("shoot",
@@ -41,6 +42,9 @@ private:
     rclcpp::Publisher<device_interface::msg::MotorGoal>::SharedPtr motor_pub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::TimerBase::SharedPtr update_timer_;
+
+    device_interface::msg::MotorGoal stop;
+    double last_rec = 0.0; // the last time a command is received
 
     // ros params, constant after initialization
     float feed_max_vel_l = 5.0, feed_max_vel_r = 5.0;
@@ -71,6 +75,7 @@ private:
 
     void goal_callback(const behavior_interface::msg::Shoot::SharedPtr msg)
     {
+        last_rec = rclcpp::Clock().now().seconds();
         active_feed = msg->feed_state;
         active_fric = msg->fric_state;
     }
@@ -136,6 +141,12 @@ private:
 
     void pub_timer_callback()
     {
+        if (rclcpp::Clock().now().seconds() - last_rec > 0.1)
+        {
+            motor_pub_->publish(stop);
+            return;
+        }
+
         device_interface::msg::MotorGoal motor_msg;
         clear(motor_msg);
 
@@ -167,6 +178,22 @@ private:
         msg.motor_id.clear();
         msg.goal_vel.clear();
         msg.goal_pos.clear();
+    }
+
+    void init_stop_command()
+    {
+        stop = [] {
+            device_interface::msg::MotorGoal stop_;
+            auto set_zero_vel = [&stop_](const std::string &rid) {
+                stop_.motor_id.push_back(rid);
+                stop_.goal_tor.push_back(NaN);
+                stop_.goal_vel.push_back(0.0);
+                stop_.goal_pos.push_back(NaN);
+            };
+            std::array rids = {"FRIC_U", "FRIC_D", "FEED_L", "FEED_R"};
+            for (const auto &id : rids) set_zero_vel(id);
+            return stop_;
+        }();
     }
 };
 

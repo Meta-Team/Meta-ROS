@@ -104,7 +104,7 @@ void AgvKinematics::chassis_decompo(const behavior_interface::msg::Move::SharedP
 MotorGoal AgvKinematics::get_motor_goal() const
 {
     auto now = rclcpp::Clock().now().seconds();
-    if (now - last_rec > 0.25) return stop;
+    if (now - last_rec > 0.1) return stop;
     return motor_goal;
 }
 
