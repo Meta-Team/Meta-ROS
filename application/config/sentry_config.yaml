@@ -5,7 +5,8 @@
     auto_rotate: 0.0 # rad/s,   of the chassis
     comp_ratio: 0.9
     move_mode: "natural"
-    serial_path: "/dev/ttyUSB0"
+    referee_port: "/dev/ttyUSB1"
+    dbus_port: "ttyUSB0"
     reset_delay: 500 # ms
 
     control:

@@ -24,7 +24,7 @@ public:
         shoot_pub_ = this->create_publisher<behavior_interface::msg::Shoot>("shoot", 10);
         aim_pub_ = this->create_publisher<behavior_interface::msg::Aim>("aim", 10);
         dbus_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
-            "dbus", 10,
+            "dbus_control", 10,
             std::bind(&DbusVehicle::dbus_callback, this, std::placeholders::_1));
 
         // timer
@@ -61,7 +61,7 @@ private:
 int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
-    auto node_ = std::shared_ptr<DbusVehicle>();
+    auto node_ = std::make_shared<DbusVehicle>();
     rclcpp::spin(node_);
     rclcpp::shutdown();
     return 0;

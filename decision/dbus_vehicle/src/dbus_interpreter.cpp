@@ -37,7 +37,7 @@ void DbusInterpreter::input(const operation_interface::msg::DbusControl::SharedP
 
 void DbusInterpreter::update()
 {
-    active = lsw == 2 ? true : false;
+    active = (lsw == Switch::MID) ? true : false;
     move_->vel_x = max_vel * ls_x;
     move_->vel_y = max_vel * ls_y;
     move_->omega = max_omega * wheel;

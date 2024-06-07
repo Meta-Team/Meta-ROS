@@ -17,6 +17,13 @@ using behavior_interface::msg::Move;
 using behavior_interface::msg::Shoot;
 using behavior_interface::msg::Aim;
 
+enum Switch
+{
+    UP = 1,
+    MID = 3,
+    DOWN = 2
+};
+
 class DbusInterpreter
 {
 public:

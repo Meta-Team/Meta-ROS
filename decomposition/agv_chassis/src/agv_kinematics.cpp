@@ -1,41 +1,59 @@
 #include "agv_chassis/agv_kinematics.hpp"
 #include <cmath>
+#include "rclcpp/rclcpp.hpp"
 
-double AgvKinematics::wheel_r = 0.05;
-double AgvKinematics::cha_r = 0.3;
-double AgvKinematics::decel_ratio = 20.0;
-double AgvKinematics::n_offset = 0.0;
-double AgvKinematics::yaw_offset = 0.0;
+MotorGoal AgvKinematics::stop = [] {
+    MotorGoal stop_;
+    auto set_zero_vel = [&stop_](const string &rid) {
+        stop_.motor_id.push_back(rid);
+        stop_.goal_tor.push_back(NaN);
+        stop_.goal_vel.push_back(0.0);
+        stop_.goal_pos.push_back(NaN);
+    };
+    std::array rid = {"LF_V", "RF_V", "LB_V", "RB_V",
+        "LF_D", "RF_D", "LB_D", "RB_D"
+    };
+    for (const auto &r : rid) set_zero_vel(r);
+    return stop_;
+}();
 
-unordered_map<string, double> AgvKinematics::vel = 
+AgvKinematics::AgvKinematics(double wheel_r, double cha_r, double decel_ratio, double n_offset, double yaw_offset)
+    : wheel_r(wheel_r), cha_r(cha_r), decel_ratio(decel_ratio), n_offset(n_offset), yaw_offset(yaw_offset)
 {
-    // {rid, vel}
-    {"LF_V", 0.0},
-    {"RF_V", 0.0},
-    {"LB_V", 0.0},
-    {"RB_V", 0.0},
-}; // m/s
+    vel = {
+        // {rid, vel}
+        {"LF_V", 0.0},
+        {"RF_V", 0.0},
+        {"LB_V", 0.0},
+        {"RB_V", 0.0},
+    }; // m/s
 
-unordered_map<string, pair<int, double>> AgvKinematics::pos = 
-{
-    // {rid, {round, angle}}
-    {"LF_D", {0, 0.0}},
-    {"RF_D", {0, 0.0}},
-    {"LB_D", {0, 0.0}},
-    {"RB_D", {0, 0.0}},
-}; // rad
+    pos = {
+        // {rid, {round, angle}}
+        {"LF_D", {0, 0.0}},
+        {"RF_D", {0, 0.0}},
+        {"LB_D", {0, 0.0}},
+        {"RB_D", {0, 0.0}},
+    }; // rad
 
-unordered_map<string, double> AgvKinematics::offsets =
-{
-    {"LF_D", 0.0},
-    {"RF_D", 0.0},
-    {"LB_D", 0.0},
-    {"RB_D", 0.0},
-}; // rad
+    offsets = {
+        {"LF_D", 0.0},
+        {"RF_D", 0.0},
+        {"LB_D", 0.0},
+        {"RB_D", 0.0},
+    }; // rad
+}
 
-MotorGoal AgvKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, double yaw_diff)
+void AgvKinematics::set_offsets(double lf, double rf, double lb, double rb)
 {
-    MotorGoal motor_goal;
+    offsets["LF_D"] = lf;
+    offsets["RF_D"] = rf;
+    offsets["LB_D"] = lb;
+    offsets["RB_D"] = rb;
+}
+
+void AgvKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, double yaw_diff)
+{
     clear_goal(motor_goal);
 
     double trans_x = msg->vel_x * cos(yaw_diff) - msg->vel_y * sin(yaw_diff);
@@ -47,12 +65,11 @@ MotorGoal AgvKinematics::natural_decompo(const behavior_interface::msg::Move::Sh
     add_group_goal(motor_goal, "RB", trans_x + rot_vel, trans_y - rot_vel);
     add_group_goal(motor_goal, "RF", trans_x + rot_vel, trans_y + rot_vel);
 
-    return motor_goal;
+    last_rec = rclcpp::Clock().now().seconds();
 }
 
-MotorGoal AgvKinematics::absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, double gimbal, double motor)
+void AgvKinematics::absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, double gimbal, double motor)
 {
-    MotorGoal motor_goal;
     clear_goal(motor_goal);
 
     double dir = gimbal + (motor - yaw_offset) - n_offset;
@@ -64,13 +81,12 @@ MotorGoal AgvKinematics::absolute_decompo(const behavior_interface::msg::Move::S
     add_group_goal(motor_goal, "LB", trans_x - rot_vel, trans_y - rot_vel);
     add_group_goal(motor_goal, "RB", trans_x + rot_vel, trans_y - rot_vel);
     add_group_goal(motor_goal, "RF", trans_x + rot_vel, trans_y + rot_vel);
-    
-    return motor_goal;
+
+    last_rec = rclcpp::Clock().now().seconds();
 }
 
-MotorGoal AgvKinematics::chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg)
+void AgvKinematics::chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg)
 {
-    MotorGoal motor_goal;
     clear_goal(motor_goal);
 
     double trans_x = msg->vel_x;
@@ -81,7 +97,14 @@ MotorGoal AgvKinematics::chassis_decompo(const behavior_interface::msg::Move::Sh
     add_group_goal(motor_goal, "LB", trans_x - rot_vel, trans_y - rot_vel);
     add_group_goal(motor_goal, "RB", trans_x + rot_vel, trans_y - rot_vel);
     add_group_goal(motor_goal, "RF", trans_x + rot_vel, trans_y + rot_vel);
-    
+
+    last_rec = rclcpp::Clock().now().seconds();
+}
+
+MotorGoal AgvKinematics::get_motor_goal() const
+{
+    auto now = rclcpp::Clock().now().seconds();
+    if (now - last_rec > 0.3) return stop;
     return motor_goal;
 }
 
