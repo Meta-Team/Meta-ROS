@@ -29,6 +29,8 @@ class DbusInterpreter
 public:
     DbusInterpreter(float max_vel, float max_omega, float aim_sens, float deadzone);
 
+    ~DbusInterpreter();
+
     void input(const DbusControl::SharedPtr msg);
 
     Move::SharedPtr get_move() const;

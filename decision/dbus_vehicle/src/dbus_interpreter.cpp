@@ -24,6 +24,11 @@ DbusInterpreter::DbusInterpreter(float max_vel, float max_omega, float aim_sens,
     });
 }
 
+DbusInterpreter::~DbusInterpreter()
+{
+    if (update_thread.joinable()) update_thread.join();
+}
+
 void DbusInterpreter::input(const operation_interface::msg::DbusControl::SharedPtr msg)
 {
     ls_x = msg->ls_x; apply_deadzone(ls_x); // forward is positive
