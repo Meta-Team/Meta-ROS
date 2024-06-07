@@ -30,6 +30,12 @@ def generate_launch_description():
             name='dbus_vehicle',
             parameters=[config],
         ),
+        Node(
+            package='auto_sentry',
+            executable='auto_sentry',
+            name='auto_sentry',
+            parameters=[config],
+        ),
 
         # decomp
         Node(
@@ -38,6 +44,19 @@ def generate_launch_description():
             name='omni_chassis',
             parameters=[config],
         ),
+        Node(
+            package='uni_gimbal',
+            executable='uni_gimbal',
+            name='uni_gimbal',
+            parameters=[config],
+        ),
+        Node(
+            package='shoot_load',
+            executable='shoot_load',
+            name='shoot_load',
+            parameters=[config],
+        ),
+
 
         # exec
     ])

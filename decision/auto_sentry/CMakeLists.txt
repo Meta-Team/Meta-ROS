@@ -17,7 +17,10 @@ find_package(rclcpp REQUIRED)
 
 include_directories(include)
 
-add_executable(auto_sentry src/auto_sentry.cpp)
+add_executable(auto_sentry
+  src/auto_sentry.cpp
+  src/auto_decision.cpp
+)
 ament_target_dependencies(auto_sentry
   rclcpp
   behavior_interface

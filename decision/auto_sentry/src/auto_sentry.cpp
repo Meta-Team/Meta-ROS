@@ -1,45 +1,41 @@
 #include "rclcpp/rclcpp.hpp"
+#include <memory>
+#include "auto_sentry/auto_decision.h"
+
 #include "behavior_interface/msg/aim.hpp"
 #include "behavior_interface/msg/move.hpp"
 #include "behavior_interface/msg/shoot.hpp"
 #include "vision_interface/msg/auto_aim.hpp"
-#include "auto_sentry/aim_mode.hpp"
-#include <memory>
-#include "operation_interface/msg/game_info.hpp"
+#include "operation_interface/msg/dbus_control.hpp"
 
-#define UPDATE_R 1 // ms
-#define PUB_R 20 // ms
+#define PUB_R 10 // ms
 
 using namespace behavior_interface::msg;
-using vision_interface::msg::AutoAim;
-using operation_interface::msg::GameInfo;
  
 class AutoSentry : public rclcpp::Node
 {
 public:
     AutoSentry() : Node("auto_sentry")
     {
-        this->aim_pub_ = this->create_publisher<Aim>("aim", 10);
-        this->move_pub_ = this->create_publisher<Move>("move", 10);
-        this->shoot_pub_ = this->create_publisher<Shoot>("shoot", 10);
+        aim_pub_ = this->create_publisher<Aim>("aim", 10);
+        move_pub_ = this->create_publisher<Move>("move", 10);
+        shoot_pub_ = this->create_publisher<Shoot>("shoot", 10);
 
-        search_vel = this->declare_parameter("gimbal.search_vel", search_vel);
-        freq = this->declare_parameter("gimbal.pitch_freq", freq);
-        amplitude = this->declare_parameter("gimbal.pitch_amp", amplitude);
-        north_offset = this->declare_parameter("north_offset", north_offset);
-        auto_rotate = this->declare_parameter("auto_rotate", auto_rotate);
-        int reset_delay = this->declare_parameter("reset_delay", 1000); // ms
-        aim_mode = std::make_unique<AimMode>(this->get_logger(), reset_delay);
+        double search_vel = this->declare_parameter("gimbal.search_vel", 0.5);
+        double freq = this->declare_parameter("gimbal.pitch_freq", 3.0);
+        double amplitude = this->declare_parameter("gimbal.pitch_amp", 0.4);
+        double north_offset = this->declare_parameter("north_offset", 0.0);
+        double auto_rotate = this->declare_parameter("auto_rotate", 2.0);
 
-        set_msgs();
+        auto_decision_ = std::make_unique<AutoDecision>(north_offset, search_vel, freq, amplitude, auto_rotate);
 
-        this->auto_aim_sub_ = this->create_subscription<AutoAim>("auto_aim", 10,
+        auto_aim_sub_ = this->create_subscription<AutoAim>("auto_aim", 10,
             std::bind(&AutoSentry::auto_aim_callback, this, std::placeholders::_1));
-
-        this->publish_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_R),
-            std::bind(&AutoSentry::pub_timer_callback, this));
-        this->update_timer_ = this->create_wall_timer(std::chrono::milliseconds(UPDATE_R),
-            std::bind(&AutoSentry::update_timer_callback, this));
+        dbus_control_sub_ = this->create_subscription<DbusControl>("dbus_control", 10,
+            std::bind(&AutoSentry::dbus_control_callback, this, std::placeholders::_1));
+        
+        pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(PUB_R),
+            std::bind(&AutoSentry::timer_callback, this));
 
         RCLCPP_INFO(this->get_logger(), "AutoSentry initialized");
     }
@@ -48,107 +44,30 @@ private:
     rclcpp::Publisher<Aim>::SharedPtr aim_pub_;
     rclcpp::Publisher<Move>::SharedPtr move_pub_;
     rclcpp::Publisher<Shoot>::SharedPtr shoot_pub_;
-    rclcpp::Subscription<GameInfo>::SharedPtr game_info;
     rclcpp::Subscription<AutoAim>::SharedPtr auto_aim_sub_;
-    rclcpp::TimerBase::SharedPtr publish_timer_;
-    rclcpp::TimerBase::SharedPtr update_timer_;
+    rclcpp::Subscription<DbusControl>::SharedPtr dbus_control_sub_;
+    rclcpp::TimerBase::SharedPtr pub_timer_;
 
-    double north_offset = 0.0;
-    double search_vel = 0.5; // rad/s
-    double freq = 3.0;
-    double amplitude = 0.4; // rad
-    double auto_rotate = 2; // rad/s
+    std::unique_ptr<AutoDecision> auto_decision_;
 
-    std::unique_ptr<AimMode> aim_mode;
-
-    float yaw_buffer = 0.0;
-    float pitch_buffer = 0.0;
-    bool received = false;
-    Aim aim_msg;
-    Move move_msg;
-    Shoot shoot_msg;
-
-    bool robot_active = false;
+    void timer_callback()
+    {
+        if (auto_decision_->is_active())
+        {
+            aim_pub_->publish(auto_decision_->get_aim());
+            move_pub_->publish(auto_decision_->get_move());
+            shoot_pub_->publish(auto_decision_->get_shoot());
+        }
+    }
 
     void auto_aim_callback(const AutoAim::SharedPtr msg)
     {
-        received = true;
-        // save the latest aim
-        yaw_buffer = msg->yaw;
-        pitch_buffer = msg->pitch;
+        auto_decision_->vision_input(msg);
     }
 
-    void game_info_callback(operation_interface::msg::GameInfo::SharedPtr msg)
+    void dbus_control_callback(const operation_interface::msg::DbusControl::SharedPtr msg)
     {
-        const auto progress = msg->game_progress;
-        if (progress == "NotStarted" || progress == "End") robot_active = false;
-        else if (progress == "Preparation" || progress == "SelfCheck" || progress == "5sCountdown") robot_active = true;
-    }
-
-    void update_timer_callback()
-    {
-        if (robot_active == true) // active
-        {
-            if (received) ++(*aim_mode);
-            else --(*aim_mode);
-
-            received = false; // reset
-
-            if (aim_mode->is_active()) // target found
-            {
-                // load the latest aim
-                aim_msg.yaw = yaw_buffer;
-                aim_msg.pitch = pitch_buffer;
-                // start feeding
-                shoot_msg.feed_state = true;
-            }
-            else { // target lost
-                search();
-                // stop feeding
-                shoot_msg.feed_state = false;
-            }
-        }
-        else // inactive
-        {
-            aim_msg.pitch = 0;
-            aim_msg.yaw = 0;
-            shoot_msg.feed_state = false;
-            shoot_msg.fric_state = false;
-            move_msg.omega = 0;
-            move_msg.vel_x = 0;
-            move_msg.vel_y = 0;
-        }
-    }
-
-    void pub_timer_callback()
-    {
-        aim_pub_->publish(aim_msg);
-        move_pub_->publish(move_msg);
-        shoot_pub_->publish(shoot_msg);
-    }
-
-    void search()
-    {
-        // yaw
-        aim_msg.yaw += search_vel * UPDATE_R / 1000;
-        aim_msg.yaw = std::fmod(aim_msg.yaw, 2 * M_PI);
-
-        // pitch sin wave
-        aim_msg.pitch = amplitude * std::sin(freq * now().seconds());
-    }
-
-    void set_msgs()
-    {
-        aim_msg.yaw = north_offset;
-        aim_msg.pitch = 0.0;
-
-        move_msg.vel_x = 0.0;
-        move_msg.vel_y = 0.0;
-        move_msg.omega = auto_rotate;
-
-        shoot_msg.id = 0;
-        shoot_msg.feed_state = false;
-        shoot_msg.fric_state = true;
+        auto_decision_->dbus_input(msg);
     }
 };
 
