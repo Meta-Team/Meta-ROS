@@ -15,13 +15,6 @@ using vision_interface::msg::AutoAim;
 
 #define UPDATE_R 5 // ms
 
-enum Switch
-{
-    UP = 1,
-    MID = 3,
-    DOWN = 2
-};
-
 class AutoDecision
 {
 public:

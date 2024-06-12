@@ -22,7 +22,7 @@ DbusInterpreter::~DbusInterpreter()
 
 void DbusInterpreter::dbus_input(const DbusControl::SharedPtr dbus_msg)
 {
-    active = (dbus_msg->lsw == Switch::MID) ? true : false;
+    active = (dbus_msg->lsw == "MID") ? true : false;
 
     if (!active) return;
 
@@ -30,7 +30,7 @@ void DbusInterpreter::dbus_input(const DbusControl::SharedPtr dbus_msg)
     move_msg_->vel_x = dbus_msg->ls_x * max_vel;
     move_msg_->vel_y = dbus_msg->ls_y * max_vel;
     move_msg_->omega = dbus_msg->rs_y * aim_sens;
-    grasp_msg_->enable = dbus_msg->rsw == Switch::UP;
+    grasp_msg_->enable = dbus_msg->rsw == "UP";
 
     if (warned)
     {

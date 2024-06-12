@@ -7,7 +7,7 @@ DbusInterpreter::DbusInterpreter(float max_vel, float max_omega, float aim_sens,
     // initialize buttons and axes
     active = false;
     ls_x = ls_y = rs_x = rs_y = wheel = 0;
-    lsw = rsw = 0;
+    lsw = rsw = "";
 
     // initialize move, shoot, and aim
     move_ = std::make_shared<Move>();
@@ -42,14 +42,15 @@ void DbusInterpreter::input(const operation_interface::msg::DbusControl::SharedP
 
 void DbusInterpreter::update()
 {
-    active = (lsw == Switch::MID) ? true : false;
+    active = (lsw == "MID") ? true : false;
     move_->vel_x = max_vel * ls_x;
     move_->vel_y = max_vel * ls_y;
     move_->omega = max_omega * wheel;
     aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_2);
     aim_->yaw += aim_sens * rs_y * PERIOD / 1000;
-    shoot_->fric_state = lsw;
-    shoot_->feed_state = rsw;
+    // shoot_->fric_state = lsw;
+    // shoot_->feed_state = rsw;
+    // MY_TODO: to be determined
 }
 
 void DbusInterpreter::apply_deadzone(double &val)

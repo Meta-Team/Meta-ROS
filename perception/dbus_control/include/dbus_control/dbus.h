@@ -6,16 +6,10 @@
 #include "rclcpp/rclcpp.hpp"
 #include <array>
 #include <cstdint>
+#include <unordered_map>
 
 #include "operation_interface/msg/dbus_control.hpp"
 #include "operation_interface/msg/key_mouse.hpp"
-
-enum Switch
-{
-    UP = 1,
-    MID = 3,
-    DOWN = 2
-};
 
 struct DbusData
 {
@@ -60,6 +54,8 @@ private:
 
     std::thread read_thread;
     std::thread timeout_thread;
+
+    static std::unordered_map<uint8_t, std::string> switch_map;
 
     void unpack();
 

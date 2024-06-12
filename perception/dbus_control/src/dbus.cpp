@@ -17,6 +17,12 @@ extern "C" {
 extern int ioctl(int __fd, unsigned long int __request, ...) throw();
 }
 
+std::unordered_map<uint8_t, std::string> Dbus::switch_map = {
+    {1, "UP"},
+    {3, "MID"},
+    {2, "DOWN"},
+};
+
 Dbus::Dbus(std::string dev_path)
 {
     this->dev_path = dev_path;
@@ -85,8 +91,8 @@ operation_interface::msg::DbusControl Dbus::controller_msg()
     msg.ls_y = static_cast<double>(-data.ch2) / 660.0; // left stick horizontal, left positive
     msg.ls_x = static_cast<double>(data.ch3) / 660.0; // left stick vertical, up positive
     msg.wheel = static_cast<double>(data.wheel) / 660.0; // wheel
-    if (data.s1 != 0) msg.lsw = data.s1; // left switch
-    if (data.s0 != 0) msg.rsw = data.s0; // right switch
+    if (data.s1 != 0) msg.lsw = switch_map[data.s1]; // left switch
+    if (data.s0 != 0) msg.rsw = switch_map[data.s0]; // right switch
 
     return msg;
 }
@@ -97,7 +103,7 @@ operation_interface::msg::KeyMouse Dbus::keymouse_msg()
 
     operation_interface::msg::KeyMouse msg;
     // only valid when left switch is at the bottom
-    if (data.s1 == Switch::DOWN) msg.active = true;
+    if (data.s1 == 2) msg.active = true; // if the left switch is at the bottom, the remote control is active
     else msg.active = false;
 
     msg.left_button = data.l;

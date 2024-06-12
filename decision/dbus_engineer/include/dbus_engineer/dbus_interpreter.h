@@ -7,13 +7,6 @@
 #include "behavior_interface/msg/move.hpp"
 #include "behavior_interface/msg/grasp.hpp"
 
-enum Switch
-{
-    UP = 1,
-    MID = 3,
-    DOWN = 2
-};
-
 using behavior_interface::msg::Move;
 using behavior_interface::msg::Grasp;
 using operation_interface::msg::DbusControl;

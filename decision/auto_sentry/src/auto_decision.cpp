@@ -54,7 +54,7 @@ void AutoDecision::vision_input(AutoAim::SharedPtr msg)
 
 void AutoDecision::dbus_input(DbusControl::SharedPtr msg)
 {
-    active = (msg->lsw == Switch::DOWN) ? true : false;
+    active = (msg->lsw == "DOWN") ? true : false;
 }
 
 void AutoDecision::update_loop()

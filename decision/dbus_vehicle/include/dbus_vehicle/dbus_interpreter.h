@@ -17,13 +17,6 @@ using behavior_interface::msg::Move;
 using behavior_interface::msg::Shoot;
 using behavior_interface::msg::Aim;
 
-enum Switch
-{
-    UP = 1,
-    MID = 3,
-    DOWN = 2
-};
-
 class DbusInterpreter
 {
 public:
@@ -45,7 +38,7 @@ private:
     bool active;
 
     double ls_x, ls_y, rs_x, rs_y, wheel;
-    uint8_t lsw, rsw;
+    std::string lsw, rsw;
 
     double max_vel, max_omega, max_feed, max_shoot, aim_sens, deadzone;
 
