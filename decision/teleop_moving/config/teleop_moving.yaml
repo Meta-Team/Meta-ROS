@@ -1,4 +1,0 @@
-/**:
-  ros__parameters:
-    trans_vel: 2.0 # m/s
-    rot_vel: 5.0 # rad/s
