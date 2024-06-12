@@ -24,10 +24,6 @@ public:
             "aim", 10, [this](const behavior_interface::msg::Aim::SharedPtr msg){
                 goal_callback(msg);
             });
-        move_sub_ = this->create_subscription<behavior_interface::msg::Move>(
-            "move", 10, [this](const behavior_interface::msg::Move::SharedPtr msg){
-                omega_callback(msg);
-            });
         feedback_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
             "euler_angles", 10, [this](const geometry_msgs::msg::Vector3::SharedPtr msg){
                 feedback_callback(msg);
@@ -53,8 +49,6 @@ private:
 
     std::unique_ptr<Gimbal> gimbal_;
 
-    double compensate = 0.0; // ratio of yaw vel compensate
-
     double yaw_offset = 0.0;
     double pitch_offset = 0.0;
 
@@ -71,11 +65,6 @@ private:
         double current_dir = - feedback_msg->z + yaw_offset; // relative to north
         double current_pitch = feedback_msg->y + pitch_offset;
         gimbal_->update_pos_feedback(current_dir, current_pitch);
-    }
-
-    void omega_callback(const behavior_interface::msg::Move::SharedPtr msg)
-    {
-        gimbal_->update_omega(msg->omega);
     }
 
 #if IMU_FB == true
@@ -176,9 +165,7 @@ private:
         if (!pitch_found) RCLCPP_WARN(this->get_logger(), "No pitch motor found in config.");
 
 #if IMU_FB == false
-        compensate = this->declare_parameter("comp_ratio", compensate);
-        gimbal_ = std::make_unique<Gimbal>(yaw_p2v, pitch_p2v, compensate);
-        RCLCPP_INFO(this->get_logger(), "Comp Ratio set to %f", compensate);
+        gimbal_ = std::make_unique<Gimbal>(yaw_p2v, pitch_p2v);
 #else
         gimbal_ = std::make_unique<Gimbal>(yaw_p2v, pitch_p2v, yaw_v2v, pitch_v2v);
 #endif // IMU_FB
