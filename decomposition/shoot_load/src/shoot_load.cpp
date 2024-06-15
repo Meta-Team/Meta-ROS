@@ -47,17 +47,17 @@ private:
     double last_rec = 0.0; // the last time a command is received
 
     // ros params, constant after initialization
-    float feed_max_vel_l = 5.0, feed_max_vel_r = 5.0;
-    float fric_max_vel_u = 300.0, fric_max_vel_d = 300.0;
-    float feed_ratio = 36.0, fric_ratio = 1.0;
+    double feed_max_vel_l = 5.0, feed_max_vel_r = 5.0;
+    double fric_max_vel_u = 300.0, fric_max_vel_d = 300.0;
+    double feed_ratio = 36.0, fric_ratio = 1.0;
     int64_t drawback_delay; // ms
-    float jammed_threshold = 0.05; // rad/s, without deceleration
+    double jammed_threshold = 0.05; // rad/s, without deceleration
 
     // local vars
-    float feed_goal_vel_l = 0.0, feed_goal_vel_r;
-    float fric_goal_vel_u = 0.0, fric_goal_vel_d = 0.0;
+    double feed_goal_vel_l = 0.0, feed_goal_vel_r;
+    double fric_goal_vel_u = 0.0, fric_goal_vel_d = 0.0;
     double last_fine_moment_l, last_fine_moment_r;
-    float feed_fb_vel_l = 0.0, feed_fb_vel_r = 0.0;
+    double feed_fb_vel_l = 0.0, feed_fb_vel_r = 0.0;
     bool active_fric = false, active_feed = false;
 
     void get_param()

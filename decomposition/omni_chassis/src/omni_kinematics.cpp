@@ -21,13 +21,13 @@ OmniKinematics::OmniKinematics(double wheel_r, double cha_r, double decel_ratio,
     // nothing
 }
 
-void OmniKinematics::absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, float gimbal, float motor)
+void OmniKinematics::absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, double gimbal, double motor)
 {
     clear_goal(motor_goal);
-    float rot = msg->omega * cha_r; // m/s
-    float dir = gimbal + (motor - yaw_offset) - n_offset; // direction of the movement against chassis in rad
-    float vx = msg->vel_x;
-    float vy = msg->vel_y;
+    double rot = msg->omega * cha_r; // m/s
+    double dir = gimbal + (motor - yaw_offset) - n_offset; // direction of the movement against chassis in rad
+    double vx = msg->vel_x;
+    double vy = msg->vel_y;
 
     add_goal(motor_goal, "F", + vx * sin(dir) + vy * cos(dir) + rot);
     add_goal(motor_goal, "L", - vx * cos(dir) + vy * sin(dir) + rot);
@@ -40,9 +40,9 @@ void OmniKinematics::absolute_decompo(const behavior_interface::msg::Move::Share
 void OmniKinematics::chassis_decompo(const behavior_interface::msg::Move::SharedPtr msg)
 {
     clear_goal(motor_goal);
-    float rot = msg->omega * cha_r;
-    float vx = msg->vel_x;
-    float vy = msg->vel_y;
+    double rot = msg->omega * cha_r;
+    double vx = msg->vel_x;
+    double vy = msg->vel_y;
 
     add_goal(motor_goal, "F", + vy + rot);
     add_goal(motor_goal, "L", - vx + rot);
@@ -52,13 +52,13 @@ void OmniKinematics::chassis_decompo(const behavior_interface::msg::Move::Shared
     last_rec = rclcpp::Clock().now().seconds();
 }
 
-void OmniKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float motor)
+void OmniKinematics::natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, double motor)
 {
     clear_goal(motor_goal);
-    float rot = msg->omega * cha_r;
-    float dir = motor - yaw_offset;
-    float vx = msg->vel_x;
-    float vy = msg->vel_y;
+    double rot = msg->omega * cha_r;
+    double dir = motor - yaw_offset;
+    double vx = msg->vel_x;
+    double vy = msg->vel_y;
 
     add_goal(motor_goal, "F", + vx * sin(dir) + vy * cos(dir) + rot);
     add_goal(motor_goal, "L", - vx * cos(dir) + vy * sin(dir) + rot);
@@ -83,7 +83,7 @@ void OmniKinematics::clear_goal(device_interface::msg::MotorGoal &motor_goal)
     motor_goal.goal_tor.clear();
 }
 
-void OmniKinematics::add_goal(device_interface::msg::MotorGoal &motor_goal, const std::string& rid, const float goal_vel)
+void OmniKinematics::add_goal(device_interface::msg::MotorGoal &motor_goal, const std::string& rid, const double goal_vel)
 {
     motor_goal.motor_id.push_back(rid);
     motor_goal.goal_vel.push_back(DIR * goal_vel / wheel_r * decel_ratio); // convert to rad/s

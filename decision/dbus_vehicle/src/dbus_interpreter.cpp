@@ -1,7 +1,7 @@
 #include "dbus_vehicle/dbus_interpreter.h"
 #include <cmath>
 
-DbusInterpreter::DbusInterpreter(float max_vel, float max_omega, float aim_sens, float deadzone)
+DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone)
     : max_vel(max_vel), max_omega(max_omega), aim_sens(aim_sens), deadzone(deadzone)
 {
     // initialize buttons and axes

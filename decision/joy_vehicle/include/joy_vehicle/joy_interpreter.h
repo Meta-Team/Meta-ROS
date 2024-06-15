@@ -19,7 +19,7 @@ using behavior_interface::msg::Aim;
 class JoyInterpreter
 {
 public:
-    JoyInterpreter(float max_vel, float max_omega, float aim_sens, float deadzone);
+    JoyInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone);
 
     ~JoyInterpreter();
 
@@ -33,9 +33,9 @@ public:
 
 private:
     bool lb, rb, a, b, x, y, up, down, left, right;
-    float lt, rt, ls_x, ls_y, rs_x, rs_y;
+    double lt, rt, ls_x, ls_y, rs_x, rs_y;
 
-    float max_vel, max_omega, max_feed, max_shoot, aim_sens, deadzone;
+    double max_vel, max_omega, max_feed, max_shoot, aim_sens, deadzone;
 
     std::thread update_thread;
 
@@ -45,7 +45,7 @@ private:
 
     void update();
 
-    void apply_deadzone(float& val);
+    void apply_deadzone(double& val);
 
     void curb(double& val, double max_val);
 };

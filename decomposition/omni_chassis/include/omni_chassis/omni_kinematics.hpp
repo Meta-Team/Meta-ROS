@@ -50,7 +50,7 @@ public:
      * @param motor The yaw position of the gimbal against the chassis, in radians.
      * @return The motor goals.
      */
-    void absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, float gimbal, float motor);
+    void absolute_decompo(const behavior_interface::msg::Move::SharedPtr msg, double gimbal, double motor);
 
     /**
      * @brief Decompose a chassis movement command into motor goals.
@@ -68,7 +68,7 @@ public:
      * @param motor The yaw position of the gimbal against the chassis, in radians.
      * @return The motor goals.
      */
-    void natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, float motor);
+    void natural_decompo(const behavior_interface::msg::Move::SharedPtr msg, double motor);
 
     /**
      * @brief Get the motor goals.
@@ -92,7 +92,7 @@ private:
      * @param goal_vel The goal velocity of the wheels in m/s.
      * @note Goal positions would be set zero.
      */
-    void add_goal(MotorGoal &motor_goals, const std::string& rid, const float goal_vel);
+    void add_goal(MotorGoal &motor_goals, const std::string& rid, const double goal_vel);
 };
 
 #endif // OMNI_KINEMATICS_HPP

@@ -20,7 +20,7 @@ using behavior_interface::msg::Aim;
 class DbusInterpreter
 {
 public:
-    DbusInterpreter(float max_vel, float max_omega, float aim_sens, float deadzone);
+    DbusInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone);
 
     ~DbusInterpreter();
 

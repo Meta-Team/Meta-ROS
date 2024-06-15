@@ -1,7 +1,7 @@
 #include "joy_vehicle/joy_interpreter.h"
 #include <cmath>
 
-JoyInterpreter::JoyInterpreter(float max_vel, float max_omega, float aim_sens, float deadzone)
+JoyInterpreter::JoyInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone)
     : max_vel(max_vel), max_omega(max_omega), aim_sens(aim_sens), deadzone(deadzone)
 {
     // initialize buttons and axes
@@ -57,7 +57,7 @@ void JoyInterpreter::update()
     shoot_->feed_state = rb;
 }
 
-void JoyInterpreter::apply_deadzone(float &val)
+void JoyInterpreter::apply_deadzone(double &val)
 {
     if (val < deadzone && val > -deadzone)
     {
