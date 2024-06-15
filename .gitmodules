@@ -8,6 +8,3 @@
 	path = perception/solais_vision
 	url = https://github.com/Meta-Team/Meta-Vision-SolaisNG
 	branch = integrated
-[submodule "perception/engineer_vision"]
-	path = perception/engineer_vision
-	url = https://github.com/Yao-Xinchen/engineer_vision
