@@ -22,7 +22,7 @@ Sucker::~Sucker()
 
 void Sucker::input(bool enable)
 {
-    valve_msg_.enable = enable;
+    valve_msg_.enable = !enable;
     pump_msg_.enable = enable;
     if (!enable) last_not_suck = rclcpp::Clock().now().seconds();
 }

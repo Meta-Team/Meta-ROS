@@ -6,7 +6,7 @@
 #include <thread>
 
 #define PUB_RATE 20 // milliseconds
-#define DURATION 0.5 // seconds
+#define DURATION 3 // seconds
 
 class Sucker
 {
