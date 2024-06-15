@@ -34,6 +34,23 @@ public:
         if (calc_thread.joinable()) calc_thread.join();
     }
 
+    void start()
+    {
+        active = true;
+    }
+
+    void stop()
+    {
+        active = false;
+
+        // clear all stored values
+        error = 0;
+        prev_error = 0;
+        proportional = 0;
+        integral = 0;
+        derivative = 0;
+    }
+
     void set_target(double x)
     {
         target = x;
@@ -55,7 +72,8 @@ public:
     }
 
 private:
-    bool running = true; ///< Whether the PID algorithm is running.
+    bool running = true; ///< Whether the program is running.
+    bool active = false; ///< Whether the PID algorithm is active.
 
     double kp, ki, kd;
     int dt;
@@ -65,6 +83,12 @@ private:
     double target = 0;
     double output = 0;
 
+    double error = 0;
+    double prev_error = 0;
+    double proportional = 0;
+    double integral = 0;
+    double derivative = 0;
+
     std::thread calc_thread; ///< The thread for calculating the PID output.
 
     /**
@@ -73,16 +97,16 @@ private:
      */
     void calc()
     {
-        double error = 0;
-        double prev_error = 0;
-        double proportional = 0;
-        double integral = 0;
-        double derivative = 0;
-
         const double dt_seconds = dt / 1000.0;
 
         while (running)
         {
+            if (!active)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(dt));
+                continue;
+            }
+
             error = target - feedback;
             proportional = kp * error; // P
             integral += ki * error * dt_seconds; curb(integral, max_i, -max_i); // I

@@ -18,6 +18,11 @@ Gimbal::Gimbal(PidParam yaw_p2v_param, PidParam pitch_p2v_param, PidParam yaw_v2
     yaw_v2v = std::make_unique<PidAlgorithm>(yaw_v2v_param.kp, yaw_v2v_param.ki, yaw_v2v_param.kd, CALC_FREQ);
     pitch_v2v = std::make_unique<PidAlgorithm>(pitch_v2v_param.kp, pitch_v2v_param.ki, pitch_v2v_param.kd, CALC_FREQ);
 
+    yaw_p2v->start();
+    pitch_p2v->start();
+    yaw_v2v->start();
+    pitch_v2v->start();
+
     vel_thread = std::thread(&Gimbal::vel_loop, this);
 }
 #endif // IMU_FB
