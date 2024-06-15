@@ -78,34 +78,7 @@ private:
 
     void pub_callback()
     {
-        auto msg = device_interface::msg::MotorGoal();
-#if IMU_FB == false
-        double yaw_vel = gimbal_->get_yaw_vel();
-        double pitch_vel = gimbal_->get_pitch_vel();
-        // yaw
-        msg.motor_id.push_back("YAW");
-        msg.goal_pos.push_back(NaN);
-        msg.goal_vel.push_back(yaw_vel);
-        msg.goal_tor.push_back(NaN);
-        // pitch
-        msg.motor_id.push_back("PITCH");
-        msg.goal_pos.push_back(NaN);
-        msg.goal_vel.push_back(pitch_vel);
-        msg.goal_tor.push_back(NaN);
-#else
-        double yaw_vol = gimbal_->get_yaw_vol();
-        double pitch_vol = gimbal_->get_pitch_vol();
-        // yaw
-        msg.motor_id.push_back("YAW");
-        msg.goal_pos.push_back(NaN);
-        msg.goal_vel.push_back(NaN);
-        msg.goal_tor.push_back(yaw_vol);
-        // pitch
-        msg.motor_id.push_back("PITCH");
-        msg.goal_pos.push_back(NaN);
-        msg.goal_vel.push_back(NaN);
-        msg.goal_tor.push_back(pitch_vol);
-#endif // IMU_FB
+        auto msg = gimbal_->get_motor_goal();
         pub_->publish(msg);
     }
 

@@ -1,13 +1,20 @@
 #ifndef GIMBAL_PID_H
 #define GIMBAL_PID_H
 
+#include <device_interface/msg/detail/motor_goal__struct.hpp>
 #include <queue>
 #include <thread>
 #include "uni_gimbal/pid_algorithm.hpp"
 
+#include "device_interface/msg/motor_goal.hpp"
+
 #define IMU_FB true
 
 #define CALC_FREQ 1 // ms
+
+#define NaN std::nan("")
+
+using device_interface::msg::MotorGoal;
 
 struct PidParam
 {
@@ -76,34 +83,16 @@ public:
      */
     double min_error(double goal, double current);
 
-#if IMU_FB == false
     /**
-     * @brief Get the velocity of the gimbal.
-     * @return The velocity of the yaw axis, in rad/s.
+     * @brief Get the motor goals.
+     * @return The motor goals to be sent.
      */
-    [[nodiscard]] double get_yaw_vel() const { return yaw_p2v->get_output(); }
-
-    /**
-     * @brief Get the velocity of the gimbal.
-     * @return The velocity of the pitch axis, in rad/s.
-     */
-    [[nodiscard]] double get_pitch_vel() const { return pitch_p2v->get_output(); }
-#else // IMU_FB == true
-
-    /**
-     * @brief Get the voltage of the gimbal.
-     * @return The voltage of the yaw axis, in V.
-     */
-    [[nodiscard]] double get_yaw_vol() const { return yaw_v2v->get_output(); }
-
-    /**
-     * @brief Get the voltage of the gimbal.
-     * @return The voltage of the pitch axis, in V.
-     */
-    [[nodiscard]] double get_pitch_vol() const { return pitch_v2v->get_output(); }
-#endif // IMU_FB
+    [[nodiscard]] MotorGoal get_motor_goal() const;
 
 private:
+    double last_rec = 0.0; ///< The last time a message was received.
+    static MotorGoal stop; ///< The goal to stop all motors on the chassis.
+
     std::unique_ptr<PidAlgorithm> yaw_p2v; ///< The yaw position-to-velocity controller, using cumulated position.
     std::unique_ptr<PidAlgorithm> pitch_p2v; ///< The pitch position-to-velocity controller.
     std::unique_ptr<PidAlgorithm> yaw_v2v; ///< The yaw velocity-to-voltage controller.
