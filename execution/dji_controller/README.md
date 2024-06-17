@@ -1,40 +1,52 @@
 # dji_controller
 
-## description
+## Description
 
-this package is used to control the DJI motors
+This package is used to control the DJI motors through CAN bus.
 
-the motors are controlled by CAN communication
+Each can_frame delivers 4 values (id from 1 to 4, from 5 to 8, or from 9 to 12). each value is a 16-bit integer, taking 2 bytes. So, 4 motors should be controlled at a time
 
-each can_frame delivers 4 values (id from 1 to 4, or from 5 to 8). each value is a 16-bit integer, taking 2 bytes
+The bitrate of the CAN communication should be 1M. CAN frames should be continuously sent to the motors to keep them running. In this case, frames are sent at 100Hz
 
-so, 4 motors should be controlled at a time
+## Pre-requisites
 
-the bitrate of the CAN communication should be 1M
+### Hardware
 
-CAN frames should be continuously sent to the motors to keep them running. in this case, frames are sent at 1000Hz
+Use USB-CAN adapter to connect the computer to the DJI motors.
 
-## requirements
+### Software
 
-similar to dm_controller
+Enable CAN interface in the computer. We take CAN0 as an example.
 
-to enable CAN communication on Orin Nano,
-
-you need to run the following commands:
-
-```
-sudo apt-get install busybox
-
-sudo busybox devmem 0x0c303018 w 0xc458
-sudo busybox devmem 0x0c303010 w 0xc400
-
-modprobe can
-modprobe can_raw
-modprobe mttcan
-
-ip link set can0 up type can bitrate 1000000 dbitrate 1000000 berr-reporting on fd on
+```shell
+sudo ip link set can0 up type can bitrate 1000000
 ```
 
-## reference
+This must be done before runtime and every time the computer is restarted.
 
-https://docs.nvidia.com/jetson/archives/r35.3.1/DeveloperGuide/text/HR/ControllerAreaNetworkCan.html
+## Usage
+
+### Configuration
+
+For DJI motors:
+
+1. Each entry in `motor.ports` should be "CANx" where x is the number of the CAN interface. For example, `"CAN0"`.
+
+2. All entries in `motor.brands` should be `"DJI"`.
+
+3. Each entry in `motor.types` should be one of `"3508"`, `"6020"`, and `"2006"`.
+
+4. Each entry in `motor.hids` should be the hardware ID of the motor. It is between `1` to `8` for 3508 and 2006, `5` to `12` for 2060.
+
+### Runtime
+
+Use `device_interface/msg/MotorGoal` to control the motors.
+
+```
+string[] motor_id
+float64[] goal_tor # can be current or voltage, A or V
+float64[] goal_vel # rad/s
+float64[] goal_pos # rad
+```
+
+The `motor_id` should be the same as `motor.rids` in the configuration file. Set one of the three goals to a valid value and the other two to `.nan`.

@@ -3,13 +3,7 @@
 #include "dji_controller/can_port.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include <chrono>
-#include <cstdint>
-#include <cstdio>
-#include <linux/can.h>
 #include <memory>
-#include <queue>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/utilities.hpp>
 #include <string>
 #include <tuple>
 #include <unordered_map>

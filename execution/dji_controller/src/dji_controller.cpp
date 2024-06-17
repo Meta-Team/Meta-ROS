@@ -1,12 +1,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "dji_controller/dji_driver.h"
 #include <chrono>
-#include <cmath>
-#include <cstdint>
-#include <linux/can.h>
 #include <memory>
 #include <string>
-#include <thread>
 #include <vector>
 
 #include "device_interface/msg/motor_goal.hpp"

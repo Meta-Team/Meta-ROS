@@ -4,8 +4,6 @@
 #include <cmath>
 #include <algorithm>
 
-#define PI 3.1415926f
-
 /**
  * @brief Represents the data of a motor.
  */
@@ -31,20 +29,25 @@ public:
      * @brief Update the cumulative position of the motor.
      * @param pos The new feedback position.
      */
-    void update_pos(double pos) // MY_TODO: check the first usage of this function
+    void update_pos(double pos)
     {
-        int round = std::floor(position / 2 / PI);
+        position += min_error(pos, position);
+    }
 
-        double up = 2 * PI * (round + 1) + pos;
-        double mid = 2 * PI * round + pos;
-        double down = 2 * PI * (round - 1) + pos;
-
-        auto comparison = [this](double a, double b)
-        {
-            return std::abs(a - position) < std::abs(b - position);
-        };
-
-        position = std::min({up, mid, down}, comparison);
+private:
+    /**
+     * @brief Calculate the minimum error in (-M_PI, M_PI] between two angles.
+     * Similar to `a - b`, but in the range (-M_PI, M_PI].
+     * @param a The first angle.
+     * @param b The second angle.
+     * @return The minimum error in (-M_PI, M_PI].
+     */
+    double min_error(double a, double b)
+    {
+        double diff = a - b;
+        while (diff > M_PI) diff -= 2 * M_PI;
+        while (diff < -M_PI) diff += 2 * M_PI;
+        return diff;
     }
 };
 

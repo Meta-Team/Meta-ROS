@@ -14,9 +14,7 @@
 
 /**
  * @brief A class for basic CAN bus manipulation.
- * 
  * This class is used to send CAN frames over the CAN bus.
- * Motor drivers always have a static CAN driver member.
  */
 class CanDriver
 {
