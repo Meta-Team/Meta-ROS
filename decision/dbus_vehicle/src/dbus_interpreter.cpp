@@ -46,11 +46,24 @@ void DbusInterpreter::update()
     move_->vel_x = max_vel * ls_x;
     move_->vel_y = max_vel * ls_y;
     move_->omega = max_omega * wheel;
-    aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_2);
+    aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_4);
     aim_->yaw += aim_sens * rs_y * PERIOD / 1000;
-    // shoot_->fric_state = lsw;
-    // shoot_->feed_state = rsw;
-    // MY_TODO: to be determined
+    
+    if (rsw == "UP")
+    {
+        shoot_->fric_state = false;
+        shoot_->feed_state = false;
+    }
+    else if (rsw == "MID")
+    {
+        shoot_->fric_state = true;
+        shoot_->feed_state = false;
+    }
+    else if (rsw == "DOWN")
+    {
+        shoot_->fric_state = true;
+        shoot_->feed_state = true;
+    }
 }
 
 void DbusInterpreter::apply_deadzone(double &val)

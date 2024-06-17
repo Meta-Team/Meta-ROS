@@ -17,7 +17,6 @@ AutoDecision::AutoDecision(double north_offset, double search_vel, double freq, 
     move_msg.vel_y = 0.0;
     move_msg.omega = auto_rotate;
 
-    shoot_msg.id = 0; // MY_TODO: to be determined
     shoot_msg.fric_state = true;
     shoot_msg.feed_state = false;
 
