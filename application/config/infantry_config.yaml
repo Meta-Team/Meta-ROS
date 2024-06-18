@@ -3,7 +3,7 @@
 
     comp_ratio: 0.9
     move_mode: "natural"
-    referee_port: "/dev/ttyUSB0"
+    referee_port: "ttyUSB0"
 
     control:
       trans_vel: 2.5 # m/s

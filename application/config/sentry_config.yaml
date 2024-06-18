@@ -5,8 +5,8 @@
     auto_rotate: 2.0 # rad/s, of the chassis
     comp_ratio: 0.9
     move_mode: "natural"
-    referee_port: "/dev/ttyUSB1"
-    dbus_port: "ttyUSB0"
+    referee_port: "ttyUSB1"
+    dbus_port: "dbus_serial" # /dev/dbus_serial, defined when fixing serial port
 
     control:
       trans_vel: 2.5 # m/s

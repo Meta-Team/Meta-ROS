@@ -25,11 +25,12 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     node_ = rclcpp::Node::make_shared("referee_serial", options);
 
     // create serial port
-    dev_name = node_->declare_parameter("referee_port", "/dev/ttyUSB1");
+    dev_name = node_->declare_parameter("referee_port", "ttyUSB1");
+    auto dev_path = "/dev/" + dev_name;
     ctx_ = std::make_unique<IoContext>(2);
     config_ = std::make_unique<SerialPortConfig>(baud, fc, pt, sb);
     port_ = std::make_unique<SerialPort>(*ctx_, dev_name, *config_);
-    RCLCPP_INFO(node_->get_logger(), "RefereeSerial using serial port: %s", dev_name.c_str());
+    RCLCPP_INFO(node_->get_logger(), "RefereeSerial using serial port: %s", dev_path.c_str());
 
     // create publishers
     key_mouse_pub_ = node_->create_publisher<operation_interface::msg::KeyMouse>("key_mouse", 10);
