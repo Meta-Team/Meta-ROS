@@ -14,6 +14,13 @@ def generate_launch_description():
         'sentry_config.yaml'
     )
 
+    ahrs_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('fdilink_ahrs'),
+                        'launch/ahrs_driver.launch.py')
+        )
+    )
+
     ld = LaunchDescription([
         # percep
         Node(
@@ -57,8 +64,15 @@ def generate_launch_description():
             parameters=[config],
         ),
 
-
         # exec
+        Node(
+            package='dji_controller',
+            executable='dji_controller',
+            name='dji_controller',
+            parameters=[config],
+        ),
     ])
+
+    ld.add_action(ahrs_launch)
 
     return ld

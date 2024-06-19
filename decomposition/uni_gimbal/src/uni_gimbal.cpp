@@ -24,10 +24,16 @@ public:
             "aim", 10, [this](const behavior_interface::msg::Aim::SharedPtr msg){
                 goal_callback(msg);
             });
-        feedback_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
+        angle_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
             "euler_angles", 10, [this](const geometry_msgs::msg::Vector3::SharedPtr msg){
-                feedback_callback(msg);
+                angle_callback(msg);
             });
+#if IMU_FB == true
+        imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>(
+            "imu", 10, [this](const sensor_msgs::msg::Imu::SharedPtr msg){
+                imu_callback(msg);
+            });
+#endif // IMU_FB
         pub_ = this->create_publisher<device_interface::msg::MotorGoal>("motor_goal", 10);
         control_timer_ = this->create_wall_timer(
             std::chrono::milliseconds(CONTROL_R), [this](){
@@ -40,7 +46,7 @@ public:
 private:
     rclcpp::Subscription<behavior_interface::msg::Aim>::SharedPtr goal_sub_;
     rclcpp::Subscription<behavior_interface::msg::Move>::SharedPtr move_sub_;
-    rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr feedback_sub_;
+    rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr angle_sub_;
 #if IMU_FB == true
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
 #endif // IMU_FB
@@ -60,18 +66,18 @@ private:
         gimbal_->set_goal(goal_dir, goal_pitch);
     }
 
-    void feedback_callback(const geometry_msgs::msg::Vector3::SharedPtr feedback_msg)
+    void angle_callback(const geometry_msgs::msg::Vector3::SharedPtr angle_msg)
     {
-        double current_dir = - feedback_msg->z + yaw_offset; // relative to north
-        double current_pitch = feedback_msg->y + pitch_offset;
+        double current_dir = - angle_msg->z + yaw_offset; // relative to north
+        double current_pitch = angle_msg->y + pitch_offset;
         gimbal_->update_pos_feedback(current_dir, current_pitch);
     }
 
 #if IMU_FB == true
-    void feedback_callback(const sensor_msgs::msg::Imu::SharedPtr feedback_msg)
+    void imu_callback(const sensor_msgs::msg::Imu::SharedPtr imu_msg)
     {
-        double yaw_vel = - feedback_msg->angular_velocity.z;
-        double pitch_vel = feedback_msg->angular_velocity.y;
+        double yaw_vel = imu_msg->angular_velocity.z;
+        double pitch_vel = - imu_msg->angular_velocity.y;
         gimbal_->update_vel_feedback(yaw_vel, pitch_vel);
     }
 #endif // IMU_FB

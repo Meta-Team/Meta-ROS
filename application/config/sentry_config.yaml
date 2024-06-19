@@ -2,15 +2,15 @@
   ros__parameters:
 
     north_offset: 0.0 # rad, north against the desired front
-    auto_rotate: 2.0 # rad/s, of the chassis
+    auto_rotate: 4.0 # rad/s, of the chassis
     comp_ratio: 0.9
     move_mode: "natural"
     referee_port: "ttyUSB1"
-    dbus_port: "dbus_serial" # /dev/dbus_serial, defined when fixing serial port
+    dbus_port: "dbus_serial"
 
     control:
       trans_vel: 2.5 # m/s
-      rot_vel: 8.0 # rad/s
+      rot_vel: 3.0 # rad/s
       stick_sens: 3.14 # rad/s
       mouse_sens: 10.0
       deadzone: 0.15 # percentage
@@ -30,7 +30,7 @@
       feed_ratio: 36.0
       drawback_delay: 500 # ms
       jammed_threshold: 1.0 # rad/s
-      search_vel: 1.6
+      search_vel: 0.0
       pitch_freq: 2.0
       pitch_amp: 0.0
       aim_yaw_offset: 0.0872664626
@@ -45,12 +45,12 @@
       types:  ["3508",    "3508",    "3508",    "3508",    "3508",    "3508",    "2006",    "2006",    "6020",    "6020"]
 
       p2v:
-        kps:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       2.0E+0,    1.5E+1]
+        kps:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       7.0E+0,    0.0E+0]
         kis:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0E-1,    0.0E+0]
-        kds:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       4.0E+4,    0.0E+6]
+        kds:  [0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0,       0.0E-2,    0.0E+0]
       v2c:
-        kps:  [1.2E-2,    1.2E-2,    1.2E-2,    1.2E-2,    1.0E-2,    1.0E-2,    5.0E-2,    5.0E-2,    2.0E+0,    1.0E+0]
-        kis:  [1.0E-4,    1.0E-4,    1.0E-4,    1.0E-4,    1.2E-2,    1.6E-2,    2.5E-1,    2.5E-1,    2.5E+0,    5.0E+0]
+        kps:  [2.0E-2,    2.0E-2,    2.0E-2,    2.0E-2,    1.0E-2,    1.0E-2,    5.0E-2,    5.0E-2,    1.0E+1,    1.0E+0]
+        kis:  [1.0E-4,    1.0E-4,    1.0E-4,    1.0E-4,    1.2E-2,    1.6E-2,    2.5E-1,    2.5E-1,    5.0E+0,    0.0E+0]
         kds:  [0.0E+3,    0.0E+3,    0.0E+3,    0.0E+3,    0.0E+3,    0.0E+3,    1.0E+2,    1.0E+2,    0.0E+0,    0.0E+0]
 
       cali:   [0,         0,         0,         0,         0,         0,         0,         0,         0,         0]
