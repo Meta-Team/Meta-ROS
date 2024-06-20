@@ -29,16 +29,19 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription([
+        # percep
         Node(
-            package='referee_serial',
-            executable='referee_serial',
-            name='referee_serial',
+            package='dbus_control',
+            executable='dbus_control_node',
+            name='dbus_control_node',
             parameters=[config],
         ),
+
+        # deci
         Node(
-            package='omni_chassis',
-            executable='omni_chassis',
-            name='omni_chassis',
+            package='dbus_vehicle',
+            executable='dbus_vehicle',
+            name='dbus_vehicle',
             parameters=[config],
         ),
         Node(
@@ -47,18 +50,28 @@ def generate_launch_description():
             name='auto_sentry',
             parameters=[config],
         ),
+
+        # decomp
         Node(
-            package="uni_gimbal",
-            executable="uni_gimbal",
-            name="uni_gimbal",
+            package='omni_chassis',
+            executable='omni_chassis',
+            name='omni_chassis',
             parameters=[config],
         ),
         Node(
-            package="shoot_load",
-            executable="shoot_load",
-            name="shoot_load",
+            package='uni_gimbal',
+            executable='uni_gimbal',
+            name='uni_gimbal',
             parameters=[config],
         ),
+        Node(
+            package='shoot_load',
+            executable='shoot_load',
+            name='shoot_load',
+            parameters=[config],
+        ),
+
+        # exec
         Node(
             package='dji_controller',
             executable='dji_controller',
