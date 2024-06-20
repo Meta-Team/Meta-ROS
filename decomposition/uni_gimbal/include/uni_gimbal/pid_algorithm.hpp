@@ -14,6 +14,7 @@ public:
      * @param dt The time interval for calculating the PID output.
      */
     PidAlgorithm(double kp, double ki, double kd, int dt = 1,
+        double max_output = std::numeric_limits<double>::max(),
         double max_i = std::numeric_limits<double>::max())
     {
         this->kp = kp;
@@ -23,6 +24,7 @@ public:
         this->dt = dt;
 
         this->max_i = max_i;
+        this->max_output = max_output;
 
         running = true;
         calc_thread = std::thread(&PidAlgorithm::calc, this);
@@ -78,6 +80,7 @@ private:
     double kp, ki, kd;
     int dt;
     double max_i;
+    double max_output;
 
     double feedback = 0;
     double target = 0;
@@ -115,6 +118,7 @@ private:
             prev_error = error;
 
             output = proportional + integral + derivative;
+            curb(output, max_output, -max_output);
 
             std::this_thread::sleep_for(std::chrono::milliseconds(dt));
         }

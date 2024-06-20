@@ -20,16 +20,25 @@ MotorGoal Gimbal::stop = [] {
 #if IMU_FB == false
 Gimbal::Gimbal(PidParam yaw_p2v_param, PidParam pitch_p2v_param)
 {
-    yaw_p2v = std::make_unique<PidAlgorithm>(yaw_p2v_param.kp, yaw_p2v_param.ki, yaw_p2v_param.kd, CALC_FREQ);
-    pitch_p2v = std::make_unique<PidAlgorithm>(pitch_p2v_param.kp, pitch_p2v_param.ki, pitch_p2v_param.kd, CALC_FREQ);
+    auto make_pid = [](const PidParam &param, double max_output, double max_i) {
+        return std::make_unique<PidAlgorithm>(param.kp, param.ki, param.kd, CALC_FREQ, max_output, max_i);
+    };
+    yaw_p2v = make_pid(yaw_p2v_param, 2, 1);
+    pitch_p2v = make_pid(pitch_p2v_param, 2, 1);
+
+    yaw_p2v->start();
+    pitch_p2v->start();
 }
 #else // IMU_FB == true
 Gimbal::Gimbal(PidParam yaw_p2v_param, PidParam pitch_p2v_param, PidParam yaw_v2v_param, PidParam pitch_v2v_param)
 {
-    yaw_p2v = std::make_unique<PidAlgorithm>(yaw_p2v_param.kp, yaw_p2v_param.ki, yaw_p2v_param.kd, CALC_FREQ);
-    pitch_p2v = std::make_unique<PidAlgorithm>(pitch_p2v_param.kp, pitch_p2v_param.ki, pitch_p2v_param.kd, CALC_FREQ);
-    yaw_v2v = std::make_unique<PidAlgorithm>(yaw_v2v_param.kp, yaw_v2v_param.ki, yaw_v2v_param.kd, CALC_FREQ);
-    pitch_v2v = std::make_unique<PidAlgorithm>(pitch_v2v_param.kp, pitch_v2v_param.ki, pitch_v2v_param.kd, CALC_FREQ);
+    auto make_pid = [](const PidParam &param, double max_output, double max_i) {
+        return std::make_unique<PidAlgorithm>(param.kp, param.ki, param.kd, CALC_FREQ, max_output, max_i);
+    };
+    yaw_p2v = make_pid(yaw_p2v_param, 5, 3);
+    pitch_p2v = make_pid(pitch_p2v_param, 2, 1);
+    yaw_v2v = make_pid(yaw_v2v_param, 20, 10);
+    pitch_v2v = make_pid(pitch_v2v_param, 20, 10);
 
     yaw_p2v->start();
     pitch_p2v->start();

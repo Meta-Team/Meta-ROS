@@ -21,8 +21,8 @@ vector<std::shared_ptr<DjiDriver>> DjiDriver::instances{};
 DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_port, int cali) :
     hid(hid),
     rid(rid),
-    p2v_prm(0.1, 0.01, 0.1),
-    v2c_prm(0.004, 0.00003, 0.1)
+    p2v_prm(0.0, 0.0, 0.0),
+    v2c_prm(0.0, 0.0, 0.0)
 {
     if (type == "3508") motor_type = M3508;
     else if (type == "6020") motor_type = M6020;
@@ -110,7 +110,6 @@ void DjiDriver::cali_loop(int dir)
 
     if (dir == 0)
     {
-        RCLCPP_INFO(log, "Motor %s zero calibration disabled", rid.c_str());
         zero = 0.0;
         // delay for a while
         ready = false;
