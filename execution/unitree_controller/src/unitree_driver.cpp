@@ -3,11 +3,16 @@
 #include <cmath>
 #include <thread>
 
-UnitreeDriver::UnitreeDriver(std::string rid, int hid, std::string port, int cali)
+UnitreeDriver::UnitreeDriver(std::string rid, int hid, std::string port, std::string type, int cali)
     : hid(hid), rid(rid), serial_port("/dev/tty" + port)
 {
-    goal_cmd.motorType = MotorType::GO_M8010_6;
-    feedback_data.motorType = MotorType::GO_M8010_6;
+    if (type == "GO") this->type = MotorType::GO_M8010_6;
+    else if (type == "A1") this->type = MotorType::A1;
+    else if (type == "B1") this->type = MotorType::B1;
+    else RCLCPP_ERROR(rclcpp::get_logger("unitree_driver"), "Unknown motor type: %s", type.c_str());
+
+    goal_cmd.motorType = this->type;
+    feedback_data.motorType = this->type;
     goal_cmd.mode = queryMotorMode(goal_cmd.motorType, MotorMode::FOC);
     goal_cmd.id = hid;
     stop();
@@ -30,7 +35,7 @@ void UnitreeDriver::set_goal(double goal_pos, double goal_vel)
     {
         goal_cmd.kd = 0.0;
         goal_cmd.kp = this->kp;
-        goal_cmd.q = goal_pos * queryGearRatio(MotorType::GO_M8010_6) + zero;
+        goal_cmd.q = goal_pos * queryGearRatio(type) + zero;
         goal_cmd.dq = 0.0;
     }
     if (!std::isnan(goal_vel))
@@ -38,7 +43,7 @@ void UnitreeDriver::set_goal(double goal_pos, double goal_vel)
         goal_cmd.kd = this->kd;
         goal_cmd.kp = 0.0;
         goal_cmd.q = 0.0;
-        goal_cmd.dq = goal_vel * queryGearRatio(MotorType::GO_M8010_6); // cmd.W
+        goal_cmd.dq = goal_vel * queryGearRatio(type); // cmd.W
     }
 }
 
@@ -56,8 +61,8 @@ void UnitreeDriver::send_recv()
 std::tuple<double, double, double> UnitreeDriver::get_state()
 {
     return std::make_tuple(
-        (feedback_data.q - zero) / queryGearRatio(MotorType::GO_M8010_6), // pos
-        feedback_data.dq / queryGearRatio(MotorType::GO_M8010_6), // vel
+        (feedback_data.q - zero) / queryGearRatio(type), // pos
+        feedback_data.dq / queryGearRatio(type), // vel
         feedback_data.tau // tor
     );
 }
@@ -112,8 +117,8 @@ void UnitreeDriver::calibrate(int dir)
     {
         // set goal and get feedback
         goal_cmd.kd = this->kd;
-        this->goal_cmd.dq = dir * TRY_VEL * queryGearRatio(MotorType::GO_M8010_6); // rad/s
-        auto fb_vel = feedback_data.dq / queryGearRatio(MotorType::GO_M8010_6);
+        this->goal_cmd.dq = dir * TRY_VEL * queryGearRatio(type); // rad/s
+        auto fb_vel = feedback_data.dq / queryGearRatio(type);
 
         // check if the motor is jammed
         if (std::abs(fb_vel) > TRY_VEL / 5) last_not_jammed_moment = NOW;

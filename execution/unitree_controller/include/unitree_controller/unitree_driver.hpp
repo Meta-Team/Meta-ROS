@@ -25,11 +25,12 @@ class UnitreeDriver
 public:
     int hid; ///< The hardware ID of the motor.
     std::string rid; ///< The ROS ID of the motor.
+    MotorType type; ///< The type of the motor.
 
     /**
      * @brief Construct a new UnitreeDriver object.
      */
-    UnitreeDriver(std::string rid, int hid, std::string port, int cali);
+    UnitreeDriver(std::string rid, int hid, std::string port, std::string type, int cali);
 
     /**
      * @brief Destroy the UnitreeDriver object.

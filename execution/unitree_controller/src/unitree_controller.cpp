@@ -115,9 +115,10 @@ private:
             std::string rid = motor_rids[i];
             int hid = motor_hids[i];
             std::string port = motor_ports[i];
+            std::string type = motor_types[i];
             int cali = motor_cali[i];
 
-            drivers_[rid] = std::make_unique<UnitreeDriver>(rid, hid, port, cali);
+            drivers_[rid] = std::make_unique<UnitreeDriver>(rid, hid, port, type, cali);
             drivers_[rid]->set_pid(p2v_kps[i], p2v_kds[i]);
             RCLCPP_INFO(this->get_logger(), "Motor rid %s hid %d initialized with kp %f kd %f",
                 rid.c_str(), hid, p2v_kps[i], p2v_kds[i]);

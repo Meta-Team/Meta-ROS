@@ -2,11 +2,11 @@
   ros__parameters:
 
     motor:
-      count:  2
+      count:  1
       rids:   ["t0", "t1"]
       hids:   [0x00, 0x01]
       brands: ["UT", "UT"]
-      types:  ["", ""]
+      types:  ["A1", "A1"]
       ports:  ["USB0", "USB0"]
 
       p2v:
