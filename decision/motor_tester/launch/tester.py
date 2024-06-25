@@ -16,9 +16,9 @@ def generate_launch_description():
 
     ld = LaunchDescription([
         Node(
-            package='joy',
-            executable='joy_node',
-            name='joy_node'
+            package='dbus_control',
+            executable='dbus_control_node',
+            name='dbus_control_node'
         ),
         Node(
             package='motor_tester',

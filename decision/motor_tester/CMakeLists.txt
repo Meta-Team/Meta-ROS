@@ -13,6 +13,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(device_interface REQUIRED)
+find_package(operation_interface)
 
 include_directories(
   include
@@ -22,7 +23,7 @@ add_executable(motor_tester
   src/motor_tester.cpp)
 ament_target_dependencies(motor_tester
   rclcpp
-  sensor_msgs
+  operation_interface
   device_interface
 )
 

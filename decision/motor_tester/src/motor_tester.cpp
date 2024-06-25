@@ -1,7 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "device_interface/msg/motor_goal.hpp"
-#include "sensor_msgs/msg/joy.hpp"
+#include "operation_interface/msg/dbus_control.hpp"
 #include <string>
 
 #define NaN std::nan("")
@@ -29,8 +29,8 @@ public:
 
         // pub and sub
         motor_pub_ = this->create_publisher<device_interface::msg::MotorGoal>("motor_goal", 10);
-        joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
-            "joy", 10,
+        joy_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
+            "dbus_control", 10,
             std::bind(&MotorTester::joy_callback, this, std::placeholders::_1));
 
         RCLCPP_INFO(this->get_logger(), "MotorTester initialized with motor_id: %s, goal_upper: %f, goal_lower: %f, goal_init: %f, sensitivity: %f, mode: %s",
@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
+    rclcpp::Subscription<operation_interface::msg::DbusControl>::SharedPtr joy_sub_;
     rclcpp::Publisher<device_interface::msg::MotorGoal>::SharedPtr motor_pub_;
 
     std::string motor_id; // id of motor
@@ -51,7 +51,7 @@ private:
     double last_receive = 0.0; // interval of goal change
     bool first_receive = true; // first receive of joy
 
-    void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
+    void joy_callback(const operation_interface::msg::DbusControl::SharedPtr msg)
     {
         // use left stick to control goal, forward is positive
         if (first_receive)
@@ -62,7 +62,7 @@ private:
         }
         double interval = rclcpp::Clock().now().seconds() - last_receive;
         last_receive = rclcpp::Clock().now().seconds();
-        goal += apply_deadzone(msg->axes[1], deadzone) * goal_sens * interval;
+        goal += apply_deadzone(msg->ls_x, deadzone) * goal_sens * interval;
         curb(goal, upper_bound, lower_bound);
 
         device_interface::msg::MotorGoal motor_goal{};
