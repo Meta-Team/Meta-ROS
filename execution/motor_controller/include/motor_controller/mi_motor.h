@@ -18,6 +18,8 @@ using std::unique_ptr;
 
 #define umap std::unordered_map
 
+#define TX_FREQ 10
+
 #define MASTER_ID 1
 
 #define P_MIN -12.5f
@@ -91,6 +93,8 @@ private:
     double kp;
     double kd;
 
+    thread tx_thread;
+
     /**
      * @brief A helper function for setting the goal.
      * @param pos The goal position.
@@ -113,6 +117,8 @@ private:
      * @note This first converts the parsed frame to a can_frame and then sends it.
      */
     void tx();
+
+    void tx_loop();
 
     /**
      * @brief Calculates the id of the motor from the feedback frames.

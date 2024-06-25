@@ -3,6 +3,8 @@
 #include <cmath>
 #include <cstdint>
 #include <linux/can.h>
+#include <rclcpp/utilities.hpp>
+#include <thread>
 #include <tuple>
 #include "rclcpp/rclcpp.hpp"
 
@@ -18,11 +20,14 @@ MiMotor::MiMotor(const string& rid, int hid, string /*type*/, string port, int c
     set_port(port.back() - '0');
 
     start();
+
+    tx_thread = std::thread(&MiMotor::tx_loop, this);
 }
 
 MiMotor::~MiMotor()
 {
     stop();
+    if (tx_thread.joinable()) tx_thread.join();
 }
 
 void MiMotor::set_goal(double goal_pos, double goal_vel, double goal_cur)
@@ -73,7 +78,6 @@ void MiMotor::goal_helper(float pos, float vel, float tor, float kp , float kd)
     parsed_frame.data[5]=float_to_uint(kp,KP_MIN,KP_MAX,16);
     parsed_frame.data[6]=float_to_uint(kd,KD_MIN,KD_MAX,16) >> 8;
     parsed_frame.data[7]=float_to_uint(kd,KD_MIN,KD_MAX,16);
-    tx();
 }
 
 void MiMotor::set_port(int port)
@@ -90,9 +94,18 @@ void MiMotor::tx()
 {
     can_frame tx_frame;
     tx_frame.len = 8;
-    tx_frame.can_id = *reinterpret_cast<uint32_t*>(&parsed_frame.ext_id); // id
+    tx_frame.can_id = *reinterpret_cast<uint32_t*>(&parsed_frame.ext_id) | CAN_EFF_FLAG; // id
     std::memcpy(tx_frame.data, parsed_frame.data.data(), 8); // data
     can_drivers[port]->send_frame(tx_frame);
+}
+
+void MiMotor::tx_loop()
+{
+    while (rclcpp::ok())
+    {
+        tx();
+        rclcpp::sleep_for(std::chrono::milliseconds(TX_FREQ));
+    }
 }
 
 int MiMotor::calc_id(const can_frame& frame)
@@ -149,7 +162,7 @@ void MiMotor::stop()
     parsed_frame.ext_id.mode = 4;
     parsed_frame.ext_id.id = hid;
     parsed_frame.ext_id.res = 0;
-    parsed_frame.ext_id.data = 0;
+    parsed_frame.ext_id.data = MASTER_ID;
     parsed_frame.data.fill(0); // data doesn't matter
     tx();
 }
