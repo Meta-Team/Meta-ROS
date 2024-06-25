@@ -32,6 +32,7 @@ add_executable(motor_controller
   src/motor_controller.cpp
   src/dji_motor.cpp
   src/unitree_motor.cpp
+  src/mi_motor.cpp
 )
 target_link_libraries(motor_controller ${EXTRA_LIBS})
 ament_target_dependencies(motor_controller

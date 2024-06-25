@@ -7,6 +7,7 @@
 #include "motor_controller/motor_driver.h"
 #include "motor_controller/dji_motor.h"
 #include "motor_controller/unitree_motor.h"
+#include "motor_controller/mi_motor.h"
 
 #include "device_interface/msg/motor_goal.hpp"
 #include "device_interface/msg/motor_state.hpp"
@@ -148,6 +149,8 @@ private:
                 drivers_[rid] = std::make_unique<DjiMotor>(rid, hid, type, port, cali);
             else if (brand == "UT")
                 drivers_[rid] = std::make_unique<UnitreeMotor>(rid, hid, type, port, cali);
+            else if (brand == "MI")
+                drivers_[rid] = std::make_unique<MiMotor>(rid, hid, type, port, cali);
             else
                 RCLCPP_WARN(this->get_logger(), "Unknown motor brand %s", brand.c_str());
 
