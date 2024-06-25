@@ -101,12 +101,12 @@ private:
         std::vector<double> p2v_kds{};
         p2v_kds = this->declare_parameter("motor.p2v.kds", p2v_kds);
 #if IMU_FB == true
-        std::vector<double> v2c_kps{};
-        v2c_kps = this->declare_parameter("motor.v2c.kps", v2c_kps);
-        std::vector<double> v2c_kis{};
-        v2c_kis = this->declare_parameter("motor.v2c.kis", v2c_kis);
-        std::vector<double> v2c_kds{};
-        v2c_kds = this->declare_parameter("motor.v2c.kds", v2c_kds);
+        std::vector<double> v2t_kps{};
+        v2t_kps = this->declare_parameter("motor.v2t.kps", v2t_kps);
+        std::vector<double> v2t_kis{};
+        v2t_kis = this->declare_parameter("motor.v2t.kis", v2t_kis);
+        std::vector<double> v2t_kds{};
+        v2t_kds = this->declare_parameter("motor.v2t.kds", v2t_kds);
 #endif // IMU_FB
 
         yaw_offset = this->declare_parameter("gimbal.aim_yaw_offset", yaw_offset);
@@ -124,7 +124,7 @@ private:
             {
                 pitch_p2v = PidParam(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
 #if IMU_FB == true
-                pitch_v2v = PidParam(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
+                pitch_v2v = PidParam(v2t_kps[i], v2t_kis[i], v2t_kds[i]);
 #endif // IMU_FB
                 pitch_found = true;
                 RCLCPP_INFO(this->get_logger(), "Pitch kp: %f, ki: %f, kd: %f", p2v_kps[i], p2v_kis[i], p2v_kds[i]);
@@ -133,7 +133,7 @@ private:
             {
                 yaw_p2v = PidParam(p2v_kps[i], p2v_kis[i], p2v_kds[i]);
 #if IMU_FB == true
-                yaw_v2v = PidParam(v2c_kps[i], v2c_kis[i], v2c_kds[i]);
+                yaw_v2v = PidParam(v2t_kps[i], v2t_kis[i], v2t_kds[i]);
 #endif // IMU_FB
                 yaw_found = true;
                 RCLCPP_INFO(this->get_logger(), "Yaw kp: %f, ki: %f, kd: %f", p2v_kps[i], p2v_kis[i], p2v_kds[i]);
