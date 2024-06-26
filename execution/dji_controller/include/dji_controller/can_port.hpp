@@ -18,7 +18,7 @@ private:
     {
         can_frame frame;
         frame.can_id = frame_id;
-        frame.len = 8;
+        frame.can_dlc = 8;
         for (auto& data : frame.data) data = 0;
         return frame;
     }

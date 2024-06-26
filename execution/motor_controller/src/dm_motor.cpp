@@ -96,7 +96,7 @@ void DmMotor::turn_on()
     can_frame temp_frame;
     temp_frame.can_id = hid;
     uint8_t start_cmd[8] = START_CMD;
-    temp_frame.len = 0x08;
+    temp_frame.can_dlc = 0x08;
     memcpy(temp_frame.data, start_cmd, sizeof(start_cmd));
     tx(temp_frame);
 }
@@ -106,14 +106,14 @@ void DmMotor::turn_off()
     can_frame temp_frame;
     temp_frame.can_id = hid;
     uint8_t stop_cmd[8] = STOP_CMD;
-    temp_frame.len = 0x08;
+    temp_frame.can_dlc = 0x08;
     memcpy(temp_frame.data, stop_cmd, sizeof(stop_cmd));
     tx(temp_frame);
 }
 
 void DmMotor::set_mode()
 {
-    tx_frame.len = 0x08;
+    tx_frame.can_dlc = 0x08;
     tx_frame.can_id = hid; // can id is equal to motor id in MIT mode
     for (int i = 0; i < 8; i++)
         tx_frame.data[i] = 0;

@@ -93,7 +93,7 @@ void MiMotor::set_port(int port)
 void MiMotor::tx()
 {
     can_frame tx_frame;
-    tx_frame.len = 8;
+    tx_frame.can_dlc = 8;
     tx_frame.can_id = *reinterpret_cast<uint32_t*>(&parsed_frame.ext_id) | CAN_EFF_FLAG; // id
     std::memcpy(tx_frame.data, parsed_frame.data.data(), 8); // data
     can_drivers[port]->send_frame(tx_frame);

@@ -54,7 +54,7 @@ void DmDriver::turn_on()
     auto frame_temp = tx_frame;
 
     uint8_t start_cmd[8] = START_CMD;
-    tx_frame.len = 0x08;
+    tx_frame.can_dlc = 0x08;
     memcpy(tx_frame.data, start_cmd, sizeof(start_cmd));
     tx();
     tx_frame = frame_temp;
@@ -62,13 +62,13 @@ void DmDriver::turn_on()
 
 void DmDriver::turn_off()
 {
-    uint8_t dlc_temp = tx_frame.len;
+    uint8_t dlc_temp = tx_frame.can_dlc;
 
     uint8_t stop_cmd[8] = STOP_CMD;
-    tx_frame.len = 0x08;
+    tx_frame.can_dlc = 0x08;
     memcpy(tx_frame.data, stop_cmd, sizeof(stop_cmd));
     tx();
-    tx_frame.len = dlc_temp;
+    tx_frame.can_dlc = dlc_temp;
 }
 
 DmDriver::~DmDriver()
@@ -140,7 +140,7 @@ DmMitDriver::DmMitDriver(const std::string& rid, int hid, float kp, float kd, st
 
 void DmMitDriver::set_mode()
 {
-    tx_frame.len = 0x08;
+    tx_frame.can_dlc = 0x08;
     tx_frame.can_id = hid;
 }
 
@@ -194,7 +194,7 @@ DmVelDriver::DmVelDriver(const std::string& rid, int hid, std::string port)
 
 void DmVelDriver::set_mode()
 {
-    tx_frame.len = 0x08;
+    tx_frame.can_dlc = 0x08;
     tx_frame.can_id = hid;
 }
 
