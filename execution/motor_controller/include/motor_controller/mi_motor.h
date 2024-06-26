@@ -53,7 +53,7 @@ public:
 
     ~MiMotor();
 
-    void set_goal(double goal_pos, double goal_vel, double goal_cur) override;
+    void set_goal(double goal_pos, double goal_vel, double goal_tor) override;
 
     void set_param(double p2v_kp, double p2v_ki, double p2v_kd,
         double v2t_kp, double v2t_ki, double v2t_kd) override;
@@ -63,11 +63,11 @@ public:
     void print_info() override;
 
 private:
-    static umap<int, unique_ptr<CanDriver>> can_drivers; /**< A map from port number to pointers to the CAN port instances. */
-    static umap<int, thread> rx_threads; /**< A map from port number to threads for the feedback loop. */
-    static umap<int, can_frame> rx_frames; /**< A map from port number to receiving frames. */
+    static umap<int, unique_ptr<CanDriver>> can_drivers; // {port, driver}
+    static umap<int, thread> rx_threads; // {port, thread}
+    static umap<int, can_frame> rx_frames; // {port, frame}
 
-    static umap<int, umap<int, std::shared_ptr<MiMotor>>> instances; /** A map from hid to shared pointers to all the motor instances. */
+    static umap<int, umap<int, std::shared_ptr<MiMotor>>> instances; // {port, {hid, instance}}
 
     struct Frame
     {

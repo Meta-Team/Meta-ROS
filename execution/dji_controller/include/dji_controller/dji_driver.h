@@ -69,7 +69,7 @@ public:
      * @param goal_pos The desired position.
      * @param goal_vel The desired velocity.
      */
-    void set_goal(double goal_pos, double goal_vel, double goal_cur);
+    void set_goal(double goal_pos, double goal_vel, double goal_tor);
 
     /**
      * @brief Set the PID parameters for position-to-velocity conversion.

@@ -11,7 +11,7 @@ umap<int, std::thread> DjiMotor::rx_threads{};
 umap<int, std::thread> DjiMotor::tx_threads{};
 umap<int, umap<int, std::shared_ptr<DjiMotor>>> DjiMotor::instances{};
 
-DjiMotor::DjiMotor(const string& rid, const int hid, string type, string can_port, int cali) :
+DjiMotor::DjiMotor(const string& rid, const int hid, string type, string port, int cali) :
     MotorDriver(rid, hid),
     p2v_prm(0.0, 0.0, 0.0),
     v2t_prm(0.0, 0.0, 0.0)
@@ -24,7 +24,7 @@ DjiMotor::DjiMotor(const string& rid, const int hid, string type, string can_por
     this->p2v_out = PidOutput();
     this->v2t_out = PidOutput();
 
-    set_port(can_port.back() - '0'); // this->port is set here
+    set_port(port.back() - '0'); // this->port is set here
     instances[this->port][this->hid] = std::shared_ptr<DjiMotor>(this);
 
     calc_thread = std::thread(&DjiMotor::calc_loop, this);

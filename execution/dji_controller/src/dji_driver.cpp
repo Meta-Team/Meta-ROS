@@ -18,7 +18,7 @@ umap<int, std::thread> DjiDriver::rx_threads{};
 umap<int, std::thread> DjiDriver::tx_threads{};
 vector<std::shared_ptr<DjiDriver>> DjiDriver::instances{};
 
-DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_port, int cali) :
+DjiDriver::DjiDriver(const string& rid, const int hid, string type, string port, int cali) :
     hid(hid),
     rid(rid),
     p2v_prm(0.0, 0.0, 0.0),
@@ -33,7 +33,7 @@ DjiDriver::DjiDriver(const string& rid, const int hid, string type, string can_p
     this->v2c_out = PidOutput();
 
     instances.push_back(std::shared_ptr<DjiDriver>(this));
-    set_port(can_port.back() - '0');
+    set_port(port.back() - '0');
 
     last_command = 0.0;
 #if ENABLE_TIMEOUT
@@ -179,13 +179,13 @@ void DjiDriver::calc_loop()
 
 }
 
-void DjiDriver::set_goal(double goal_pos, double goal_vel, double goal_cur)
+void DjiDriver::set_goal(double goal_pos, double goal_vel, double goal_tor)
 {
     last_command = rclcpp::Clock().now().seconds();
     if (!ready) return;
     this->goal_pos = goal_pos + zero;
     this->goal_vel = goal_vel;
-    this->current = goal_cur;
+    this->current = goal_tor;
 }
 
 void DjiDriver::set_p2v_pid(double kp, double ki, double kd)

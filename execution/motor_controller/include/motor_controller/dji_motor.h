@@ -12,7 +12,6 @@
 
 using std::thread;
 using std::unique_ptr;
-using std::vector;
 
 #define umap std::unordered_map
 
@@ -41,7 +40,7 @@ public:
      */
     ~DjiMotor();
 
-    void set_goal(double goal_pos, double goal_vel, double goal_cur) override;
+    void set_goal(double goal_pos, double goal_vel, double goal_tor) override;
 
     void set_param(double p2v_kp, double p2v_ki, double p2v_kd,
         double v2t_kp, double v2t_ki, double v2t_kd) override;

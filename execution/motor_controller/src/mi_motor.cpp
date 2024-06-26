@@ -30,14 +30,14 @@ MiMotor::~MiMotor()
     if (tx_thread.joinable()) tx_thread.join();
 }
 
-void MiMotor::set_goal(double goal_pos, double goal_vel, double goal_cur)
+void MiMotor::set_goal(double goal_pos, double goal_vel, double goal_tor)
 {
     if (!std::isnan(goal_pos))
         goal_helper(goal_pos, 0, 0, kp, kd);
     else if (!std::isnan(goal_vel))
         goal_helper(0, goal_vel, 0, 0, kd);
-    else // if (!std::isnan(goal_cur))
-        goal_helper(0, 0, goal_cur, 0, 0);
+    else // if (!std::isnan(goal_tor))
+        goal_helper(0, 0, goal_tor, 0, 0);
 }
 
 void MiMotor::set_param(double p2v_kp, double /*p2v_ki*/, double p2v_kd,
