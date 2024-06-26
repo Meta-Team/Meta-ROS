@@ -25,7 +25,8 @@ DjiMotor::DjiMotor(const string& rid, const int hid, string type, string port, i
     this->v2t_out = PidOutput();
 
     set_port(port.back() - '0'); // this->port is set here
-    instances[this->port][this->hid] = std::shared_ptr<DjiMotor>(this);
+    int fb_id = calc_fb_id();
+    instances[this->port][fb_id] = std::shared_ptr<DjiMotor>(this);
 
     calc_thread = std::thread(&DjiMotor::calc_loop, this);
     cali_thread = std::thread(&DjiMotor::cali_loop, this, cali);
@@ -106,6 +107,22 @@ void DjiMotor::pos2velocity()
     curb(goal_vel, V_MAX);
 }
 
+int DjiMotor::calc_fb_id()
+{
+    switch (motor_type)
+    {
+    case M3508:
+        return 0x200 + hid;
+    case M6020:
+        return 0x204 + hid;
+    case M2006:
+        return 0x200 + hid;
+    default:
+        return 0;
+    }
+
+}
+
 void DjiMotor::set_port(int port)
 {
     this->port = port;
@@ -117,11 +134,6 @@ void DjiMotor::set_port(int port)
     }
 }
 
-int DjiMotor::calc_id(const can_frame& frame)
-{
-    return frame.can_id;
-}
-
 void DjiMotor::rx_loop(int port)
 {
     auto& can_port = can_ports[port];
@@ -130,11 +142,11 @@ void DjiMotor::rx_loop(int port)
     while (rclcpp::ok())
     {
         can_port->rx();
-        int id = calc_id(can_port->rx_frame);
+        int fb_id = can_port->rx_frame.can_id;
 
         // find corresponding instance and let it process
-        if (instances.find(id) != instances.end())
-            instances[id]->process_rx();
+        if (instances.find(fb_id) != instances.end())
+            instances[fb_id]->process_rx();
     }
 }
 
@@ -287,22 +299,6 @@ void DjiMotor::calc_tx() // calc and write
 void DjiMotor::process_rx()
 {
     auto& rx_frame = can_ports[port]->rx_frame;
-
-    // check if the frame is for this motor
-    switch (motor_type)
-    {
-    case M3508:
-        if ((int)rx_frame.can_id != 0x200 + hid) return;
-        break;
-    case M6020:
-        if ((int)rx_frame.can_id != 0x204 + hid) return;
-        break;
-    case M2006:
-        if ((int)rx_frame.can_id != 0x200 + hid) return;
-        break;
-    default:
-        return;
-    }
 
     // parse the frame
     int16_t pos_raw = (static_cast<int16_t>(rx_frame.data[0]) << 8) | (rx_frame.data[1] & 0xFF);

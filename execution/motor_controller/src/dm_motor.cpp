@@ -1,6 +1,7 @@
 #include "motor_controller/dm_motor.h"
 #include <cmath>
 #include <linux/can.h>
+#include <rclcpp/logger.hpp>
 #include "motor_controller/motor_driver.h"
 #include "rclcpp/rclcpp.hpp"
 
@@ -17,6 +18,8 @@ DmMotor::DmMotor(const string& rid, const int hid, string /*type*/, string port)
     instances[this->port][this->hid] = std::shared_ptr<DmMotor>(this);
     turn_on();
     tx_thread = std::thread(&DmMotor::tx_loop, this);
+    set_goal(NaN, NaN, 0);
+    // kp and kd are not configured yet
 }
 
 DmMotor::~DmMotor()
@@ -57,7 +60,7 @@ void DmMotor::print_info()
 
 void DmMotor::set_frame(float pos, float vel, float tor, float kp, float kd)
 {
-    uint16_t pos_tmp,vel_tmp,kp_tmp,kd_tmp,tor_tmp;
+    uint16_t pos_tmp, vel_tmp, kp_tmp, kd_tmp, tor_tmp;
     pos_tmp = float_to_uint(pos, P_MIN, P_MAX, 16);
     vel_tmp = float_to_uint(vel, V_MIN, V_MAX, 12);
     kp_tmp = float_to_uint(kp, KP_MIN, KP_MAX, 12);
@@ -83,7 +86,7 @@ void DmMotor::tx_loop()
 {
     while (rclcpp::ok())
     {
-        // tx(tx_frame);
+        tx(tx_frame);
         std::this_thread::sleep_for(std::chrono::milliseconds(TX_FREQ));
     }
 }
@@ -152,13 +155,10 @@ void DmMotor::process_rx()
 {
     auto& rx_frame = rx_frames[port];
 
-    // check if the frame is for this driver
-    if (static_cast<int>(rx_frame.can_id) != this->hid) return;
-
     // get raw data from the frame
-    float pos_raw = rx_frame.data[1]<<8 | rx_frame.data[2];
-    float vel_raw = rx_frame.data[3]<<4 | rx_frame.data[4]>>4;
-    float tor_raw = rx_frame.data[5];
+    float pos_raw = (rx_frame.data[1]<<8) | (rx_frame.data[2]);
+    float vel_raw = (rx_frame.data[3]<<4) | (rx_frame.data[4]>>4);
+    float tor_raw = (rx_frame.data[4] & 0xf) << 8 | rx_frame.data[5];
 
     // write the data to the present_data
     fb_pos = uint_to_float(pos_raw, -P_MAX, P_MAX, 16);

@@ -190,7 +190,7 @@ private:
     static umap<int, std::thread> rx_threads; // {port, thread}
     static umap<int, std::thread> tx_threads; // {port, thread}
 
-    static umap<int, umap<int, std::shared_ptr<DjiMotor>>> instances; // {port, {hid, instance}}
+    static umap<int, umap<int, std::shared_ptr<DjiMotor>>> instances; // {port, {fb_id, instance}}
 
     uint8_t port; /**< CAN port number. */
     MotorType motor_type; /**< Type of the motor. */
@@ -227,13 +227,17 @@ private:
     void pos2velocity();
 
     /**
+     * @brief Calculate the feedback ID according to the motor type and hid.
+     * @return The feedback ID of the motor.
+     */
+    int calc_fb_id();
+
+    /**
      * @brief Set the CAN port number of this motor, and add it to the array of CAN ports.
      * @param port The port number.
      * @note This create a new feedback loop thread if the port is not in the array.
      */
     void set_port(int port);
-
-    static int calc_id(const can_frame& frame);
 
     /**
      * @brief Receive loop for processing received data.

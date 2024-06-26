@@ -86,9 +86,6 @@ void DmDriver::process_rx()
 {
     auto& rx_frame = rx_frames[port];
 
-    // check if the frame is for this driver
-    if (static_cast<int>(rx_frame.can_id) != this->hid) return;
-
     // get raw data from the frame
     float pos_raw = rx_frame.data[1]<<8 | rx_frame.data[2];
     float vel_raw = rx_frame.data[3]<<4 | rx_frame.data[4]>>4;
