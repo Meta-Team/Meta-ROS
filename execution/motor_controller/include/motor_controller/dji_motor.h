@@ -2,6 +2,7 @@
 #define DJI_MOTOR_H
 
 #include "motor_driver.h"
+#include <linux/can.h>
 #include <thread>
 #include <unordered_map>
 #include <memory>
@@ -186,10 +187,11 @@ private:
         PidOutput() : p(0.0), i(0.0), d(0.0) {}
     };
 
-    static umap<int, unique_ptr<CanPort>> can_ports; /**< Array of pointers to the CAN port instances. */
-    static umap<int, std::thread> rx_threads; /**< Array of threads for the feedback loop. */
-    static umap<int, std::thread> tx_threads; /**< Array of threads for the transmit loop. */
-    static vector<std::shared_ptr<DjiMotor>> instances; /** A vector of shared pointers to the DjiDriver instances. */
+    static umap<int, unique_ptr<CanPort>> can_ports; // {port, ptr}
+    static umap<int, std::thread> rx_threads; // {port, thread}
+    static umap<int, std::thread> tx_threads; // {port, thread}
+
+    static umap<int, umap<int, std::shared_ptr<DjiMotor>>> instances; // {port, {hid, instance}}
 
     uint8_t port; /**< CAN port number. */
     MotorType motor_type; /**< Type of the motor. */
@@ -205,7 +207,6 @@ private:
     double torque{}; /**< Current or voltage value of the motor. */
     double zero = 0.0; /**< Zero position of the motor. */
 
-    double last_command; /**< When the motor receives the last command. */
     bool ready; /**< Flag to indicate if the motor is ready to receive commands. */
 
     std::thread calc_thread; /**< Thread for calculating PID control. */
@@ -232,6 +233,8 @@ private:
      * @note This create a new feedback loop thread if the port is not in the array.
      */
     void set_port(int port);
+
+    static int calc_id(const can_frame& frame);
 
     /**
      * @brief Receive loop for processing received data.

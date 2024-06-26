@@ -11,13 +11,13 @@
 umap<int, unique_ptr<CanDriver>> MiMotor::can_drivers;
 umap<int, std::thread> MiMotor::rx_threads;
 umap<int, can_frame> MiMotor::rx_frames;
-umap<int, std::shared_ptr<MiMotor>> MiMotor::instances;
+umap<int, umap<int, std::shared_ptr<MiMotor>>> MiMotor::instances;
 
 MiMotor::MiMotor(const string& rid, int hid, string /*type*/, string port, int cali) :
     MotorDriver(rid, hid)
 {
-    instances[hid] = std::shared_ptr<MiMotor>(this);
-    set_port(port.back() - '0');
+    set_port(port.back() - '0'); // this->port is set here
+    instances[this->port][this->hid] = std::shared_ptr<MiMotor>(this);
 
     start();
 
@@ -136,6 +136,7 @@ void MiMotor::rx_loop(int port)
 {
     auto& can_driver = can_drivers[port];
     auto& can_frame = rx_frames[port];
+    auto& instances = MiMotor::instances[port];
     while (rclcpp::ok())
     {
         can_driver->get_frame(can_frame);

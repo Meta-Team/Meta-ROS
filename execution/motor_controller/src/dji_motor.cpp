@@ -9,7 +9,7 @@
 umap<int, unique_ptr<DjiMotor::CanPort>> DjiMotor::can_ports{};
 umap<int, std::thread> DjiMotor::rx_threads{};
 umap<int, std::thread> DjiMotor::tx_threads{};
-vector<std::shared_ptr<DjiMotor>> DjiMotor::instances{};
+umap<int, umap<int, std::shared_ptr<DjiMotor>>> DjiMotor::instances{};
 
 DjiMotor::DjiMotor(const string& rid, const int hid, string type, string can_port, int cali) :
     MotorDriver(rid, hid),
@@ -24,10 +24,8 @@ DjiMotor::DjiMotor(const string& rid, const int hid, string type, string can_por
     this->p2v_out = PidOutput();
     this->v2t_out = PidOutput();
 
-    instances.push_back(std::shared_ptr<DjiMotor>(this));
-    set_port(can_port.back() - '0');
-
-    last_command = 0.0;
+    set_port(can_port.back() - '0'); // this->port is set here
+    instances[this->port][this->hid] = std::shared_ptr<DjiMotor>(this);
 
     calc_thread = std::thread(&DjiMotor::calc_loop, this);
     cali_thread = std::thread(&DjiMotor::cali_loop, this, cali);
@@ -41,7 +39,6 @@ DjiMotor::~DjiMotor()
 
 void DjiMotor::set_goal(double goal_pos, double goal_vel, double goal_tor)
 {
-    last_command = rclcpp::Clock().now().seconds();
     if (!ready) return;
     this->goal_pos = goal_pos + zero;
     this->goal_vel = goal_vel;
@@ -120,14 +117,24 @@ void DjiMotor::set_port(int port)
     }
 }
 
+int DjiMotor::calc_id(const can_frame& frame)
+{
+    return frame.can_id;
+}
+
 void DjiMotor::rx_loop(int port)
 {
     auto& can_port = can_ports[port];
+    auto& instances = DjiMotor::instances[port]; // instances on this port
+
     while (rclcpp::ok())
     {
         can_port->rx();
-        for (auto& instance: instances)
-            instance->process_rx();
+        int id = calc_id(can_port->rx_frame);
+
+        // find corresponding instance and let it process
+        if (instances.find(id) != instances.end())
+            instances[id]->process_rx();
     }
 }
 

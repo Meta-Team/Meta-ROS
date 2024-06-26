@@ -67,7 +67,7 @@ private:
     static umap<int, thread> rx_threads; /**< A map from port number to threads for the feedback loop. */
     static umap<int, can_frame> rx_frames; /**< A map from port number to receiving frames. */
 
-    static umap<int, std::shared_ptr<MiMotor>> instances; /** A map from hid to shared pointers to all the motor instances. */
+    static umap<int, umap<int, std::shared_ptr<MiMotor>>> instances; /** A map from hid to shared pointers to all the motor instances. */
 
     struct Frame
     {
