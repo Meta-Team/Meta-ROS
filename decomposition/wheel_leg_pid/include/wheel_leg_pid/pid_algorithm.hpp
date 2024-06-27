@@ -10,20 +10,31 @@ class PidAlgorithm
 {
 public:
     /**
-     * @brief Construct a new object.
-     * @param kp The proportional gain of the PID controller.
-     * @param ki The integral gain of the PID controller.
-     * @param kd The derivative gain of the PID controller.
-     * @param dt The time interval for calculating the PID output.
+     * @brief The PID parameters.
      */
-    PidAlgorithm(double kp, double ki, double kd, int dt = 1,
+    class PidParam
+    {
+    public:
+        double kp;
+        double ki;
+        double kd;
+
+        PidParam(double kp, double ki, double kd)
+            : kp(kp), ki(ki), kd(kd) {}
+    };
+
+    /**
+     * @brief Construct a new object.
+     * @param param The PID parameters.
+     * @param dt The time interval for calculating the PID output.
+     * @param max_output The maximum output value.
+     * @param max_i The maximum integral value.
+     */
+    PidAlgorithm(PidParam param, int dt = 1,
         double max_output = std::numeric_limits<double>::max(),
         double max_i = std::numeric_limits<double>::max())
+        : param(param)
     {
-        this->kp = kp;
-        this->ki = ki;
-        this->kd = kd;
-
         this->dt = dt;
 
         this->max_i = max_i;
@@ -87,7 +98,7 @@ private:
     bool running = true; ///< Whether the program is running.
     bool active = false; ///< Whether the PID algorithm is active.
 
-    double kp, ki, kd;
+    PidParam param;
     int dt;
     double max_i;
     double max_output;
@@ -121,9 +132,9 @@ private:
             }
 
             error = target - feedback;
-            proportional = kp * error; // P
-            integral += ki * error * dt_seconds; curb(integral, max_i, -max_i); // I
-            derivative = kd * (error - prev_error) / dt_seconds; // D
+            proportional = param.kp * error; // P
+            integral += param.ki * error * dt_seconds; curb(integral, max_i, -max_i); // I
+            derivative = param.kd * (error - prev_error) / dt_seconds; // D
 
             prev_error = error;
 
