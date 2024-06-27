@@ -8,3 +8,6 @@
 	path = perception/solais_vision
 	url = https://github.com/Meta-Team/Meta-Vision-SolaisNG
 	branch = integrated
+[submodule "execution/motor_controller/thirdparty/pybind11"]
+	path = execution/motor_controller/thirdparty/pybind11
+	url = https://github.com/pybind/pybind11
