@@ -23,15 +23,9 @@ def generate_launch_description():
 
     ld = LaunchDescription([
         Node(
-            package="dji_controller",
-            executable="dji_controller",
-            name="dji_controller",
-            parameters=[config],
-        ),
-        Node(
-            package="unitree_controller",
-            executable="unitree_controller",
-            name="unitree_controller",
+            package="motor_controller",
+            executable="motor_controller",
+            name="motor_controller",
             parameters=[config],
         ),
         Node(

@@ -66,9 +66,9 @@ def generate_launch_description():
 
         # exec
         Node(
-            package='dji_controller',
-            executable='dji_controller',
-            name='dji_controller',
+            package='motor_controller',
+            executable='motor_controller',
+            name='motor_controller',
             parameters=[config],
         ),
     ])
