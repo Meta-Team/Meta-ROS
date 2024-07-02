@@ -15,6 +15,7 @@
 #include "operation_interface/msg/game_info.hpp"
 #include "operation_interface/msg/power_state.hpp"
 #include "operation_interface/msg/custom_controller.hpp"
+#include "operation_interface/msg/robot_state.hpp"
 
 using spb = asio::serial_port_base;
 using drivers::serial_driver::FlowControl;
@@ -57,7 +58,7 @@ private:
     /**
      * @brief Method to receive data from the serial port.
      * Interprets the received data and publishes it to the appropriate topic.
-     * @note This would call the handleFrame method, and is called by the receive_thread.
+     * @note This would call the handle_frame method, and is called by the receive_thread.
      */
     void receive();
 
@@ -76,7 +77,7 @@ private:
      * @param frame_type The type of the frame.
      */
     template<typename MSG, typename PARSE>
-    void handleFrame(const std::vector<uint8_t>& prefix,
+    void handle_frame(const std::vector<uint8_t>& prefix,
         typename rclcpp::Publisher<MSG>::SharedPtr pub,
         const std::string frame_type);
 
@@ -85,6 +86,7 @@ private:
     rclcpp::Publisher<operation_interface::msg::GameInfo>::SharedPtr game_info_pub_;
     rclcpp::Publisher<operation_interface::msg::PowerState>::SharedPtr power_state_pub_;
     rclcpp::Publisher<operation_interface::msg::CustomController>::SharedPtr custom_controller_pub_;
+    rclcpp::Publisher<operation_interface::msg::RobotState>::SharedPtr robot_state_pub_;
 
     // Serial port
     std::unique_ptr<IoContext> ctx_;

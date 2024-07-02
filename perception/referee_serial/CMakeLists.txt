@@ -30,6 +30,7 @@ add_library(referee_serial SHARED
   src/game_info.cpp
   src/power_state.cpp
   src/custom_controller.cpp
+  src/robot_state.cpp
   src/crc.cpp)
 
 target_include_directories(referee_serial PRIVATE

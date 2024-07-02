@@ -3,6 +3,7 @@
 #include "referee_serial/game_info.hpp"
 #include "referee_serial/power_state.hpp"
 #include "referee_serial/custom_controller.hpp"
+#include "referee_serial/robot_state.hpp"
 #include <chrono>
 #include <cstdint>
 #include <rclcpp/logging.hpp>
@@ -25,8 +26,8 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     node_ = rclcpp::Node::make_shared("referee_serial", options);
 
     // create serial port
-    dev_name = node_->declare_parameter("referee_port", "ttyUSB1");
-    auto dev_path = "/dev/" + dev_name;
+    dev_name = node_->declare_parameter("referee_port", "referee_serial");
+    auto dev_path = "/dev/" + dev_name; // default: /dev/referee_serial
     ctx_ = std::make_unique<IoContext>(2);
     config_ = std::make_unique<SerialPortConfig>(baud, fc, pt, sb);
     port_ = std::make_unique<SerialPort>(*ctx_, dev_name, *config_);
@@ -37,6 +38,7 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     game_info_pub_ = node_->create_publisher<operation_interface::msg::GameInfo>("game_info", 10);
     power_state_pub_ = node_->create_publisher<operation_interface::msg::PowerState>("power_state", 10);
     custom_controller_pub_ = node_->create_publisher<operation_interface::msg::CustomController>("custom_controller", 10);
+    robot_state_pub_ = node_->create_publisher<operation_interface::msg::RobotState>("robot_state", 10);
 
     // open serial port
     if (!port_->is_open())
@@ -81,23 +83,28 @@ void RefereeSerial::receive()
 
             if (KeyMouse::is_wanted_pre(prefix)) // key mouse
             {
-                handleFrame<operation_interface::msg::KeyMouse, KeyMouse>(
+                handle_frame<operation_interface::msg::KeyMouse, KeyMouse>(
                     prefix, key_mouse_pub_, "key_mouse");
             }
             else if (GameInfo::is_wanted_pre(prefix)) // game info
             {
-                handleFrame<operation_interface::msg::GameInfo, GameInfo>(
+                handle_frame<operation_interface::msg::GameInfo, GameInfo>(
                     prefix, game_info_pub_, "game_info");
             }
             else if (PowerState::is_wanted_pre(prefix)) // power state
             {
-                handleFrame<operation_interface::msg::PowerState, PowerState>(
+                handle_frame<operation_interface::msg::PowerState, PowerState>(
                     prefix, power_state_pub_, "power_state");
             }
             else if (CustomController::is_wanted_pre(prefix)) // custom controller
             {
-                handleFrame<operation_interface::msg::CustomController, CustomController>(
+                handle_frame<operation_interface::msg::CustomController, CustomController>(
                     prefix, custom_controller_pub_, "custom_controller");
+            }
+            else if (RobotState::is_wanted_pre(prefix)) // robot state
+            {
+                handle_frame<operation_interface::msg::RobotState, RobotState>(
+                    prefix, robot_state_pub_, "robot_state");
             }
 #if DEBUG == true
             else if (prefix[0] == 0xA5)
@@ -116,7 +123,7 @@ void RefereeSerial::receive()
 }
 
 template<typename MSG, typename PARSE>
-void RefereeSerial::handleFrame(const std::vector<uint8_t>& prefix,
+void RefereeSerial::handle_frame(const std::vector<uint8_t>& prefix,
     typename rclcpp::Publisher<MSG>::SharedPtr pub,
     const std::string frame_type)
 {

@@ -58,9 +58,9 @@ public:
 
     static bool is_wanted_pre(const std::vector<uint8_t> &prefix);
 
-    PowerState(const std::vector<uint8_t> &frame);
+    RobotState(const std::vector<uint8_t> &frame);
 
-    operation_interface::msg::PowerState msg();
+    operation_interface::msg::RobotState msg();
 };
 
 #endif // POWER_STATE_HPP
