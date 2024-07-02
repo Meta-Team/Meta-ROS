@@ -18,6 +18,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/PowerState.msg"
   "msg/DbusControl.msg"
   "msg/CustomController.msg"
+  "msg/RobotState.msg"
 )
 ament_export_dependencies(rosidl_default_runtime)
 
