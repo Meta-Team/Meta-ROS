@@ -7,7 +7,7 @@
 #include <memory>
 #include <sys/types.h>
 
-#include "operation_interface/msg/power_state.hpp"  // CHANGE HERE
+#include "operation_interface/msg/robot_state.hpp"
 #include "referee_serial/referee_serial.hpp"
 
 // refer to ./key_mouse.hpp for explanation
