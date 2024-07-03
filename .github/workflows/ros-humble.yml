@@ -21,10 +21,7 @@ jobs:
       uses: ichiro-its/ros2-ws-action/setup@v1.0.1
       with:
         distro: humble
+    - name: Install ament_cmake_auto
+      run: sudo apt install -y ros-humble-ament-cmake-auto
     - name: Build workspace
       uses: ichiro-its/ros2-ws-action/build@v1.0.1
-    # - name: ROS 2 Humble Env
-    #   uses: ichiro-its/ros2-ci@v1.0.1
-    #   with:
-    #     ros2-distro: humble
-    #     apt-packages: ros-humble-serial-driver ros-humble-camera-info-manager ros-humble-image-transport ros-humble-image-transport-plugins ros-humble-angles ros-humble-xacro ros-humble-cv-bridge
