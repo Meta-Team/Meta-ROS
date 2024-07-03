@@ -16,7 +16,7 @@ jobs:
       with:
         submodules: recursive
     - name: Install curl
-      run: sudo apt install -y curl
+      run: sudo apt update && sudo apt install -y curl
     - name: Ignore scara_moveit
       run: touch decomposition/scara_moveit/AMENT_IGNORE
     - name: Setup ROS 2 Humble
