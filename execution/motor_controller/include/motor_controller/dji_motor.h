@@ -201,7 +201,7 @@ private:
 
     double vel_error{}; /**< Error in velocity. */
     double pos_error{}; /**< Error in position. */
-    double goal_pos{}; /**< Desired position of the motor. */
+    double goal_pos = NaN; /**< Desired position of the motor. Initially set to NaN to ensure that motor doesn't attempt to adjust to 0 position.*/
     double goal_vel{}; /**< Desired velocity of the motor. */
     double torque{}; /**< Current or voltage value of the motor. */
     double zero = 0.0; /**< Zero position of the motor. */
