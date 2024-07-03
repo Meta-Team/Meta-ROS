@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
     - name: ROS 2 Humble Env
       uses: ichiro-its/ros2-ci@v1.0.0
       with:
