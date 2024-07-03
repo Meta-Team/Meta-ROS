@@ -20,6 +20,7 @@ jobs:
     - name: Install dependencies
       shell: bash
       run: |
+        sudo apt update
         rosdep update
         rosdep install -y --rosdistro humble --from-paths . --ignore-src
         source /opt/ros/humble/local_setup.bash
