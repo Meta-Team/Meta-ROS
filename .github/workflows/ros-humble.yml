@@ -15,15 +15,14 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-    - name: Install curl
-      run: sudo apt update && sudo apt install -y curl
     - name: Ignore scara_moveit
       run: touch decomposition/scara_moveit/AMENT_IGNORE
-    - name: Setup ROS 2 Humble
+    - name: Install dependencies
+      shell: bash
       run: |
         rosdep update
         rosdep install -y --rosdistro humble --from-paths . --ignore-src
-        source /opt/ros/humble/local_setup.sh
+        source /opt/ros/humble/local_setup.bash
         colcon build --packages-skip-regex '.*'
     - name: Install ament_cmake_auto
       run: sudo apt install -y ros-humble-ament-cmake-auto
