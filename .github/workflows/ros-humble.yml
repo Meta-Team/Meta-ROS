@@ -1,0 +1,27 @@
+name: ROS2 Humble Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Ignore scara_moveit
+      run: touch decomposition/scara_moveit/AMENT_IGNORE
+    - name: Setup ROS 2 Humble
+      uses: ichiro-its/ros2-ws-action/setup@v1.0.1
+      with:
+        distro: humble
+    - name: Install ament_cmake_auto
+      run: sudo apt install -y ros-humble-ament-cmake-auto
+    - name: Build workspace
+      uses: ichiro-its/ros2-ws-action/build@v1.0.1
