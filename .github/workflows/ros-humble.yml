@@ -21,4 +21,4 @@ jobs:
       uses: ichiro-its/ros2-ci@v1.0.0
       with:
         ros2-distro: humble
-        apt-packages: ros-humble-serial-driver ros-humble-camera-info-manager ros-humble-image-transport ros-humble-image-transport-plugins
+        apt-packages: ros-humble-serial-driver ros-humble-camera-info-manager ros-humble-image-transport ros-humble-image-transport-plugins ros-humble-angles ros-humble-xacro ros-humble-cv-bridge
