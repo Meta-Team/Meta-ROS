@@ -8,19 +8,23 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-22.04
-
+    container:
+      image: ros:humble
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Ignore scara_moveit
       run: touch decomposition/scara_moveit/AMENT_IGNORE
-    - name: Setup ROS 2 Humble
-      uses: ichiro-its/ros2-ws-action/setup@v1.0.1
-      with:
-        distro: humble
+    - name: Install dependencies
+      shell: bash
+      run: |
+        sudo apt update
+        rosdep update
+        rosdep install -y --rosdistro humble --from-paths . --ignore-src
+        source /opt/ros/humble/local_setup.bash
+        colcon build --packages-skip-regex '.*'
     - name: Install ament_cmake_auto
       run: sudo apt install -y ros-humble-ament-cmake-auto
     - name: Build workspace
