@@ -1,10 +1,12 @@
 # Meta-ROS
+
 ![humble](https://github.com/Meta-Team/Meta-ROS/actions/workflows/ros-humble.yml/badge.svg)
+
 ## Basic Info
 
 Created by Yao Xinchen, 2023/7/13. \
 Based on ROS2 Humble. \
-Tested on Nvidia Orin Nano, Ubuntu 22.04. \
+Tested on Ubuntu 22.04. \
 Used for RoboMaster Team Meta to control robots.
 
 This project is hoped to be modular, readable and easy to maintain.
@@ -23,6 +25,7 @@ Its source code is provided here ->
 2. serial-driver
 3. moveit
 4. moveit-servo
+5. camera-info-manager
 
 ## Structure
 
@@ -38,19 +41,8 @@ cd Meta-ROS
 git clone --recurse-submodules https://github.com/Yao-Xinchen/Meta-ROS src
 ```
 
-To build run the script `first_build.bash` or `first_build.zsh` with
-
-```Shell
-# For bash
-bash src/first_build.bash
-# For zsh
-zsh src/first_build.zsh
-```
-
-or run the following commands:
+To build, run
 
 ```Bash
-colcon build --symlink-install --packages-select serial
-source ./install/setup.bash
 colcon build --symlink-install --cmake-args '-DCMAKE_EXPORT_COMPILE_COMMANDS=On'
 ```
