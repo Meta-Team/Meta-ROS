@@ -11,3 +11,6 @@
 [submodule "execution/motor_controller/thirdparty/pybind11"]
 	path = execution/motor_controller/thirdparty/pybind11
 	url = https://github.com/pybind/pybind11
+[submodule "decomposition/wheel_leg_rl"]
+	path = decomposition/wheel_leg_rl
+	url = https://github.com/Yao-Xinchen/Meta-WL
