@@ -13,7 +13,7 @@
     motor:
       count:  4
       rids:   ["L_LEG",   "R_LEG",   "l_WHL",   "R_WHL"]
-      hids:   [1,         2,         0,         1]
+      hids:   [2,         1,         0,         1]
       ports:  ["CAN0",    "CAN0",    "CAN0",    "CAN0"]
       brands: ["DM",      "DM",      "DJI",     "DJI"]
       types:  ["4310",    "4310",    "3508",    "3508"]
