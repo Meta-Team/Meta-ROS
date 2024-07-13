@@ -1,0 +1,30 @@
+/**:
+  ros__parameters:
+    dbus_port: "dbus_serial"
+
+    control:
+      trans_vel: 2.5 # m/s
+      rot_vel: 3.0 # rad/s
+      stick_sens: 5.00 # rad/s
+      mouse_sens: 10.0
+      height_sens: 0.3 # m/s
+      deadzone: 0.15 # percentage
+
+    motor:
+      count:  4
+      rids:   ["L_LEG",   "R_LEG",   "l_WHL",   "R_WHL"]
+      hids:   [1,         2,         0,         1]
+      ports:  ["CAN0",    "CAN0",    "CAN0",    "CAN0"]
+      brands: ["DM",      "DM",      "DJI",     "DJI"]
+      types:  ["4310",    "4310",    "3508",    "3508"]
+
+      p2v:
+        kps:  [7.0E+0,    7.0E+0,    0.0,       0.0]
+        kis:  [0.0,       0.0,       0.0,       0.0]
+        kds:  [0.5E+0,    0.5E+0,    0.0,       0.0]
+      v2t:
+        kps:  [0.0,       0.0,       2.0E-2,    2.0E-2]
+        kis:  [0.0,       0.0,       1.0E-2,    1.0E-2]
+        kds:  [0.0,       0.0,       0.0,       0.0]
+
+      cali:   [0,         0,         0,         0]
