@@ -51,13 +51,21 @@ void DbusInterpreter::update()
     {
         return; // do not update if not active, this prevents yaw and pitch from accumulating in standby
     }
+
     move_->vel_x = max_vel * ls_x;
     move_->vel_y = 0.0;
     move_->omega = max_omega * ls_y;
-    move_->height += height_sens * rs_x;
+    move_->height += height_sens * rs_x * PERIOD / 1000.0;
+    curb(move_->height, 0.3, 0.1); // 0.1m to 0.3m
 }
 
 void DbusInterpreter::apply_deadzone(double& val)
 {
     if (std::abs(val) < deadzone) val = 0;
+}
+
+void DbusInterpreter::curb(double& val, double upper, double lower)
+{
+    if (val > upper) val = upper;
+    if (val < lower) val = lower;
 }

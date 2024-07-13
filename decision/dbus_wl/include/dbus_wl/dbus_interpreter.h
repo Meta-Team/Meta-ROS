@@ -40,6 +40,8 @@ private:
     void update();
 
     void apply_deadzone(double& val);
+
+    void curb(double& val, double upper, double lower);
 };
 
 #endif // DBUS_INTERPRETER_H

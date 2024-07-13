@@ -33,13 +33,7 @@ def generate_launch_description():
         output="screen"
     )
 
-    interpreter=Node(
-        package="ahrs_interpreter",
-        executable="ahrs_interpreter",
-    )
-
     launch_description =LaunchDescription()
     launch_description.add_action(ahrs_driver)
     launch_description.add_action(imu_tf)
-    launch_description.add_action(interpreter)
     return launch_description

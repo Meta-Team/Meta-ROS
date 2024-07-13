@@ -7,7 +7,7 @@
       rot_vel: 3.0 # rad/s
       stick_sens: 5.00 # rad/s
       mouse_sens: 10.0
-      height_sens: 0.3 # m/s
+      height_sens: 0.4 # m/s
       deadzone: 0.15 # percentage
 
     motor:

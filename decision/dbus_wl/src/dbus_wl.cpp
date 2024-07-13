@@ -12,9 +12,9 @@ public:
         double max_vel = this->declare_parameter("control.trans_vel", 2.0);
         double max_omega = this->declare_parameter("control.rot_vel", 3.0);
         double deadzone = this->declare_parameter("control.deadzone", 0.05);
-        double height_sens = this->declare_parameter("control.height_sens", 0.3);
-        RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, deadzone: %f",
-            max_vel, max_omega, deadzone);
+        double height_sens = this->declare_parameter("control.height_sens", 0.2);
+        RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, deadzone: %f, height_sens: %f",
+            max_vel, max_omega, deadzone, height_sens);
 
         interpreter_ = std::make_unique<DbusInterpreter>(max_vel, max_omega, deadzone, height_sens);
 
@@ -55,6 +55,8 @@ private:
 int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
+    auto node = std::make_shared<DbusWl>();
+    rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
 }
