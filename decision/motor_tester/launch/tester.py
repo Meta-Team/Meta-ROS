@@ -14,6 +14,15 @@ def generate_launch_description():
         'motor_info.yaml'
     )
 
+    motor_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('motor_controller'),
+                'launch/motor_test.py'
+            )
+        )
+    )
+
     ld = LaunchDescription([
         Node(
             package='dbus_control',
@@ -27,5 +36,7 @@ def generate_launch_description():
             parameters=[config]
         )
     ])
+
+    ld.add_action(motor_launch)
 
     return ld

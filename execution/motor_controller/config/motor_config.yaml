@@ -2,17 +2,17 @@
   ros__parameters:
 
     motor:
-      count: 1
+      count: 2
       rids: ["J1", "J2"]
       hids: [1, 2]
       ports: ["CAN0", "CAN0"]
-      brands: ["DM", "MI"]
-      types: ["", ""]
+      brands: ["DM", "DM"]
+      types: ["4310", "4310"]
 
       p2v:
-        kps: [4.0E+0, 1.0E+0]
+        kps: [7.0E+0, 7.0E+0]
         kis: [0.0E+1, 0.0E+1]
-        kds: [0.3E+0, 0.5E+0]
+        kds: [0.5E+0, 0.5E+0]
       v2t:
         kps: [0.0E-2, 0.0E-2]
         kis: [0.0E-4, 0.0E-4]
