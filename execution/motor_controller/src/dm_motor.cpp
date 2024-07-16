@@ -8,14 +8,15 @@
 umap<int, unique_ptr<CanDriver>> DmMotor::can_drivers; // {port, driver}
 umap<int, thread> DmMotor::rx_threads; // {port, thread}
 umap<int, can_frame> DmMotor::rx_frames; // {port, frame}
-umap<int, umap<int, shared_ptr<DmMotor>>> DmMotor::instances; // {port, {hid, instance}}
+umap<int, umap<int, DmMotor*>> DmMotor::instances; // {port, {hid, instance}}
 
 DmMotor::DmMotor(const string& rid, const int hid, string /*type*/, string port) :
     MotorDriver(rid, hid)
 {
+    std::cout << "DmMotor constructor" << std::endl;
     set_mode();
     set_port(port.back() - '0'); // this->port is set here
-    instances[this->port][this->hid] = std::shared_ptr<DmMotor>(this);
+    instances[this->port][this->hid] = this;
     turn_on();
     tx_thread = std::thread(&DmMotor::tx_loop, this);
     set_goal(NaN, NaN, 0);
@@ -24,6 +25,7 @@ DmMotor::DmMotor(const string& rid, const int hid, string /*type*/, string port)
 
 DmMotor::~DmMotor()
 {
+    std::cout << "DmMotor destructor" << std::endl;
     turn_off();
     if (tx_thread.joinable()) tx_thread.join();
 }
@@ -143,6 +145,7 @@ void DmMotor::rx_loop(int port)
     while (rclcpp::ok())
     {
         can_driver->get_frame(can_frame);
+        if (can_frame.can_id != 0) continue; // master id must be 0
         int id = calc_id(can_frame);
 
         // find corresponding instance and let it process

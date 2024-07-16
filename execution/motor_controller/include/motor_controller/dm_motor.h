@@ -55,7 +55,7 @@ private:
     static umap<int, thread> rx_threads; // {port, thread}
     static umap<int, can_frame> rx_frames; // {port, frame}
 
-    static umap<int, umap<int, shared_ptr<DmMotor>>> instances; // {port, {hid, instance}}
+    static umap<int, umap<int, DmMotor*>> instances; // {port, {hid, instance}}
 
     int port;
     can_frame tx_frame;

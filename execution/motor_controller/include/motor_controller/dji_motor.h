@@ -190,7 +190,7 @@ private:
     static umap<int, std::thread> rx_threads; // {port, thread}
     static umap<int, std::thread> tx_threads; // {port, thread}
 
-    static umap<int, umap<int, std::shared_ptr<DjiMotor>>> instances; // {port, {fb_id, instance}}
+    static umap<int, umap<int, DjiMotor*>> instances; // {port, {fb_id, instance}}
 
     uint8_t port; /**< CAN port number. */
     MotorType motor_type; /**< Type of the motor. */

@@ -9,7 +9,7 @@
 umap<int, unique_ptr<DjiMotor::CanPort>> DjiMotor::can_ports{};
 umap<int, std::thread> DjiMotor::rx_threads{};
 umap<int, std::thread> DjiMotor::tx_threads{};
-umap<int, umap<int, std::shared_ptr<DjiMotor>>> DjiMotor::instances{};
+umap<int, umap<int, DjiMotor*>> DjiMotor::instances{};
 
 DjiMotor::DjiMotor(const string& rid, const int hid, string type, string port, int cali) :
     MotorDriver(rid, hid),
@@ -26,7 +26,7 @@ DjiMotor::DjiMotor(const string& rid, const int hid, string type, string port, i
 
     set_port(port.back() - '0'); // this->port is set here
     int fb_id = calc_fb_id();
-    instances[this->port][fb_id] = std::shared_ptr<DjiMotor>(this);
+    instances[this->port][fb_id] = this;
 
     calc_thread = std::thread(&DjiMotor::calc_loop, this);
     cali_thread = std::thread(&DjiMotor::cali_loop, this, cali);
