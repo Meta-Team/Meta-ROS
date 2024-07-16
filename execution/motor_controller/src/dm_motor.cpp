@@ -13,7 +13,6 @@ umap<int, umap<int, DmMotor*>> DmMotor::instances; // {port, {hid, instance}}
 DmMotor::DmMotor(const string& rid, const int hid, string /*type*/, string port) :
     MotorDriver(rid, hid)
 {
-    std::cout << "DmMotor constructor" << std::endl;
     set_mode();
     set_port(port.back() - '0'); // this->port is set here
     instances[this->port][this->hid] = this;
@@ -25,7 +24,6 @@ DmMotor::DmMotor(const string& rid, const int hid, string /*type*/, string port)
 
 DmMotor::~DmMotor()
 {
-    std::cout << "DmMotor destructor" << std::endl;
     turn_off();
     if (tx_thread.joinable()) tx_thread.join();
 }
