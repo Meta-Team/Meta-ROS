@@ -14,8 +14,11 @@ DmMotor::DmMotor(const string& rid, const int hid, string /*type*/, string port)
     MotorDriver(rid, hid)
 {
     set_mode();
-    set_port(port.back() - '0'); // this->port is set here
-    instances[this->port][this->hid] = this;
+    this->port = port.back() - '0';
+    instances[this->port][this->hid] = this; // fb_id = hid
+
+    create_port(this->port);
+
     turn_on();
     tx_thread = std::thread(&DmMotor::tx_loop, this);
     set_goal(NaN, NaN, 0);
@@ -26,6 +29,7 @@ DmMotor::~DmMotor()
 {
     turn_off();
     if (tx_thread.joinable()) tx_thread.join();
+    destroy_port(port);
 }
 
 void DmMotor::set_param(double p2v_kp, double /*p2v_ki*/, double p2v_kd,
@@ -119,13 +123,21 @@ void DmMotor::set_mode()
         tx_frame.data[i] = 0;
 }
 
-void DmMotor::set_port(int port)
+void DmMotor::create_port(int port)
 {
-    this->port = port;
     if (can_drivers.find(port) == can_drivers.end())
     {
         can_drivers[port] = std::make_unique<CanDriver>(port);
         rx_threads[port] = std::thread(&DmMotor::rx_loop, port);
+    }
+}
+
+void DmMotor::destroy_port(int port)
+{
+    if (instances[port].empty())
+    {
+        can_drivers.erase(port);
+        if (rx_threads[port].joinable()) rx_threads[port].join();
     }
 }
 

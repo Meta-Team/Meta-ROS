@@ -24,9 +24,14 @@ DjiMotor::DjiMotor(const string& rid, const int hid, string type, string port, i
     this->p2v_out = PidOutput();
     this->v2t_out = PidOutput();
 
-    set_port(port.back() - '0'); // this->port is set here
+    // parse the port number
+    this->port = port.back() - '0';
     int fb_id = calc_fb_id();
-    instances[this->port][fb_id] = this;
+    instances[this->port][fb_id] = this; // add the instance to the map
+
+    create_port(this->port);
+    // create the port after the instance is added
+    // in case the threads race to access the instance
 
     calc_thread = std::thread(&DjiMotor::calc_loop, this);
     cali_thread = std::thread(&DjiMotor::cali_loop, this, cali);
@@ -36,6 +41,7 @@ DjiMotor::~DjiMotor()
 {
     if (calc_thread.joinable()) calc_thread.join();
     if (cali_thread.joinable()) cali_thread.join();
+    destroy_port(port);
 }
 
 void DjiMotor::set_goal(double goal_pos, double goal_vel, double goal_tor)
@@ -123,14 +129,23 @@ int DjiMotor::calc_fb_id()
 
 }
 
-void DjiMotor::set_port(int port)
+void DjiMotor::create_port(int port)
 {
-    this->port = port;
     if (can_ports.find(port) == can_ports.end())
     {
         can_ports[port] = std::make_unique<CanPort>(port);
         rx_threads[port] = std::thread(&DjiMotor::rx_loop, port);
         tx_threads[port] = std::thread(&DjiMotor::tx_loop, port);
+    }
+}
+
+void DjiMotor::destroy_port(int port)
+{
+    if (instances[port].empty())
+    {
+        can_ports.erase(port);
+        if (rx_threads[port].joinable()) rx_threads[port].join();
+        if (tx_threads[port].joinable()) tx_threads[port].join();
     }
 }
 
