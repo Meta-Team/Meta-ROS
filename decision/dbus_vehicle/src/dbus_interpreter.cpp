@@ -47,6 +47,7 @@ void DbusInterpreter::update()
     {
         return; // do not update if not active, this prevents yaw and pitch from accumulating in standby
     }
+
     move_->vel_x = max_vel * ls_x;
     move_->vel_y = max_vel * ls_y;
     move_->omega = max_omega * wheel;

@@ -13,7 +13,7 @@
 #include "device_interface/msg/motor_goal.hpp"
 #include "device_interface/msg/motor_state.hpp"
 
-using std::shared_ptr;
+using std::unique_ptr;
 using std::string;
 using std::vector;
 using std::unordered_map;
@@ -49,7 +49,7 @@ private:
     rclcpp::Subscription<device_interface::msg::MotorGoal>::SharedPtr goal_sub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
     rclcpp::Publisher<device_interface::msg::MotorState>::SharedPtr state_pub_;
-    unordered_map<string, shared_ptr<MotorDriver>> drivers_; // unique_ptr<DjiDriver> drivers_[8];
+    unordered_map<string, unique_ptr<MotorDriver>> drivers_; // unique_ptr<DjiDriver> drivers_[8];
     vector<double> p2v_kps{}, p2v_kis{}, p2v_kds{};
     vector<double> v2t_kps{}, v2t_kis{}, v2t_kds{};
 
@@ -147,13 +147,13 @@ private:
             auto& v2t_kd = v2t_kds[i];
 
             if (brand == "DJI")
-                drivers_[rid] = std::make_shared<DjiMotor>(rid, hid, type, port, cali);
+                drivers_[rid] = std::make_unique<DjiMotor>(rid, hid, type, port, cali);
             else if (brand == "UT")
-                drivers_[rid] = std::make_shared<UnitreeMotor>(rid, hid, type, port, cali);
+                drivers_[rid] = std::make_unique<UnitreeMotor>(rid, hid, type, port, cali);
             else if (brand == "MI")
-                drivers_[rid] = std::make_shared<MiMotor>(rid, hid, type, port, cali);
+                drivers_[rid] = std::make_unique<MiMotor>(rid, hid, type, port, cali);
             else if (brand == "DM")
-                drivers_[rid] = std::make_shared<DmMotor>(rid, hid, type, port);
+                drivers_[rid] = std::make_unique<DmMotor>(rid, hid, type, port);
             else
                 RCLCPP_WARN(this->get_logger(), "Unknown motor brand %s", brand.c_str());
 

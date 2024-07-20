@@ -21,6 +21,8 @@ public:
      */
     MotorDriver(const string& rid, int hid) : hid(hid), rid(rid) {}
 
+    virtual ~MotorDriver() = default;
+
     /**
      * @brief Get the ROS ID of the motor.
      * @return The ROS ID of the motor.

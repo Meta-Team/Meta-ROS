@@ -31,17 +31,27 @@ Its source code is provided here ->
 
 4 main layers: Perception -> Decision -> Decomposition -> Execution
 
-## To Compile
+## Quickstart
 
+### Clone the Project
 First, create a workspace and clone the project.
 
 ```Bash
-mkdir Meta-ROS
-cd Meta-ROS
-git clone --recurse-submodules https://github.com/Yao-Xinchen/Meta-ROS src
+mkdir -p metav/src && cd metav/src
+git clone --recurse-submodules https://github.com/Meta-Team/Meta-ROS
 ```
 
-To build, run
+### Install dependencies
+This project is fully compatible with `rosdep`, you can easily install the dependencies with this command
+
+```Bash
+rosdep install -y --rosdistro humble --from-paths . --ignore-src
+```
+
+> **Note:** You may need to manually install Eigen3 because it cannot be automatically resolved by `rosdep`.
+
+### Compile the Project
+Simply run
 
 ```Bash
 colcon build --symlink-install --cmake-args '-DCMAKE_EXPORT_COMPILE_COMMANDS=On'

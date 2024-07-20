@@ -55,7 +55,7 @@ private:
     static umap<int, thread> rx_threads; // {port, thread}
     static umap<int, can_frame> rx_frames; // {port, frame}
 
-    static umap<int, umap<int, shared_ptr<DmMotor>>> instances; // {port, {hid, instance}}
+    static umap<int, umap<int, DmMotor*>> instances; // {port, {hid, instance}}
 
     int port;
     can_frame tx_frame;
@@ -101,11 +101,18 @@ private:
     void set_mode();
 
     /**
-     * @brief Set the CAN port number of this motor, and add it to the array of CAN ports.
+     * @brief Create a CAN port when no port is available.
      * @param port The port number.
      * @note This create a new feedback loop thread if the port is not in the array.
      */
-    void set_port(int port);
+    static void create_port(int port);
+
+    /**
+     * @brief Destroy the CAN port when no motor is using it.
+     * @param port The port number.
+     * @note This function joins the threads for receiving and transmitting data.
+     */
+    static void destroy_port(int port);
 
     /**
      * @brief Calculates the id of the motor from the feedback frames.

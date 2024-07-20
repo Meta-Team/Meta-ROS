@@ -3,6 +3,7 @@
 
 #include "motor_driver.h"
 #include <linux/can.h>
+#include <mutex>
 #include <thread>
 #include <unordered_map>
 #include <memory>
@@ -190,7 +191,7 @@ private:
     static umap<int, std::thread> rx_threads; // {port, thread}
     static umap<int, std::thread> tx_threads; // {port, thread}
 
-    static umap<int, umap<int, std::shared_ptr<DjiMotor>>> instances; // {port, {fb_id, instance}}
+    static umap<int, umap<int, DjiMotor*>> instances; // {port, {fb_id, instance}}
 
     uint8_t port; /**< CAN port number. */
     MotorType motor_type; /**< Type of the motor. */
@@ -233,11 +234,18 @@ private:
     int calc_fb_id();
 
     /**
-     * @brief Set the CAN port number of this motor, and add it to the array of CAN ports.
+     * @brief Create a CAN port when no port is available.
      * @param port The port number.
      * @note This create a new feedback loop thread if the port is not in the array.
      */
-    void set_port(int port);
+    static void create_port(int port);
+
+    /**
+     * @brief Destroy the CAN port when no motor is using it.
+     * @param port The port number.
+     * @note This function joins the threads for receiving and transmitting data.
+     */
+    static void destroy_port(int port);
 
     /**
      * @brief Receive loop for processing received data.
