@@ -27,6 +27,8 @@
 
   <depend>std_srvs</depend>
 
+  <depend>Eigen3</depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>

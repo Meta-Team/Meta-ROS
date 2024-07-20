@@ -25,6 +25,8 @@
 #include <vector>
 
 #include "controller_interface/helpers.hpp"
+#include "hardware_interface/types/hardware_interface_type_values.hpp"
+#include "rclcpp/logging.hpp"
 
 namespace
 {  // utility
@@ -46,23 +48,29 @@ using ControllerReferenceMsg = omni_wheel_controller::OmniWheelController::Contr
 
 // called from RT control loop
 void reset_controller_reference_msg(
-  const std::shared_ptr<ControllerReferenceMsg> & msg, const std::vector<std::string> & joint_names)
+  const std::shared_ptr<ControllerReferenceMsg> & msg,
+  const std::shared_ptr<rclcpp_lifecycle::LifecycleNode> & node)
 {
-  msg->joint_names = joint_names;
-  msg->displacements.resize(joint_names.size(), std::numeric_limits<double>::quiet_NaN());
-  msg->velocities.resize(joint_names.size(), std::numeric_limits<double>::quiet_NaN());
-  msg->duration = std::numeric_limits<double>::quiet_NaN();
+  msg->header.stamp = node->now();
+  msg->twist.angular.x = std::numeric_limits<double>::quiet_NaN();
+  msg->twist.angular.y = std::numeric_limits<double>::quiet_NaN();
+  msg->twist.angular.z = std::numeric_limits<double>::quiet_NaN();
+  msg->twist.linear.x = std::numeric_limits<double>::quiet_NaN();
+  msg->twist.linear.y = std::numeric_limits<double>::quiet_NaN();
+  msg->twist.linear.z = std::numeric_limits<double>::quiet_NaN();
 }
 
 }  // namespace
 
 namespace omni_wheel_controller
 {
+using hardware_interface::HW_IF_VELOCITY;
+
 OmniWheelController::OmniWheelController() : controller_interface::ChainableControllerInterface() {}
 
 controller_interface::CallbackReturn OmniWheelController::on_init()
 {
-  control_mode_.initRT(control_mode_type::FAST);
+  control_mode_.initRT(control_mode_type::CHASSIS);
 
   try
   {
@@ -82,23 +90,8 @@ controller_interface::CallbackReturn OmniWheelController::on_configure(
 {
   params_ = param_listener_->get_params();
 
-  if (!params_.state_joints.empty())
-  {
-    state_joints_ = params_.state_joints;
-  }
-  else
-  {
-    state_joints_ = params_.joints;
-  }
-
-  if (params_.joints.size() != state_joints_.size())
-  {
-    RCLCPP_FATAL(
-      get_node()->get_logger(),
-      "Size of 'joints' (%zu) and 'state_joints' (%zu) parameters has to be the same!",
-      params_.joints.size(), state_joints_.size());
-    return CallbackReturn::FAILURE;
-  }
+  omni_wheel_kinematics_ = std::make_unique<OmniWheelKinematics>(
+    params_.omni_wheel_angles, params_.omni_wheel_distance, params_.omni_wheel_radius);
 
   // topics QoS
   auto subscribers_qos = rclcpp::SystemDefaultsQoS();
@@ -106,12 +99,13 @@ controller_interface::CallbackReturn OmniWheelController::on_configure(
   subscribers_qos.best_effort();
 
   // Reference Subscriber
-  ref_subscriber_ = get_node()->create_subscription<ControllerReferenceMsg>(
+  ref_timeout_ = rclcpp::Duration::from_seconds(params_.reference_timeout);
+  ref_subscriber_ = get_node()->create_subscription<ControllerReferenceMsgUnstamped>(
     "~/reference", subscribers_qos,
     std::bind(&OmniWheelController::reference_callback, this, std::placeholders::_1));
 
   std::shared_ptr<ControllerReferenceMsg> msg = std::make_shared<ControllerReferenceMsg>();
-  reset_controller_reference_msg(msg, params_.joints);
+  reset_controller_reference_msg(msg, get_node());
   input_ref_.writeFromNonRT(msg);
 
   auto set_slow_mode_service_callback =
@@ -121,11 +115,11 @@ controller_interface::CallbackReturn OmniWheelController::on_configure(
   {
     if (request->data)
     {
-      control_mode_.writeFromNonRT(control_mode_type::SLOW);
+      control_mode_.writeFromNonRT(control_mode_type::CHASSIS);
     }
     else
     {
-      control_mode_.writeFromNonRT(control_mode_type::FAST);
+      control_mode_.writeFromNonRT(control_mode_type::GIMBAL);
     }
     response->success = true;
   };
@@ -137,9 +131,9 @@ controller_interface::CallbackReturn OmniWheelController::on_configure(
   try
   {
     // State publisher
-    s_publisher_ =
-      get_node()->create_publisher<ControllerStateMsg>("~/state", rclcpp::SystemDefaultsQoS());
-    state_publisher_ = std::make_unique<ControllerStatePublisher>(s_publisher_);
+    // s_publisher_ =
+    //   get_node()->create_publisher<ControllerStateMsg>("~/state", rclcpp::SystemDefaultsQoS());
+    // state_publisher_ = std::make_unique<ControllerStatePublisher>(s_publisher_);
   }
   catch (const std::exception & e)
   {
@@ -150,9 +144,9 @@ controller_interface::CallbackReturn OmniWheelController::on_configure(
   }
 
   // TODO(anyone): Reserve memory in state publisher depending on the message type
-  state_publisher_->lock();
-  state_publisher_->msg_.header.frame_id = params_.joints[0];
-  state_publisher_->unlock();
+  // state_publisher_->lock();
+  // state_publisher_->msg_.header.frame_id = params_.joints[0];
+  // state_publisher_->unlock();
 
   RCLCPP_INFO(get_node()->get_logger(), "configure successful");
   return controller_interface::CallbackReturn::SUCCESS;
@@ -163,10 +157,10 @@ controller_interface::InterfaceConfiguration OmniWheelController::command_interf
   controller_interface::InterfaceConfiguration command_interfaces_config;
   command_interfaces_config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
-  command_interfaces_config.names.reserve(params_.joints.size());
-  for (const auto & joint : params_.joints)
+  command_interfaces_config.names.reserve(params_.omni_wheel_joints.size());
+  for (const auto & joint : params_.omni_wheel_joints)
   {
-    command_interfaces_config.names.push_back(joint + "/" + params_.interface_name);
+    command_interfaces_config.names.push_back(joint + "/" + HW_IF_VELOCITY);
   }
 
   return command_interfaces_config;
@@ -177,43 +171,37 @@ controller_interface::InterfaceConfiguration OmniWheelController::state_interfac
   controller_interface::InterfaceConfiguration state_interfaces_config;
   state_interfaces_config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
-  state_interfaces_config.names.reserve(state_joints_.size());
-  for (const auto & joint : state_joints_)
-  {
-    state_interfaces_config.names.push_back(joint + "/" + params_.interface_name);
-  }
+  // No feedback required for inverse kinematics
 
   return state_interfaces_config;
 }
 
-void OmniWheelController::reference_callback(const std::shared_ptr<ControllerReferenceMsg> msg)
+void OmniWheelController::reference_callback(const std::shared_ptr<ControllerReferenceMsgUnstamped> msg)
 {
-  if (msg->joint_names.size() == params_.joints.size())
-  {
-    input_ref_.writeFromNonRT(msg);
-  }
-  else
-  {
-    RCLCPP_ERROR(
-      get_node()->get_logger(),
-      "Received %zu , but expected %zu joints in command. Ignoring message.",
-      msg->joint_names.size(), params_.joints.size());
-  }
+  auto stamped_msg = std::make_shared<ControllerReferenceMsg>();
+  stamped_msg->header.stamp = get_node()->now();
+  stamped_msg->twist = *msg;
+  input_ref_.writeFromNonRT(stamped_msg);
 }
 
 std::vector<hardware_interface::CommandInterface> OmniWheelController::on_export_reference_interfaces()
 {
-  reference_interfaces_.resize(state_joints_.size(), std::numeric_limits<double>::quiet_NaN());
+  reference_interfaces_.resize(3, std::numeric_limits<double>::quiet_NaN());
 
   std::vector<hardware_interface::CommandInterface> reference_interfaces;
   reference_interfaces.reserve(reference_interfaces_.size());
 
-  for (size_t i = 0; i < reference_interfaces_.size(); ++i)
-  {
-    reference_interfaces.push_back(hardware_interface::CommandInterface(
-      get_node()->get_name(), state_joints_[i] + "/" + params_.interface_name,
-      &reference_interfaces_[i]));
-  }
+  reference_interfaces.push_back(hardware_interface::CommandInterface(
+    get_node()->get_name(), std::string("linear/x/") + HW_IF_VELOCITY,
+    &reference_interfaces_[0]));
+
+  reference_interfaces.push_back(hardware_interface::CommandInterface(
+    get_node()->get_name(), std::string("linear/y/") + HW_IF_VELOCITY,
+    &reference_interfaces_[1]));
+
+  reference_interfaces.push_back(hardware_interface::CommandInterface(
+    get_node()->get_name(), std::string("angular/z/") + HW_IF_VELOCITY,
+    &reference_interfaces_[2]));
 
   return reference_interfaces;
 }
@@ -228,7 +216,7 @@ controller_interface::CallbackReturn OmniWheelController::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // Set default value in command
-  reset_controller_reference_msg(*(input_ref_.readFromRT()), state_joints_);
+  reset_controller_reference_msg(*(input_ref_.readFromRT()), get_node());
 
   return controller_interface::CallbackReturn::SUCCESS;
 }
@@ -247,17 +235,32 @@ controller_interface::CallbackReturn OmniWheelController::on_deactivate(
 
 controller_interface::return_type OmniWheelController::update_reference_from_subscribers()
 {
-  auto current_ref = input_ref_.readFromRT();
+  auto current_ref = *(input_ref_.readFromRT()); // A shared_ptr must be allocated immediately to prevent dangling
+  const auto command_age = get_node()->now() - current_ref->header.stamp;
 
-  // TODO(anyone): depending on number of interfaces, use definitions, e.g., `CMD_MY_ITFS`,
-  // instead of a loop
-  for (size_t i = 0; i < reference_interfaces_.size(); ++i)
-  {
-    if (!std::isnan((*current_ref)->displacements[i]))
+  // RCLCPP_INFO(get_node()->get_logger(), "Current reference age: %f", command_age.seconds());
+
+  if (command_age <= ref_timeout_ || ref_timeout_ == rclcpp::Duration::from_seconds(0)) {
+    if (!std::isnan(current_ref->twist.linear.x) && 
+        !std::isnan(current_ref->twist.linear.y) && 
+        !std::isnan(current_ref->twist.angular.z))
     {
-      reference_interfaces_[i] = (*current_ref)->displacements[i];
-
-      (*current_ref)->displacements[i] = std::numeric_limits<double>::quiet_NaN();
+      reference_interfaces_[0] = current_ref->twist.linear.x;
+      reference_interfaces_[1] = current_ref->twist.linear.y;
+      reference_interfaces_[2] = current_ref->twist.angular.z;
+    }
+  }
+  else {
+    if (!std::isnan(current_ref->twist.linear.x) && 
+        !std::isnan(current_ref->twist.linear.y) && 
+        !std::isnan(current_ref->twist.angular.z))
+    {
+      reference_interfaces_[0] = 0.0;
+      reference_interfaces_[1] = 0.0;
+      reference_interfaces_[2] = 0.0;
+      current_ref->twist.linear.x = std::numeric_limits<double>::quiet_NaN();
+      current_ref->twist.linear.y = std::numeric_limits<double>::quiet_NaN();
+      current_ref->twist.angular.z = std::numeric_limits<double>::quiet_NaN();
     }
   }
   return controller_interface::return_type::OK;
@@ -266,29 +269,31 @@ controller_interface::return_type OmniWheelController::update_reference_from_sub
 controller_interface::return_type OmniWheelController::update_and_write_commands(
   const rclcpp::Time & time, const rclcpp::Duration & /*period*/)
 {
-  // TODO(anyone): depending on number of interfaces, use definitions, e.g., `CMD_MY_ITFS`,
-  // instead of a loop
-  for (size_t i = 0; i < command_interfaces_.size(); ++i)
-  {
-    if (!std::isnan(reference_interfaces_[i]))
-    {
-      if (*(control_mode_.readFromRT()) == control_mode_type::SLOW)
-      {
-        reference_interfaces_[i] /= 2;
-      }
-      command_interfaces_[i].set_value(reference_interfaces_[i]);
 
-      reference_interfaces_[i] = std::numeric_limits<double>::quiet_NaN();
+  if (!std::isnan(reference_interfaces_[0]) &&
+      !std::isnan(reference_interfaces_[1]) &&
+      !std::isnan(reference_interfaces_[2]))
+  {
+    auto wheel_vels = omni_wheel_kinematics_->inverse(
+      reference_interfaces_[0],
+      reference_interfaces_[1],
+      reference_interfaces_[2]);
+    for (size_t i = 0; i < command_interfaces_.size(); i++) {
+      command_interfaces_[i].set_value(wheel_vels[i]);
     }
   }
 
-  if (state_publisher_ && state_publisher_->trylock())
-  {
-    state_publisher_->msg_.header.stamp = time;
-    state_publisher_->msg_.set_point = command_interfaces_[CMD_MY_ITFS].get_value();
+  reference_interfaces_[0] = std::numeric_limits<double>::quiet_NaN();
+  reference_interfaces_[1] = std::numeric_limits<double>::quiet_NaN();
+  reference_interfaces_[2] = std::numeric_limits<double>::quiet_NaN();
 
-    state_publisher_->unlockAndPublish();
-  }
+  // if (state_publisher_ && state_publisher_->trylock())
+  // {
+  //   state_publisher_->msg_.header.stamp = time;
+  //   state_publisher_->msg_.set_point = command_interfaces_[CMD_MY_ITFS].get_value();
+
+  //   state_publisher_->unlockAndPublish();
+  // }
 
   return controller_interface::return_type::OK;
 }

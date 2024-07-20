@@ -15,6 +15,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp_lifecycle
   realtime_tools
   std_srvs
+  Eigen3
 )
 
 find_package(ament_cmake REQUIRED)
@@ -32,6 +33,7 @@ add_library(
   omni_wheel_controller
   SHARED
   src/omni_wheel_controller.cpp
+  src/omni_wheel_kinematics.cpp
 )
 target_include_directories(omni_wheel_controller PUBLIC
   "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"

@@ -18,33 +18,38 @@
 #
 
 omni_wheel_controller:
-  joints: {
+  omni_wheel_joints: {
     type: string_array,
     default_value: [],
-    description: "Specifies joints used by the controller. If state joints parameter is defined, then only command joints are defined with this parameter.",
+    description: "Specifies joints of the omni wheels.",
     read_only: true,
     validation: {
       unique<>: null,
       not_empty<>: null,
     }
   }
-  state_joints: {
-    type: string_array,
+  omni_wheel_angles: {
+    type: double_array,
     default_value: [],
-    description: "(optional) Specifies joints for reading states. This parameter is only relevant when state joints are different then command joint, i.e., when a following controller is used.",
+    description: "Specifies angles of the omni wheels.",
     read_only: true,
     validation: {
       unique<>: null,
+      not_empty<>: null,
     }
   }
-  interface_name: {
-    type: string,
-    default_value: "",
-    description: "Name of the interface used by the controller on joints and command_joints.",
-    read_only: true,
-    validation: {
-      not_empty<>: null,
-      one_of<>: [["position", "velocity", "acceleration", "effort",]],
-      forbidden_interface_name_prefix: null
-    }
+  omni_wheel_distance: {
+    type: double,
+    default_value: 0.0,
+    description: "Specifies distance between an omni wheel and the robot center.",
+  }
+  omni_wheel_radius: {
+    type: double,
+    default_value: 0.0,
+    description: "Specifies radius of the omni wheels.",
+  }
+  reference_timeout: {
+    type: double,
+    default_value: 0.1,
+    description: "Specifies timeout for the reference.",
   }

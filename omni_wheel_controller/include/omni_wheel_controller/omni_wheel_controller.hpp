@@ -27,15 +27,18 @@
 #include "controller_interface/chainable_controller_interface.hpp"
 #include "omni_wheel_controller_parameters.hpp"
 #include "omni_wheel_controller/visibility_control.h"
+#include "omni_wheel_controller/omni_wheel_kinematics.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
+#include "rclcpp/duration.hpp"
 #include "realtime_tools/realtime_buffer.h"
 #include "realtime_tools/realtime_publisher.h"
 #include "std_srvs/srv/set_bool.hpp"
 
 // TODO(anyone): Replace with controller specific messages
+#include "geometry_msgs/msg/twist.hpp"
+#include "geometry_msgs/msg/twist_stamped.hpp"
 #include "control_msgs/msg/joint_controller_state.hpp"
-#include "control_msgs/msg/joint_jog.hpp"
 
 namespace omni_wheel_controller
 {
@@ -48,8 +51,8 @@ static constexpr size_t CMD_MY_ITFS = 0;
 // TODO(anyone: example setup for control mode (usually you will use some enums defined in messages)
 enum class control_mode_type : std::uint8_t
 {
-  FAST = 0,
-  SLOW = 1,
+  CHASSIS = 0,
+  GIMBAL = 1,
 };
 
 class OmniWheelController : public controller_interface::ChainableControllerInterface
@@ -87,7 +90,8 @@ public:
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
   // TODO(anyone): replace the state and command message types
-  using ControllerReferenceMsg = control_msgs::msg::JointJog;
+  using ControllerReferenceMsg = geometry_msgs::msg::TwistStamped;
+  using ControllerReferenceMsgUnstamped = geometry_msgs::msg::Twist;
   using ControllerModeSrvType = std_srvs::srv::SetBool;
   using ControllerStateMsg = control_msgs::msg::JointControllerState;
 
@@ -98,7 +102,8 @@ protected:
   std::vector<std::string> state_joints_;
 
   // Command subscribers and Controller State publisher
-  rclcpp::Subscription<ControllerReferenceMsg>::SharedPtr ref_subscriber_ = nullptr;
+  rclcpp::Duration ref_timeout_ = rclcpp::Duration(0, 0);
+  rclcpp::Subscription<ControllerReferenceMsgUnstamped>::SharedPtr ref_subscriber_ = nullptr;
   realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerReferenceMsg>> input_ref_;
 
   rclcpp::Service<ControllerModeSrvType>::SharedPtr set_slow_control_mode_service_;
@@ -109,6 +114,9 @@ protected:
   rclcpp::Publisher<ControllerStateMsg>::SharedPtr s_publisher_;
   std::unique_ptr<ControllerStatePublisher> state_publisher_;
 
+  // Omni wheel kinematics
+  std::unique_ptr<OmniWheelKinematics> omni_wheel_kinematics_;
+
   // override methods from ChainableControllerInterface
   std::vector<hardware_interface::CommandInterface> on_export_reference_interfaces() override;
 
@@ -117,7 +125,7 @@ protected:
 private:
   // callback for topic interface
   OMNI_WHEEL_CONTROLLER__VISIBILITY_LOCAL
-  void reference_callback(const std::shared_ptr<ControllerReferenceMsg> msg);
+  void reference_callback(const std::shared_ptr<ControllerReferenceMsgUnstamped> msg);
 };
 
 }  // namespace omni_wheel_controller
