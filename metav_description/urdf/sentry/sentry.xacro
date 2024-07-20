@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot name="sentry" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="is_simulation" default="true"/>
+    <xacro:arg name="roller_type" default="simple"/>
+
+    <link name="base_footprint">
+    </link>
+
+    <!-- raise the robot a bit higher to prevent it from stucking in the ground -->
+    <joint name="joint_base_to_footprint" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 1"/> 
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+    </joint>
+
+    <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.chassis.xacro"/>
+    <xacro:chassis roller_type="$(arg roller_type)"/>
+
+    <ros2_control name="sentry_control" type="system">
+        <xacro:if value="$(arg is_simulation)">
+            <hardware>
+                <plugin>ign_ros2_control/IgnitionSystem</plugin>
+            </hardware>
+        </xacro:if>
+        <xacro:wheel_transmission prefix="front" mechanical_reduction="20.0"/>
+        <xacro:wheel_transmission prefix="right" mechanical_reduction="20.0"/>
+        <xacro:wheel_transmission prefix="left" mechanical_reduction="20.0"/>
+        <xacro:wheel_transmission prefix="back" mechanical_reduction="20.0"/>
+    </ros2_control>
+
+    <xacro:if value="$(arg is_simulation)">
+        <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.gazebo.xacro"/>
+    </xacro:if>
+</robot>

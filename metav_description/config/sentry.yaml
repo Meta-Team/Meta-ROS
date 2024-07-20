@@ -1,0 +1,29 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 200  # Hz
+
+    omni_wheel_controller:
+      type: omni_wheel_controller/OmniWheelController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # imu_sensor_broadcaster:
+    #   type: imu_sensor_broadcaster/IMUSensorBroadcaster
+
+omni_wheel_controller:
+  ros__parameters:
+    omni_wheel_joints:
+      - front_wheel_joint
+      - left_wheel_joint
+      - back_wheel_joint
+      - right_wheel_joint
+    omni_wheel_angles: [0.0, 90.0, 180.0, -90.0]
+    omni_wheel_distance: 0.196
+    omni_wheel_radius: 0.05
+    
+
+# imu_sensor_broadcaster:
+#   ros__parameters:
+#     sensor_name: cart_imu_sensor
+#     frame_id: imu
