@@ -13,7 +13,7 @@ public:
   ~OmniWheelKinematics() = default;
 
   std::vector<double> forward(const std::vector<double> & wheels_vel);
-  std::vector<double> inverse(const double linear_x, const double linear_y, const double angular_z);
+  Eigen::VectorXd inverse(const double linear_x, const double linear_y, const double angular_z);
 private:
   void init();
   std::vector<double> omni_wheel_angles_;

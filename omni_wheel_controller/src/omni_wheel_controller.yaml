@@ -31,7 +31,7 @@ omni_wheel_controller:
   omni_wheel_angles: {
     type: double_array,
     default_value: [],
-    description: "Specifies angles of the omni wheels.",
+    description: "Specifies angles of the omni wheels (in degrees).",
     read_only: true,
     validation: {
       unique<>: null,

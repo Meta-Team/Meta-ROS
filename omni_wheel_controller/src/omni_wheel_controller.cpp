@@ -279,7 +279,7 @@ controller_interface::return_type OmniWheelController::update_and_write_commands
       reference_interfaces_[1],
       reference_interfaces_[2]);
     for (size_t i = 0; i < command_interfaces_.size(); i++) {
-      command_interfaces_[i].set_value(wheel_vels[i]);
+      command_interfaces_[i].set_value(wheel_vels[static_cast<Eigen::Index>(i)]);
     }
   }
 
