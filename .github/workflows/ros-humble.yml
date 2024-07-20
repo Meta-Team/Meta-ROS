@@ -22,10 +22,12 @@ jobs:
       run: |
         sudo apt update
         rosdep update
-        rosdep install -y --rosdistro humble --from-paths . --ignore-src
+        rosdep install -y --rosdistro humble --from-paths . --ignore-src --skip-keys Eigen3
         source /opt/ros/humble/local_setup.bash
         colcon build --packages-skip-regex '.*'
     - name: Install ament_cmake_auto
-      run: sudo apt install -y ros-humble-ament-cmake-auto
+      run: |
+        sudo apt install -y libeigen3-dev
+        sudo apt install -y ros-humble-ament-cmake-auto
     - name: Build workspace
       uses: ichiro-its/ros2-ws-action/build@v1.0.1
