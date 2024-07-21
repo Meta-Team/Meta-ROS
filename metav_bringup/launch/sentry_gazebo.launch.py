@@ -30,6 +30,13 @@ ARGUMENTS = [
         description='If true, use simulated clock'),
 ]
 
+def load_pid_controller(joint_name,):
+    return ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+                joint_name + '_pid_controller'],
+        output='screen'
+    )
+
 def generate_launch_description():
     # Launch Arguments
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -75,6 +82,14 @@ def generate_launch_description():
         output='screen'
     )
 
+    wheels_pid_controller = load_pid_controller('wheels')
+
+    gimbal_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller',
+             '--set-state', 'active', 'gimbal_controller'],
+        output='screen'
+    )
+
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
@@ -107,11 +122,24 @@ def generate_launch_description():
                 on_exit=[load_joint_state_broadcaster],
             )
         ),
-        # Load omni wheel controller
+        # Load wheels PID controller
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_joint_state_broadcaster,
+                on_exit=[wheels_pid_controller],
+            )
+        ),
+        # Load omni wheel controller
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=wheels_pid_controller,
                 on_exit=[load_omni_wheel_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_omni_wheel_controller,
+                on_exit=[gimbal_controller],
             )
         ),
         # Load robot state publisher

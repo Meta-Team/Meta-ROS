@@ -4,6 +4,11 @@
   ros_type_name: "rosgraph_msgs/msg/Clock"
   gz_type_name: "gz.msgs.Clock"
   direction: GZ_TO_ROS
+- ros_topic_name: "/gimbal_imu"
+  gz_topic_name: "/world/empty_world/model/sentry/link/gimbal_imu/sensor/gimbal_imu/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
 # - ros_topic_name: "/diff_drive/cmd_vel"
 #   gz_topic_name: "/model/diff_drive/cmd_vel"
 #   ros_type_name: "geometry_msgs/msg/Twist"
@@ -26,6 +31,11 @@
 #   direction: GZ_TO_ROS
 # - ros_topic_name: "/tf"
 #   gz_topic_name: "/model/sentry/pose"
+#   ros_type_name: "tf2_msgs/msg/TFMessage"
+#   gz_type_name: "gz.msgs.Pose_V"
+#   direction: GZ_TO_ROS
+# - ros_topic_name: "/tf"
+#   gz_topic_name: "/model/sentry/pose_static"
 #   ros_type_name: "tf2_msgs/msg/TFMessage"
 #   gz_type_name: "gz.msgs.Pose_V"
 #   direction: GZ_TO_ROS
