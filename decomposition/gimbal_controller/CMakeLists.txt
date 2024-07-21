@@ -8,6 +8,7 @@ endif()
 # find dependencies
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   angles
+  behavior_interface
   controller_interface
   control_msgs
   control_toolbox
@@ -19,7 +20,6 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   std_srvs
   tf2
   sensor_msgs
-  geometry_msgs
 )
 
 find_package(ament_cmake REQUIRED)
