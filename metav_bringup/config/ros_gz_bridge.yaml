@@ -9,6 +9,11 @@
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "gz.msgs.IMU"
   direction: GZ_TO_ROS
+- ros_topic_name: "/omni_wheel_controller/reference"
+  gz_topic_name: "/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "ignition.msgs.Twist"
+  direction: GZ_TO_ROS
 # - ros_topic_name: "/diff_drive/cmd_vel"
 #   gz_topic_name: "/model/diff_drive/cmd_vel"
 #   ros_type_name: "geometry_msgs/msg/Twist"
