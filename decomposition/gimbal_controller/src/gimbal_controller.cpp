@@ -47,11 +47,18 @@ void reset_controller_feedback_msg(
   msg->orientation.y = std::numeric_limits<double>::quiet_NaN();
   msg->orientation.z = std::numeric_limits<double>::quiet_NaN();
   msg->orientation.w = std::numeric_limits<double>::quiet_NaN();
+  msg->angular_velocity.x = std::numeric_limits<double>::quiet_NaN();
+  msg->angular_velocity.y = std::numeric_limits<double>::quiet_NaN();
+  msg->angular_velocity.z = std::numeric_limits<double>::quiet_NaN();
+  msg->linear_acceleration.x = std::numeric_limits<double>::quiet_NaN();
+  msg->linear_acceleration.y = std::numeric_limits<double>::quiet_NaN();
+  msg->linear_acceleration.z = std::numeric_limits<double>::quiet_NaN();
 }
 
 } // namespace
 
 namespace gimbal_controller {
+using hardware_interface::HW_IF_EFFORT;
 using hardware_interface::HW_IF_POSITION;
 using hardware_interface::HW_IF_VELOCITY;
 
@@ -79,7 +86,8 @@ controller_interface::CallbackReturn GimbalController::on_configure(
 
   // Allocate gimbal roles and PIDs
   gimbal_roles_.resize(params_.gimbal_joints.size());
-  pids_.resize(params_.gimbal_joints.size());
+  pos2vel_pids_.resize(params_.gimbal_joints.size());
+  vel2eff_pids_.resize(params_.gimbal_joints.size());
   for (size_t i = 0; i < params_.gimbal_joints.size(); ++i) {
     if (params_.gimbal_roles[i] == "yaw") {
       gimbal_roles_[i] = gimbal_controller::gimbal_role::YAW;
@@ -87,10 +95,20 @@ controller_interface::CallbackReturn GimbalController::on_configure(
       gimbal_roles_[i] = gimbal_controller::gimbal_role::PITCH;
     }
 
-    pids_[i] = std::make_shared<control_toolbox::PidROS>(
-        get_node(), "gains." + params_.gimbal_joints[i], true);
+    pos2vel_pids_[i] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "gains." + params_.gimbal_joints[i] + "_pos2vel", true);
 
-    if (!pids_[i]->initPid()) {
+    if (!pos2vel_pids_[i]->initPid()) {
+      RCLCPP_ERROR(get_node()->get_logger(),
+                   "Failed to initialize PID for joint %s",
+                   params_.gimbal_joints[i].c_str());
+      return controller_interface::CallbackReturn::FAILURE;
+    }
+
+    vel2eff_pids_[i] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "gains." + params_.gimbal_joints[i] + "_vel2eff", true);
+
+    if (!vel2eff_pids_[i]->initPid()) {
       RCLCPP_ERROR(get_node()->get_logger(),
                    "Failed to initialize PID for joint %s",
                    params_.gimbal_joints[i].c_str());
@@ -105,11 +123,10 @@ controller_interface::CallbackReturn GimbalController::on_configure(
 
   // Reference Subscriber
   ref_timeout_ = rclcpp::Duration::from_seconds(params_.reference_timeout);
-  ref_subscriber_ =
-      get_node()->create_subscription<ControllerReferenceMsg>(
-          "~/reference", subscribers_qos,
-          std::bind(&GimbalController::reference_callback, this,
-                    std::placeholders::_1));
+  ref_subscriber_ = get_node()->create_subscription<ControllerReferenceMsg>(
+      "~/reference", subscribers_qos,
+      std::bind(&GimbalController::reference_callback, this,
+                std::placeholders::_1));
 
   std::shared_ptr<ControllerReferenceMsg> msg =
       std::make_shared<ControllerReferenceMsg>();
@@ -141,9 +158,12 @@ controller_interface::CallbackReturn GimbalController::on_configure(
   }
 
   state_publisher_->lock();
-  state_publisher_->msg_.dof_states.resize(params_.gimbal_joints.size());
+  state_publisher_->msg_.dof_states.resize(params_.gimbal_joints.size() * 2);
   for (size_t i = 0; i < params_.gimbal_joints.size(); ++i) {
-    state_publisher_->msg_.dof_states[i].name = params_.gimbal_joints[i];
+    state_publisher_->msg_.dof_states[i].name =
+        params_.gimbal_joints[i] + "_pos2vel";
+    state_publisher_->msg_.dof_states[i + params_.gimbal_joints.size()].name =
+        params_.gimbal_joints[i] + "_vel2eff";
   }
   state_publisher_->unlock();
 
@@ -159,7 +179,7 @@ GimbalController::command_interface_configuration() const {
 
   command_interfaces_config.names.reserve(params_.gimbal_joints.size());
   for (const auto &joint : params_.gimbal_joints) {
-    command_interfaces_config.names.push_back(joint + "/" + HW_IF_VELOCITY);
+    command_interfaces_config.names.push_back(joint + "/" + HW_IF_EFFORT);
   }
 
   return command_interfaces_config;
@@ -171,7 +191,7 @@ GimbalController::state_interface_configuration() const {
   state_interfaces_config.type =
       controller_interface::interface_configuration_type::INDIVIDUAL;
 
-  // Feedback comes from ROS2 topic
+  // IMU feedback comes from ROS2 topic
 
   return state_interfaces_config;
 }
@@ -232,8 +252,7 @@ GimbalController::update_reference_from_subscribers() {
       *(input_ref_.readFromRT()); // A shared_ptr must be allocated immediately
                                   // to prevent dangling
 
-  if (!std::isnan(current_ref->yaw) &&
-      !std::isnan(current_ref->pitch)) {
+  if (!std::isnan(current_ref->yaw) && !std::isnan(current_ref->pitch)) {
     reference_interfaces_[0] = current_ref->yaw;
     reference_interfaces_[1] = current_ref->pitch;
 
@@ -256,21 +275,48 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
       current_feedback->orientation.z, current_feedback->orientation.w);
   tf2::Matrix3x3(q).getRPY(fb_roll, fb_pitch, fb_yaw);
 
+  double fb_yaw_vel = current_feedback->angular_velocity.z;
+  double fb_pitch_vel = current_feedback->angular_velocity.y;
+
   // Update commands
+  size_t num_joints = params_.gimbal_joints.size();
+  std::vector<double> pos_refrences(num_joints);
+  std::vector<double> pos_feedbacks(num_joints);
+  std::vector<double> pos_errors(num_joints);
+  std::vector<double> vel_references(num_joints);
+  std::vector<double> vel_feedbacks(num_joints);
+  std::vector<double> vel_errors(num_joints);
+  std::vector<double> eff_commands(num_joints);
+
   if (!std::isnan(reference_interfaces_[0]) &&
       !std::isnan(reference_interfaces_[1]) && !std::isnan(fb_yaw) &&
-      !std::isnan(fb_pitch) && !std::isnan(fb_roll)) {
-    double error_yaw =
-        angles::shortest_angular_distance(fb_yaw, reference_interfaces_[0]);
-    double error_pitch =
-        angles::shortest_angular_distance(fb_pitch, reference_interfaces_[1]);
+      !std::isnan(fb_pitch) && !std::isnan(fb_roll) &&
+      !std::isnan(fb_yaw_vel) && !std::isnan(fb_pitch_vel)) {
 
     for (size_t i = 0; i < command_interfaces_.size(); ++i) {
-      double error = (gimbal_roles_[i] == gimbal_controller::gimbal_role::YAW)
-                         ? error_yaw
-                         : error_pitch;
-      double command = pids_[i]->computeCommand(error, period);
-      command_interfaces_[i].set_value(command);
+      pos_refrences[i] =
+          (gimbal_roles_[i] == gimbal_controller::gimbal_role::YAW)
+              ? reference_interfaces_[0]
+              : reference_interfaces_[1];
+      pos_feedbacks[i] =
+          (gimbal_roles_[i] == gimbal_controller::gimbal_role::YAW) ? fb_yaw
+                                                                    : fb_pitch;
+      vel_feedbacks[i] =
+          (gimbal_roles_[i] == gimbal_controller::gimbal_role::YAW)
+              ? fb_yaw_vel
+              : fb_pitch_vel;
+
+      // Position (IMU) to velocity (IMU) PID
+      pos_errors[i] =
+          angles::shortest_angular_distance(pos_feedbacks[i], pos_refrences[i]);
+      vel_references[i] =
+          pos2vel_pids_[i]->computeCommand(pos_errors[i], period);
+      // vel_references[i] = 3.0;
+
+      // Velocity (IMU) to effort (motor) PID
+      vel_errors[i] = vel_references[i] - vel_feedbacks[i];
+      eff_commands[i] = vel2eff_pids_[i]->computeCommand(vel_errors[i], period);
+      command_interfaces_[i].set_value(eff_commands[i]);
     }
   }
 
@@ -278,23 +324,23 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
   if (state_publisher_ && state_publisher_->trylock()) {
     state_publisher_->msg_.header.stamp = time;
 
-    size_t num_joints = params_.gimbal_joints.size();
-
     for (size_t i = 0; i < num_joints; ++i) {
+      state_publisher_->msg_.dof_states[i].reference = pos_refrences[i];
+      state_publisher_->msg_.dof_states[i].feedback = pos_feedbacks[i];
+      state_publisher_->msg_.dof_states[i].error = pos_errors[i];
+      state_publisher_->msg_.dof_states[i].time_step = period.seconds();
+      state_publisher_->msg_.dof_states[i].output = vel_references[i];
+    }
+
+    for (size_t i = num_joints; i < 2 * num_joints; ++i) {
       state_publisher_->msg_.dof_states[i].reference =
-          (gimbal_roles_[i] == gimbal_controller::gimbal_role::YAW)
-              ? reference_interfaces_[0]
-              : reference_interfaces_[1];
+          vel_references[i - num_joints];
       state_publisher_->msg_.dof_states[i].feedback =
-          (gimbal_roles_[i] == gimbal_controller::gimbal_role::YAW) ? fb_yaw
-                                                                    : fb_pitch;
-      state_publisher_->msg_.dof_states[i].error =
-          angles::shortest_angular_distance(
-              state_publisher_->msg_.dof_states[i].feedback,
-              reference_interfaces_[i]);
+          vel_feedbacks[i - num_joints];
+      state_publisher_->msg_.dof_states[i].error = vel_errors[i - num_joints];
       state_publisher_->msg_.dof_states[i].time_step = period.seconds();
       state_publisher_->msg_.dof_states[i].output =
-          command_interfaces_[i].get_value();
+          eff_commands[i - num_joints];
     }
 
     state_publisher_->unlockAndPublish();

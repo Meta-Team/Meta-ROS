@@ -59,6 +59,7 @@ gimbal_controller:
     imu_topic: /gimbal_imu
 
     gains:
-      yaw_gimbal_joint: {p: 15.0, i: 0.0, d: 0.4}
-      pitch_gimbal_joint: {p: 10.0, i: 0.0, d: 0.5}
-
+      yaw_gimbal_joint_pos2vel: {p: 13.0, i: 0.0, d: 0.4}
+      pitch_gimbal_joint_pos2vel: {p: 10.0, i: 0.0, d: 0.5}
+      yaw_gimbal_joint_vel2eff: {p: 0.26, i: 0.2, d: 0.00003}
+      pitch_gimbal_joint_vel2eff: {p: 0.26, i: 0.1, d: 0.0001}

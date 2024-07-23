@@ -96,7 +96,8 @@ protected:
   realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerFeedbackMsg>>
       input_feedback_;
 
-  std::vector<std::shared_ptr<control_toolbox::PidROS>> pids_;
+  std::vector<std::shared_ptr<control_toolbox::PidROS>> pos2vel_pids_;
+  std::vector<std::shared_ptr<control_toolbox::PidROS>> vel2eff_pids_;
 
   using ControllerStatePublisher =
       realtime_tools::RealtimePublisher<ControllerStateMsg>;
