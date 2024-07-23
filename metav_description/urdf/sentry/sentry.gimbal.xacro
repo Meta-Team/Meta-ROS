@@ -10,14 +10,14 @@
         <link name="yaw_gimbal">
             <inertial>
                 <mass value="0.2"/>
-                <origin xyz="-0.034 0.002 0.036"/>
+                <origin xyz="0 0 0"/>
                 <inertia ixx="4.878e-4" ixy="1.941e-5" ixz="2.44e-4" iyy="8.322e-4"
                         iyz="-1.812e-5" izz="4.513e-4"/>
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="file://$(find metav_description)/meshes/sentry/yaw.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="file://$(find metav_description)/meshes/sentry/yaw_gimbal.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
                 <material name="silver">
                     <color rgba="0.700 0.700 0.700 1.000"/>
@@ -26,7 +26,7 @@
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="file://$(find metav_description)/meshes/sentry/yaw.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="file://$(find metav_description)/meshes/sentry/yaw_gimbal.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </collision>
         </link>
@@ -58,7 +58,7 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="file://$(find metav_description)/meshes/sentry/pitch.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="file://$(find metav_description)/meshes/sentry/pitch_gimbal.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
                 <material name="silver">
                     <color rgba="0.700 0.700 0.700 1.000"/>
@@ -67,13 +67,13 @@
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="file://$(find metav_description)/meshes/sentry/pitch.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="file://$(find metav_description)/meshes/sentry/pitch_gimbal.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </collision>
         </link>
 
         <joint name="pitch_gimbal_joint" type="revolute">
-            <origin xyz="0 0 0.09" rpy="0 0 0"/>
+            <origin xyz="-0.029 0 0.257" rpy="0 0 0"/>
             <dynamics damping="0.0" friction="0.1"/>
             <limit effort="3." velocity="86" lower="${pitch_lower_limit}" upper="${pitch_upper_limit}"/>
             <safety_controller k_position="100" k_velocity="0.1"
@@ -96,11 +96,11 @@
             </joint>
         </transmission>
         <joint name="${prefix}_gimbal_joint">
-            <command_interface name="velocity">
+            <command_interface name="effort">
             </command_interface>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
-            <state_interface name="torque"/>
+            <state_interface name="effort"/>
         </joint>
     </xacro:macro>
 
