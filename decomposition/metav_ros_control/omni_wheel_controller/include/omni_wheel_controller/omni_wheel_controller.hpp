@@ -1,22 +1,3 @@
-// Copyright (c) 2024, Stogl Robotics Consulting UG (haftungsbeschränkt) (template)
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-//
-// Source of this file are templates in
-// [RosTeamWorkspace](https://github.com/StoglRobotics/ros_team_workspace) repository.
-//
-
 #ifndef OMNI_WHEEL_CONTROLLER__OMNI_WHEEL_CONTROLLER_HPP_
 #define OMNI_WHEEL_CONTROLLER__OMNI_WHEEL_CONTROLLER_HPP_
 
@@ -35,7 +16,6 @@
 #include "realtime_tools/realtime_publisher.h"
 #include "std_srvs/srv/set_bool.hpp"
 
-// TODO(anyone): Replace with controller specific messages
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "control_msgs/msg/joint_controller_state.hpp"
@@ -48,7 +28,6 @@ static constexpr size_t STATE_MY_ITFS = 0;
 // name constants for command interfaces
 static constexpr size_t CMD_MY_ITFS = 0;
 
-// TODO(anyone: example setup for control mode (usually you will use some enums defined in messages)
 enum class control_mode_type : std::uint8_t
 {
   CHASSIS = 0,
@@ -89,7 +68,6 @@ public:
   controller_interface::return_type update_and_write_commands(
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-  // TODO(anyone): replace the state and command message types
   using ControllerReferenceMsg = geometry_msgs::msg::TwistStamped;
   using ControllerReferenceMsgUnstamped = geometry_msgs::msg::Twist;
   using ControllerModeSrvType = std_srvs::srv::SetBool;

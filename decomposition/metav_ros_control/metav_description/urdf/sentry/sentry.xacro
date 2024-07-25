@@ -17,6 +17,12 @@
     <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.chassis.xacro"/>
     <xacro:chassis roller_type="$(arg roller_type)"/>
 
+    <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.gimbal.xacro"/>
+    <xacro:gimbal/>
+
+    <xacro:include filename="$(find metav_description)/urdf/common/sensor_imu.xacro"/>
+    <xacro:sensor_imu connected_to="pitch_gimbal" imu_name="gimbal_imu" xyz="0 0 0.1"/>
+
     <ros2_control name="sentry_control" type="system">
         <xacro:if value="$(arg is_simulation)">
             <hardware>
@@ -27,6 +33,8 @@
         <xacro:wheel_transmission prefix="right" mechanical_reduction="20.0"/>
         <xacro:wheel_transmission prefix="left" mechanical_reduction="20.0"/>
         <xacro:wheel_transmission prefix="back" mechanical_reduction="20.0"/>
+        <xacro:gimbal_transmission prefix="yaw" mechanical_reduction="1.0"/>
+        <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="1.0"/>
     </ros2_control>
 
     <xacro:if value="$(arg is_simulation)">

@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<robot name="sentry" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="threshold" value="0.08"/>
+    <xacro:property name="pitch_lower_limit" value="-0.72"/>
+    <xacro:property name="pitch_upper_limit" value="0.457"/>
+
+    <xacro:macro name="gimbal" params="">
+
+        <link name="yaw_gimbal">
+            <inertial>
+                <mass value="0.2"/>
+                <origin xyz="0 0 0"/>
+                <inertia ixx="4.878e-4" ixy="1.941e-5" ixz="2.44e-4" iyy="8.322e-4"
+                        iyz="-1.812e-5" izz="4.513e-4"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find metav_description)/meshes/sentry/yaw_gimbal.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="silver">
+                    <color rgba="0.700 0.700 0.700 1.000"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find metav_description)/meshes/sentry/yaw_gimbal.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="yaw_gimbal_joint" type="continuous">
+            <origin xyz="0 0 0.162"
+                    rpy="0 0 0"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="1.2" velocity="31"/>
+            <parent link="base_link"/>
+            <child link="yaw_gimbal"/>
+            <axis xyz="0 0 1"/>
+        </joint>
+
+        <link name="supply_frame"/>
+        <joint name="supply_joint" type="fixed">
+            <origin xyz="0 0 0" rpy="0 0 ${pi/3}"/>
+            <parent link="yaw_gimbal"/>
+            <child link="supply_frame"/>
+        </joint>
+
+        <link name="pitch_gimbal">
+            <inertial>
+                <mass value="0.644"/>
+                <origin xyz="0.029 0.000617 0.0376"/>
+                <inertia ixx="1.8216e-3" ixy="5.514e-6" ixz="1.58e-4" iyy="5.68e-3"
+                        iyz="-6.628e-6" izz="4.396e-3"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find metav_description)/meshes/sentry/pitch_gimbal.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="silver">
+                    <color rgba="0.700 0.700 0.700 1.000"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find metav_description)/meshes/sentry/pitch_gimbal.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="pitch_gimbal_joint" type="revolute">
+            <origin xyz="-0.029 0 0.257" rpy="0 0 0"/>
+            <dynamics damping="0.0" friction="0.1"/>
+            <limit effort="3." velocity="86" lower="${pitch_lower_limit}" upper="${pitch_upper_limit}"/>
+            <safety_controller k_position="100" k_velocity="0.1"
+                            soft_lower_limit="${pitch_lower_limit+threshold}"
+                            soft_upper_limit="${pitch_upper_limit-threshold}"/>
+            <parent link="yaw_gimbal"/>
+            <child link="pitch_gimbal"/>
+            <axis xyz="0 1 0 "/>
+        </joint>
+
+    </xacro:macro>
+
+    <xacro:macro name="gimbal_transmission" params="prefix mechanical_reduction">
+        <transmission name="${prefix}_gimbal_trans">
+            <plugin>transmission_interface/SimpleTransmission</plugin>
+            <actuator name="${prefix}_gimbal_motor" role="${prefix}_gimbal_motor"/>
+            <joint name="${prefix}_gimbal_joint" role="${prefix}_gimbal_joint">
+                <mechanical_reduction>${mechanical_reduction}</mechanical_reduction>
+                <offset>0.0</offset>
+            </joint>
+        </transmission>
+        <joint name="${prefix}_gimbal_joint">
+            <command_interface name="effort">
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+    </xacro:macro>
+
+</robot>

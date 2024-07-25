@@ -30,6 +30,14 @@ ARGUMENTS = [
         description='If true, use simulated clock'),
 ]
 
+def load_pid_controller(joint_name,):
+    return ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+                joint_name + '_pid_controller'],
+        output='screen',
+        emulate_tty=True
+    )
+
 def generate_launch_description():
     # Launch Arguments
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -49,30 +57,43 @@ def generate_launch_description():
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        output='screen',
         parameters=[
             {'use_sim_time': True},
-            {'robot_description': robot_description_content},]
+            {'robot_description': robot_description_content},],
+        output='screen',
+        emulate_tty=True
     )
 
     gz_spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
-        output='screen',
         arguments=['-topic', '/robot_description',
                    '-name', 'sentry', '-allow_renaming', 'true'],
+        output='screen',
+        emulate_tty=True
     )
 
     load_joint_state_broadcaster = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
              'joint_state_broadcaster'],
-        output='screen'
+        output='screen',
+        emulate_tty=True
     )
 
     load_omni_wheel_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
              '--set-state', 'active', 'omni_wheel_controller'],
-        output='screen'
+        output='screen',
+        emulate_tty=True
+    )
+
+    wheels_pid_controller = load_pid_controller('wheels')
+
+    gimbal_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller',
+             '--set-state', 'active', 'gimbal_controller'],
+        output='screen',
+        emulate_tty=True
     )
 
     gazebo_launch = IncludeLaunchDescription(
@@ -94,7 +115,8 @@ def generate_launch_description():
             'config_file': PathJoinSubstitution([FindPackageShare('metav_bringup'), 'config', 'ros_gz_bridge.yaml']),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
         }],
-        output='screen'
+        output='screen',
+        emulate_tty=True
     )
 
     return LaunchDescription([
@@ -107,11 +129,24 @@ def generate_launch_description():
                 on_exit=[load_joint_state_broadcaster],
             )
         ),
-        # Load omni wheel controller
+        # Load wheels PID controller
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_joint_state_broadcaster,
+                on_exit=[wheels_pid_controller],
+            )
+        ),
+        # Load omni wheel controller
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=wheels_pid_controller,
                 on_exit=[load_omni_wheel_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_omni_wheel_controller,
+                on_exit=[gimbal_controller],
             )
         ),
         # Load robot state publisher

@@ -1,22 +1,3 @@
-// Copyright (c) 2024, Stogl Robotics Consulting UG (haftungsbeschränkt) (template)
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-//
-// Source of this file are templates in
-// [RosTeamWorkspace](https://github.com/StoglRobotics/ros_team_workspace) repository.
-//
-
 #include "omni_wheel_controller/omni_wheel_controller.hpp"
 
 #include <limits>
@@ -31,8 +12,6 @@
 namespace
 {  // utility
 
-// TODO(destogl): remove this when merged upstream
-// Changed services history QoS to keep all so we don't lose any client service calls
 static constexpr rmw_qos_profile_t rmw_qos_profile_services_hist_keep_all = {
   RMW_QOS_POLICY_HISTORY_KEEP_ALL,
   1,  // message queue depth
@@ -224,8 +203,6 @@ controller_interface::CallbackReturn OmniWheelController::on_activate(
 controller_interface::CallbackReturn OmniWheelController::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // TODO(anyone): depending on number of interfaces, use definitions, e.g., `CMD_MY_ITFS`,
-  // instead of a loop
   for (size_t i = 0; i < command_interfaces_.size(); ++i)
   {
     command_interfaces_[i].set_value(std::numeric_limits<double>::quiet_NaN());
