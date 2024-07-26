@@ -28,6 +28,12 @@ omni_wheel_controller:
 
     omni_wheel_radius: 0.05
 
+    control_mode: 2
+
+    yaw_gimbal_joint: yaw_gimbal_joint
+
+    follow_pid_gains: {p: 2.0, i: 0.0, d: 0.0}
+
 wheels_pid_controller:
   ros__parameters:
     dof_names:

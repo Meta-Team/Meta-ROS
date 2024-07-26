@@ -11,6 +11,8 @@
 
   <build_depend>generate_parameter_library</build_depend>
 
+  <depend>control_toolbox</depend>
+
   <depend>control_msgs</depend>
 
   <depend>controller_interface</depend>

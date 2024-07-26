@@ -23,12 +23,10 @@ void OmniWheelKinematics::init()
   motion_mat_ /= omni_wheel_radius_;
 }
 
-Eigen::VectorXd OmniWheelKinematics::inverse(const double linear_x, const double linear_y, const double angular_z)
+Eigen::VectorXd OmniWheelKinematics::inverse(Eigen::Vector3d twist)
 {
   std::vector<double> wheels_vel(omni_wheel_angles_.size(), 0.0);
-  Eigen::VectorXd vel(3);
-  vel << linear_x, linear_y, angular_z;
-  Eigen::VectorXd wheels_vel_eigen = motion_mat_ * vel;
+  Eigen::VectorXd wheels_vel_eigen = motion_mat_ * twist;
   return wheels_vel_eigen;
 }
 

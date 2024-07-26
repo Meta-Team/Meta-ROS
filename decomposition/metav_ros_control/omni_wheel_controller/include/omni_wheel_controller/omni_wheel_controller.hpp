@@ -14,7 +14,7 @@
 #include "rclcpp/duration.hpp"
 #include "realtime_tools/realtime_buffer.h"
 #include "realtime_tools/realtime_publisher.h"
-#include "std_srvs/srv/set_bool.hpp"
+#include "control_toolbox/pid_ros.hpp"
 
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
@@ -32,6 +32,7 @@ enum class control_mode_type : std::uint8_t
 {
   CHASSIS = 0,
   GIMBAL = 1,
+  CHASSIS_FOLLOW_GIMBAL = 2,
 };
 
 class OmniWheelController : public controller_interface::ChainableControllerInterface
@@ -70,22 +71,18 @@ public:
 
   using ControllerReferenceMsg = geometry_msgs::msg::TwistStamped;
   using ControllerReferenceMsgUnstamped = geometry_msgs::msg::Twist;
-  using ControllerModeSrvType = std_srvs::srv::SetBool;
   using ControllerStateMsg = control_msgs::msg::JointControllerState;
 
 protected:
   std::shared_ptr<omni_wheel_controller::ParamListener> param_listener_;
   omni_wheel_controller::Params params_;
 
-  std::vector<std::string> state_joints_;
+  std::shared_ptr<control_toolbox::PidROS> follow_pid_;
 
   // Command subscribers and Controller State publisher
   rclcpp::Duration ref_timeout_ = rclcpp::Duration(0, 0);
   rclcpp::Subscription<ControllerReferenceMsgUnstamped>::SharedPtr ref_subscriber_ = nullptr;
   realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerReferenceMsg>> input_ref_;
-
-  rclcpp::Service<ControllerModeSrvType>::SharedPtr set_slow_control_mode_service_;
-  realtime_tools::RealtimeBuffer<control_mode_type> control_mode_;
 
   using ControllerStatePublisher = realtime_tools::RealtimePublisher<ControllerStateMsg>;
 
