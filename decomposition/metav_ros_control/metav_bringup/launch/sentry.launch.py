@@ -12,35 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
-from launch.actions import RegisterEventHandler
-from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.conditions import IfCondition, UnlessCondition
 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+# Necessary dirty work that lets us import modules from the metav_bringup package
+import os
+import sys
+from ament_index_python.packages import get_package_share_directory
+sys.path.append(os.path.join(get_package_share_directory('metav_bringup'), 'launch'))
+
+from launch_utils import load_controller, register_loading_order, register_sequential_loading
 
 ARGUMENTS = [
     DeclareLaunchArgument(
-        'use_sim_time',
+        'enable_simulation',
         default_value='true',
-        description='If true, use simulated clock'),
+        description='If true, the simulation will be started'),
 ]
-
-def load_pid_controller(joint_name,):
-    return ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-                joint_name + '_pid_controller'],
-        output='screen',
-        emulate_tty=True
-    )
 
 def generate_launch_description():
     # Launch Arguments
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    enable_simulation = LaunchConfiguration('enable_simulation')
 
     # Get URDF via xacro
     robot_description_content = Command(
@@ -51,6 +50,16 @@ def generate_launch_description():
                 [FindPackageShare('metav_description'),
                  'urdf', 'sentry', 'sentry.xacro']
             ),
+            ' ',
+            'is_simulation:=', enable_simulation,
+        ]
+    )
+
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare("metav_description"),
+            "config",
+            "sentry.yaml",
         ]
     )
 
@@ -58,10 +67,22 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[
-            {'use_sim_time': True},
+            {'use_sim_time': enable_simulation},
             {'robot_description': robot_description_content},],
         output='screen',
         emulate_tty=True
+    )
+
+    controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_controllers],
+        remappings=[
+            ("~/robot_description", "/robot_description"),
+        ],
+        output='screen',
+        emulate_tty=True,
+        condition=UnlessCondition(enable_simulation)
     )
 
     gz_spawn_robot = Node(
@@ -70,42 +91,32 @@ def generate_launch_description():
         arguments=['-topic', '/robot_description',
                    '-name', 'sentry', '-allow_renaming', 'true'],
         output='screen',
-        emulate_tty=True
+        emulate_tty=True,
+        condition=IfCondition(enable_simulation)
     )
 
-    load_joint_state_broadcaster = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_state_broadcaster'],
-        output='screen',
-        emulate_tty=True
-    )
+    load_joint_state_broadcaster = load_controller('joint_state_broadcaster')
 
-    load_omni_wheel_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active', 'omni_wheel_controller'],
-        output='screen',
-        emulate_tty=True
-    )
+    # List of controllers to be loaded sequentially
+    # Order in this list is IMPORTANT
+    load_controllers = [
+        load_controller('wheels_pid_controller'),
+        load_controller('omni_wheel_controller'),
+        load_controller('gimbal_controller'),
+    ]
 
-    wheels_pid_controller = load_pid_controller('wheels')
-
-    gimbal_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active', 'gimbal_controller'],
-        output='screen',
-        emulate_tty=True
-    )
-
+    # Gazebo related launch
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
                                     'launch',
                                     'gz_sim.launch.py'])]),
         launch_arguments=[
-            ('gz_args', [PathJoinSubstitution([FindPackageShare('metav_gazebo'),'worlds','empty_world.sdf']),
+            ('gz_args', [PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'worlds', 'empty_world.sdf']),
                         ' -r',
                         ' -v 3',])
         ],
+        condition=IfCondition(enable_simulation)
     )
 
     bridge = Node(
@@ -116,45 +127,26 @@ def generate_launch_description():
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
         }],
         output='screen',
-        emulate_tty=True
+        emulate_tty=True,
+        condition=IfCondition(enable_simulation)
     )
 
     return LaunchDescription([
+        # Launch Arguments
+        *ARGUMENTS,
         # Launch gazebo environment
         gazebo_launch,
-        # Load joint state broadcaster
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=gz_spawn_robot,
-                on_exit=[load_joint_state_broadcaster],
-            )
-        ),
-        # Load wheels PID controller
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=load_joint_state_broadcaster,
-                on_exit=[wheels_pid_controller],
-            )
-        ),
-        # Load omni wheel controller
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=wheels_pid_controller,
-                on_exit=[load_omni_wheel_controller],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=load_omni_wheel_controller,
-                on_exit=[gimbal_controller],
-            )
-        ),
-        # Load robot state publisher
-        node_robot_state_publisher,
-        # Spawn robot in Gazebo
-        gz_spawn_robot,
         # Gazebo Gazebo ROS 2 bridge
         bridge,
-        # Launch Arguments
-        *ARGUMENTS
+        # Load robot state publisher
+        node_robot_state_publisher,
+        # Spawn robot in Gazebo (this will automatically start controller manager)
+        gz_spawn_robot,
+        # Launch controller manager (if not in simulation)
+        controller_manager,
+        # Load joint state broadcaster
+        register_loading_order(gz_spawn_robot, load_joint_state_broadcaster, condition=IfCondition(enable_simulation)),
+        register_loading_order(controller_manager, load_joint_state_broadcaster, condition=UnlessCondition(enable_simulation)),
+        # Load controllers
+        *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
     ])
