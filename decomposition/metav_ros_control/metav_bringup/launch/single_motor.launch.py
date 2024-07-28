@@ -69,7 +69,7 @@ def generate_launch_description():
         parameters=[
             {'use_sim_time': enable_simulation},
             {'robot_description': robot_description_content},],
-        output='screen',
+        output='both',
         emulate_tty=True
     )
 
@@ -80,7 +80,7 @@ def generate_launch_description():
         remappings=[
             ("~/robot_description", "/robot_description"),
         ],
-        output='screen',
+        output='both',
         emulate_tty=True,
         condition=UnlessCondition(enable_simulation)
     )
@@ -90,7 +90,7 @@ def generate_launch_description():
         executable='create',
         arguments=['-topic', '/robot_description',
                    '-name', 'single_motor', '-allow_renaming', 'true'],
-        output='screen',
+        output='both',
         emulate_tty=True,
         condition=IfCondition(enable_simulation)
     )
@@ -126,7 +126,7 @@ def generate_launch_description():
             'config_file': PathJoinSubstitution([FindPackageShare('metav_bringup'), 'config', 'ros_gz_bridge.yaml']),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
         }],
-        output='screen',
+        output='both',
         emulate_tty=True,
         condition=IfCondition(enable_simulation)
     )
@@ -145,8 +145,7 @@ def generate_launch_description():
         # Launch controller manager (if not in simulation)
         controller_manager,
         # Load joint state broadcaster
-        register_loading_order(gz_spawn_robot, load_joint_state_broadcaster, condition=IfCondition(enable_simulation)),
-        register_loading_order(controller_manager, load_joint_state_broadcaster, condition=UnlessCondition(enable_simulation)),
+        load_joint_state_broadcaster,
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
     ])

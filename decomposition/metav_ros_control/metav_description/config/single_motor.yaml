@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 200  # Hz
+    update_rate: 200 # Hz
 
     forward_position_controller:
       type: forward_command_controller/ForwardCommandController
@@ -33,7 +33,8 @@ motor_pos2vel_pid_controller:
     reference_and_state_interfaces: ["position"]
 
     gains:
-      motor_vel2eff_pid_controller/motor_joint: {p: 5.0, i: 0.0, d: 0.1, angle_wraparound: true}
+      motor_vel2eff_pid_controller/motor_joint:
+        { p: 30.0, i: 0.0, d: 0.0, angle_wraparound: true }
 
 motor_vel2eff_pid_controller:
   ros__parameters:
@@ -45,4 +46,4 @@ motor_vel2eff_pid_controller:
     reference_and_state_interfaces: ["velocity"]
 
     gains:
-      motor_joint: {p: 1.0, i: 0.1, d: 0.0}
+      motor_joint: { p: 0.008, i: 0.0, d: 0.0 }

@@ -7,7 +7,7 @@ def load_controller(controller_name,):
     return ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
                 controller_name],
-        output='screen',
+        output='both',
         emulate_tty=True
     )
 
