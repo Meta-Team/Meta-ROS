@@ -14,3 +14,6 @@
 [submodule "decomposition/wheel_leg_rl"]
 	path = decomposition/wheel_leg_rl
 	url = https://github.com/Yao-Xinchen/Meta-WL
+[submodule "execution/metav_hardware/libsockcanpp"]
+	path = execution/metav_hardware/libsockcanpp
+	url = https://github.com/SimonCahill/libsockcanpp.git
