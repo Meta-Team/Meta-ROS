@@ -12,15 +12,24 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 
+if (NOT TARGET sockcanpp)
+    add_subdirectory(libsockcanpp)
+endif()
+
 add_library(
   metav_hardware
   SHARED
   src/hardware_interface.cpp
+  src/dji_motor_network.cpp
 )
 target_include_directories(
   metav_hardware
   PUBLIC
   include
+)
+target_link_libraries(
+  metav_hardware
+  sockcanpp
 )
 ament_target_dependencies(
   metav_hardware
