@@ -67,7 +67,7 @@ private:
     static umap<int, thread> rx_threads; // {port, thread}
     static umap<int, can_frame> rx_frames; // {port, frame}
 
-    static umap<int, umap<int, std::shared_ptr<MiMotor>>> instances; // {port, {hid, instance}}
+    static umap<int, umap<int, MiMotor*>> instances; // {port, {hid, instance}}
 
     struct Frame
     {
@@ -106,11 +106,18 @@ private:
     void goal_helper(float pos, float vel, float tor, float kp , float kd);
 
     /**
-     * @brief Sets the port number of the CAN bus.
-     * @param port The port number of the CAN bus.
-     * @note Threads for receiving data are created for each port.
+     * @brief Create a CAN port when no port is available.
+     * @param port The port number.
+     * @note This create a new feedback loop thread if the port is not in the array.
      */
-    void set_port(int port);
+    static void create_port(int port);
+
+    /**
+     * @brief Destroy the CAN port when no motor is using it.
+     * @param port The port number.
+     * @note This function joins the threads for receiving and transmitting data.
+     */
+    static void destroy_port(int port);
 
     /**
      * @brief Sends the parsed frame to the motor.
@@ -118,6 +125,9 @@ private:
      */
     void tx();
 
+    /**
+     * @brief The transmission loop for sending data to the motor.
+     */
     void tx_loop();
 
     /**

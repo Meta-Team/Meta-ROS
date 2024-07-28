@@ -4,7 +4,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 UnitreeMotor::UnitreeMotor(const string& rid, int hid, const string& type, const string& port, int cali)
-    : MotorDriver(rid, hid), serial_port("/dev/tty" + port)
+    : MotorDriver(rid, hid), serial_port("/dev/" + port)
 {
     if (type == "GO") this->type = MotorType::GO_M8010_6;
     else if (type == "A1") this->type = MotorType::A1;

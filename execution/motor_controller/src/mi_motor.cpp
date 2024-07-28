@@ -11,13 +11,15 @@
 umap<int, unique_ptr<CanDriver>> MiMotor::can_drivers;
 umap<int, std::thread> MiMotor::rx_threads;
 umap<int, can_frame> MiMotor::rx_frames;
-umap<int, umap<int, std::shared_ptr<MiMotor>>> MiMotor::instances;
+umap<int, umap<int, MiMotor*>> MiMotor::instances;
 
 MiMotor::MiMotor(const string& rid, int hid, string /*type*/, string port, int cali) :
     MotorDriver(rid, hid)
 {
-    set_port(port.back() - '0'); // this->port is set here
-    instances[this->port][this->hid] = std::shared_ptr<MiMotor>(this);
+    this->port = port.back() - '0';
+    instances[this->port][this->hid] = this;
+
+    create_port(this->port);
 
     start();
 
@@ -28,6 +30,7 @@ MiMotor::~MiMotor()
 {
     stop();
     if (tx_thread.joinable()) tx_thread.join();
+    destroy_port(port);
 }
 
 void MiMotor::set_goal(double goal_pos, double goal_vel, double goal_tor)
@@ -80,13 +83,21 @@ void MiMotor::goal_helper(float pos, float vel, float tor, float kp , float kd)
     parsed_frame.data[7]=float_to_uint(kd,KD_MIN,KD_MAX,16);
 }
 
-void MiMotor::set_port(int port)
+void MiMotor::create_port(int port)
 {
-    this->port = port;
     if (can_drivers.find(port) == can_drivers.end())
     {
         can_drivers[port] = std::make_unique<CanDriver>(port);
         rx_threads[port] = std::thread(&MiMotor::rx_loop, port);
+    }
+}
+
+void MiMotor::destroy_port(int port)
+{
+    if (instances[port].empty())
+    {
+        can_drivers.erase(port);
+        if (rx_threads[port].joinable()) rx_threads[port].join();
     }
 }
 
