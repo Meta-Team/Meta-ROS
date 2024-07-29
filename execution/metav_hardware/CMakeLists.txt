@@ -11,6 +11,7 @@ find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(angles REQUIRED)
 
 if (NOT TARGET sockcanpp)
     add_subdirectory(libsockcanpp)
@@ -36,6 +37,7 @@ ament_target_dependencies(
   hardware_interface
   rclcpp
   rclcpp_lifecycle
+  angles
 )
 # prevent pluginlib from using boost
 target_compile_definitions(metav_hardware PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

@@ -7,6 +7,7 @@
 #include <string>
 #include <tuple>
 
+#include "angles/angles.h"
 #include "metav_hardware/motor_driver/can_motor_driver.hpp"
 
 namespace metav_hardware {
@@ -47,7 +48,9 @@ class DjiMotor : public CanMotorDriver {
 
     inline void set_motor_feedback(int16_t position_raw, int16_t velocity_raw,
                                    int16_t current_raw) {
-        position_ = position_raw / 8191.0 * (2 * M_PI);
+        double position = position_raw / 8191.0 * (2 * M_PI);
+        position_ += angles::shortest_angular_distance(position_, position);
+        // position_ = position;
         velocity_ = velocity_raw * M_PI / 30.0;
         current_ = current_raw / 16384.0 * maximum_current_;
     }
@@ -66,9 +69,9 @@ class DjiMotor : public CanMotorDriver {
     double maximum_current_;
 
     // Motor feedback
-    double position_{std::numeric_limits<double>::quiet_NaN()};
-    double velocity_{std::numeric_limits<double>::quiet_NaN()};
-    double current_{std::numeric_limits<double>::quiet_NaN()};
+    double position_{0.0};
+    double velocity_{0.0};
+    double current_{0.0};
 };
 
 } // namespace metav_hardware
