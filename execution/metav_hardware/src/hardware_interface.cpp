@@ -40,7 +40,7 @@ hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_configure(
             can_motor_networks_[motor_vendor].end()) {
             if (motor_vendor == "DJI") {
                 can_motor_networks_[motor_vendor][can_network_name] =
-                    std::make_unique<DjiMotorNetwork>(can_network_name);
+                    std::make_shared<DjiMotorNetwork>(can_network_name);
             } else {
                 RCLCPP_ERROR(rclcpp::get_logger("MetavRobotHardwareInterface"),
                              "Unknown motor vendor: %s", motor_vendor.c_str());
@@ -58,17 +58,14 @@ hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_configure(
             static_cast<uint32_t>(std::stoul(joint.parameters.at("motor_id")));
         can_motor_networks_[motor_vendor][can_network_name]->add_motor(
             motor_model, motor_id, i);
-        joint_motors_[i] = JointMotor{.name = joint.name,
-                                      .motor_vendor = motor_vendor,
-                                      .motor_model = motor_model,
-                                      .can_network_name = can_network_name,
-                                      .motor_id = motor_id};
-    }
-
-    for (const auto &can_motor_network : can_motor_networks_) {
-        for (const auto &motor_network : can_motor_network.second) {
-            motor_network.second->init_rx_tx();
-        }
+        joint_motors_[i] =
+            JointMotor{.name = joint.name,
+                       .motor_vendor = motor_vendor,
+                       .motor_model = motor_model,
+                       .can_network_name = can_network_name,
+                       .motor_id = motor_id,
+                       .can_motor_network =
+                           can_motor_networks_[motor_vendor][can_network_name]};
     }
 
     return CallbackReturn::SUCCESS;
@@ -148,7 +145,12 @@ MetavRobotHardwareInterface::export_command_interfaces() {
 
 hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_activate(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-    // TODO(anyone): prepare the robot to receive commands
+
+    for (const auto &can_motor_network : can_motor_networks_) {
+        for (const auto &motor_network : can_motor_network.second) {
+            motor_network.second->init_rx();
+        }
+    }
 
     return CallbackReturn::SUCCESS;
 }
@@ -164,10 +166,8 @@ hardware_interface::return_type
 MetavRobotHardwareInterface::read(const rclcpp::Time & /*time*/,
                                   const rclcpp::Duration & /*period*/) {
     for (size_t i = 0; i < joint_motors_.size(); ++i) {
-        std::string motor_vendor = joint_motors_[i].motor_vendor;
-        std::string can_network_name = joint_motors_[i].can_network_name;
         auto [position, velocity, effort] =
-            can_motor_networks_[motor_vendor][can_network_name]->read(i);
+            joint_motors_[i].can_motor_network->read(i);
         hw_states_[i * 3 + 0] = position;
         hw_states_[i * 3 + 1] = velocity;
         hw_states_[i * 3 + 2] = effort;
@@ -183,9 +183,13 @@ MetavRobotHardwareInterface::write(const rclcpp::Time & /*time*/,
         if (std::isnan(effort)) {
             continue;
         }
-        std::string motor_vendor = joint_motors_[i].motor_vendor;
-        std::string can_network_name = joint_motors_[i].can_network_name;
-        can_motor_networks_[motor_vendor][can_network_name]->write(i, effort);
+        joint_motors_[i].can_motor_network->write(i, effort);
+    }
+
+    for (const auto &can_motor_network : can_motor_networks_) {
+        for (const auto &motor_network : can_motor_network.second) {
+            motor_network.second->tx();
+        }
     }
     return hardware_interface::return_type::OK;
 }

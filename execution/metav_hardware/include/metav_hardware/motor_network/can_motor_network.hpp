@@ -28,7 +28,7 @@ class CanMotorNetwork {
     /**
      * @brief Initialize the RX and TX threads
      */
-    virtual void init_rx_tx() = 0;
+    virtual void init_rx() = 0;
 
     /**
      * @brief Read the motor feedback
@@ -44,6 +44,11 @@ class CanMotorNetwork {
      * @param effort The effort to write
      */
     virtual void write(uint32_t joint_id, double effort) = 0;
+
+    /**
+     * @brief Transmit the motor commands.
+     */
+    virtual void tx() = 0;
 };
 } // namespace metav_hardware
 

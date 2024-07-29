@@ -15,13 +15,20 @@ class DjiMotor : public CanMotorDriver {
     DjiMotor(const std::string &motor_model, uint32_t dji_motor_id)
         : motor_model_(motor_model), dji_motor_id_(dji_motor_id) {
         if (motor_model_ == "GM6020") {
-            tx_can_id_ = (dji_motor_id_ <= 4) ? 0x1FE : 0x2FE;
+            tx_can_id_ = (dji_motor_id_ <= 4) ? 0x1FF : 0x2FF;
             rx_can_id_ = 0x204 + dji_motor_id_;
             maximum_current_ = 3.0;
-        } else if (motor_model_ == "GM3508") {
+            maximum_raw_effort_ = 25000;
+        } else if (motor_model_ == "M3508") {
             tx_can_id_ = (dji_motor_id_ <= 4) ? 0x200 : 0x1FF;
             rx_can_id_ = 0x200 + dji_motor_id_;
             maximum_current_ = 20.0;
+            maximum_raw_effort_ = 16384;
+        } else if (motor_model_ == "M2006") {
+            tx_can_id_ = (dji_motor_id_ <= 4) ? 0x200 : 0x1FF;
+            rx_can_id_ = 0x200 + dji_motor_id_;
+            maximum_current_ = 10.0;
+            maximum_raw_effort_ = 10000;
         } else {
             throw std::runtime_error("Unknown motor model: " + motor_model_);
         }
@@ -34,6 +41,9 @@ class DjiMotor : public CanMotorDriver {
     inline uint32_t get_tx_can_id() const { return tx_can_id_; }
     inline uint32_t get_rx_can_id() const { return rx_can_id_; }
     inline double get_maximum_current() const { return maximum_current_; }
+    inline uint32_t get_maximum_raw_effort() const {
+        return maximum_raw_effort_;
+    }
 
     inline void set_motor_feedback(int16_t position_raw, int16_t velocity_raw,
                                    int16_t current_raw) {
@@ -42,16 +52,20 @@ class DjiMotor : public CanMotorDriver {
         current_ = current_raw / 16384.0 * maximum_current_;
     }
 
-    std::tuple<double, double, double> get_motor_feedback() const {
+    inline std::tuple<double, double, double> get_motor_feedback() const {
         return {position_, velocity_, current_};
     }
 
   private:
+    // Motor information
     std::string motor_model_;
     uint32_t dji_motor_id_;
     uint32_t tx_can_id_;
     uint32_t rx_can_id_;
+    uint32_t maximum_raw_effort_;
     double maximum_current_;
+
+    // Motor feedback
     double position_{std::numeric_limits<double>::quiet_NaN()};
     double velocity_{std::numeric_limits<double>::quiet_NaN()};
     double current_{std::numeric_limits<double>::quiet_NaN()};

@@ -60,6 +60,7 @@ class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
         std::string motor_model;
         std::string can_network_name;
         uint32_t motor_id;
+        std::shared_ptr<CanMotorNetwork> can_motor_network;
     };
     std::vector<JointMotor> joint_motors_; // local cache of joint motor info
 
@@ -67,7 +68,7 @@ class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
     // [motor_vendor, can_network_name] -> can_motor_network
     std::map<
         std::string,
-        std::map<std::string, std::unique_ptr<CanMotorNetwork>, std::less<>>,
+        std::map<std::string, std::shared_ptr<CanMotorNetwork>, std::less<>>,
         std::less<>>
         can_motor_networks_;
 };

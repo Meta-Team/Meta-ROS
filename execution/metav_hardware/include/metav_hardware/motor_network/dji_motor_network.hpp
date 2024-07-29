@@ -20,7 +20,7 @@ class DjiMotorNetwork : public CanMotorNetwork {
 
     /**
      * @brief Add a DJI motor to the DJI motor network
-     * @param motor_model The model name of the motor (GM6020, GM3508, GM2006)
+     * @param motor_model The model name of the motor (GM6020, M3508, M2006)
      * @param dji_motor_id The DJI motor ID (this ID is not unique between
      * different models)
      * @param joint_id This can be basically anything, but it has to be unique.
@@ -31,9 +31,9 @@ class DjiMotorNetwork : public CanMotorNetwork {
                    uint32_t joint_id) override;
 
     /**
-     * @brief Initialize the RX and TX threads
+     * @brief Initialize the RX threads
      */
-    void init_rx_tx() override;
+    void init_rx() override;
 
     /**
      * @brief Read the motor feedback
@@ -49,18 +49,21 @@ class DjiMotorNetwork : public CanMotorNetwork {
      */
     void write(uint32_t joint_id, double effort) override;
 
+    /**
+     * @brief Transmit the motor commands
+     */
+    void tx() override;
+
   private:
     [[noreturn]] void rx_loop();
     std::thread rx_thread_;
 
-    [[noreturn]] void tx_loop();
-    std::thread tx_thread_;
-
-    // Four CAN frames for tx
-    // 0x1FE: GM6020 motor 1-4
-    // 0x1FF: GM3508 motor 5-8
-    // 0x200: GM3508 motor 1-4
-    // 0x2FE: GM6020 motor 5-8
+    // Five CAN frames for tx
+    // 0x1FE: GM6020(current) motor 1-4
+    // 0x1FF: M3508/M2006 motor 5-8 / GM6020(voltage) motor 1-4
+    // 0x200: M3508/M2006 motor 1-4
+    // 0x2FE: GM6020(current) motor  5-8
+    // 0x2FF: GM6020(voltage) motor 5-8
     can_frame tx_frame_1fe{
         .can_id = 0x1FE, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
     can_frame tx_frame_1ff{
@@ -69,6 +72,8 @@ class DjiMotorNetwork : public CanMotorNetwork {
         .can_id = 0x200, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
     can_frame tx_frame_2fe{
         .can_id = 0x2FE, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
+    can_frame tx_frame_2ff{
+        .can_id = 0x2FF, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
 
     // CAN driver
     std::unique_ptr<sockcanpp::CanDriver> can_driver_;
