@@ -2,6 +2,7 @@
 #define METAV_HARDWARE__MOTOR_NETWORK__CAN_MOTOR_NETWORK_HPP_
 
 #include <string>
+#include <unordered_map>
 
 namespace metav_hardware {
 
@@ -18,17 +19,22 @@ class CanMotorNetwork {
     /**
      * @brief Add a motor to the motor network, see detailed description in the
      * derived class.
-     * @param motor_model The model name of the motor
-     * @param motor_id The internal motor ID of the motor
      * @param joint_id The joint ID of the motor
+     * @param motor_params The parameters of the motor
      */
-    virtual void add_motor(std::string motor_model, uint32_t motor_id,
-                           uint32_t joint_id) = 0;
+    virtual void
+    add_motor(uint32_t joint_id,
+              const std::unordered_map<std::string, std::string> &motor_params);
 
     /**
-     * @brief Initialize the RX and TX threads
+     * @brief Perform the required initialization of the motor network
      */
-    virtual void init_rx() = 0;
+    virtual void init() = 0;
+
+    /**
+     * @brief Shutdown the motor network
+     */
+    virtual void deinit() = 0;
 
     /**
      * @brief Read the motor feedback
@@ -43,7 +49,8 @@ class CanMotorNetwork {
      * @param joint_id The joint ID of the motor
      * @param effort The effort to write
      */
-    virtual void write(uint32_t joint_id, double effort) = 0;
+    virtual void write(uint32_t joint_id, double position, double velocity,
+                       double effort) = 0;
 
     /**
      * @brief Transmit the motor commands.

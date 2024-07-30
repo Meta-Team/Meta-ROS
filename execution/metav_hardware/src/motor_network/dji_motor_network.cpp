@@ -24,23 +24,29 @@ DjiMotorNetwork::DjiMotorNetwork(std::string can_network_name) {
     }
 }
 
-void DjiMotorNetwork::add_motor(std::string motor_model, uint32_t dji_motor_id,
-                                uint32_t joint_id) {
+void DjiMotorNetwork::add_motor(
+    uint32_t joint_id,
+    const std::unordered_map<std::string, std::string> &motor_params) {
+    std::string motor_model = motor_params.at("motor_model");
+    uint32_t dji_motor_id = std::stoi(motor_params.at("motor_id"));
     auto dji_motor = std::make_shared<DjiMotor>(motor_model, dji_motor_id);
     rx_id2motor_[dji_motor->get_rx_can_id()] = dji_motor;
     joint_id2motor_[joint_id] = dji_motor;
 }
 
-void DjiMotorNetwork::init_rx() {
+void DjiMotorNetwork::init() {
     rx_thread_ = std::thread(&DjiMotorNetwork::rx_loop, this);
 }
+
+void DjiMotorNetwork::deinit() {}
 
 std::tuple<double, double, double>
 DjiMotorNetwork::read(uint32_t joint_id) const {
     return joint_id2motor_.at(joint_id)->get_motor_feedback();
 }
 
-void DjiMotorNetwork::write(uint32_t joint_id, double effort) {
+void DjiMotorNetwork::write(uint32_t joint_id, double /*position*/,
+                            double /*velocity*/, double effort) {
     const auto &motor = joint_id2motor_.at(joint_id);
     uint32_t dji_motor_id = motor->get_dji_motor_id();
     uint32_t tx_can_id = motor->get_tx_can_id();

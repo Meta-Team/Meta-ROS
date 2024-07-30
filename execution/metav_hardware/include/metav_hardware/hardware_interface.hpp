@@ -17,6 +17,7 @@
 namespace metav_hardware {
 class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
   public:
+    ~MetavRobotHardwareInterface() override;
     TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     hardware_interface::CallbackReturn
     on_init(const hardware_interface::HardwareInfo &info) override;
@@ -57,10 +58,11 @@ class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
       public:
         std::string name;
         std::string motor_vendor;
-        std::string motor_model;
         std::string can_network_name;
-        uint32_t motor_id;
         std::shared_ptr<CanMotorNetwork> can_motor_network;
+        bool command_pos;
+        bool command_vel;
+        bool command_eff;
     };
     std::vector<JointMotor> joint_motors_; // local cache of joint motor info
 

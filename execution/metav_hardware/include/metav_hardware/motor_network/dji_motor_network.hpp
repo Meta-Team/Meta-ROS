@@ -27,13 +27,16 @@ class DjiMotorNetwork : public CanMotorNetwork {
      * The name comes from ros2_control, where motors are identified by
      * joint_id. But you may use any other unique number.
      */
-    void add_motor(std::string motor_model, uint32_t dji_motor_id,
-                   uint32_t joint_id) override;
+    void add_motor(uint32_t joint_id,
+                   const std::unordered_map<std::string, std::string>
+                       &motor_params) override;
 
     /**
      * @brief Initialize the RX threads
      */
-    void init_rx() override;
+    void init() override;
+
+    void deinit() override;
 
     /**
      * @brief Read the motor feedback
@@ -47,7 +50,8 @@ class DjiMotorNetwork : public CanMotorNetwork {
      * @param joint_id The joint ID of the motor
      * @param effort The effort to write
      */
-    void write(uint32_t joint_id, double effort) override;
+    void write(uint32_t joint_id, double position, double velocity,
+               double effort) override;
 
     /**
      * @brief Transmit the motor commands

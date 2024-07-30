@@ -21,7 +21,10 @@ add_library(
   metav_hardware
   SHARED
   src/hardware_interface.cpp
-  src/dji_motor_network.cpp
+  src/motor_network/dji_motor_network.cpp
+  src/motor_driver/dji_motor_driver.cpp
+  src/motor_network/mi_motor_network.cpp
+  src/motor_driver/mi_motor_driver.cpp
 )
 target_include_directories(
   metav_hardware
