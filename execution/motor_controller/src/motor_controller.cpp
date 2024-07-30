@@ -108,7 +108,9 @@ private:
 
     void motor_init()
     {
-        int motor_count = this->declare_parameter("motor.count", 0);
+        vector<bool> motor_enables{};
+        motor_enables = this->declare_parameter("motor.enables", motor_enables);
+        int motor_count = motor_enables.size();
 
         vector<string> motor_brands{};
         motor_brands = this->declare_parameter("motor.brands", motor_brands);
@@ -133,6 +135,8 @@ private:
         // initialize the drivers
         for (int i = 0; i < motor_count; i++)
         {
+            if (!motor_enables[i]) continue;
+
             auto& brand = motor_brands[i];
             auto& rid = motor_rids[i];
             auto& hid = motor_hids[i];
@@ -151,7 +155,7 @@ private:
             else if (brand == "UT")
                 drivers_[rid] = std::make_unique<UnitreeMotor>(rid, hid, type, port, cali);
             else if (brand == "MI")
-                drivers_[rid] = std::make_unique<MiMotor>(rid, hid, type, port, cali);
+                drivers_[rid] = std::make_unique<MiMotor>(rid, hid, type, port);
             else if (brand == "DM")
                 drivers_[rid] = std::make_unique<DmMotor>(rid, hid, type, port);
             else

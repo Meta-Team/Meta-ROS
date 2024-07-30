@@ -51,7 +51,7 @@ using std::unique_ptr;
 class MiMotor : public MotorDriver
 {
 public:
-    MiMotor(const string& rid, int hid, string type, string port, int cali);
+    MiMotor(const string& rid, int hid, string type, string port);
 
     ~MiMotor();
 
