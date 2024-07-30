@@ -1,21 +1,74 @@
 /**:
   ros__parameters:
 
+    # # DM
+    # motor:
+    #   count: 2
+    #   rids: ["J1", "J2"]
+    #   hids: [1, 2]
+    #   ports: ["CAN0", "CAN0"]
+    #   brands: ["DM", "DM"]
+    #   types: ["4310", "4310"]
+    #   p2v:
+    #     kps: [7.0E+0, 7.0E+0]
+    #     kis: [0.0E+1, 0.0E+1]
+    #     kds: [0.5E+0, 0.5E+0]
+    #   v2t:
+    #     kps: [0.0E-2, 0.0E-2]
+    #     kis: [0.0E-4, 0.0E-4]
+    #     kds: [0.0E+3, 0.0E+3]
+    #   cali: [0, 0]
+
+    # # Unitree
+    # motor:
+    #   count: 2
+    #   rids: ["J1", "J2"]
+    #   hids: [0, 1]
+    #   ports: ["ttyUSB0", "ttyUSB0"]
+    #   brands: ["UT", "UT"]
+    #   types: ["A1", "A1"]
+    #   p2v:
+    #     kps: [0.0E+0, 0.0E+0]
+    #     kis: [0.0E+0, 0.0E+0]
+    #     kds: [0.0E+0, 0.0E+0]
+    #   v2t:
+    #     kps: [0.0E+0, 0.0E+0]
+    #     kis: [0.0E+0, 0.0E+0]
+    #     kds: [0.0E+0, 0.0E+0]
+    #   cali: [0, 0]
+
+    # # DJI 6020
+    # motor:
+    #   count: 1
+    #   rids: ["J1"]
+    #   hids: [1]
+    #   ports: ["CAN0"]
+    #   brands: ["DJI"]
+    #   types: ["6020"]
+    #   p2v:
+    #     kps: [1.0E+1]
+    #     kis: [0.0E+0]
+    #     kds: [1.0E+3]
+    #   v2t:
+    #     kps: [3.0E-1]
+    #     kis: [8.0E+0]
+    #     kds: [0.0E+0]
+    #   cali: [0]
+
+    # MI
     motor:
       count: 2
       rids: ["J1", "J2"]
       hids: [1, 2]
       ports: ["CAN0", "CAN0"]
-      brands: ["DM", "DM"]
-      types: ["4310", "4310"]
-
+      brands: ["MI", "MI"]
+      types: ["", ""]
       p2v:
-        kps: [7.0E+0, 7.0E+0]
-        kis: [0.0E+1, 0.0E+1]
-        kds: [0.5E+0, 0.5E+0]
+        kps: [1.0E+1, 1.0E+1]
+        kis: [0.0E+0, 0.0E+0]
+        kds: [1.0E+0, 1.0E+0]
       v2t:
-        kps: [0.0E-2, 0.0E-2]
-        kis: [0.0E-4, 0.0E-4]
-        kds: [0.0E+3, 0.0E+3]
-      
+        kps: [0.0E-1, 0.0E-1]
+        kis: [0.0E+0, 0.0E+0]
+        kds: [0.0E+0, 0.0E+0]
       cali: [0, 0]

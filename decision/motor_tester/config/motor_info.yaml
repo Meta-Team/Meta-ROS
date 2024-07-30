@@ -8,10 +8,10 @@
     # sensitivity: 1.0 # per second
     # deadzone: 0.2
 
-    motor_rid: "J1"
-    goal_type: "pos"
-    goal_upper: 3.0
-    goal_lower: -3.0
+    motor_rid: "J2"
+    goal_type: "vel"
+    goal_upper: 30.0
+    goal_lower: -30.0
     goal_init: 0.0
-    sensitivity: 5.0 # per second
+    sensitivity: 60.0 # per second
     deadzone: 0.2

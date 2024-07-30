@@ -33,7 +33,8 @@ def generate_launch_description():
             package='motor_tester',
             executable='motor_tester',
             name='motor_tester',
-            parameters=[config]
+            parameters=[config],
+            output='screen'
         )
     ])
 

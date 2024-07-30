@@ -20,7 +20,9 @@ using std::unique_ptr;
 
 #define TX_FREQ 10
 
-#define MASTER_ID 1
+#define MASTER_ID 0 // must be zero
+// or the motor will keep sending feedback frames once enabled
+// and it cannot be disabled
 
 #define P_MIN -12.5f
 #define P_MAX 12.5f

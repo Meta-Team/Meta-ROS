@@ -23,6 +23,8 @@ MiMotor::MiMotor(const string& rid, int hid, string /*type*/, string port, int c
 
     start();
 
+    goal_helper(0, 0, 0, 0, 0);
+
     tx_thread = std::thread(&MiMotor::tx_loop, this);
 }
 
@@ -52,11 +54,11 @@ void MiMotor::set_param(double p2v_kp, double /*p2v_ki*/, double p2v_kd,
 
 std::tuple<double, double, double> MiMotor::get_state()
 {
-    return std::make_tuple(
+    return {
         position,
         velocity,
         torque
-    );
+    };
 }
 
 void MiMotor::print_info()
@@ -131,13 +133,13 @@ void MiMotor::process_rx(const can_frame& frame)
     uint16_t buffer;
     auto& rx_data = frame.data;
     buffer = (rx_data[0] << 8 | rx_data[1]);
-    position = ((float)buffer-32767.5)/32767.5*4*3.1415926f;;
+    position = ((float)buffer - 32767.5) / 32767.5 * 4 * 3.1415926f;
 
     buffer = (rx_data[2] << 8 | rx_data[3]);
-    velocity = ((float)buffer-32767.5)/32767.5*30.0f;
+    velocity = ((float)buffer - 32767.5) / 32767.5 * 30.0f;
 
     buffer = (rx_data[4] << 8 | rx_data[5]);
-    torque = ((float)buffer-32767.5)/32767.5*12.0f;
+    torque = ((float)buffer - 32767.5) / 32767.5 * 12.0f;
 
     // buffer = (rx_data[6] << 8 | rx_data[7]);
     // temperature = (float)buffer/10.0f;
@@ -166,7 +168,7 @@ void MiMotor::start()
     start_msg.ext_id.id = hid;
     start_msg.ext_id.res = 0;
     start_msg.ext_id.data = MASTER_ID;
-    start_msg.data.fill(0); // data doesn't matter
+    start_msg.data.fill(0);
     tx(start_msg);
 }
 
@@ -177,7 +179,7 @@ void MiMotor::stop()
     stop_msg.ext_id.id = hid;
     stop_msg.ext_id.res = 0;
     stop_msg.ext_id.data = MASTER_ID;
-    stop_msg.data.fill(0); // data doesn't matter
+    stop_msg.data.fill(0);
     tx(stop_msg);
 }
 
