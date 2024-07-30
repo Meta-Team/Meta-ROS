@@ -31,7 +31,6 @@ DjiMotor::DjiMotor(const std::string &motor_model, uint32_t dji_motor_id)
     }
 }
 
-std::string DjiMotor::get_motor_model() const { return motor_model_; }
 uint32_t DjiMotor::get_dji_motor_id() const { return dji_motor_id_; }
 uint32_t DjiMotor::get_tx_can_id() const { return tx_can_id_; }
 uint32_t DjiMotor::get_rx_can_id() const { return rx_can_id_; }

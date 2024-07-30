@@ -15,14 +15,10 @@
 namespace metav_hardware {
 class MiMotor {
   public:
-    MiMotor(const std::string &motor_model, uint8_t mi_motor_id);
     MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp,
             double Kd);
 
     ~MiMotor() = default;
-
-    std::string get_motor_model() const;
-    uint8_t get_mi_motor_id() const;
 
     sockcanpp::CanMessage get_motor_enable_frame(uint8_t host_id) const;
     sockcanpp::CanMessage get_motor_disable_frame(uint8_t host_id) const;

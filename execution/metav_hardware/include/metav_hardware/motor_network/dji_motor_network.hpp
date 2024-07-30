@@ -32,10 +32,13 @@ class DjiMotorNetwork : public CanMotorNetwork {
                        &motor_params) override;
 
     /**
-     * @brief Initialize the RX threads
+     * @brief Initialize
      */
     void init() override;
 
+    /**
+     * @brief Deinitialize
+     */
     void deinit() override;
 
     /**

@@ -23,14 +23,6 @@ constexpr double MAX_ABS_POSITION = 4.0 * M_PI;
 constexpr double MAX_KP = 500.0;
 constexpr double MAX_KD = 5.0;
 
-MiMotor::MiMotor(const std::string &motor_model, uint8_t mi_motor_id)
-    : motor_model_(motor_model), mi_motor_id_(mi_motor_id) {
-    if (motor_model_ == "CyberGear") {
-    } else {
-        throw std::runtime_error("Unknown motor model: " + motor_model_);
-    }
-}
-
 MiMotor::MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp,
                  double Kd)
     : motor_model_(motor_model), mi_motor_id_(mi_motor_id) {
@@ -103,12 +95,6 @@ sockcanpp::CanMessage MiMotor::get_motor_command_frame(double position,
     return sockcanpp::CanMessage(command_frame);
 }
 
-std::string MiMotor::get_motor_model() const { return motor_model_; }
-
-uint8_t MiMotor::get_mi_motor_id() const {
-    return static_cast<uint8_t>(mi_motor_id_);
-}
-
 void MiMotor::set_motor_feedback(const sockcanpp::CanMessage &can_msg) {
     auto position_raw = static_cast<uint16_t>(
         (static_cast<uint16_t>(can_msg.getRawFrame().data[0]) << 8) |
@@ -123,10 +109,13 @@ void MiMotor::set_motor_feedback(const sockcanpp::CanMessage &can_msg) {
     double position =
         (position_raw / double(MAX_RAW_POSITION)) * (2 * MAX_ABS_POSITION) -
         MAX_ABS_POSITION;
-    position_ += angles::shortest_angular_distance(position_, position);
+    position_ += angles::shortest_angular_distance(
+        position_, position); // Accumulate angles
+
     velocity_ =
         (velocity_raw / double(MAX_RAW_VELOCITY)) * (2 * MAX_ABS_VELOCITY) -
         MAX_ABS_VELOCITY;
+
     torque_ = (torque_raw / double(MAX_RAW_TORQUE)) * (2 * MAX_ABS_TORQUE) -
               MAX_ABS_TORQUE;
 }

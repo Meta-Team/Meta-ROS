@@ -16,7 +16,6 @@ class DjiMotor {
 
     ~DjiMotor() = default;
 
-    std::string get_motor_model() const;
     uint32_t get_dji_motor_id() const;
     uint32_t get_tx_can_id() const;
     uint32_t get_rx_can_id() const;

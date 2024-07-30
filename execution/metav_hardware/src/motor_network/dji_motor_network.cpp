@@ -83,6 +83,13 @@ void DjiMotorNetwork::write(uint32_t joint_id, double /*position*/,
         try {
             can_driver_->waitForMessages(std::chrono::milliseconds(200));
             sockcanpp::CanMessage can_msg = can_driver_->readMessage();
+
+            // Check if the received CAN ID is managed by current motor network
+            if (rx_id2motor_.find(can_msg.getRawFrame().can_id) ==
+                rx_id2motor_.end()) {
+                continue;
+            }
+
             const auto &motor = rx_id2motor_.at(can_msg.getRawFrame().can_id);
 
             auto position_raw = static_cast<uint16_t>(
