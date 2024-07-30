@@ -16,7 +16,7 @@ namespace metav_hardware {
 class DjiMotorNetwork : public CanMotorNetwork {
   public:
     explicit DjiMotorNetwork(std::string can_network_name);
-    ~DjiMotorNetwork() override = default;
+    ~DjiMotorNetwork() override;
 
     /**
      * @brief Add a DJI motor to the DJI motor network
@@ -30,16 +30,6 @@ class DjiMotorNetwork : public CanMotorNetwork {
     void add_motor(uint32_t joint_id,
                    const std::unordered_map<std::string, std::string>
                        &motor_params) override;
-
-    /**
-     * @brief Initialize
-     */
-    void init() override;
-
-    /**
-     * @brief Deinitialize
-     */
-    void deinit() override;
 
     /**
      * @brief Read the motor feedback

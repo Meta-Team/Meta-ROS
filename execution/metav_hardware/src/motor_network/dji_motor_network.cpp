@@ -15,6 +15,7 @@ namespace metav_hardware {
 using sockcanpp::CanDriver;
 
 DjiMotorNetwork::DjiMotorNetwork(std::string can_network_name) {
+    // Initialize CAN driver
     try {
         can_driver_ = std::make_unique<CanDriver>(can_network_name,
                                                   CanDriver::CAN_SOCK_RAW);
@@ -22,6 +23,13 @@ DjiMotorNetwork::DjiMotorNetwork(std::string can_network_name) {
         std::cerr << "Error initializing CAN driver: " << e.what() << std::endl;
         throw std::runtime_error("Error initializing CAN driver");
     }
+
+    // Initialize RX thread
+    rx_thread_ = std::thread(&DjiMotorNetwork::rx_loop, this);
+}
+
+DjiMotorNetwork::~DjiMotorNetwork() {
+    // TODO: Join RX thread
 }
 
 void DjiMotorNetwork::add_motor(
@@ -33,12 +41,6 @@ void DjiMotorNetwork::add_motor(
     rx_id2motor_[dji_motor->get_rx_can_id()] = dji_motor;
     joint_id2motor_[joint_id] = dji_motor;
 }
-
-void DjiMotorNetwork::init() {
-    rx_thread_ = std::thread(&DjiMotorNetwork::rx_loop, this);
-}
-
-void DjiMotorNetwork::deinit() {}
 
 std::tuple<double, double, double>
 DjiMotorNetwork::read(uint32_t joint_id) const {

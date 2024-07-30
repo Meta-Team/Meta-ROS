@@ -17,7 +17,7 @@ class MiMotorNetwork : public CanMotorNetwork {
   public:
     explicit MiMotorNetwork(const std::string &can_network_name,
                             uint32_t host_id);
-    ~MiMotorNetwork() override = default;
+    ~MiMotorNetwork() override;
 
     /**
      * @brief Add a MI motor to the MI motor network
@@ -29,16 +29,6 @@ class MiMotorNetwork : public CanMotorNetwork {
     void add_motor(uint32_t joint_id,
                    const std::unordered_map<std::string, std::string>
                        &motor_params) override;
-
-    /**
-     * @brief Initialize
-     */
-    void init() override;
-
-    /**
-     * @brief Deinitialize
-     */
-    void deinit() override;
 
     /**
      * @brief Read the motor feedback
@@ -68,7 +58,9 @@ class MiMotorNetwork : public CanMotorNetwork {
     [[noreturn]] void rx_loop();
     std::thread rx_thread_;
 
-    void process_feedback_frame(const sockcanpp::CanMessage &can_msg);
+    void process_mi_frame(const sockcanpp::CanMessage &can_msg);
+    void process_mi_info_frame(const sockcanpp::CanMessage &can_msg);
+    void process_mi_fb_frame(const sockcanpp::CanMessage &can_msg);
 
     // CAN driver
     std::unique_ptr<sockcanpp::CanDriver> can_driver_;

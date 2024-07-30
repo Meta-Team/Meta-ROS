@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <linux/can.h>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -14,32 +15,24 @@
 
 namespace metav_hardware {
 using sockcanpp::CanDriver;
+using sockcanpp::CanMessage;
+using sockcanpp::exceptions::CanException;
+using sockcanpp::exceptions::CanInitException;
+using std::string;
+using std::unordered_map;
 
-MiMotorNetwork::MiMotorNetwork(const std::string &can_network_name,
-                               uint32_t host_id)
-    : can_network_name_(can_network_name), host_id_(host_id) {}
-
-void MiMotorNetwork::add_motor(
-    uint32_t joint_id,
-    const std::unordered_map<std::string, std::string> &motor_params) {
-    std::string motor_model = motor_params.at("motor_model");
-    uint32_t mi_motor_id = std::stoi(motor_params.at("motor_id"));
-    double Kp = std::stod(motor_params.at("Kp"));
-    double Kd = std::stod(motor_params.at("Kd"));
-    auto mi_motor = std::make_shared<MiMotor>(motor_model, mi_motor_id, Kp, Kd);
-    motor_id2motor_[mi_motor_id] = mi_motor;
-    joint_id2motor_[joint_id] = mi_motor;
-}
-
-void MiMotorNetwork::init() {
+MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id)
+    : can_network_name_(can_network_name), host_id_(host_id) {
+    // Initialize CAN driver
     try {
         can_driver_ = std::make_unique<CanDriver>(can_network_name_,
                                                   CanDriver::CAN_SOCK_RAW);
-    } catch (sockcanpp::exceptions::CanInitException &e) {
+    } catch (CanInitException &e) {
         std::cerr << "Error initializing CAN driver: " << e.what() << std::endl;
         throw std::runtime_error("Error initializing CAN driver");
     }
 
+    // Start RX thread
     rx_thread_ = std::thread(&MiMotorNetwork::rx_loop, this);
 
     // Enable all motors
@@ -48,23 +41,37 @@ void MiMotorNetwork::init() {
             can_driver_->sendMessage(
                 motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
         }
-    } catch (sockcanpp::exceptions::CanException &e) {
+    } catch (CanException &e) {
         std::cerr << "Error writing MI motor enable CAN message: " << e.what()
                   << std::endl;
     }
 }
 
-void MiMotorNetwork::deinit() {
+MiMotorNetwork::~MiMotorNetwork() {
     // Disable all motors
     try {
         for (const auto &[joint_id, motor] : joint_id2motor_) {
             can_driver_->sendMessage(
                 motor->get_motor_disable_frame(static_cast<uint8_t>(host_id_)));
         }
-    } catch (sockcanpp::exceptions::CanException &e) {
+    } catch (CanException &e) {
         std::cerr << "Error writing MI motor disable CAN message: " << e.what()
                   << std::endl;
     }
+
+    // TODO: Join RX thread
+}
+
+void MiMotorNetwork::add_motor(
+    uint32_t joint_id, const unordered_map<string, string> &motor_params) {
+    string motor_model = motor_params.at("motor_model");
+    uint32_t mi_motor_id = std::stoi(motor_params.at("motor_id"));
+    double Kp = std::stod(motor_params.at("Kp"));
+    double Kd = std::stod(motor_params.at("Kd"));
+
+    auto mi_motor = std::make_shared<MiMotor>(motor_model, mi_motor_id, Kp, Kd);
+    motor_id2motor_[mi_motor_id] = mi_motor;
+    joint_id2motor_[joint_id] = mi_motor;
 }
 
 std::tuple<double, double, double>
@@ -88,38 +95,42 @@ void MiMotorNetwork::write(uint32_t joint_id, double position, double velocity,
     while (true) {
         try {
             can_driver_->waitForMessages(std::chrono::milliseconds(200));
-            sockcanpp::CanMessage can_msg = can_driver_->readMessage();
-            canid_t can_id = can_msg.getRawFrame().can_id;
+            CanMessage can_msg = can_driver_->readMessage();
 
-            // Check if the frame is an extended frame
-            if ((can_id & 0x80000000) == 0) {
-                continue; // MI motor only uses extended frames
+            // MI motor frames are all extended frames
+            if (!can_msg.getCanId().isExtendedFrameId()) {
+                process_mi_frame(can_msg);
             }
-            can_id &= 0x7FFFFFFF; // Clear the extended frame bit
-
-            uint8_t comm_type = can_id >> 24;
-            switch (comm_type) {
-            case 0x00: // MI motor info frame
-                break;
-            case 0x02: // MI motor feedback frame
-                process_feedback_frame(can_msg);
-                break;
-            default:
-                std::cerr << "Unknown MI motor frame type: " << comm_type
-                          << std::endl;
-                break;
-            }
-        } catch (sockcanpp::exceptions::CanException &e) {
+        } catch (CanException &e) {
             std::cerr << "Error reading CAN message: " << e.what() << std::endl;
         }
     }
 }
 
-void MiMotorNetwork::process_feedback_frame(
-    const sockcanpp::CanMessage &can_msg) {
+void MiMotorNetwork::process_mi_frame(const CanMessage &can_msg) {
+    canid_t can_id = can_msg.getRawFrame().can_id & CAN_EFF_MASK;
+    uint8_t mi_frame_type = can_id >> 24;
+    switch (mi_frame_type) {
+    case 0x00: // MI motor info frame
+        process_mi_info_frame(can_msg);
+        break;
+    case 0x02: // MI motor feedback frame
+        process_mi_fb_frame(can_msg);
+        break;
+    default:
+        std::cerr << "Unknown MI motor frame type: " << mi_frame_type
+                  << std::endl;
+        break;
+    }
+}
+
+void MiMotorNetwork::process_mi_info_frame(const CanMessage &can_msg) {
+    // TODO: Implement this
+}
+
+void MiMotorNetwork::process_mi_fb_frame(const CanMessage &can_msg) {
     uint8_t motor_id = (can_msg.getRawFrame().can_id >> 8) & 0xFF;
     const auto &motor = motor_id2motor_.at(motor_id);
-
     motor->set_motor_feedback(can_msg);
 }
 

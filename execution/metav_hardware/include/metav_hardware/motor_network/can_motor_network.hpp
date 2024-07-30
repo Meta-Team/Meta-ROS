@@ -27,16 +27,6 @@ class CanMotorNetwork {
               const std::unordered_map<std::string, std::string> &motor_params);
 
     /**
-     * @brief Perform the required initialization of the motor network
-     */
-    virtual void init() = 0;
-
-    /**
-     * @brief Shutdown the motor network
-     */
-    virtual void deinit() = 0;
-
-    /**
      * @brief Read the motor feedback
      * @param joint_id The joint ID of the motor
      * @return A tuple of (position, velocity, effort)
@@ -53,7 +43,7 @@ class CanMotorNetwork {
                        double effort) = 0;
 
     /**
-     * @brief Transmit the motor commands.
+     * @brief Transmit the motor commands (optional, useful for DJI motors).
      */
     virtual void tx() = 0;
 };

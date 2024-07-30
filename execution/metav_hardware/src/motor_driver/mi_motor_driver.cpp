@@ -23,6 +23,9 @@ constexpr double MAX_ABS_POSITION = 4.0 * M_PI;
 constexpr double MAX_KP = 500.0;
 constexpr double MAX_KD = 5.0;
 
+using sockcanpp::CanMessage;
+using std::tuple;
+
 MiMotor::MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp,
                  double Kd)
     : motor_model_(motor_model), mi_motor_id_(mi_motor_id) {
@@ -34,29 +37,28 @@ MiMotor::MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp,
     }
 }
 
-sockcanpp::CanMessage MiMotor::get_motor_enable_frame(uint8_t host_id) const {
+CanMessage MiMotor::get_motor_enable_frame(uint8_t host_id) const {
     canid_t enable_can_id = 3 << 24;
     enable_can_id |= host_id << 8;
     enable_can_id |= mi_motor_id_;
     can_frame enable_frame{.can_id = enable_can_id,
                            .can_dlc = 8,
                            .data = {0, 0, 0, 0, 0, 0, 0, 0}};
-    return sockcanpp::CanMessage(enable_frame);
+    return CanMessage(enable_frame);
 }
 
-sockcanpp::CanMessage MiMotor::get_motor_disable_frame(uint8_t host_id) const {
+CanMessage MiMotor::get_motor_disable_frame(uint8_t host_id) const {
     canid_t disable_can_id = 4 << 24;
     disable_can_id |= host_id << 8;
     disable_can_id |= mi_motor_id_;
     can_frame disable_frame{.can_id = disable_can_id,
                             .can_dlc = 8,
                             .data = {0, 0, 0, 0, 0, 0, 0, 0}};
-    return sockcanpp::CanMessage(disable_frame);
+    return CanMessage(disable_frame);
 }
 
-sockcanpp::CanMessage MiMotor::get_motor_command_frame(double position,
-                                                       double velocity,
-                                                       double effort) const {
+CanMessage MiMotor::get_motor_command_frame(double position, double velocity,
+                                            double effort) const {
     if (!std::isnan(position) && std::isnan(velocity) &&
         std::isnan(effort)) { // Position only mode
         velocity = 0.0;       // Set target velocity to 0
@@ -92,10 +94,10 @@ sockcanpp::CanMessage MiMotor::get_motor_command_frame(double position,
     command_frame.data[6] = Kd_raw_ >> 8;
     command_frame.data[7] = Kd_raw_ & 0xFF;
 
-    return sockcanpp::CanMessage(command_frame);
+    return CanMessage(command_frame);
 }
 
-void MiMotor::set_motor_feedback(const sockcanpp::CanMessage &can_msg) {
+void MiMotor::set_motor_feedback(const CanMessage &can_msg) {
     auto position_raw = static_cast<uint16_t>(
         (static_cast<uint16_t>(can_msg.getRawFrame().data[0]) << 8) |
         static_cast<uint16_t>(can_msg.getRawFrame().data[1]));
@@ -120,7 +122,7 @@ void MiMotor::set_motor_feedback(const sockcanpp::CanMessage &can_msg) {
               MAX_ABS_TORQUE;
 }
 
-std::tuple<double, double, double> MiMotor::get_motor_feedback() const {
+tuple<double, double, double> MiMotor::get_motor_feedback() const {
     return {position_, velocity_, torque_};
 }
 
