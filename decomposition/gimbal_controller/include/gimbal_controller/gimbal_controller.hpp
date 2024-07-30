@@ -81,8 +81,6 @@ class GimbalController
     std::shared_ptr<gimbal_controller::ParamListener> param_listener_;
     gimbal_controller::Params params_;
 
-    std::vector<std::string> state_joints_;
-
     // Command subscribers
     rclcpp::Duration ref_timeout_ = rclcpp::Duration(0, 0);
     rclcpp::Subscription<ControllerReferenceMsg>::SharedPtr ref_subscriber_ =

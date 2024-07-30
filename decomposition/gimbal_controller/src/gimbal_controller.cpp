@@ -135,12 +135,11 @@ controller_interface::CallbackReturn GimbalController::on_configure(
     // Feedback Subscriber
     feedback_subscriber_ =
         get_node()->create_subscription<ControllerFeedbackMsg>(
-            params_.imu_topic, subscribers_qos,
+            params_.imu_topics[0], subscribers_qos,
             std::bind(&GimbalController::feedback_callback, this,
                       std::placeholders::_1));
 
-    std::shared_ptr<ControllerFeedbackMsg> feedback_msg =
-        std::make_shared<ControllerFeedbackMsg>();
+    auto feedback_msg = std::make_shared<ControllerFeedbackMsg>();
     reset_controller_feedback_msg(feedback_msg, get_node());
     input_feedback_.writeFromNonRT(feedback_msg);
 

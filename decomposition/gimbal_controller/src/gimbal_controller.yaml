@@ -1,31 +1,29 @@
 gimbal_controller:
-  gimbal_joints: {
-    type: string_array,
-    default_value: [],
-    description: "Specifies joints of the gimbals.",
-    read_only: true,
-    validation: {
-      unique<>: null,
-      not_empty<>: null,
+  gimbal_joints:
+    {
+      type: string_array,
+      default_value: [],
+      description: "Specifies joints of the gimbals.",
+      read_only: true,
+      validation: { unique<>: null, not_empty<>: null },
     }
-  }
-  gimbal_roles: {
-    type: string_array,
-    default_value: [],
-    description: "Specifies roles of the gimbals. (yaw / pitch)",
-    read_only: true,
-    validation: {
-      unique<>: null,
-      not_empty<>: null,
+  gimbal_roles:
+    {
+      type: string_array,
+      default_value: [],
+      description: "Specifies roles of the gimbals. (yaw / pitch)",
+      read_only: true,
+      validation: { unique<>: null, not_empty<>: null },
     }
-  }
-  imu_topic: {
-    type: string,
-    default_value: "/gimbal_imu",
-    description: "Specifies topic of the IMU.",
-  }
-  reference_timeout: {
-    type: double,
-    default_value: 0.1,
-    description: "Specifies timeout for the reference.",
-  }
+  imu_topics:
+    {
+      type: string_array,
+      default_value: ["/gimbal_imu"],
+      description: "Specifies topic of the IMU.",
+    }
+  reference_timeout:
+    {
+      type: double,
+      default_value: 0.1,
+      description: "Specifies timeout for the reference.",
+    }

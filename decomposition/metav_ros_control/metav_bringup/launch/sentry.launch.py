@@ -101,7 +101,7 @@ def generate_launch_description():
     # Order in this list is IMPORTANT
     load_controllers = [
         load_controller('wheels_pid_controller'),
-        load_controller('omni_wheel_controller'),
+        load_controller('omni_chassis_controller'),
         load_controller('gimbal_controller'),
     ]
 

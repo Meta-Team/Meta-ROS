@@ -131,6 +131,20 @@ def generate_launch_description():
         condition=IfCondition(enable_simulation)
     )
 
+    motor_tester_node = Node(
+        package='motor_tester',
+        executable='motor_tester',
+        name='motor_tester_node',
+        parameters=[robot_controllers],
+    )
+
+    dbus_control_node = Node(
+        package='dbus_control',
+        executable='dbus_control_node',
+        name='dbus_control_node',
+        parameters=[robot_controllers],
+    )
+
     return LaunchDescription([
         # Launch Arguments
         *ARGUMENTS,
@@ -148,4 +162,6 @@ def generate_launch_description():
         load_joint_state_broadcaster,
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
+        motor_tester_node,
+        dbus_control_node,
     ])
