@@ -69,7 +69,7 @@ private:
 
     static umap<int, umap<int, MiMotor*>> instances; // {port, {hid, instance}}
 
-    struct Frame
+    struct TxMsg
     {
         struct [[gnu::packed]] ExtId
         {
@@ -83,7 +83,7 @@ private:
         std::array<uint8_t, 8> data;
     };
 
-    Frame parsed_frame; // The frame to be sent.
+    TxMsg control_msg; // The control message to be sent.
 
     double position; // The current position of the motor.
     double velocity; // The current velocity of the motor.
@@ -120,10 +120,11 @@ private:
     static void destroy_port(int port);
 
     /**
-     * @brief Sends the parsed frame to the motor.
-     * @note This first converts the parsed frame to a can_frame and then sends it.
+     * @brief Sends a message to the motor.
+     * @param msg The message to be sent.
+     * @note This first converts the message to a CAN frame before sending it.
      */
-    void tx();
+    void tx(TxMsg msg);
 
     /**
      * @brief The transmission loop for sending data to the motor.
