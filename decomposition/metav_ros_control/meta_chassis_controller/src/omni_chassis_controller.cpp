@@ -143,9 +143,13 @@ OmniChassisController::state_interface_configuration() const {
 
     // Joint position state of yaw gimbal is required for GIMBAL or
     // CHASSIS_FOLLOW_GIMBAL control mode
-    state_interfaces_config.names.reserve(1);
-    state_interfaces_config.names.push_back(params_.yaw_gimbal_joint + "/" +
-                                            HW_IF_POSITION);
+    if (params_.control_mode == static_cast<int>(control_mode_type::GIMBAL) ||
+        params_.control_mode ==
+            static_cast<int>(control_mode_type::CHASSIS_FOLLOW_GIMBAL)) {
+        state_interfaces_config.names.reserve(1);
+        state_interfaces_config.names.push_back(params_.yaw_gimbal_joint + "/" +
+                                                HW_IF_POSITION);
+    }
 
     return state_interfaces_config;
 }
