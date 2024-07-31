@@ -1,5 +1,6 @@
 #include <exception>
 #include <iostream>
+#include <linux/can.h>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -28,7 +29,15 @@ DjiMotorNetwork::DjiMotorNetwork(std::string can_network_name) {
     rx_thread_ = std::thread(&DjiMotorNetwork::rx_loop, this);
 }
 
-DjiMotorNetwork::~DjiMotorNetwork() = default;
+DjiMotorNetwork::~DjiMotorNetwork() {
+    // Send zero effort to all motors
+    for (auto tx_can_id : {0x1FE, 0x1FF, 0x200, 0x2FE, 0x2FF}) {
+        can_frame tx_frame{.can_id = static_cast<canid_t>(tx_can_id),
+                           .can_dlc = 8,
+                           .data = {0}};
+        can_driver_->sendMessage(tx_frame);
+    }
+}
 
 void DjiMotorNetwork::add_motor(
     uint32_t joint_id,
@@ -111,11 +120,10 @@ void DjiMotorNetwork::write(uint32_t joint_id, double /*position*/,
 
 void DjiMotorNetwork::tx() {
     try {
-        // can_driver_->sendMessage(tx_frame_1fe);
-        can_driver_->sendMessage(tx_frame_1ff);
-        can_driver_->sendMessage(tx_frame_200);
-        // can_driver_->sendMessage(tx_frame_2fe);
-        can_driver_->sendMessage(tx_frame_2ff);
+        for (auto &tx_frame : {tx_frame_1fe, tx_frame_1ff, tx_frame_200,
+                               tx_frame_2fe, tx_frame_2ff}) {
+            can_driver_->sendMessage(tx_frame);
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(4));
     } catch (sockcanpp::exceptions::CanException &e) {
         std::cerr << "Error writing CAN message: " << e.what() << std::endl;
