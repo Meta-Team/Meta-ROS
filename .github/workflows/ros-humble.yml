@@ -15,6 +15,10 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
+    - name: Upgrade cmake
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '3.23.x'
     - name: Ignore scara_moveit
       run: touch decomposition/scara_moveit/AMENT_IGNORE
     - name: Install dependencies

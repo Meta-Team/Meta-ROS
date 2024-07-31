@@ -1,0 +1,48 @@
+omni_chassis_controller:
+  omni_wheel_joints:
+    {
+      type: string_array,
+      default_value: [],
+      description: "Specifies joints of the omni wheels.",
+      read_only: true,
+      validation: { unique<>: null, not_empty<>: null },
+    }
+  omni_wheel_angles:
+    {
+      type: double_array,
+      default_value: [],
+      description: "Specifies angles of the omni wheels (in degrees).",
+      read_only: true,
+      validation: { unique<>: null, not_empty<>: null },
+    }
+  omni_wheel_distance:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Specifies distance between an omni wheel and the robot center.",
+    }
+  omni_wheel_radius:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Specifies radius of the omni wheels.",
+    }
+  control_mode:
+    {
+      type: int,
+      default_value: 0,
+      description: "Specifies control mode of the omni wheel controller. 0: CHASSIS, 1: GIMBAL, 2: CHASSIS_FOLLOW_GIMBAL.",
+    }
+  yaw_gimbal_joint:
+    {
+      type: string,
+      default_value: "",
+      description: "Specifies the joint of the yaw gimbal.",
+      validation: { not_empty<>: null },
+    }
+  reference_timeout:
+    {
+      type: double,
+      default_value: 0.1,
+      description: "Specifies timeout for the reference.",
+    }

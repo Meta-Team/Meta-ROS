@@ -1,9 +1,9 @@
 controller_manager:
   ros__parameters:
-    update_rate: 200  # Hz
+    update_rate: 200 # Hz
 
-    omni_wheel_controller:
-      type: omni_wheel_controller/OmniWheelController
+    omni_chassis_controller:
+      type: meta_chassis_controller/OmniChassisController
 
     wheels_pid_controller:
       type: pid_controller/PidController
@@ -14,7 +14,7 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-omni_wheel_controller:
+omni_chassis_controller:
   ros__parameters:
     omni_wheel_joints:
       - wheels_pid_controller/front_wheel_joint
@@ -27,6 +27,12 @@ omni_wheel_controller:
     omni_wheel_distance: 0.196
 
     omni_wheel_radius: 0.05
+
+    control_mode: 2
+
+    yaw_gimbal_joint: yaw_gimbal_joint
+
+    follow_pid_gains: { p: 2.0, i: 0.0, d: 0.0 }
 
 wheels_pid_controller:
   ros__parameters:
@@ -41,10 +47,10 @@ wheels_pid_controller:
     reference_and_state_interfaces: ["velocity"]
 
     gains:
-      front_wheel_joint: {p: 1.0, i: 0.0, d: 0.0}
-      left_wheel_joint: {p: 1.0, i: 0.0, d: 0.0}
-      back_wheel_joint: {p: 1.0, i: 0.0, d: 0.0}
-      right_wheel_joint: {p: 1.0, i: 0.0, d: 0.0}
+      front_wheel_joint: { p: 1.0, i: 0.0, d: 0.0 }
+      left_wheel_joint: { p: 1.0, i: 0.0, d: 0.0 }
+      back_wheel_joint: { p: 1.0, i: 0.0, d: 0.0 }
+      right_wheel_joint: { p: 1.0, i: 0.0, d: 0.0 }
 
 gimbal_controller:
   ros__parameters:
@@ -59,7 +65,7 @@ gimbal_controller:
     imu_topic: /gimbal_imu
 
     gains:
-      yaw_gimbal_joint_pos2vel: {p: 13.0, i: 0.0, d: 0.4}
-      pitch_gimbal_joint_pos2vel: {p: 10.0, i: 0.0, d: 0.5}
-      yaw_gimbal_joint_vel2eff: {p: 0.26, i: 0.2, d: 0.00003}
-      pitch_gimbal_joint_vel2eff: {p: 0.26, i: 0.1, d: 0.0001}
+      yaw_gimbal_joint_pos2vel: { p: 13.0, i: 0.0, d: 0.4 }
+      pitch_gimbal_joint_pos2vel: { p: 10.0, i: 0.0, d: 0.5 }
+      yaw_gimbal_joint_vel2eff: { p: 0.26, i: 0.2, d: 0.00003 }
+      pitch_gimbal_joint_vel2eff: { p: 0.26, i: 0.1, d: 0.0001 }

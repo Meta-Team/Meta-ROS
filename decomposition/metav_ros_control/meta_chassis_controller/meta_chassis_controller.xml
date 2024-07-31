@@ -18,11 +18,12 @@ Source of this file are templates in
 [RosTeamWorkspace](https://github.com/StoglRobotics/ros_team_workspace) repository.
 -->
 
-<library path="omni_wheel_controller">
-  <class name="omni_wheel_controller/OmniWheelController"
-         type="omni_wheel_controller::OmniWheelController" base_class_type="controller_interface::ChainableControllerInterface">
-  <description>
-    OmniWheelController ros2_control controller.
-  </description>
+<library path="meta_chassis_controller">
+  <class name="meta_chassis_controller/OmniChassisController"
+    type="meta_chassis_controller::OmniChassisController"
+    base_class_type="controller_interface::ChainableControllerInterface">
+    <description>
+      OmniChassisController ros2_control controller.
+    </description>
   </class>
 </library>
