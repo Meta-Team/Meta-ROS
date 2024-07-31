@@ -15,8 +15,7 @@ namespace metav_hardware {
 
 class MiMotorNetwork : public CanMotorNetwork {
   public:
-    explicit MiMotorNetwork(const std::string &can_network_name,
-                            uint32_t host_id);
+    MiMotorNetwork(const std::string &can_network_name, uint32_t host_id);
     ~MiMotorNetwork() override;
 
     /**

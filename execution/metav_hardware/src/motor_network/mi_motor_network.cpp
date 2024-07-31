@@ -34,17 +34,6 @@ MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id)
 
     // Start RX thread
     rx_thread_ = std::thread(&MiMotorNetwork::rx_loop, this);
-
-    // Enable all motors
-    try {
-        for (const auto &[joint_id, motor] : joint_id2motor_) {
-            can_driver_->sendMessage(
-                motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
-        }
-    } catch (CanException &e) {
-        std::cerr << "Error writing MI motor enable CAN message: " << e.what()
-                  << std::endl;
-    }
 }
 
 MiMotorNetwork::~MiMotorNetwork() {
@@ -72,6 +61,15 @@ void MiMotorNetwork::add_motor(
     auto mi_motor = std::make_shared<MiMotor>(motor_model, mi_motor_id, Kp, Kd);
     motor_id2motor_[mi_motor_id] = mi_motor;
     joint_id2motor_[joint_id] = mi_motor;
+
+    // Enable this motor
+    try {
+        can_driver_->sendMessage(
+            mi_motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
+    } catch (CanException &e) {
+        std::cerr << "Error writing MI motor enable CAN message: " << e.what()
+                  << std::endl;
+    }
 }
 
 std::tuple<double, double, double>
@@ -94,11 +92,13 @@ void MiMotorNetwork::write(uint32_t joint_id, double position, double velocity,
 [[noreturn]] void MiMotorNetwork::rx_loop() {
     while (true) {
         try {
-            can_driver_->waitForMessages(std::chrono::milliseconds(200));
+            can_driver_->waitForMessages(std::chrono::milliseconds(
+                100)); // MI motors don't send periodic feedbacks, they send
+                       // feedbacks only when commanded
             CanMessage can_msg = can_driver_->readMessage();
 
             // MI motor frames are all extended frames
-            if (!can_msg.getCanId().isExtendedFrameId()) {
+            if (can_msg.getCanId().isExtendedFrameId()) {
                 process_mi_frame(can_msg);
             }
         } catch (CanException &e) {

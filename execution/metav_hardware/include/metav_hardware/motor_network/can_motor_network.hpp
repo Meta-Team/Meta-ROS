@@ -22,9 +22,9 @@ class CanMotorNetwork {
      * @param joint_id The joint ID of the motor
      * @param motor_params The parameters of the motor
      */
-    virtual void
-    add_motor(uint32_t joint_id,
-              const std::unordered_map<std::string, std::string> &motor_params);
+    virtual void add_motor(
+        uint32_t joint_id,
+        const std::unordered_map<std::string, std::string> &motor_params) = 0;
 
     /**
      * @brief Read the motor feedback

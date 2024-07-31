@@ -28,9 +28,7 @@ DjiMotorNetwork::DjiMotorNetwork(std::string can_network_name) {
     rx_thread_ = std::thread(&DjiMotorNetwork::rx_loop, this);
 }
 
-DjiMotorNetwork::~DjiMotorNetwork() {
-    // TODO: Join RX thread
-}
+DjiMotorNetwork::~DjiMotorNetwork() = default;
 
 void DjiMotorNetwork::add_motor(
     uint32_t joint_id,

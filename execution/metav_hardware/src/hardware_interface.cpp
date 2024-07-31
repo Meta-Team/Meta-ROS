@@ -46,6 +46,42 @@ hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_configure(
             info_.joints[i].parameters.at("can_network_name");
     }
 
+    // Initialize the motor networks with joint information
+    for (const auto &joint : info_.joints) {
+        std::string motor_vendor = joint.parameters.at("motor_vendor");
+        std::string can_network_name = joint.parameters.at("can_network_name");
+        // Allocate the motor network if it doesn't exist
+        if (can_motor_networks_[motor_vendor].find(can_network_name) ==
+            can_motor_networks_[motor_vendor].end()) {
+            if (motor_vendor == "DJI") {
+                can_motor_networks_[motor_vendor][can_network_name] =
+                    std::make_shared<DjiMotorNetwork>(can_network_name);
+            } else if (motor_vendor == "MI") {
+                can_motor_networks_[motor_vendor][can_network_name] =
+                    std::make_shared<MiMotorNetwork>(can_network_name, 0x00);
+            } else {
+                RCLCPP_ERROR(rclcpp::get_logger("MetavRobotHardwareInterface"),
+                             "Unknown motor vendor: %s", motor_vendor.c_str());
+                return CallbackReturn::ERROR;
+            }
+        }
+    }
+
+    // Add the motors to the motor networks
+    for (size_t i = 0; i < info_.joints.size(); ++i) {
+        const auto &joint = info_.joints[i];
+        const auto &joint_params = joint.parameters;
+        std::string motor_vendor = joint_params.at("motor_vendor");
+        std::string can_network_name = joint_params.at("can_network_name");
+
+        can_motor_networks_[joint_motors_[i].motor_vendor]
+                           [joint_motors_[i].can_network_name]
+                               ->add_motor(i, joint_params);
+
+        joint_motors_[i].can_motor_network =
+            can_motor_networks_[motor_vendor][can_network_name];
+    }
+
     return CallbackReturn::SUCCESS;
 }
 
@@ -125,42 +161,6 @@ MetavRobotHardwareInterface::export_command_interfaces() {
 
 hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_activate(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-
-    // Initialize the motor networks with joint information
-    for (const auto &joint : info_.joints) {
-        std::string motor_vendor = joint.parameters.at("motor_vendor");
-        std::string can_network_name = joint.parameters.at("can_network_name");
-        // Allocate the motor network if it doesn't exist
-        if (can_motor_networks_[motor_vendor].find(can_network_name) ==
-            can_motor_networks_[motor_vendor].end()) {
-            if (motor_vendor == "DJI") {
-                can_motor_networks_[motor_vendor][can_network_name] =
-                    std::make_shared<DjiMotorNetwork>(can_network_name);
-            } else if (motor_vendor == "MI") {
-                can_motor_networks_[motor_vendor][can_network_name] =
-                    std::make_shared<MiMotorNetwork>(can_network_name, 0x00);
-            } else {
-                RCLCPP_ERROR(rclcpp::get_logger("MetavRobotHardwareInterface"),
-                             "Unknown motor vendor: %s", motor_vendor.c_str());
-                return CallbackReturn::ERROR;
-            }
-        }
-    }
-
-    // Add the motors to the motor networks
-    for (size_t i = 0; i < info_.joints.size(); ++i) {
-        const auto &joint = info_.joints[i];
-        const auto &joint_params = joint.parameters;
-        std::string motor_vendor = joint_params.at("motor_vendor");
-        std::string can_network_name = joint_params.at("can_network_name");
-
-        can_motor_networks_[joint_motors_[i].motor_vendor]
-                           [joint_motors_[i].can_network_name]
-                               ->add_motor(i, joint_params);
-
-        joint_motors_[i].can_motor_network =
-            can_motor_networks_[motor_vendor][can_network_name];
-    }
 
     return CallbackReturn::SUCCESS;
 }

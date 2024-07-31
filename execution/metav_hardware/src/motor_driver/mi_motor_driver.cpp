@@ -108,11 +108,9 @@ void MiMotor::set_motor_feedback(const CanMessage &can_msg) {
         (static_cast<uint16_t>(can_msg.getRawFrame().data[4]) << 8) |
         static_cast<uint16_t>(can_msg.getRawFrame().data[5]));
 
-    double position =
+    position_ =
         (position_raw / double(MAX_RAW_POSITION)) * (2 * MAX_ABS_POSITION) -
         MAX_ABS_POSITION;
-    position_ += angles::shortest_angular_distance(
-        position_, position); // Accumulate angles
 
     velocity_ =
         (velocity_raw / double(MAX_RAW_VELOCITY)) * (2 * MAX_ABS_VELOCITY) -
