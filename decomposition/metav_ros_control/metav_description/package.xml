@@ -12,7 +12,7 @@
   <exec_depend>joint_state_publisher_gui</exec_depend>
   <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
-  <exec_depend>omni_wheel_controller</exec_depend>
+  <exec_depend>meta_chassis_controller</exec_depend>
   <exec_depend>imu_sensor_broadcaster</exec_depend>
   <!-- <exec_depend>pid_controller</exec_depend> -->
   <exec_depend>gimbal_controller</exec_depend>
