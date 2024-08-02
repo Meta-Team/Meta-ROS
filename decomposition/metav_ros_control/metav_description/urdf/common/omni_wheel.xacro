@@ -153,14 +153,14 @@
     </xacro:macro>
 
     <xacro:macro name="wheel_transmission" params="prefix mechanical_reduction can_network motor_id">
-        <transmission name="${prefix}_wheel_trans">
+        <!-- <transmission name="${prefix}_wheel_trans">
             <plugin>transmission_interface/SimpleTransmission</plugin>
             <actuator name="${prefix}_wheel_motor" role="${prefix}_wheel_motor" />
             <joint name="${prefix}_wheel_joint" role="${prefix}_wheel_joint">
                 <mechanical_reduction>${mechanical_reduction}</mechanical_reduction>
                 <offset>0.0</offset>
             </joint>
-        </transmission>
+        </transmission> -->
         <joint name="${prefix}_wheel_joint">
             <command_interface name="effort">
             </command_interface>
@@ -171,6 +171,7 @@
             <param name="motor_model">M3508</param>
             <param name="can_network_name">${can_network}</param>
             <param name="motor_id">${motor_id}</param>
+            <param name="mechanical_reduction">${mechanical_reduction}</param>
         </joint>
     </xacro:macro>
 </robot>

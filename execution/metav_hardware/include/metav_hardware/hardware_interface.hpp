@@ -68,6 +68,7 @@ class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
         std::string motor_vendor;
         std::string can_network_name;
         std::shared_ptr<CanMotorNetwork> can_motor_network;
+        double mechanical_reduction;
         bool command_pos;
         bool command_vel;
         bool command_eff;

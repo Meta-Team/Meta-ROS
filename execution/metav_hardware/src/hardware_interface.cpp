@@ -41,6 +41,8 @@ hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_configure(
             info_.joints[i].parameters.at("motor_vendor");
         joint_motors_info_[i].can_network_name =
             info_.joints[i].parameters.at("can_network_name");
+        joint_motors_info_[i].mechanical_reduction =
+            std::stod(info_.joints[i].parameters.at("mechanical_reduction"));
     }
 
     // Initialize the motor networks with joint information
@@ -191,6 +193,11 @@ MetavRobotHardwareInterface::read(const rclcpp::Time & /*time*/,
     for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
         auto [position, velocity, effort] =
             joint_motors_info_[i].can_motor_network->read(i);
+
+        position /= joint_motors_info_[i].mechanical_reduction;
+        velocity /= joint_motors_info_[i].mechanical_reduction;
+        effort *= joint_motors_info_[i].mechanical_reduction;
+
         joint_interface_data_[i].state_position = position;
         joint_interface_data_[i].state_velocity = velocity;
         joint_interface_data_[i].state_effort = effort;
@@ -207,6 +214,10 @@ MetavRobotHardwareInterface::write(const rclcpp::Time & /*time*/,
         double position = joint_interface_data_[i].command_position;
         double velocity = joint_interface_data_[i].command_velocity;
         double effort = joint_interface_data_[i].command_effort;
+
+        position *= joint_motors_info_[i].mechanical_reduction;
+        velocity *= joint_motors_info_[i].mechanical_reduction;
+        effort /= joint_motors_info_[i].mechanical_reduction;
 
         // Check if the command is valid
         // If a command interface exists, the command must not be NaN

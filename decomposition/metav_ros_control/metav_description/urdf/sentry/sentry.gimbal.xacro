@@ -87,20 +87,25 @@
     </xacro:macro>
 
     <xacro:macro name="gimbal_transmission" params="prefix mechanical_reduction">
-        <transmission name="${prefix}_gimbal_trans">
+        <!-- <transmission name="${prefix}_gimbal_trans">
             <plugin>transmission_interface/SimpleTransmission</plugin>
             <actuator name="${prefix}_gimbal_motor" role="${prefix}_gimbal_motor"/>
             <joint name="${prefix}_gimbal_joint" role="${prefix}_gimbal_joint">
                 <mechanical_reduction>${mechanical_reduction}</mechanical_reduction>
                 <offset>0.0</offset>
             </joint>
-        </transmission>
+        </transmission> -->
         <joint name="${prefix}_gimbal_joint">
             <command_interface name="effort">
             </command_interface>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
+            <param name="motor_vendor">DJI</param>
+            <param name="motor_model">GM6020</param>
+            <param name="can_network_name">${can_network}</param>
+            <param name="motor_id">${motor_id}</param>
+            <param name="mechanical_reduction" value="${mechanical_reduction}"/>
         </joint>
     </xacro:macro>
 

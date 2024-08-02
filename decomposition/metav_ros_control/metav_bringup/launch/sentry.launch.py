@@ -131,6 +131,31 @@ def generate_launch_description():
         condition=IfCondition(enable_simulation)
     )
 
+    dbus_control_node = Node(
+        package='dbus_control',
+        executable='dbus_control_node',
+        name='dbus_control_node',
+        parameters=[robot_controllers],
+        output='both',
+        emulate_tty=True,
+    )
+
+    # auto_sentry_node = Node(
+    #     package='auto_sentry',
+    #     executable='auto_sentry',
+    #     name='auto_sentry_node',
+    #     parameters=[robot_controllers],
+    # )
+
+    dbus_vehicle_node = Node(
+        package='dbus_vehicle',
+        executable='dbus_vehicle',
+        name='dbus_vehicle',
+        parameters=[robot_controllers],
+        output='both',
+        emulate_tty=True,
+    )
+
     return LaunchDescription([
         # Launch Arguments
         *ARGUMENTS,
@@ -148,4 +173,7 @@ def generate_launch_description():
         load_joint_state_broadcaster,
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
+        dbus_control_node,
+        # auto_sentry_node,
+        dbus_vehicle_node,
     ])
