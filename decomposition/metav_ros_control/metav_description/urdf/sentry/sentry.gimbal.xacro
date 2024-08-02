@@ -86,7 +86,7 @@
 
     </xacro:macro>
 
-    <xacro:macro name="gimbal_transmission" params="prefix mechanical_reduction">
+    <xacro:macro name="gimbal_transmission" params="prefix mechanical_reduction can_network motor_id">
         <!-- <transmission name="${prefix}_gimbal_trans">
             <plugin>transmission_interface/SimpleTransmission</plugin>
             <actuator name="${prefix}_gimbal_motor" role="${prefix}_gimbal_motor"/>
@@ -105,7 +105,7 @@
             <param name="motor_model">GM6020</param>
             <param name="can_network_name">${can_network}</param>
             <param name="motor_id">${motor_id}</param>
-            <param name="mechanical_reduction" value="${mechanical_reduction}"/>
+            <param name="mechanical_reduction">${mechanical_reduction}</param>
         </joint>
     </xacro:macro>
 

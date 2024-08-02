@@ -277,7 +277,7 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
         current_feedback->orientation.z, current_feedback->orientation.w);
     tf2::Matrix3x3(q).getRPY(fb_roll, fb_pitch, fb_yaw);
 
-    double fb_yaw_vel = current_feedback->angular_velocity.z;
+    double fb_yaw_vel = -current_feedback->angular_velocity.z;
     double fb_pitch_vel = current_feedback->angular_velocity.y;
 
     // Update commands

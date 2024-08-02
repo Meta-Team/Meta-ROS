@@ -40,6 +40,12 @@ omni_chassis_controller:
       description: "Specifies the joint of the yaw gimbal.",
       validation: { not_empty<>: null },
     }
+  yaw_gimbal_joint_offset:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Specifies the target angle for the follow mode.",
+    }
   reference_timeout:
     {
       type: double,

@@ -156,6 +156,13 @@ def generate_launch_description():
         emulate_tty=True,
     )
 
+    ahrs_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('fdilink_ahrs'),
+                        'launch/ahrs_driver.launch.py')
+        )
+    )
+
     return LaunchDescription([
         # Launch Arguments
         *ARGUMENTS,
@@ -176,4 +183,5 @@ def generate_launch_description():
         dbus_control_node,
         # auto_sentry_node,
         dbus_vehicle_node,
+        ahrs_launch,
     ])
