@@ -26,11 +26,8 @@ hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_init(
         return CallbackReturn::ERROR;
     }
 
-    hw_states_.resize(info_.joints.size() * 3,
-                      std::numeric_limits<double>::quiet_NaN());
-    hw_commands_.resize(info_.joints.size() * 3,
-                        std::numeric_limits<double>::quiet_NaN());
-    joint_motors_.resize(info_.joints.size());
+    joint_interface_data_.resize(info_.joints.size());
+    joint_motors_info_.resize(info_.joints.size());
 
     return CallbackReturn::SUCCESS;
 }
@@ -39,10 +36,10 @@ hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_configure(
     const rclcpp_lifecycle::State & /*previous_state*/) {
 
     for (size_t i = 0; i < info_.joints.size(); ++i) {
-        joint_motors_[i].name = info_.joints[i].name;
-        joint_motors_[i].motor_vendor =
+        joint_motors_info_[i].name = info_.joints[i].name;
+        joint_motors_info_[i].motor_vendor =
             info_.joints[i].parameters.at("motor_vendor");
-        joint_motors_[i].can_network_name =
+        joint_motors_info_[i].can_network_name =
             info_.joints[i].parameters.at("can_network_name");
     }
 
@@ -74,11 +71,11 @@ hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_configure(
         std::string motor_vendor = joint_params.at("motor_vendor");
         std::string can_network_name = joint_params.at("can_network_name");
 
-        can_motor_networks_[joint_motors_[i].motor_vendor]
-                           [joint_motors_[i].can_network_name]
+        can_motor_networks_[joint_motors_info_[i].motor_vendor]
+                           [joint_motors_info_[i].can_network_name]
                                ->add_motor(i, joint_params);
 
-        joint_motors_[i].can_motor_network =
+        joint_motors_info_[i].can_motor_network =
             can_motor_networks_[motor_vendor][can_network_name];
     }
 
@@ -104,16 +101,19 @@ MetavRobotHardwareInterface::export_state_interfaces() {
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         const auto &joint_state_interfaces = info_.joints[i].state_interfaces;
         if (contains_interface(joint_state_interfaces, "position")) {
-            state_interfaces.emplace_back(info_.joints[i].name, HW_IF_POSITION,
-                                          &hw_states_[i * 3 + 0]);
+            state_interfaces.emplace_back(
+                info_.joints[i].name, HW_IF_POSITION,
+                &joint_interface_data_[i].state_position);
         }
         if (contains_interface(joint_state_interfaces, "velocity")) {
-            state_interfaces.emplace_back(info_.joints[i].name, HW_IF_VELOCITY,
-                                          &hw_states_[i * 3 + 1]);
+            state_interfaces.emplace_back(
+                info_.joints[i].name, HW_IF_VELOCITY,
+                &joint_interface_data_[i].state_velocity);
         }
         if (contains_interface(joint_state_interfaces, "effort")) {
-            state_interfaces.emplace_back(info_.joints[i].name, HW_IF_EFFORT,
-                                          &hw_states_[i * 3 + 2]);
+            state_interfaces.emplace_back(
+                info_.joints[i].name, HW_IF_EFFORT,
+                &joint_interface_data_[i].state_effort);
         }
     }
 
@@ -141,18 +141,21 @@ MetavRobotHardwareInterface::export_command_interfaces() {
             info_.joints[i].command_interfaces;
         if (contains_interface(joint_command_interfaces, "position")) {
             command_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_POSITION, &hw_commands_[i * 3 + 0]);
-            joint_motors_[i].command_pos = true;
+                info_.joints[i].name, HW_IF_POSITION,
+                &joint_interface_data_[i].command_position);
+            joint_motors_info_[i].command_pos = true;
         }
         if (contains_interface(joint_command_interfaces, "velocity")) {
             command_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_VELOCITY, &hw_commands_[i * 3 + 1]);
-            joint_motors_[i].command_vel = true;
+                info_.joints[i].name, HW_IF_VELOCITY,
+                &joint_interface_data_[i].command_velocity);
+            joint_motors_info_[i].command_vel = true;
         }
         if (contains_interface(joint_command_interfaces, "effort")) {
-            command_interfaces.emplace_back(info_.joints[i].name, HW_IF_EFFORT,
-                                            &hw_commands_[i * 3 + 2]);
-            joint_motors_[i].command_eff = true;
+            command_interfaces.emplace_back(
+                info_.joints[i].name, HW_IF_EFFORT,
+                &joint_interface_data_[i].command_effort);
+            joint_motors_info_[i].command_eff = true;
         }
     }
 
@@ -174,7 +177,7 @@ hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_deactivate(
         can_motor_networks.clear();
     }
 
-    for (auto &joint_motor : joint_motors_) {
+    for (auto &joint_motor : joint_motors_info_) {
         joint_motor.can_motor_network = nullptr;
     }
 
@@ -185,12 +188,12 @@ hardware_interface::return_type
 MetavRobotHardwareInterface::read(const rclcpp::Time & /*time*/,
                                   const rclcpp::Duration & /*period*/) {
 
-    for (size_t i = 0; i < joint_motors_.size(); ++i) {
+    for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
         auto [position, velocity, effort] =
-            joint_motors_[i].can_motor_network->read(i);
-        hw_states_[i * 3 + 0] = position;
-        hw_states_[i * 3 + 1] = velocity;
-        hw_states_[i * 3 + 2] = effort;
+            joint_motors_info_[i].can_motor_network->read(i);
+        joint_interface_data_[i].state_position = position;
+        joint_interface_data_[i].state_velocity = velocity;
+        joint_interface_data_[i].state_effort = effort;
     }
 
     return hardware_interface::return_type::OK;
@@ -200,26 +203,26 @@ hardware_interface::return_type
 MetavRobotHardwareInterface::write(const rclcpp::Time & /*time*/,
                                    const rclcpp::Duration & /*period*/) {
 
-    for (size_t i = 0; i < joint_motors_.size(); ++i) {
-        double position = hw_commands_[i * 3 + 0];
-        double velocity = hw_commands_[i * 3 + 1];
-        double effort = hw_commands_[i * 3 + 2];
+    for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
+        double position = joint_interface_data_[i].command_position;
+        double velocity = joint_interface_data_[i].command_velocity;
+        double effort = joint_interface_data_[i].command_effort;
 
         // Check if the command is valid
         // If a command interface exists, the command must not be NaN
-        if (joint_motors_[i].command_pos && std::isnan(position)) {
+        if (joint_motors_info_[i].command_pos && std::isnan(position)) {
             continue;
         }
-        if (joint_motors_[i].command_vel && std::isnan(velocity)) {
+        if (joint_motors_info_[i].command_vel && std::isnan(velocity)) {
             continue;
         }
-        if (joint_motors_[i].command_eff && std::isnan(effort)) {
+        if (joint_motors_info_[i].command_eff && std::isnan(effort)) {
             continue;
         }
 
         // Write the command to the motor network
-        joint_motors_[i].can_motor_network->write(i, position, velocity,
-                                                  effort);
+        joint_motors_info_[i].can_motor_network->write(i, position, velocity,
+                                                       effort);
     }
 
     // Some motor network implementations require a separate tx() call

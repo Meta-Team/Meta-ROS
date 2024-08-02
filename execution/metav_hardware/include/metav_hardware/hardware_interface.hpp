@@ -51,10 +51,18 @@ class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
     write(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
   private:
-    std::vector<double> hw_commands_;
-    std::vector<double> hw_states_;
+    class JointInterfaceData {
+      public:
+        double command_position;
+        double command_velocity;
+        double command_effort;
+        double state_position;
+        double state_velocity;
+        double state_effort;
+    };
+    std::vector<JointInterfaceData> joint_interface_data_;
 
-    class JointMotor {
+    class JointMotorInfo {
       public:
         std::string name;
         std::string motor_vendor;
@@ -64,7 +72,8 @@ class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
         bool command_vel;
         bool command_eff;
     };
-    std::vector<JointMotor> joint_motors_; // local cache of joint motor info
+    std::vector<JointMotorInfo>
+        joint_motors_info_; // local cache of joint motor info
 
     // store all the CAN motor networks in std::map
     // [motor_vendor, can_network_name] -> can_motor_network
