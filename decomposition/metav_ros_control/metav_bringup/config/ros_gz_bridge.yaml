@@ -4,7 +4,7 @@
   ros_type_name: "rosgraph_msgs/msg/Clock"
   gz_type_name: "gz.msgs.Clock"
   direction: GZ_TO_ROS
-- ros_topic_name: "/gimbal_imu"
+- ros_topic_name: "/imu"
   gz_topic_name: "/world/empty_world/model/sentry/link/gimbal_imu/sensor/gimbal_imu/imu"
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "gz.msgs.IMU"

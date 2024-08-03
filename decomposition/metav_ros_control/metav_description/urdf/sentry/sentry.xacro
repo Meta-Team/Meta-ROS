@@ -20,8 +20,8 @@
     <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.gimbal.xacro" />
     <xacro:gimbal />
 
-    <!-- <xacro:include filename="$(find metav_description)/urdf/common/sensor_imu.xacro" /> -->
-    <!-- <xacro:sensor_imu connected_to="pitch_gimbal" imu_name="gimbal_imu" xyz="0 0 0.1" /> -->
+    <xacro:include filename="$(find metav_description)/urdf/common/sensor_imu.xacro" />
+    <xacro:sensor_imu connected_to="pitch_gimbal" imu_name="gimbal_imu" xyz="0 0 0.1" rpy="3.14159 0 0" />
 
     <ros2_control name="sentry_control" type="system">
         <xacro:if value="$(arg is_simulation)">

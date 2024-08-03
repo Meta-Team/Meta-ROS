@@ -33,7 +33,7 @@ from launch_utils import load_controller, register_loading_order, register_seque
 ARGUMENTS = [
     DeclareLaunchArgument(
         'enable_simulation',
-        default_value='true',
+        default_value='false',
         description='If true, the simulation will be started'),
 ]
 
@@ -160,7 +160,8 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('fdilink_ahrs'),
                         'launch/ahrs_driver.launch.py')
-        )
+        ),
+        condition=UnlessCondition(enable_simulation)
     )
 
     return LaunchDescription([
