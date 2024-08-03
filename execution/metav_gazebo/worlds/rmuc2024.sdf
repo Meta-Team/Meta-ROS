@@ -54,5 +54,5 @@
                 </visual>
             </link>
         </model>
-
+    </world>
 </sdf>
