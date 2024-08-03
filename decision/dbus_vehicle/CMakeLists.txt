@@ -7,12 +7,12 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(operation_interface REQUIRED)
-find_package(behavior_interface REQUIRED)
+ament_auto_find_build_dependencies()
 
 include_directories(include)
 
@@ -22,7 +22,9 @@ add_executable(dbus_vehicle
 ament_target_dependencies(dbus_vehicle
   rclcpp
   operation_interface
-  behavior_interface)
+  behavior_interface
+  geometry_msgs
+)
 
 install(TARGETS
   dbus_vehicle

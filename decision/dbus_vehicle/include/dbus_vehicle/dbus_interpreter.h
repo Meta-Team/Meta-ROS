@@ -9,6 +9,7 @@
 #include "behavior_interface/msg/move.hpp"
 #include "behavior_interface/msg/shoot.hpp"
 #include "behavior_interface/msg/aim.hpp"
+#include "geometry_msgs/msg/twist.hpp"
 
 #define PERIOD 10 // ms
 
@@ -27,6 +28,7 @@ public:
     void input(const DbusControl::SharedPtr msg);
 
     Move::SharedPtr get_move() const;
+    geometry_msgs::msg::Twist get_move_ros2_control() const;
 
     Shoot::SharedPtr get_shoot() const;
 

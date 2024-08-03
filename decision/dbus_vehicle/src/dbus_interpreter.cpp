@@ -84,6 +84,15 @@ Move::SharedPtr DbusInterpreter::get_move() const
     return move_;
 }
 
+geometry_msgs::msg::Twist DbusInterpreter::get_move_ros2_control() const
+{
+    geometry_msgs::msg::Twist move_msg_ros2_control;
+    move_msg_ros2_control.linear.x = move_->vel_x;
+    move_msg_ros2_control.linear.y = move_->vel_y;
+    move_msg_ros2_control.angular.z = move_->omega;
+    return move_msg_ros2_control;
+}
+
 Shoot::SharedPtr DbusInterpreter::get_shoot() const
 {
     return shoot_;
