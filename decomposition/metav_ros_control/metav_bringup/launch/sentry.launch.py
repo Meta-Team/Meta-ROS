@@ -89,7 +89,11 @@ def generate_launch_description():
         package='ros_gz_sim',
         executable='create',
         arguments=['-topic', '/robot_description',
-                   '-name', 'sentry', '-allow_renaming', 'true'],
+                   '-name', 'sentry', '-allow_renaming', 'true',
+                   '-x', '6.35',
+                    '-y', '7.6',
+                    '-z', '0.2',
+                    '-Y', '0.0'],
         output='both',
         emulate_tty=True,
         condition=IfCondition(enable_simulation)
@@ -112,7 +116,7 @@ def generate_launch_description():
                                     'launch',
                                     'gz_sim.launch.py'])]),
         launch_arguments=[
-            ('gz_args', [PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'worlds', 'empty_world.sdf']),
+            ('gz_args', [PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'worlds', 'rmuc2024.sdf']),
                         ' -r',
                         ' -v 3',])
         ],
