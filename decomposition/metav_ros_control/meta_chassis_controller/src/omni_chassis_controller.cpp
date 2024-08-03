@@ -258,7 +258,8 @@ OmniChassisController::update_and_write_commands(
             reference_interfaces_[2];
         if (params_.control_mode ==
             static_cast<int>(control_mode_type::CHASSIS_FOLLOW_GIMBAL)) {
-            double error = state_interfaces_[0].get_value() - params_.yaw_gimbal_joint_offset;
+            double current_motor_pos = state_interfaces_[0].get_value() - params_.yaw_gimbal_joint_offset;
+            double error = current_motor_pos - params_.follow_pid_target;
             twist[2] = follow_pid_->computeCommand(error, period);
             if (state_publisher_ && state_publisher_->trylock()) {
                 state_publisher_->msg_.header.stamp = time;

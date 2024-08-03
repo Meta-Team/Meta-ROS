@@ -44,7 +44,13 @@ omni_chassis_controller:
     {
       type: double,
       default_value: 0.0,
-      description: "Specifies the target angle for the follow mode.",
+      description: "Specifies the zero point offset of the yaw gimbal motor. This should be measured from tests.",
+    }
+  follow_pid_target:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Specifies target of the follow PID controller. Setting 0.0 meaning the car is always moving towards the front. Usually 0.7853981634(45 degree) gives the maximum speed.",
     }
   reference_timeout:
     {

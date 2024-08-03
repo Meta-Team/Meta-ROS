@@ -42,6 +42,8 @@ omni_chassis_controller:
         antiwindup: true,
       }
 
+    follow_pid_target: 0.7853981634
+
     reference_timeout: 0.2
 
 wheels_pid_controller:
