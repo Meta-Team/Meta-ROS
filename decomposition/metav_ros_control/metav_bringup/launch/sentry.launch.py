@@ -67,8 +67,10 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[
-            {'use_sim_time': enable_simulation},
-            {'robot_description': robot_description_content},],
+            {'use_sim_time': enable_simulation,
+            'robot_description': robot_description_content,
+            'publish_frequency': 100.0}
+        ],
         output='both',
         emulate_tty=True
     )

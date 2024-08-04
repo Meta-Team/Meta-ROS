@@ -23,6 +23,9 @@
     <xacro:include filename="$(find metav_description)/urdf/common/sensor_imu.xacro" />
     <xacro:sensor_imu connected_to="pitch_gimbal" imu_name="gimbal_imu" xyz="0 0 0.1" rpy="3.14159 0 0" />
 
+    <xacro:include filename="$(find metav_description)/urdf/common/sensor_mid360.xacro" />
+    <xacro:sensor_mid360 connected_to="yaw_gimbal" name="livox_frame" xyz="0.1687 0 0.11" rpy="0 0.2269 0" />
+
     <ros2_control name="sentry_control" type="system">
         <xacro:if value="$(arg is_simulation)">
             <hardware>
