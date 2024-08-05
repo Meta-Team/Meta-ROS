@@ -93,20 +93,20 @@ wheels_pid_controller:
 
 gimbal_controller:
   ros__parameters:
-    gimbal_joints:
-      - yaw_gimbal_joint
-      - pitch_gimbal_joint
+    yaw_gimbal_joint:
+      enable: true
+      name: yaw_gimbal_joint
 
-    gimbal_roles:
-      - yaw
-      - pitch
+    pitch_gimbal_joint:
+      enable: true
+      name: pitch_gimbal_joint
 
-    imu_topics: ["/imu"]
+    imu_topic: /imu
 
     gains:
-      yaw_gimbal_joint_pos2vel: 
+      yaw_gimbal_joint_pos2vel:
         { p: 7.0, i: 0.0, d: 0.0 }
-      pitch_gimbal_joint_pos2vel: 
+      pitch_gimbal_joint_pos2vel:
         { p: 30.0, i: 0.0, d: 0.05 }
       yaw_gimbal_joint_vel2eff:
         { p: 5.0e-1, i: 2.5e-1, d: 0.0,
