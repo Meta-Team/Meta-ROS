@@ -14,12 +14,17 @@
         <child link="base_link" />
     </joint>
 
+    <xacro:macro name="cylinder_inertia" params="m r h">
+        <inertia ixx="${m*(3*r*r+h*h)/12}" ixy="0" ixz="0"
+            iyy="${m*(3*r*r+h*h)/12}" iyz="0"
+            izz="${m*r*r/2}" />
+    </xacro:macro>
+
     <link name="base_link">
         <inertial>
-            <mass value="12.326" />
-            <origin xyz="-0.000932  -0.000668  -0.01" />
-            <inertia ixx="1.924e-1" ixy="-6.458e-4" ixz="5.951352e-3" iyy="2.473e-1"
-                iyz="-7.22e-4" izz="3.187e-1" />
+            <mass value="10.0" />
+            <origin xyz="0 0 0.1" />
+            <xacro:cylinder_inertia m="1.0" r="0.25" h="0.1" />
         </inertial>
         <visual>
             <origin xyz="0 0 0.05" rpy="0 0 0" />
@@ -49,10 +54,9 @@
 
     <link name="motor_top">
         <inertial>
-            <mass value="12.326" />
-            <origin xyz="-0.000932  -0.000668  -0.01" />
-            <inertia ixx="1.924e-1" ixy="-6.458e-4" ixz="5.951352e-3" iyy="2.473e-1"
-                iyz="-7.22e-4" izz="3.187e-1" />
+            <mass value="20.0" />
+            <origin xyz="0 0 0.1" />
+            <xacro:cylinder_inertia m="20.0" r="0.25" h="0.2" />
         </inertial>
         <visual>
             <origin xyz="0 0 0.1" rpy="0 0 0" />
@@ -79,10 +83,9 @@
 
     <link name="motor_top_indicator">
         <inertial>
-            <mass value="12.326" />
-            <origin xyz="-0.000932  -0.000668  -0.01" />
-            <inertia ixx="1.924e-1" ixy="-6.458e-4" ixz="5.951352e-3" iyy="2.473e-1"
-                iyz="-7.22e-4" izz="3.187e-1" />
+            <mass value="1.0" />
+            <origin xyz="0 0 0.01" />
+            <xacro:cylinder_inertia m="1.0" r="0.05" h="0.02" />
         </inertial>
         <visual>
             <origin xyz="0 0 0.01" rpy="0 0 0" />
