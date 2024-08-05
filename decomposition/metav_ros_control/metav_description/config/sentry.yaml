@@ -115,7 +115,7 @@ gimbal_controller:
           antiwindup: true,
         }
       pitch_gimbal_joint_vel2eff:
-        { p: -1.0e-1, i: -2.0e-2, d: 0.0,
+        { p: 1.0e-1, i: 2.0e-2, d: 0.0,
           i_clamp_max: 1.0,
           i_clamp_min: -1.0,
           antiwindup: true,
