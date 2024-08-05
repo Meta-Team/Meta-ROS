@@ -109,9 +109,8 @@
         </xacro:if>
         <xacro:unless value="$(arg is_simulation)">
             <hardware>
-                <plugin>meta_hardware/MetaRobotMotorNetwork</plugin>
-                <param name="vendor" value="DJI" />
-                <param name="can_network_name" value="can0" />
+                <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
+                <param name="can_network_name">can0</param>
             </hardware>
         </xacro:unless>
         <joint name="motor_joint">
@@ -119,7 +118,6 @@
             <state_interface name="position" />
             <state_interface name="velocity" />
             <state_interface name="effort" />
-            <param name="motor_vendor">DJI</param>
             <param name="motor_model">GM6020</param>
             <param name="motor_id">1</param>
         </joint>

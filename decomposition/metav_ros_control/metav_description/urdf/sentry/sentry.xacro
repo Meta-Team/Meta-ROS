@@ -31,9 +31,8 @@
     <xacro:unless value="$(arg is_simulation)">
         <ros2_control name="dji_motors" type="system">
             <hardware>
-                <plugin>meta_hardware/MetaRobotMotorNetwork</plugin>
-                <param name="vendor" value="DJI" />
-                <param name="can_network_name" value="can1" />
+                <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
+                <param name="can_network_name">can1</param>
             </hardware>
             <xacro:wheel_transmission prefix="front" mechanical_reduction="20.0" can_network="can1"
                 motor_id="1" />

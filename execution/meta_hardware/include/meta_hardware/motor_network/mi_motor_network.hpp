@@ -13,10 +13,10 @@
 
 namespace meta_hardware {
 
-class MiMotorNetwork : public MotorNetwork {
+class MiMotorNetwork {
   public:
     MiMotorNetwork(const std::string &can_network_name, uint32_t host_id);
-    ~MiMotorNetwork() override;
+    ~MiMotorNetwork();
 
     /**
      * @brief Add a MI motor to the MI motor network
@@ -25,16 +25,16 @@ class MiMotorNetwork : public MotorNetwork {
      * joint_id. But you may use any other unique number.
      * @param motor_params The parameters of the motor.
      */
-    void add_motor(uint32_t joint_id,
-                   const std::unordered_map<std::string, std::string>
-                       &motor_params) override;
+    void
+    add_motor(uint32_t joint_id,
+              const std::unordered_map<std::string, std::string> &motor_params);
 
     /**
      * @brief Read the motor feedback
      * @param joint_id The joint ID of the motor
      * @return A tuple of (position, velocity, effort)
      */
-    std::tuple<double, double, double> read(uint32_t joint_id) const override;
+    std::tuple<double, double, double> read(uint32_t joint_id) const;
 
     /**
      * @brief Write the motor command
@@ -44,13 +44,13 @@ class MiMotorNetwork : public MotorNetwork {
      * @param effort The effort to write
      */
     void write(uint32_t joint_id, double position, double velocity,
-               double effort) override;
+               double effort);
 
     /**
      * @brief Transmit the motor commands, serves no purpose in MI motor
      * network.
      */
-    void tx() override;
+    void tx();
 
   private:
     std::string can_network_name_;

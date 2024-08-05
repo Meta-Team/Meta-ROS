@@ -20,9 +20,10 @@ endif()
 add_library(
   meta_hardware
   SHARED
-  src/hardware_interface.cpp
+  src/dji_motor_interface.cpp
   src/motor_network/dji_motor_network.cpp
   src/motor_driver/dji_motor_driver.cpp
+  src/mi_motor_interface.cpp
   src/motor_network/mi_motor_network.cpp
   src/motor_driver/mi_motor_driver.cpp
 )
@@ -62,26 +63,6 @@ install(
 )
 
 if(BUILD_TESTING)
-  # find_package(ament_lint_auto REQUIRED)
-  # # the following line skips the linter which checks for copyrights
-  # # comment the line when a copyright and license is added to all source files
-  # set(ament_cmake_copyright_FOUND TRUE)
-  # # the following line skips cpplint (only works in a git repo)
-  # # comment the line when this package is in a git repo and when
-  # # a copyright and license is added to all source files
-  # set(ament_cmake_cpplint_FOUND TRUE)
-  # ament_lint_auto_find_test_dependencies()
-  # find_package(ament_cmake_gmock REQUIRED)
-  # find_package(ros2_control_test_assets REQUIRED)
-
-  # ament_add_gmock(test_hardware_interface test/test_hardware_interface.cpp)
-  # target_include_directories(test_hardware_interface PRIVATE include)
-  # ament_target_dependencies(
-  #   test_hardware_interface
-  #   hardware_interface
-  #   pluginlib
-  #   ros2_control_test_assets
-  # )
 endif()
 
 ament_export_include_directories(

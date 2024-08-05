@@ -5,8 +5,7 @@
 
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "meta_hardware/hardware_interface.hpp"
-#include "meta_hardware/motor_network/dji_motor_network.hpp"
+#include "meta_hardware/mi_motor_interface.hpp"
 #include "meta_hardware/motor_network/mi_motor_network.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -15,12 +14,12 @@ using hardware_interface::HW_IF_EFFORT;
 using hardware_interface::HW_IF_POSITION;
 using hardware_interface::HW_IF_VELOCITY;
 
-MetaRobotMotorNetwork::~MetaRobotMotorNetwork() {
+MetaRobotMiMotorNetwork::~MetaRobotMiMotorNetwork() {
     on_deactivate(rclcpp_lifecycle::State());
 }
 
 hardware_interface::CallbackReturn
-MetaRobotMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
+MetaRobotMiMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
     if (hardware_interface::SystemInterface::on_init(info) !=
         CallbackReturn::SUCCESS) {
         return CallbackReturn::ERROR;
@@ -32,44 +31,30 @@ MetaRobotMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
     return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn MetaRobotMotorNetwork::on_configure(
+hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_configure(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-
-    for (size_t i = 0; i < info_.joints.size(); ++i) {
-        joint_motors_info_[i].name = info_.joints[i].name;
-        joint_motors_info_[i].mechanical_reduction =
-            std::stod(info_.joints[i].parameters.at("mechanical_reduction"));
-    }
-
-    std::string motor_vendor = info_.hardware_parameters.at("vendor");
     std::string can_network_name =
         info_.hardware_parameters.at("can_network_name");
 
-    if (motor_vendor == "DJI") {
-        can_motor_network_ =
-            std::make_unique<DjiMotorNetwork>(can_network_name);
-    } else if (motor_vendor == "MI") {
-        can_motor_network_ =
-            std::make_unique<MiMotorNetwork>(can_network_name, 0x00);
-    } else {
-        RCLCPP_ERROR(rclcpp::get_logger("MetavRobotHardwareInterface"),
-                     "Unknown motor vendor: %s", motor_vendor.c_str());
-        return CallbackReturn::ERROR;
-    }
+    mi_motor_network_ =
+        std::make_unique<MiMotorNetwork>(can_network_name, 0x00);
 
     // Add the motors to the motor networks
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         const auto &joint = info_.joints[i];
         const auto &joint_params = joint.parameters;
 
-        can_motor_network_->add_motor(i, joint_params);
+        mi_motor_network_->add_motor(i, joint_params);
+        joint_motors_info_[i].name = info_.joints[i].name;
+        joint_motors_info_[i].mechanical_reduction =
+            std::stod(info_.joints[i].parameters.at("mechanical_reduction"));
     }
 
     return CallbackReturn::SUCCESS;
 }
 
 std::vector<hardware_interface::StateInterface>
-MetaRobotMotorNetwork::export_state_interfaces() {
+MetaRobotMiMotorNetwork::export_state_interfaces() {
     std::vector<hardware_interface::StateInterface> state_interfaces;
 
     // Helper function to check if the interface exists
@@ -107,7 +92,7 @@ MetaRobotMotorNetwork::export_state_interfaces() {
 }
 
 std::vector<hardware_interface::CommandInterface>
-MetaRobotMotorNetwork::export_command_interfaces() {
+MetaRobotMiMotorNetwork::export_command_interfaces() {
     std::vector<hardware_interface::CommandInterface> command_interfaces;
 
     // Helper function to check if the interface exists
@@ -148,24 +133,24 @@ MetaRobotMotorNetwork::export_command_interfaces() {
     return command_interfaces;
 }
 
-hardware_interface::CallbackReturn MetaRobotMotorNetwork::on_activate(
+hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_activate(
     const rclcpp_lifecycle::State & /*previous_state*/) {
 
     return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn MetaRobotMotorNetwork::on_deactivate(
+hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_deactivate(
     const rclcpp_lifecycle::State & /*previous_state*/) {
 
     return CallbackReturn::SUCCESS;
 }
 
 hardware_interface::return_type
-MetaRobotMotorNetwork::read(const rclcpp::Time & /*time*/,
-                            const rclcpp::Duration & /*period*/) {
+MetaRobotMiMotorNetwork::read(const rclcpp::Time & /*time*/,
+                              const rclcpp::Duration & /*period*/) {
 
     for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
-        auto [position, velocity, effort] = can_motor_network_->read(i);
+        auto [position, velocity, effort] = mi_motor_network_->read(i);
 
         position /= joint_motors_info_[i].mechanical_reduction;
         velocity /= joint_motors_info_[i].mechanical_reduction;
@@ -180,8 +165,8 @@ MetaRobotMotorNetwork::read(const rclcpp::Time & /*time*/,
 }
 
 hardware_interface::return_type
-MetaRobotMotorNetwork::write(const rclcpp::Time & /*time*/,
-                             const rclcpp::Duration & /*period*/) {
+MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
+                               const rclcpp::Duration & /*period*/) {
 
     for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
         double position = joint_interface_data_[i].command_position;
@@ -205,11 +190,11 @@ MetaRobotMotorNetwork::write(const rclcpp::Time & /*time*/,
         }
 
         // Write the command to the motor network
-        can_motor_network_->write(i, position, velocity, effort);
+        mi_motor_network_->write(i, position, velocity, effort);
     }
 
     // Some motor network implementations require a separate tx() call
-    can_motor_network_->tx();
+    mi_motor_network_->tx();
 
     return hardware_interface::return_type::OK;
 }
@@ -218,5 +203,5 @@ MetaRobotMotorNetwork::write(const rclcpp::Time & /*time*/,
 
 #include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(meta_hardware::MetaRobotMotorNetwork,
+PLUGINLIB_EXPORT_CLASS(meta_hardware::MetaRobotMiMotorNetwork,
                        hardware_interface::SystemInterface)

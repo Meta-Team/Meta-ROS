@@ -7,16 +7,15 @@
 #include <vector>
 
 #include "meta_hardware/motor_driver/dji_motor_driver.hpp"
-#include "meta_hardware/motor_network/motor_network.hpp"
 #include <CanDriver.hpp>
 #include <CanMessage.hpp>
 
 namespace meta_hardware {
 
-class DjiMotorNetwork : public MotorNetwork {
+class DjiMotorNetwork {
   public:
     explicit DjiMotorNetwork(std::string can_network_name);
-    ~DjiMotorNetwork() override;
+    ~DjiMotorNetwork();
 
     /**
      * @brief Add a DJI motor to the DJI motor network
@@ -27,29 +26,28 @@ class DjiMotorNetwork : public MotorNetwork {
      * The name comes from ros2_control, where motors are identified by
      * joint_id. But you may use any other unique number.
      */
-    void add_motor(uint32_t joint_id,
-                   const std::unordered_map<std::string, std::string>
-                       &motor_params) override;
+    void
+    add_motor(uint32_t joint_id,
+              const std::unordered_map<std::string, std::string> &motor_params);
 
     /**
      * @brief Read the motor feedback
      * @param joint_id The joint ID of the motor
      * @return A tuple of (position, velocity, effort)
      */
-    std::tuple<double, double, double> read(uint32_t joint_id) const override;
+    std::tuple<double, double, double> read(uint32_t joint_id) const;
 
     /**
      * @brief Write the motor command
      * @param joint_id The joint ID of the motor
      * @param effort The effort to write
      */
-    void write(uint32_t joint_id, double position, double velocity,
-               double effort) override;
+    void write(uint32_t joint_id, double effort);
 
     /**
      * @brief Transmit the motor commands
      */
-    void tx() override;
+    void tx();
 
   private:
     [[noreturn]] void rx_loop();

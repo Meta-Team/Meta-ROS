@@ -55,8 +55,7 @@ DjiMotorNetwork::read(uint32_t joint_id) const {
     return joint_id2motor_.at(joint_id)->get_motor_feedback();
 }
 
-void DjiMotorNetwork::write(uint32_t joint_id, double /*position*/,
-                            double /*velocity*/, double effort) {
+void DjiMotorNetwork::write(uint32_t joint_id, double effort) {
     const auto &motor = joint_id2motor_.at(joint_id);
     uint32_t dji_motor_id = motor->get_dji_motor_id();
     uint32_t tx_can_id = motor->get_tx_can_id();
