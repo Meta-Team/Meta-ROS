@@ -7,19 +7,37 @@ omni_chassis_controller:
       read_only: true,
       validation: { unique<>: null, not_empty<>: null },
     }
-  omni_wheel_angles:
+  omni_wheel_forward_angles:
     {
       type: double_array,
       default_value: [],
-      description: "Specifies angles of the omni wheels (in degrees).",
+      description: "Specifies forward angles of the omni wheels (in degrees).",
       read_only: true,
-      validation: { unique<>: null, not_empty<>: null },
+      validation: { not_empty<>: null },
     }
-  omni_wheel_distance:
+  omni_wheel_center_x:
     {
-      type: double,
-      default_value: 0.0,
-      description: "Specifies distance between an omni wheel and the robot center.",
+      type: double_array,
+      default_value: [],
+      description: "Specifies the x coordinate of the omni wheel center.",
+      read_only: true,
+      validation: { not_empty<>: null },
+    }
+  omni_wheel_center_y:
+    {
+      type: double_array,
+      default_value: [],
+      description: "Specifies the y coordinate of the omni wheel center.",
+      read_only: true,
+      validation: { not_empty<>: null },
+    }
+  omni_wheel_sliding_angles:
+    {
+      type: double_array,
+      default_value: [],
+      description: "Specifies sliding angles of the omni wheels (in degrees).",
+      read_only: true,
+      validation: { not_empty<>: null },
     }
   omni_wheel_radius:
     {

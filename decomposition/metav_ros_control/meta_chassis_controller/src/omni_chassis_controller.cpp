@@ -71,8 +71,8 @@ controller_interface::CallbackReturn OmniChassisController::on_configure(
     params_ = param_listener_->get_params();
 
     omni_wheel_kinematics_ = std::make_unique<OmniWheelKinematics>(
-        params_.omni_wheel_angles, params_.omni_wheel_distance,
-        params_.omni_wheel_radius);
+        params_.omni_wheel_forward_angles, params_.omni_wheel_center_x,
+        params_.omni_wheel_center_y, params_.omni_wheel_sliding_angles, params_.omni_wheel_radius);
 
     // topics QoS
     auto subscribers_qos = rclcpp::SystemDefaultsQoS();

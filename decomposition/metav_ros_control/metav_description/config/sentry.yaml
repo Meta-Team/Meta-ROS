@@ -22,9 +22,12 @@ omni_chassis_controller:
       - wheels_pid_controller/back_wheel_joint
       - wheels_pid_controller/right_wheel_joint
 
-    omni_wheel_angles: [0.0, 90.0, 180.0, -90.0]
+    omni_wheel_forward_angles: [-90.0, 0.0, 90.0, 180.0]
 
-    omni_wheel_distance: 0.255
+    omni_wheel_center_x: [0.255, 0.0, -0.255, 0.0]
+    omni_wheel_center_y: [0.0, 0.255, 0.0, -0.255]
+
+    omni_wheel_sliding_angles: [0.0, 0.0, 0.0, 0.0]
 
     omni_wheel_radius: 0.076
 
