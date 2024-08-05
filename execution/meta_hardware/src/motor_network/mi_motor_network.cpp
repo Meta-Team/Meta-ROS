@@ -10,10 +10,10 @@
 #include "CanMessage.hpp"
 #include "exceptions/CanException.hpp"
 #include "exceptions/CanInitException.hpp"
-#include "metav_hardware/motor_driver/mi_motor_driver.hpp"
-#include "metav_hardware/motor_network/mi_motor_network.hpp"
+#include "meta_hardware/motor_driver/mi_motor_driver.hpp"
+#include "meta_hardware/motor_network/mi_motor_network.hpp"
 
-namespace metav_hardware {
+namespace meta_hardware {
 using sockcanpp::CanDriver;
 using sockcanpp::CanMessage;
 using sockcanpp::exceptions::CanException;
@@ -138,4 +138,4 @@ void MiMotorNetwork::tx() {
     // tx() does nothing because the motor commands are sent in write()
 }
 
-} // namespace metav_hardware
+} // namespace meta_hardware

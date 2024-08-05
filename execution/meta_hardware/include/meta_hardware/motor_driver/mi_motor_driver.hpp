@@ -1,5 +1,5 @@
-#ifndef METAV_HARDWARE__MOTOR_DRIVER__MI_MOTOR_DRIVER_HPP_
-#define METAV_HARDWARE__MOTOR_DRIVER__MI_MOTOR_DRIVER_HPP_
+#ifndef META_HARDWARE__MOTOR_DRIVER__MI_MOTOR_DRIVER_HPP_
+#define META_HARDWARE__MOTOR_DRIVER__MI_MOTOR_DRIVER_HPP_
 #include <cmath>
 #include <cstdint>
 #include <limits>
@@ -12,7 +12,7 @@
 
 #include "angles/angles.h"
 
-namespace metav_hardware {
+namespace meta_hardware {
 class MiMotor {
   public:
     MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp,
@@ -45,6 +45,6 @@ class MiMotor {
     uint16_t Kd_raw_{0};
 };
 
-} // namespace metav_hardware
+} // namespace meta_hardware
 
-#endif // METAV_HARDWARE__MOTOR_DRIVER__MI_MOTOR_DRIVER_HPP_
+#endif // META_HARDWARE__MOTOR_DRIVER__MI_MOTOR_DRIVER_HPP_

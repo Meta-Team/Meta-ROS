@@ -1,10 +1,10 @@
-#ifndef METAV_HARDWARE__MOTOR_NETWORK__CAN_MOTOR_NETWORK_HPP_
-#define METAV_HARDWARE__MOTOR_NETWORK__CAN_MOTOR_NETWORK_HPP_
+#ifndef META_HARDWARE__MOTOR_NETWORK__CAN_MOTOR_NETWORK_HPP_
+#define META_HARDWARE__MOTOR_NETWORK__CAN_MOTOR_NETWORK_HPP_
 
 #include <string>
 #include <unordered_map>
 
-namespace metav_hardware {
+namespace meta_hardware {
 
 /**
  * @brief The abstract class for the CAN motor network. A CAN motor network
@@ -12,9 +12,9 @@ namespace metav_hardware {
  * their communication is beneficial and sometimes even necessary (especially
  * for DJI motors).
  */
-class CanMotorNetwork {
+class MotorNetwork {
   public:
-    virtual ~CanMotorNetwork() = default;
+    virtual ~MotorNetwork() = default;
 
     /**
      * @brief Add a motor to the motor network, see detailed description in the
@@ -47,6 +47,6 @@ class CanMotorNetwork {
      */
     virtual void tx() = 0;
 };
-} // namespace metav_hardware
+} // namespace meta_hardware
 
-#endif // METAV_HARDWARE__MOTOR_NETWORK__CAN_MOTOR_NETWORK_HPP_
+#endif // META_HARDWARE__MOTOR_NETWORK__CAN_MOTOR_NETWORK_HPP_

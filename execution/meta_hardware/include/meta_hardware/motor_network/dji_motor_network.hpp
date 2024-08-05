@@ -1,19 +1,19 @@
-#ifndef METAV_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
-#define METAV_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
+#ifndef META_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
+#define META_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "metav_hardware/motor_driver/dji_motor_driver.hpp"
-#include "metav_hardware/motor_network/can_motor_network.hpp"
+#include "meta_hardware/motor_driver/dji_motor_driver.hpp"
+#include "meta_hardware/motor_network/motor_network.hpp"
 #include <CanDriver.hpp>
 #include <CanMessage.hpp>
 
-namespace metav_hardware {
+namespace meta_hardware {
 
-class DjiMotorNetwork : public CanMotorNetwork {
+class DjiMotorNetwork : public MotorNetwork {
   public:
     explicit DjiMotorNetwork(std::string can_network_name);
     ~DjiMotorNetwork() override;
@@ -84,6 +84,6 @@ class DjiMotorNetwork : public CanMotorNetwork {
     std::map<uint32_t, std::shared_ptr<DjiMotor>> joint_id2motor_;
 };
 
-} // namespace metav_hardware
+} // namespace meta_hardware
 
-#endif // METAV_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
+#endif // META_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_

@@ -1,0 +1,9 @@
+<library path="meta_hardware">
+  <class name="meta_hardware/MetaRobotMotorNetwork"
+    type="meta_hardware::MetaRobotMotorNetwork"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ros2_control hardware interface.
+    </description>
+  </class>
+</library>

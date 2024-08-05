@@ -5,22 +5,22 @@
 
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "metav_hardware/hardware_interface.hpp"
-#include "metav_hardware/motor_network/dji_motor_network.hpp"
-#include "metav_hardware/motor_network/mi_motor_network.hpp"
+#include "meta_hardware/hardware_interface.hpp"
+#include "meta_hardware/motor_network/dji_motor_network.hpp"
+#include "meta_hardware/motor_network/mi_motor_network.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace metav_hardware {
+namespace meta_hardware {
 using hardware_interface::HW_IF_EFFORT;
 using hardware_interface::HW_IF_POSITION;
 using hardware_interface::HW_IF_VELOCITY;
 
-MetavRobotHardwareInterface::~MetavRobotHardwareInterface() {
+MetaRobotMotorNetwork::~MetaRobotMotorNetwork() {
     on_deactivate(rclcpp_lifecycle::State());
 }
 
-hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_init(
-    const hardware_interface::HardwareInfo &info) {
+hardware_interface::CallbackReturn
+MetaRobotMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
     if (hardware_interface::SystemInterface::on_init(info) !=
         CallbackReturn::SUCCESS) {
         return CallbackReturn::ERROR;
@@ -32,60 +32,44 @@ hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_init(
     return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_configure(
+hardware_interface::CallbackReturn MetaRobotMotorNetwork::on_configure(
     const rclcpp_lifecycle::State & /*previous_state*/) {
 
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         joint_motors_info_[i].name = info_.joints[i].name;
-        joint_motors_info_[i].motor_vendor =
-            info_.joints[i].parameters.at("motor_vendor");
-        joint_motors_info_[i].can_network_name =
-            info_.joints[i].parameters.at("can_network_name");
         joint_motors_info_[i].mechanical_reduction =
             std::stod(info_.joints[i].parameters.at("mechanical_reduction"));
     }
 
-    // Initialize the motor networks with joint information
-    for (const auto &joint : info_.joints) {
-        std::string motor_vendor = joint.parameters.at("motor_vendor");
-        std::string can_network_name = joint.parameters.at("can_network_name");
-        // Allocate the motor network if it doesn't exist
-        if (can_motor_networks_[motor_vendor].find(can_network_name) ==
-            can_motor_networks_[motor_vendor].end()) {
-            if (motor_vendor == "DJI") {
-                can_motor_networks_[motor_vendor][can_network_name] =
-                    std::make_shared<DjiMotorNetwork>(can_network_name);
-            } else if (motor_vendor == "MI") {
-                can_motor_networks_[motor_vendor][can_network_name] =
-                    std::make_shared<MiMotorNetwork>(can_network_name, 0x00);
-            } else {
-                RCLCPP_ERROR(rclcpp::get_logger("MetavRobotHardwareInterface"),
-                             "Unknown motor vendor: %s", motor_vendor.c_str());
-                return CallbackReturn::ERROR;
-            }
-        }
+    std::string motor_vendor = info_.hardware_parameters.at("vendor");
+    std::string can_network_name =
+        info_.hardware_parameters.at("can_network_name");
+
+    if (motor_vendor == "DJI") {
+        can_motor_network_ =
+            std::make_unique<DjiMotorNetwork>(can_network_name);
+    } else if (motor_vendor == "MI") {
+        can_motor_network_ =
+            std::make_unique<MiMotorNetwork>(can_network_name, 0x00);
+    } else {
+        RCLCPP_ERROR(rclcpp::get_logger("MetavRobotHardwareInterface"),
+                     "Unknown motor vendor: %s", motor_vendor.c_str());
+        return CallbackReturn::ERROR;
     }
 
     // Add the motors to the motor networks
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         const auto &joint = info_.joints[i];
         const auto &joint_params = joint.parameters;
-        std::string motor_vendor = joint_params.at("motor_vendor");
-        std::string can_network_name = joint_params.at("can_network_name");
 
-        can_motor_networks_[joint_motors_info_[i].motor_vendor]
-                           [joint_motors_info_[i].can_network_name]
-                               ->add_motor(i, joint_params);
-
-        joint_motors_info_[i].can_motor_network =
-            can_motor_networks_[motor_vendor][can_network_name];
+        can_motor_network_->add_motor(i, joint_params);
     }
 
     return CallbackReturn::SUCCESS;
 }
 
 std::vector<hardware_interface::StateInterface>
-MetavRobotHardwareInterface::export_state_interfaces() {
+MetaRobotMotorNetwork::export_state_interfaces() {
     std::vector<hardware_interface::StateInterface> state_interfaces;
 
     // Helper function to check if the interface exists
@@ -123,7 +107,7 @@ MetavRobotHardwareInterface::export_state_interfaces() {
 }
 
 std::vector<hardware_interface::CommandInterface>
-MetavRobotHardwareInterface::export_command_interfaces() {
+MetaRobotMotorNetwork::export_command_interfaces() {
     std::vector<hardware_interface::CommandInterface> command_interfaces;
 
     // Helper function to check if the interface exists
@@ -164,35 +148,24 @@ MetavRobotHardwareInterface::export_command_interfaces() {
     return command_interfaces;
 }
 
-hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_activate(
+hardware_interface::CallbackReturn MetaRobotMotorNetwork::on_activate(
     const rclcpp_lifecycle::State & /*previous_state*/) {
 
     return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn MetavRobotHardwareInterface::on_deactivate(
+hardware_interface::CallbackReturn MetaRobotMotorNetwork::on_deactivate(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-
-    // Clear all the shared pointers to fully deallocate the motor networks
-    // This will trigger the destructor of the motor networks
-    for (auto &[motor_vendor, can_motor_networks] : can_motor_networks_) {
-        can_motor_networks.clear();
-    }
-
-    for (auto &joint_motor : joint_motors_info_) {
-        joint_motor.can_motor_network = nullptr;
-    }
 
     return CallbackReturn::SUCCESS;
 }
 
 hardware_interface::return_type
-MetavRobotHardwareInterface::read(const rclcpp::Time & /*time*/,
-                                  const rclcpp::Duration & /*period*/) {
+MetaRobotMotorNetwork::read(const rclcpp::Time & /*time*/,
+                            const rclcpp::Duration & /*period*/) {
 
     for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
-        auto [position, velocity, effort] =
-            joint_motors_info_[i].can_motor_network->read(i);
+        auto [position, velocity, effort] = can_motor_network_->read(i);
 
         position /= joint_motors_info_[i].mechanical_reduction;
         velocity /= joint_motors_info_[i].mechanical_reduction;
@@ -207,8 +180,8 @@ MetavRobotHardwareInterface::read(const rclcpp::Time & /*time*/,
 }
 
 hardware_interface::return_type
-MetavRobotHardwareInterface::write(const rclcpp::Time & /*time*/,
-                                   const rclcpp::Duration & /*period*/) {
+MetaRobotMotorNetwork::write(const rclcpp::Time & /*time*/,
+                             const rclcpp::Duration & /*period*/) {
 
     for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
         double position = joint_interface_data_[i].command_position;
@@ -232,24 +205,18 @@ MetavRobotHardwareInterface::write(const rclcpp::Time & /*time*/,
         }
 
         // Write the command to the motor network
-        joint_motors_info_[i].can_motor_network->write(i, position, velocity,
-                                                       effort);
+        can_motor_network_->write(i, position, velocity, effort);
     }
 
     // Some motor network implementations require a separate tx() call
-    for (const auto &[motor_vendor, can_motor_networks] : can_motor_networks_) {
-        for (const auto &[can_network_name, can_motor_network] :
-             can_motor_networks) {
-            can_motor_network->tx();
-        }
-    }
+    can_motor_network_->tx();
 
     return hardware_interface::return_type::OK;
 }
 
-} // namespace metav_hardware
+} // namespace meta_hardware
 
 #include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(metav_hardware::MetavRobotHardwareInterface,
+PLUGINLIB_EXPORT_CLASS(meta_hardware::MetaRobotMotorNetwork,
                        hardware_interface::SystemInterface)

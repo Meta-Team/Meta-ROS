@@ -1,4 +1,5 @@
-// Copyright (c) 2022, Stogl Robotics Consulting UG (haftungsbeschränkt) (template)
+// Copyright (c) 2022, Stogl Robotics Consulting UG (haftungsbeschränkt)
+// (template)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,17 +21,15 @@
 #include "ros2_control_test_assets/components_urdfs.hpp"
 #include "ros2_control_test_assets/descriptions.hpp"
 
-class TestMetavRobotHardwareInterface : public ::testing::Test
-{
-protected:
-  void SetUp() override
-  {
-    // TODO(anyone): Extend this description to your robot
-    hardware_interface_2dof_ =
-      R"(
+class TestMetavRobotHardwareInterface : public ::testing::Test {
+  protected:
+    void SetUp() override {
+        // TODO(anyone): Extend this description to your robot
+        hardware_interface_2dof_ =
+            R"(
         <ros2_control name="MetavRobotHardwareInterface2dof" type="system">
           <hardware>
-            <plugin>metav_hardware/MetavRobotHardwareInterface</plugin>
+            <plugin>meta_hardware/MetavRobotHardwareInterface</plugin>
           </hardware>
           <joint name="joint1">
             <command_interface name="position"/>
@@ -44,14 +43,13 @@ protected:
           </joint>
         </ros2_control>
     )";
-  }
+    }
 
-  std::string hardware_interface_2dof_;
+    std::string hardware_interface_2dof_;
 };
 
-TEST_F(TestMetavRobotHardwareInterface, load_hardware_interface_2dof)
-{
-  auto urdf = ros2_control_test_assets::urdf_head + hardware_interface_2dof_ +
-              ros2_control_test_assets::urdf_tail;
-  ASSERT_NO_THROW(hardware_interface::ResourceManager rm(urdf));
+TEST_F(TestMetavRobotHardwareInterface, load_hardware_interface_2dof) {
+    auto urdf = ros2_control_test_assets::urdf_head + hardware_interface_2dof_ +
+                ros2_control_test_assets::urdf_tail;
+    ASSERT_NO_THROW(hardware_interface::ResourceManager rm(urdf));
 }

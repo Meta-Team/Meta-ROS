@@ -1,5 +1,5 @@
-#ifndef METAV_HARDWARE__HARDWARE_INTERFACE_HPP_
-#define METAV_HARDWARE__HARDWARE_INTERFACE_HPP_
+#ifndef META_HARDWARE__HARDWARE_INTERFACE_HPP_
+#define META_HARDWARE__HARDWARE_INTERFACE_HPP_
 
 #include <map>
 #include <string>
@@ -9,15 +9,15 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
-#include "metav_hardware/motor_network/can_motor_network.hpp"
-#include "metav_hardware/visibility_control.h"
+#include "meta_hardware/motor_network/motor_network.hpp"
+#include "meta_hardware/visibility_control.h"
 #include "rclcpp/macros.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 
-namespace metav_hardware {
-class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
+namespace meta_hardware {
+class MetaRobotMotorNetwork : public hardware_interface::SystemInterface {
   public:
-    ~MetavRobotHardwareInterface() override;
+    ~MetaRobotMotorNetwork() override;
     TEMPLATES__ROS2_CONTROL__VISIBILITY_PUBLIC
     hardware_interface::CallbackReturn
     on_init(const hardware_interface::HardwareInfo &info) override;
@@ -65,9 +65,6 @@ class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
     class JointMotorInfo {
       public:
         std::string name;
-        std::string motor_vendor;
-        std::string can_network_name;
-        std::shared_ptr<CanMotorNetwork> can_motor_network;
         double mechanical_reduction;
         bool command_pos;
         bool command_vel;
@@ -76,15 +73,9 @@ class MetavRobotHardwareInterface : public hardware_interface::SystemInterface {
     std::vector<JointMotorInfo>
         joint_motors_info_; // local cache of joint motor info
 
-    // store all the CAN motor networks in std::map
-    // [motor_vendor, can_network_name] -> can_motor_network
-    std::map<
-        std::string,
-        std::map<std::string, std::shared_ptr<CanMotorNetwork>, std::less<>>,
-        std::less<>>
-        can_motor_networks_;
+    std::unique_ptr<MotorNetwork> can_motor_network_;
 };
 
-} // namespace metav_hardware
+} // namespace meta_hardware
 
-#endif // METAV_HARDWARE__HARDWARE_INTERFACE_HPP_
+#endif // META_HARDWARE__HARDWARE_INTERFACE_HPP_

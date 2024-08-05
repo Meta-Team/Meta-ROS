@@ -1,5 +1,5 @@
-#ifndef METAV_HARDWARE__MOTOR_DRIVER__DJI_MOTOR_DRIVER_HPP_
-#define METAV_HARDWARE__MOTOR_DRIVER__DJI_MOTOR_DRIVER_HPP_
+#ifndef META_HARDWARE__MOTOR_DRIVER__DJI_MOTOR_DRIVER_HPP_
+#define META_HARDWARE__MOTOR_DRIVER__DJI_MOTOR_DRIVER_HPP_
 #include <cmath>
 #include <cstdint>
 #include <limits>
@@ -9,7 +9,7 @@
 
 #include "angles/angles.h"
 
-namespace metav_hardware {
+namespace meta_hardware {
 class DjiMotor {
   public:
     DjiMotor(const std::string &motor_model, uint32_t dji_motor_id);
@@ -41,6 +41,6 @@ class DjiMotor {
     double current_{0.0};
 };
 
-} // namespace metav_hardware
+} // namespace meta_hardware
 
-#endif // METAV_HARDWARE__MOTOR_DRIVER__DJI_MOTOR_DRIVER_HPP_
+#endif // META_HARDWARE__MOTOR_DRIVER__DJI_MOTOR_DRIVER_HPP_

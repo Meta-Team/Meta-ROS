@@ -10,10 +10,10 @@
 #include "CanMessage.hpp"
 #include "exceptions/CanException.hpp"
 #include "exceptions/CanInitException.hpp"
-#include "metav_hardware/motor_driver/dji_motor_driver.hpp"
-#include "metav_hardware/motor_network/dji_motor_network.hpp"
+#include "meta_hardware/motor_driver/dji_motor_driver.hpp"
+#include "meta_hardware/motor_network/dji_motor_network.hpp"
 
-namespace metav_hardware {
+namespace meta_hardware {
 using sockcanpp::CanDriver;
 
 DjiMotorNetwork::DjiMotorNetwork(std::string can_network_name) {
@@ -132,4 +132,4 @@ void DjiMotorNetwork::tx() {
     }
 }
 
-} // namespace metav_hardware
+} // namespace meta_hardware
