@@ -278,7 +278,7 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
     tf2::Matrix3x3(q).getRPY(fb_roll, fb_pitch, fb_yaw);
 
     double fb_yaw_vel = -current_feedback->angular_velocity.z;
-    double fb_pitch_vel = current_feedback->angular_velocity.y;
+    double fb_pitch_vel = -current_feedback->angular_velocity.y;
 
     // Update commands
     size_t num_joints = params_.gimbal_joints.size();
@@ -299,7 +299,7 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
             pos_refrences[i] =
                 (gimbal_roles_[i] == gimbal_controller::gimbal_role::YAW)
                     ? reference_interfaces_[0]
-                    : reference_interfaces_[1];
+                    : -reference_interfaces_[1];
             pos_feedbacks[i] =
                 (gimbal_roles_[i] == gimbal_controller::gimbal_role::YAW)
                     ? fb_yaw

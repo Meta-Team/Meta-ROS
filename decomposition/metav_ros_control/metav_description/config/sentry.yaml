@@ -92,23 +92,31 @@ gimbal_controller:
   ros__parameters:
     gimbal_joints:
       - yaw_gimbal_joint
+      - pitch_gimbal_joint
 
     gimbal_roles:
       - yaw
+      - pitch
 
     imu_topics: ["/imu"]
 
     gains:
       yaw_gimbal_joint_pos2vel: 
         { p: 7.0, i: 0.0, d: 0.0 }
-      pitch_gimbal_joint_pos2vel: { p: 10.0, i: 0.0, d: 0.5 }
+      pitch_gimbal_joint_pos2vel: 
+        { p: 30.0, i: 0.0, d: 0.05 }
       yaw_gimbal_joint_vel2eff:
         { p: 5.0e-1, i: 2.5e-1, d: 0.0,
           i_clamp_max: 1.0,
           i_clamp_min: -1.0,
           antiwindup: true,
         }
-      pitch_gimbal_joint_vel2eff: { p: 0.26, i: 0.1, d: 0.0001 }
+      pitch_gimbal_joint_vel2eff:
+        { p: -1.0e-1, i: -2.0e-2, d: 0.0,
+          i_clamp_max: 1.0,
+          i_clamp_min: -1.0,
+          antiwindup: true,
+        }
 
 dbus_control_node:
   ros__parameters:
