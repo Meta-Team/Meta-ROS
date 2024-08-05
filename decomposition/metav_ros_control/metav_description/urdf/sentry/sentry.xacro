@@ -21,35 +21,54 @@
     <xacro:gimbal />
 
     <xacro:include filename="$(find metav_description)/urdf/common/sensor_imu.xacro" />
-    <xacro:sensor_imu connected_to="pitch_gimbal" imu_name="gimbal_imu" xyz="0 0 0.1" rpy="3.14159 0 0" />
+    <xacro:sensor_imu connected_to="pitch_gimbal" imu_name="gimbal_imu" xyz="0 0 0.1"
+        rpy="3.14159 0 0" />
 
     <xacro:include filename="$(find metav_description)/urdf/common/sensor_mid360.xacro" />
-    <xacro:sensor_mid360 connected_to="yaw_gimbal" name="livox_frame" xyz="0.1687 0 0.11" rpy="0 0.2269 0" />
+    <xacro:sensor_mid360 connected_to="yaw_gimbal" name="livox_frame" xyz="0.1687 0 0.11"
+        rpy="0 0.2269 0" />
 
-    <ros2_control name="sentry_control" type="system">
-        <xacro:if value="$(arg is_simulation)">
+    <xacro:unless value="$(arg is_simulation)">
+        <ros2_control name="dji_motors" type="system">
+            <hardware>
+                <plugin>meta_hardware/MetaRobotMotorNetwork</plugin>
+                <param name="vendor" value="DJI" />
+                <param name="can_network_name" value="can1" />
+            </hardware>
+            <xacro:wheel_transmission prefix="front" mechanical_reduction="20.0" can_network="can1"
+                motor_id="1" />
+            <xacro:wheel_transmission prefix="right" mechanical_reduction="20.0" can_network="can1"
+                motor_id="3" />
+            <xacro:wheel_transmission prefix="left" mechanical_reduction="20.0" can_network="can1"
+                motor_id="4" />
+            <xacro:wheel_transmission prefix="back" mechanical_reduction="20.0" can_network="can1"
+                motor_id="2" />
+            <xacro:gimbal_transmission prefix="yaw" mechanical_reduction="1.0" can_network="can1"
+                motor_id="5" />
+            <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="-1.0" can_network="can1"
+                motor_id="6" />
+        </ros2_control>
+    </xacro:unless>
+
+    <xacro:if value="$(arg is_simulation)">
+        <ros2_control name="sentry_control" type="system">
             <hardware>
                 <plugin>ign_ros2_control/IgnitionSystem</plugin>
             </hardware>
-        </xacro:if>
-        <xacro:unless value="$(arg is_simulation)">
-            <hardware>
-                <plugin>metav_hardware/MetavRobotHardwareInterface</plugin>
-            </hardware>
-        </xacro:unless>
-        <xacro:wheel_transmission prefix="front" mechanical_reduction="20.0" can_network="can1"
-            motor_id="1" />
-        <xacro:wheel_transmission prefix="right" mechanical_reduction="20.0" can_network="can1"
-            motor_id="3" />
-        <xacro:wheel_transmission prefix="left" mechanical_reduction="20.0" can_network="can1"
-            motor_id="4" />
-        <xacro:wheel_transmission prefix="back" mechanical_reduction="20.0" can_network="can1"
-            motor_id="2" />
-        <xacro:gimbal_transmission prefix="yaw" mechanical_reduction="1.0" can_network="can1"
-            motor_id="5"/>
-        <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="-1.0" can_network="can1"
-            motor_id="6"/>
-    </ros2_control>
+            <xacro:wheel_transmission prefix="front" mechanical_reduction="20.0" can_network="can1"
+                motor_id="1" />
+            <xacro:wheel_transmission prefix="right" mechanical_reduction="20.0" can_network="can1"
+                motor_id="3" />
+            <xacro:wheel_transmission prefix="left" mechanical_reduction="20.0" can_network="can1"
+                motor_id="4" />
+            <xacro:wheel_transmission prefix="back" mechanical_reduction="20.0" can_network="can1"
+                motor_id="2" />
+            <xacro:gimbal_transmission prefix="yaw" mechanical_reduction="1.0" can_network="can1"
+                motor_id="5" />
+            <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="-1.0" can_network="can1"
+                motor_id="6" />
+        </ros2_control>
+    </xacro:if>
 
     <xacro:if value="$(arg is_simulation)">
         <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.gazebo.xacro" />

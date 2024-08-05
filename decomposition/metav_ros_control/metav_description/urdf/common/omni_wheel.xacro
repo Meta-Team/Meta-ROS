@@ -169,7 +169,6 @@
             <state_interface name="effort" />
             <param name="motor_vendor">DJI</param>
             <param name="motor_model">M3508</param>
-            <param name="can_network_name">${can_network}</param>
             <param name="motor_id">${motor_id}</param>
             <param name="mechanical_reduction">${mechanical_reduction}</param>
         </joint>
