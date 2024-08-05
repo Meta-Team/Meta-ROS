@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "meta_hardware/motor_driver/mi_motor_driver.hpp"
-#include "meta_hardware/motor_network/motor_network.hpp"
 #include <CanDriver.hpp>
 #include <CanMessage.hpp>
 
