@@ -1,3 +1,4 @@
+#include <cmath>
 #include <exception>
 #include <iostream>
 #include <linux/can.h>
@@ -9,10 +10,10 @@
 #include "CanMessage.hpp"
 #include "exceptions/CanException.hpp"
 #include "exceptions/CanInitException.hpp"
-#include "metav_hardware/motor_driver/dji_motor_driver.hpp"
-#include "metav_hardware/motor_network/dji_motor_network.hpp"
+#include "meta_hardware/motor_driver/dji_motor_driver.hpp"
+#include "meta_hardware/motor_network/dji_motor_network.hpp"
 
-namespace metav_hardware {
+namespace meta_hardware {
 using sockcanpp::CanDriver;
 
 DjiMotorNetwork::DjiMotorNetwork(std::string can_network_name) {
@@ -54,12 +55,12 @@ DjiMotorNetwork::read(uint32_t joint_id) const {
     return joint_id2motor_.at(joint_id)->get_motor_feedback();
 }
 
-void DjiMotorNetwork::write(uint32_t joint_id, double /*position*/,
-                            double /*velocity*/, double effort) {
+void DjiMotorNetwork::write(uint32_t joint_id, double effort) {
     const auto &motor = joint_id2motor_.at(joint_id);
     uint32_t dji_motor_id = motor->get_dji_motor_id();
     uint32_t tx_can_id = motor->get_tx_can_id();
     uint32_t maximum_raw_effort = motor->get_maximum_raw_effort();
+    effort = std::clamp(effort, -1.0, 1.0);
     auto effort_raw = static_cast<int16_t>(effort * maximum_raw_effort);
     can_frame *tx_frame = nullptr;
     switch (tx_can_id) {
@@ -130,4 +131,4 @@ void DjiMotorNetwork::tx() {
     }
 }
 
-} // namespace metav_hardware
+} // namespace meta_hardware

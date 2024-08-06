@@ -1,22 +1,21 @@
-#ifndef METAV_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
-#define METAV_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
+#ifndef META_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
+#define META_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
 
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "metav_hardware/motor_driver/dji_motor_driver.hpp"
-#include "metav_hardware/motor_network/can_motor_network.hpp"
+#include "meta_hardware/motor_driver/dji_motor_driver.hpp"
 #include <CanDriver.hpp>
 #include <CanMessage.hpp>
 
-namespace metav_hardware {
+namespace meta_hardware {
 
-class DjiMotorNetwork : public CanMotorNetwork {
+class DjiMotorNetwork {
   public:
     explicit DjiMotorNetwork(std::string can_network_name);
-    ~DjiMotorNetwork() override;
+    ~DjiMotorNetwork();
 
     /**
      * @brief Add a DJI motor to the DJI motor network
@@ -27,29 +26,28 @@ class DjiMotorNetwork : public CanMotorNetwork {
      * The name comes from ros2_control, where motors are identified by
      * joint_id. But you may use any other unique number.
      */
-    void add_motor(uint32_t joint_id,
-                   const std::unordered_map<std::string, std::string>
-                       &motor_params) override;
+    void
+    add_motor(uint32_t joint_id,
+              const std::unordered_map<std::string, std::string> &motor_params);
 
     /**
      * @brief Read the motor feedback
      * @param joint_id The joint ID of the motor
      * @return A tuple of (position, velocity, effort)
      */
-    std::tuple<double, double, double> read(uint32_t joint_id) const override;
+    std::tuple<double, double, double> read(uint32_t joint_id) const;
 
     /**
      * @brief Write the motor command
      * @param joint_id The joint ID of the motor
      * @param effort The effort to write
      */
-    void write(uint32_t joint_id, double position, double velocity,
-               double effort) override;
+    void write(uint32_t joint_id, double effort);
 
     /**
      * @brief Transmit the motor commands
      */
-    void tx() override;
+    void tx();
 
   private:
     [[noreturn]] void rx_loop();
@@ -84,6 +82,6 @@ class DjiMotorNetwork : public CanMotorNetwork {
     std::map<uint32_t, std::shared_ptr<DjiMotor>> joint_id2motor_;
 };
 
-} // namespace metav_hardware
+} // namespace meta_hardware
 
-#endif // METAV_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_
+#endif // META_HARDWARE__MOTOR_NETWORK__DJI_MOTOR_NETWORK_HPP_

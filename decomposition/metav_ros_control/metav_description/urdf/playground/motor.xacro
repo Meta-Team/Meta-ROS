@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<robot name="motor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="cylinder_inertia" params="m r h">
+        <inertia ixx="${m*(3*r*r+h*h)/12}" ixy="0" ixz="0"
+            iyy="${m*(3*r*r+h*h)/12}" iyz="0"
+            izz="${m*r*r/2}" />
+    </xacro:macro>
+
+    <xacro:macro name="motor" params="name connected_to x y">
+
+        <joint name="${name}_connection" type="fixed">
+            <origin xyz="${x} ${y} 0.0" rpy="0 0 0" />
+            <parent link="${connected_to}" />
+            <child link="${name}_base_link" />
+        </joint>
+
+        <link name="${name}_base_link">
+            <inertial>
+                <mass value="10.0" />
+                <origin xyz="0 0 0.1" />
+                <xacro:cylinder_inertia m="1.0" r="0.25" h="0.1" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0.05" rpy="0 0 0" />
+                <geometry>
+                    <cylinder radius="0.25" length="0.1" />
+                </geometry>
+                <material name="silver">
+                    <color rgba="0.700 0.700 0.700 1.000" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.05" rpy="0 0 0" />
+                <geometry>
+                    <cylinder radius="0.25" length="0.1" />
+                </geometry>
+            </collision>
+        </link>
+
+
+        <joint name="${name}_joint" type="continuous">
+            <origin xyz="0 0 0.1" rpy="0 0 0" />
+            <parent link="${name}_base_link" />
+            <child link="${name}_top" />
+            <dynamics damping="0.0" friction="0.1" />
+            <limit effort="30" velocity="2.0" />
+            <axis xyz="0 0 1" />
+        </joint>
+
+        <link name="${name}_top">
+            <inertial>
+                <mass value="20.0" />
+                <origin xyz="0 0 0.1" />
+                <xacro:cylinder_inertia m="20.0" r="0.25" h="0.2" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0.1" rpy="0 0 0" />
+                <geometry>
+                    <cylinder radius="0.25" length="0.2" />
+                </geometry>
+                <material name="black">
+                    <color rgba="0.000 0.000 0.000 1.000" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.1" rpy="0 0 0" />
+                <geometry>
+                    <cylinder radius="0.25" length="0.2" />
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${name}_top_indicator_joint" type="fixed">
+            <origin xyz="0.2 0 0.2" rpy="0 0 0" />
+            <parent link="${name}_top" />
+            <child link="${name}_top_indicator" />
+        </joint>
+
+        <link name="${name}_top_indicator">
+            <inertial>
+                <mass value="1.0" />
+                <origin xyz="0 0 0.01" />
+                <xacro:cylinder_inertia m="1.0" r="0.05" h="0.02" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0.01" rpy="0 0 0" />
+                <geometry>
+                    <cylinder radius="0.05" length="0.02" />
+                </geometry>
+                <material name="white">
+                    <color rgba="1.000 1.000 1.000 1.000" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.01" rpy="0 0 0" />
+                <geometry>
+                    <cylinder radius="0.05" length="0.02" />
+                </geometry>
+            </collision>
+        </link>
+    </xacro:macro>
+</robot>

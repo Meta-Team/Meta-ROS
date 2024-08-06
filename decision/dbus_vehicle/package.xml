@@ -13,6 +13,7 @@
   <test_depend>ament_lint_common</test_depend>
 
   <depend>operation_interface</depend>
+  <depend>geometry_msgs</depend>
   <depend>behavior_interface</depend>
 
   <export>

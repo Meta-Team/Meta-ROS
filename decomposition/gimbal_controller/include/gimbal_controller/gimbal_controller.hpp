@@ -29,11 +29,6 @@ static constexpr size_t STATE_MY_ITFS = 0;
 // name constants for command interfaces
 static constexpr size_t CMD_MY_ITFS = 0;
 
-enum class gimbal_role : std::uint8_t {
-    PITCH = 0,
-    YAW = 1,
-};
-
 class GimbalController
     : public controller_interface::ChainableControllerInterface {
   public:
@@ -82,7 +77,6 @@ class GimbalController
     gimbal_controller::Params params_;
 
     // Command subscribers
-    rclcpp::Duration ref_timeout_ = rclcpp::Duration(0, 0);
     rclcpp::Subscription<ControllerReferenceMsg>::SharedPtr ref_subscriber_ =
         nullptr;
     realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerReferenceMsg>>
@@ -94,8 +88,10 @@ class GimbalController
     realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerFeedbackMsg>>
         input_feedback_;
 
-    std::vector<std::shared_ptr<control_toolbox::PidROS>> pos2vel_pids_;
-    std::vector<std::shared_ptr<control_toolbox::PidROS>> vel2eff_pids_;
+    std::shared_ptr<control_toolbox::PidROS> yaw_pos2vel_pid_;
+    std::shared_ptr<control_toolbox::PidROS> pitch_pos2vel_pid_;
+    std::shared_ptr<control_toolbox::PidROS> yaw_vel2eff_pid_;
+    std::shared_ptr<control_toolbox::PidROS> pitch_vel2eff_pid_;
 
     using ControllerStatePublisher =
         realtime_tools::RealtimePublisher<ControllerStateMsg>;
@@ -108,8 +104,6 @@ class GimbalController
     on_export_reference_interfaces() override;
 
     bool on_set_chained_mode(bool chained_mode) override;
-
-    std::vector<gimbal_role> gimbal_roles_;
 
   private:
     // callback for topic interface

@@ -1,0 +1,16 @@
+<library path="meta_hardware">
+  <class name="meta_hardware/MetaRobotDjiMotorNetwork"
+    type="meta_hardware::MetaRobotDjiMotorNetwork"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      DJI motor network hardware interface.
+    </description>
+  </class>
+  <class name="meta_hardware/MetaRobotMiMotorNetwork"
+    type="meta_hardware::MetaRobotMiMotorNetwork"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      MI motor network hardware interface.
+    </description>
+  </class>
+</library>

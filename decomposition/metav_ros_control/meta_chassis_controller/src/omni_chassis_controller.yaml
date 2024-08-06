@@ -7,19 +7,37 @@ omni_chassis_controller:
       read_only: true,
       validation: { unique<>: null, not_empty<>: null },
     }
-  omni_wheel_angles:
+  omni_wheel_forward_angles:
     {
       type: double_array,
       default_value: [],
-      description: "Specifies angles of the omni wheels (in degrees).",
+      description: "Specifies forward angles of the omni wheels (in degrees).",
       read_only: true,
-      validation: { unique<>: null, not_empty<>: null },
+      validation: { not_empty<>: null },
     }
-  omni_wheel_distance:
+  omni_wheel_center_x:
     {
-      type: double,
-      default_value: 0.0,
-      description: "Specifies distance between an omni wheel and the robot center.",
+      type: double_array,
+      default_value: [],
+      description: "Specifies the x coordinate of the omni wheel center.",
+      read_only: true,
+      validation: { not_empty<>: null },
+    }
+  omni_wheel_center_y:
+    {
+      type: double_array,
+      default_value: [],
+      description: "Specifies the y coordinate of the omni wheel center.",
+      read_only: true,
+      validation: { not_empty<>: null },
+    }
+  omni_wheel_sliding_angles:
+    {
+      type: double_array,
+      default_value: [],
+      description: "Specifies sliding angles of the omni wheels (in degrees).",
+      read_only: true,
+      validation: { not_empty<>: null },
     }
   omni_wheel_radius:
     {
@@ -39,6 +57,18 @@ omni_chassis_controller:
       default_value: "",
       description: "Specifies the joint of the yaw gimbal.",
       validation: { not_empty<>: null },
+    }
+  yaw_gimbal_joint_offset:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Specifies the zero point offset of the yaw gimbal motor. This should be measured from tests.",
+    }
+  follow_pid_target:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Specifies target of the follow PID controller. Setting 0.0 meaning the car is always moving towards the front. Usually 0.7853981634(45 degree) gives the maximum speed.",
     }
   reference_timeout:
     {

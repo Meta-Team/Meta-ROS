@@ -9,9 +9,9 @@
 
 #include "CanMessage.hpp"
 #include "angles/angles.h"
-#include "metav_hardware/motor_driver/mi_motor_driver.hpp"
+#include "meta_hardware/motor_driver/mi_motor_driver.hpp"
 
-namespace metav_hardware {
+namespace meta_hardware {
 constexpr uint16_t MAX_RAW_TORQUE = 65535;
 constexpr uint16_t MAX_RAW_VELOCITY = 65535;
 constexpr uint16_t MAX_RAW_POSITION = 65535;
@@ -124,4 +124,4 @@ tuple<double, double, double> MiMotor::get_motor_feedback() const {
     return {position_, velocity_, torque_};
 }
 
-} // namespace metav_hardware
+} // namespace meta_hardware

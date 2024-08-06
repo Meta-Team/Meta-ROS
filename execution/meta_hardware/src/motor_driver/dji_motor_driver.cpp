@@ -6,9 +6,9 @@
 #include <tuple>
 
 #include "angles/angles.h"
-#include "metav_hardware/motor_driver/dji_motor_driver.hpp"
+#include "meta_hardware/motor_driver/dji_motor_driver.hpp"
 
-namespace metav_hardware {
+namespace meta_hardware {
 DjiMotor::DjiMotor(const std::string &motor_model, uint32_t dji_motor_id)
     : motor_model_(motor_model), dji_motor_id_(dji_motor_id) {
     if (motor_model_ == "GM6020") {
@@ -51,4 +51,4 @@ std::tuple<double, double, double> DjiMotor::get_motor_feedback() const {
     return {position_, velocity_, current_};
 }
 
-} // namespace metav_hardware
+} // namespace meta_hardware

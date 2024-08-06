@@ -22,17 +22,32 @@ omni_chassis_controller:
       - wheels_pid_controller/back_wheel_joint
       - wheels_pid_controller/right_wheel_joint
 
-    omni_wheel_angles: [0.0, 90.0, 180.0, -90.0]
+    omni_wheel_forward_angles: [-90.0, 0.0, 90.0, 180.0]
 
-    omni_wheel_distance: 0.196
+    omni_wheel_center_x: [0.255, 0.0, -0.255, 0.0]
+    omni_wheel_center_y: [0.0, 0.255, 0.0, -0.255]
 
-    omni_wheel_radius: 0.05
+    omni_wheel_sliding_angles: [0.0, 0.0, 0.0, 0.0]
+
+    omni_wheel_radius: 0.076
 
     control_mode: 2
 
     yaw_gimbal_joint: yaw_gimbal_joint
 
-    follow_pid_gains: { p: 2.0, i: 0.0, d: 0.0 }
+    yaw_gimbal_joint_offset: -0.25
+
+    follow_pid_gains: 
+      {
+        p: 4.0, i: 2.0e-1, d: 0.0,
+        i_clamp_max: 3.0,
+        i_clamp_min: -3.0,
+        antiwindup: true,
+      }
+
+    follow_pid_target: 0.7853981634
+
+    reference_timeout: 0.2
 
 wheels_pid_controller:
   ros__parameters:
@@ -47,25 +62,76 @@ wheels_pid_controller:
     reference_and_state_interfaces: ["velocity"]
 
     gains:
-      front_wheel_joint: { p: 1.0, i: 0.0, d: 0.0 }
-      left_wheel_joint: { p: 1.0, i: 0.0, d: 0.0 }
-      back_wheel_joint: { p: 1.0, i: 0.0, d: 0.0 }
-      right_wheel_joint: { p: 1.0, i: 0.0, d: 0.0 }
+      front_wheel_joint:
+        {
+          p: 4.0e-1, i: 2.0e-3, d: 0.0,
+          i_clamp_max: 1.0,
+          i_clamp_min: -1.0,
+          antiwindup: true,
+        }
+      left_wheel_joint:
+        {
+          p: 4.0e-1, i: 2.0e-3, d: 0.0,
+          i_clamp_max: 1.0,
+          i_clamp_min: -1.0,
+          antiwindup: true,
+        }
+      back_wheel_joint:
+        {
+          p: 4.0e-1, i: 2.0e-3, d: 0.0,
+          i_clamp_max: 1.0,
+          i_clamp_min: -1.0,
+          antiwindup: true,
+        }
+      right_wheel_joint:
+        {
+          p: 4.0e-1, i: 2.0e-3, d: 0.0,
+          i_clamp_max: 1.0,
+          i_clamp_min: -1.0,
+          antiwindup: true,
+        }
 
 gimbal_controller:
   ros__parameters:
-    gimbal_joints:
-      - yaw_gimbal_joint
-      - pitch_gimbal_joint
+    yaw_gimbal_joint:
+      enable: true
+      name: yaw_gimbal_joint
 
-    gimbal_roles:
-      - yaw
-      - pitch
+    pitch_gimbal_joint:
+      enable: true
+      name: pitch_gimbal_joint
 
-    imu_topic: /gimbal_imu
+    imu_topic: /imu
 
     gains:
-      yaw_gimbal_joint_pos2vel: { p: 13.0, i: 0.0, d: 0.4 }
-      pitch_gimbal_joint_pos2vel: { p: 10.0, i: 0.0, d: 0.5 }
-      yaw_gimbal_joint_vel2eff: { p: 0.26, i: 0.2, d: 0.00003 }
-      pitch_gimbal_joint_vel2eff: { p: 0.26, i: 0.1, d: 0.0001 }
+      yaw_gimbal_joint_pos2vel:
+        { p: 7.0, i: 0.0, d: 0.0 }
+      pitch_gimbal_joint_pos2vel:
+        { p: 30.0, i: 0.0, d: 0.05 }
+      yaw_gimbal_joint_vel2eff:
+        { p: 5.0e-1, i: 2.5e-1, d: 0.0,
+          i_clamp_max: 1.0,
+          i_clamp_min: -1.0,
+          antiwindup: true,
+        }
+      pitch_gimbal_joint_vel2eff:
+        { p: 1.0e-1, i: 2.0e-2, d: 0.0,
+          i_clamp_max: 1.0,
+          i_clamp_min: -1.0,
+          antiwindup: true,
+        }
+
+dbus_control_node:
+  ros__parameters:
+    dbus_port: "dbus_control"
+
+dbus_vehicle:
+  ros__parameters:
+    enable_ros2_control: true
+    aim_topic: "/gimbal_controller/reference"
+    control:
+      trans_vel: 2.5 # m/s
+      rot_vel: 3.0 # rad/s
+      stick_sens: 5.00 # rad/s
+      mouse_sens: 10.0
+      deadzone: 0.15 # percentage

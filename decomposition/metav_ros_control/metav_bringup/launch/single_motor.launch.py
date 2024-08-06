@@ -33,7 +33,7 @@ from launch_utils import load_controller, register_loading_order, register_seque
 ARGUMENTS = [
     DeclareLaunchArgument(
         'enable_simulation',
-        default_value='true',
+        default_value='false',
         description='If true, the simulation will be started'),
 ]
 
@@ -42,26 +42,13 @@ def generate_launch_description():
     enable_simulation = LaunchConfiguration('enable_simulation')
 
     # Get URDF via xacro
-    robot_description_content = Command(
-        [
+    robot_description_content = Command([
             PathJoinSubstitution([FindExecutable(name='xacro')]),
             ' ',
-            PathJoinSubstitution(
-                [FindPackageShare('metav_description'),
-                 'urdf', 'playground', 'single_motor.xacro']
-            ),
+            PathJoinSubstitution([FindPackageShare('metav_description'), 'urdf', 'playground', 'single_motor.xacro']),
             ' ',
             'is_simulation:=', enable_simulation,
-        ]
-    )
-
-    robot_controllers = PathJoinSubstitution(
-        [
-            FindPackageShare("metav_description"),
-            "config",
-            "single_motor.yaml",
-        ]
-    )
+    ])
 
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -73,26 +60,33 @@ def generate_launch_description():
         emulate_tty=True
     )
 
+    # Gazebo related launch
+    world_sdf = PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'worlds', 'empty_world.sdf'])
+    bridge_config = PathJoinSubstitution([FindPackageShare('metav_bringup'), 'config', 'ros_gz_bridge.yaml'])
+    gazebo_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'launch', 'meta_gazebo.launch.py'])],
+        ),
+        launch_arguments=[
+            ('world_sdf', world_sdf),
+            ('robot_name', 'single_motor'),
+            ('bridge_config_file', bridge_config),
+        ],
+        condition=IfCondition(enable_simulation)
+    )
+    
+    # ROS2 Control related launch
+    robot_controller_config = PathJoinSubstitution([FindPackageShare('metav_description'), 'config', 'single_motor.yaml'])
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_controllers],
+        parameters=[robot_controller_config],
         remappings=[
             ("~/robot_description", "/robot_description"),
         ],
         output='both',
         emulate_tty=True,
         condition=UnlessCondition(enable_simulation)
-    )
-
-    gz_spawn_robot = Node(
-        package='ros_gz_sim',
-        executable='create',
-        arguments=['-topic', '/robot_description',
-                   '-name', 'single_motor', '-allow_renaming', 'true'],
-        output='both',
-        emulate_tty=True,
-        condition=IfCondition(enable_simulation)
     )
 
     load_joint_state_broadcaster = load_controller('joint_state_broadcaster')
@@ -105,57 +99,27 @@ def generate_launch_description():
         load_controller('forward_position_controller'),
     ]
 
-    # Gazebo related launch
-    gazebo_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
-                                    'launch',
-                                    'gz_sim.launch.py'])]),
-        launch_arguments=[
-            ('gz_args', [PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'worlds', 'empty_world.sdf']),
-                        ' -r',
-                        ' -v 3',])
-        ],
-        condition=IfCondition(enable_simulation)
-    )
-
-    bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        parameters=[{
-            'config_file': PathJoinSubstitution([FindPackageShare('metav_bringup'), 'config', 'ros_gz_bridge.yaml']),
-            'qos_overrides./tf_static.publisher.durability': 'transient_local',
-        }],
-        output='both',
-        emulate_tty=True,
-        condition=IfCondition(enable_simulation)
-    )
-
     motor_tester_node = Node(
         package='motor_tester',
         executable='motor_tester',
         name='motor_tester_node',
-        parameters=[robot_controllers],
+        parameters=[robot_controller_config],
     )
 
     dbus_control_node = Node(
         package='dbus_control',
         executable='dbus_control_node',
         name='dbus_control_node',
-        parameters=[robot_controllers],
+        parameters=[robot_controller_config],
     )
 
     return LaunchDescription([
         # Launch Arguments
         *ARGUMENTS,
-        # Launch gazebo environment
+        # Launch Gazebo and ROS2 bridge and spawn robot in Gazebo (also start controller manager)
         gazebo_launch,
-        # Gazebo Gazebo ROS 2 bridge
-        bridge,
         # Load robot state publisher
         node_robot_state_publisher,
-        # Spawn robot in Gazebo (this will automatically start controller manager)
-        gz_spawn_robot,
         # Launch controller manager (if not in simulation)
         controller_manager,
         # Load joint state broadcaster

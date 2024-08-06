@@ -9,6 +9,7 @@
 #include "controller_interface/helpers.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/logging.hpp"
+#include "angles/angles.h"
 
 namespace { // utility
 
@@ -70,8 +71,8 @@ controller_interface::CallbackReturn OmniChassisController::on_configure(
     params_ = param_listener_->get_params();
 
     omni_wheel_kinematics_ = std::make_unique<OmniWheelKinematics>(
-        params_.omni_wheel_angles, params_.omni_wheel_distance,
-        params_.omni_wheel_radius);
+        params_.omni_wheel_forward_angles, params_.omni_wheel_center_x,
+        params_.omni_wheel_center_y, params_.omni_wheel_sliding_angles, params_.omni_wheel_radius);
 
     // topics QoS
     auto subscribers_qos = rclcpp::SystemDefaultsQoS();
@@ -143,9 +144,13 @@ OmniChassisController::state_interface_configuration() const {
 
     // Joint position state of yaw gimbal is required for GIMBAL or
     // CHASSIS_FOLLOW_GIMBAL control mode
-    state_interfaces_config.names.reserve(1);
-    state_interfaces_config.names.push_back(params_.yaw_gimbal_joint + "/" +
-                                            HW_IF_POSITION);
+    if (params_.control_mode == static_cast<int>(control_mode_type::GIMBAL) ||
+        params_.control_mode ==
+            static_cast<int>(control_mode_type::CHASSIS_FOLLOW_GIMBAL)) {
+        state_interfaces_config.names.reserve(1);
+        state_interfaces_config.names.push_back(params_.yaw_gimbal_joint + "/" +
+                                                HW_IF_POSITION);
+    }
 
     return state_interfaces_config;
 }
@@ -254,7 +259,8 @@ OmniChassisController::update_and_write_commands(
             reference_interfaces_[2];
         if (params_.control_mode ==
             static_cast<int>(control_mode_type::CHASSIS_FOLLOW_GIMBAL)) {
-            double error = state_interfaces_[0].get_value() - 0;
+            double current_motor_pos = state_interfaces_[0].get_value() - params_.yaw_gimbal_joint_offset;
+            double error = -angles::shortest_angular_distance(current_motor_pos, params_.follow_pid_target);
             twist[2] = follow_pid_->computeCommand(error, period);
             if (state_publisher_ && state_publisher_->trylock()) {
                 state_publisher_->msg_.header.stamp = time;
@@ -273,7 +279,7 @@ OmniChassisController::update_and_write_commands(
             params_.control_mode ==
                 static_cast<int>(control_mode_type::CHASSIS_FOLLOW_GIMBAL)) {
             Eigen::MatrixXd rotation_mat(3, 3);
-            double yaw_gimbal_joint_pos = state_interfaces_[0].get_value();
+            double yaw_gimbal_joint_pos = state_interfaces_[0].get_value() - params_.yaw_gimbal_joint_offset;
             rotation_mat << cos(yaw_gimbal_joint_pos),
                 -sin(yaw_gimbal_joint_pos), 0, sin(yaw_gimbal_joint_pos),
                 cos(yaw_gimbal_joint_pos), 0, 0, 0, 1;

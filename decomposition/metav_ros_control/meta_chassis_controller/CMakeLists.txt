@@ -7,6 +7,7 @@ endif()
 
 # find dependencies
 set(THIS_PACKAGE_INCLUDE_DEPENDS
+  angles
   control_toolbox
   control_msgs
   controller_interface
