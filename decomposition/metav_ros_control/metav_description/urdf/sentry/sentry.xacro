@@ -2,7 +2,6 @@
 <robot name="sentry" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:arg name="is_simulation" default="true" />
-    <xacro:arg name="roller_type" default="simple" />
 
     <link name="base_footprint">
     </link>
@@ -15,7 +14,12 @@
     </joint>
 
     <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.chassis.xacro" />
-    <xacro:chassis roller_type="$(arg roller_type)" />
+    <xacro:if value="$(arg is_simulation)">
+        <xacro:chassis roller_type="simple" />
+    </xacro:if>
+    <xacro:unless value="$(arg is_simulation)">
+        <xacro:chassis roller_type="none" />
+    </xacro:unless>
 
     <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.gimbal.xacro" />
     <xacro:gimbal />
