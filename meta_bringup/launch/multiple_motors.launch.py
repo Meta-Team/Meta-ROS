@@ -22,11 +22,11 @@ from launch.conditions import IfCondition, UnlessCondition
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
-# Necessary dirty work that lets us import modules from the metav_bringup package
+# Necessary dirty work that lets us import modules from the meta_bringup package
 import os
 import sys
 from ament_index_python.packages import get_package_share_directory
-sys.path.append(os.path.join(get_package_share_directory('metav_bringup'), 'launch'))
+sys.path.append(os.path.join(get_package_share_directory('meta_bringup'), 'launch'))
 
 from launch_utils import load_controller, register_loading_order, register_sequential_loading
 
@@ -62,7 +62,7 @@ def generate_launch_description():
 
     # Gazebo related launch
     world_sdf = PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'worlds', 'empty_world.sdf'])
-    bridge_config = PathJoinSubstitution([FindPackageShare('metav_bringup'), 'config', 'ros_gz_bridge.yaml'])
+    bridge_config = PathJoinSubstitution([FindPackageShare('meta_bringup'), 'config', 'ros_gz_bridge.yaml'])
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'launch', 'meta_gazebo.launch.py'])],
