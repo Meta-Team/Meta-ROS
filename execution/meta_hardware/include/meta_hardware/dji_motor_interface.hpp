@@ -53,8 +53,6 @@ class MetaRobotDjiMotorNetwork : public hardware_interface::SystemInterface {
   private:
     class JointInterfaceData {
       public:
-        double command_position;
-        double command_velocity;
         double command_effort;
         double state_position;
         double state_velocity;
@@ -66,9 +64,6 @@ class MetaRobotDjiMotorNetwork : public hardware_interface::SystemInterface {
       public:
         std::string name;
         double mechanical_reduction;
-        bool command_pos;
-        bool command_vel;
-        bool command_eff;
     };
     std::vector<JointMotorInfo>
         joint_motors_info_; // local cache of joint motor info

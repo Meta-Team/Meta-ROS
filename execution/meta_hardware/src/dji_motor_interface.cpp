@@ -109,23 +109,10 @@ MetaRobotDjiMotorNetwork::export_command_interfaces() {
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         const auto &joint_command_interfaces =
             info_.joints[i].command_interfaces;
-        if (contains_interface(joint_command_interfaces, "position")) {
-            command_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_POSITION,
-                &joint_interface_data_[i].command_position);
-            joint_motors_info_[i].command_pos = true;
-        }
-        if (contains_interface(joint_command_interfaces, "velocity")) {
-            command_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_VELOCITY,
-                &joint_interface_data_[i].command_velocity);
-            joint_motors_info_[i].command_vel = true;
-        }
         if (contains_interface(joint_command_interfaces, "effort")) {
             command_interfaces.emplace_back(
                 info_.joints[i].name, HW_IF_EFFORT,
                 &joint_interface_data_[i].command_effort);
-            joint_motors_info_[i].command_eff = true;
         }
     }
 
@@ -174,7 +161,7 @@ MetaRobotDjiMotorNetwork::write(const rclcpp::Time & /*time*/,
 
         // Check if the command is valid
         // If a command interface exists, the command must not be NaN
-        if (joint_motors_info_[i].command_eff && std::isnan(effort)) {
+        if (std::isnan(effort)) {
             continue;
         }
 
