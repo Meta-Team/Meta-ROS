@@ -16,11 +16,23 @@
 namespace meta_hardware {
 using sockcanpp::CanDriver;
 
-DjiMotorNetwork::DjiMotorNetwork(std::string can_network_name) {
+DjiMotorNetwork::DjiMotorNetwork(
+    std::string can_interface,
+    const std::vector<std::unordered_map<std::string, std::string>>
+        &motor_params) {
+
+    for (const auto &motor_param : motor_params) {
+        std::string motor_model = motor_param.at("motor_model");
+        uint32_t dji_motor_id = std::stoi(motor_param.at("motor_id"));
+        auto dji_motor = std::make_shared<DjiMotor>(motor_model, dji_motor_id);
+        rx_id2motor_[dji_motor->get_rx_can_id()] = dji_motor;
+        motors_.emplace_back(dji_motor);
+    }
+
     // Initialize CAN driver
     try {
-        can_driver_ = std::make_unique<CanDriver>(can_network_name,
-                                                  CanDriver::CAN_SOCK_RAW);
+        can_driver_ =
+            std::make_unique<CanDriver>(can_interface, CanDriver::CAN_SOCK_RAW);
     } catch (sockcanpp::exceptions::CanInitException &e) {
         std::cerr << "Error initializing CAN driver: " << e.what() << std::endl;
         throw std::runtime_error("Error initializing CAN driver");
@@ -40,23 +52,13 @@ DjiMotorNetwork::~DjiMotorNetwork() {
     }
 }
 
-void DjiMotorNetwork::add_motor(
-    uint32_t joint_id,
-    const std::unordered_map<std::string, std::string> &motor_params) {
-    std::string motor_model = motor_params.at("motor_model");
-    uint32_t dji_motor_id = std::stoi(motor_params.at("motor_id"));
-    auto dji_motor = std::make_shared<DjiMotor>(motor_model, dji_motor_id);
-    rx_id2motor_[dji_motor->get_rx_can_id()] = dji_motor;
-    joint_id2motor_[joint_id] = dji_motor;
-}
-
 std::tuple<double, double, double>
 DjiMotorNetwork::read(uint32_t joint_id) const {
-    return joint_id2motor_.at(joint_id)->get_motor_feedback();
+    return motors_[joint_id]->get_motor_feedback();
 }
 
 void DjiMotorNetwork::write(uint32_t joint_id, double effort) {
-    const auto &motor = joint_id2motor_.at(joint_id);
+    const auto &motor = motors_[joint_id];
     uint32_t dji_motor_id = motor->get_dji_motor_id();
     uint32_t tx_can_id = motor->get_tx_can_id();
     uint32_t maximum_raw_effort = motor->get_maximum_raw_effort();

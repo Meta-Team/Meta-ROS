@@ -62,7 +62,7 @@ class MetaRobotDjiMotorNetwork : public hardware_interface::SystemInterface {
 
     class JointMotorInfo {
       public:
-        std::string name;
+        std::string joint_name;
         double mechanical_reduction;
     };
     std::vector<JointMotorInfo>

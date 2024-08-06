@@ -33,21 +33,22 @@ hardware_interface::CallbackReturn MetaRobotDjiMotorNetwork::on_init(
 
 hardware_interface::CallbackReturn MetaRobotDjiMotorNetwork::on_configure(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-    std::string can_network_name =
-        info_.hardware_parameters.at("can_network_name");
 
-    dji_motor_network_ = std::make_unique<DjiMotorNetwork>(can_network_name);
+    std::vector<std::unordered_map<std::string, std::string>> motor_params;
 
     // Add the motors to the motor networks
     for (size_t i = 0; i < info_.joints.size(); ++i) {
-        const auto &joint = info_.joints[i];
-        const auto &joint_params = joint.parameters;
-
-        dji_motor_network_->add_motor(i, joint_params);
-        joint_motors_info_[i].name = info_.joints[i].name;
+        const auto &joint_params = info_.joints[i].parameters;
+        motor_params.push_back(joint_params);
+        joint_motors_info_[i].joint_name = info_.joints[i].name;
         joint_motors_info_[i].mechanical_reduction =
-            std::stod(info_.joints[i].parameters.at("mechanical_reduction"));
+            std::stod(joint_params.at("mechanical_reduction"));
     }
+
+    std::string can_interface =
+        info_.hardware_parameters.at("can_network_name");
+    dji_motor_network_ =
+        std::make_unique<DjiMotorNetwork>(can_interface, motor_params);
 
     return CallbackReturn::SUCCESS;
 }

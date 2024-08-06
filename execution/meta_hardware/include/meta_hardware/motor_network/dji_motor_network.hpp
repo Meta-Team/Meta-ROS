@@ -14,21 +14,11 @@ namespace meta_hardware {
 
 class DjiMotorNetwork {
   public:
-    explicit DjiMotorNetwork(std::string can_network_name);
+    DjiMotorNetwork(
+        std::string can_interface,
+        const std::vector<std::unordered_map<std::string, std::string>>
+            &motor_params);
     ~DjiMotorNetwork();
-
-    /**
-     * @brief Add a DJI motor to the DJI motor network
-     * @param motor_model The model name of the motor (GM6020, M3508, M2006)
-     * @param dji_motor_id The DJI motor ID (this ID is not unique between
-     * different models)
-     * @param joint_id This can be basically anything, but it has to be unique.
-     * The name comes from ros2_control, where motors are identified by
-     * joint_id. But you may use any other unique number.
-     */
-    void
-    add_motor(uint32_t joint_id,
-              const std::unordered_map<std::string, std::string> &motor_params);
 
     /**
      * @brief Read the motor feedback
@@ -79,7 +69,7 @@ class DjiMotorNetwork {
 
     // [joint_id] -> dji_motor
     // This makes it easy to find the motor object in read() and write()
-    std::map<uint32_t, std::shared_ptr<DjiMotor>> joint_id2motor_;
+    std::vector<std::shared_ptr<DjiMotor>> motors_;
 };
 
 } // namespace meta_hardware
