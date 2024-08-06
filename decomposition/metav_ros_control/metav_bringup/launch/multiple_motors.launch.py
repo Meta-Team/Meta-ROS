@@ -45,13 +45,23 @@ def generate_launch_description():
     robot_description_content = Command([
             PathJoinSubstitution([FindExecutable(name='xacro')]),
             ' ',
-            PathJoinSubstitution([FindPackageShare('metav_description'), 'urdf', 'sentry', 'sentry.xacro']),
+            PathJoinSubstitution([FindPackageShare('metav_description'), 'urdf', 'playground', 'multiple_motors.xacro']),
             ' ',
             'is_simulation:=', enable_simulation,
     ])
 
+    node_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        parameters=[
+            {'use_sim_time': enable_simulation},
+            {'robot_description': robot_description_content},],
+        output='both',
+        emulate_tty=True
+    )
+
     # Gazebo related launch
-    world_sdf = PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'worlds', 'rmuc2024.sdf'])
+    world_sdf = PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'worlds', 'empty_world.sdf'])
     bridge_config = PathJoinSubstitution([FindPackageShare('metav_bringup'), 'config', 'ros_gz_bridge.yaml'])
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -59,28 +69,13 @@ def generate_launch_description():
         ),
         launch_arguments=[
             ('world_sdf', world_sdf),
-            ('robot_name', 'sentry'),
+            ('robot_name', 'multiple_motors'),
             ('bridge_config_file', bridge_config),
-            ('robot_x', '6.35'),
-            ('robot_y', '7.6'),
-            ('robot_z', '0.2'),
         ],
         condition=IfCondition(enable_simulation)
     )
-    
-    node_robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        parameters=[
-            {'use_sim_time': enable_simulation,
-            'robot_description': robot_description_content,
-            'publish_frequency': 100.0}
-        ],
-        output='both',
-        emulate_tty=True
-    )
 
-    robot_controller_config = PathJoinSubstitution([FindPackageShare('metav_description'), 'config', 'sentry.yaml'])
+    robot_controller_config = PathJoinSubstitution([FindPackageShare('metav_description'), 'config', 'multiple_motors.yaml'])
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
@@ -98,42 +93,23 @@ def generate_launch_description():
     # List of controllers to be loaded sequentially
     # Order in this list is IMPORTANT
     load_controllers = [
-        load_controller('wheels_pid_controller'),
-        load_controller('gimbal_controller'),
-        load_controller('omni_chassis_controller'),
+        load_controller('motor_vel2eff_pid_controller'),
+        load_controller('motor_pos2vel_pid_controller'),
+        load_controller('forward_position_controller'),
     ]
+
+    motor_tester_node = Node(
+        package='motor_tester',
+        executable='motor_tester',
+        name='motor_tester_node',
+        parameters=[robot_controller_config],
+    )
 
     dbus_control_node = Node(
         package='dbus_control',
         executable='dbus_control_node',
         name='dbus_control_node',
         parameters=[robot_controller_config],
-        output='both',
-        emulate_tty=True,
-    )
-
-    # auto_sentry_node = Node(
-    #     package='auto_sentry',
-    #     executable='auto_sentry',
-    #     name='auto_sentry_node',
-    #     parameters=[robot_controllers],
-    # )
-
-    dbus_vehicle_node = Node(
-        package='dbus_vehicle',
-        executable='dbus_vehicle',
-        name='dbus_vehicle',
-        parameters=[robot_controller_config],
-        output='both',
-        emulate_tty=True,
-    )
-
-    ahrs_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('fdilink_ahrs'),
-                        'launch/ahrs_driver.launch.py')
-        ),
-        condition=UnlessCondition(enable_simulation)
     )
 
     return LaunchDescription([
@@ -149,8 +125,6 @@ def generate_launch_description():
         load_joint_state_broadcaster,
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
+        motor_tester_node,
         dbus_control_node,
-        # auto_sentry_node,
-        dbus_vehicle_node,
-        ahrs_launch,
     ])
