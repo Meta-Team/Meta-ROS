@@ -23,7 +23,6 @@ forward_velocity_controller:
       - wheels_pid_controller/back_right_wheel_joint
     interface_name: velocity
 
-
 # omni_chassis_controller:
 #   ros__parameters:
 #     omni_wheel_joints:
@@ -47,7 +46,7 @@ forward_velocity_controller:
 
 #     yaw_gimbal_joint_offset: -0.25
 
-#     follow_pid_gains: 
+#     follow_pid_gains:
 #       {
 #         p: 4.0, i: 2.0e-1, d: 0.0,
 #         i_clamp_max: 3.0,
@@ -58,8 +57,6 @@ forward_velocity_controller:
 #     follow_pid_target: 0.7853981634
 
 #     reference_timeout: 0.2
-
-
 
 wheels_pid_controller:
   ros__parameters:
@@ -75,33 +72,13 @@ wheels_pid_controller:
 
     gains:
       front_left_wheel_joint:
-        {
-          p: 4.0e-1, i: 2.0e-3, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       front_right_wheel_joint:
-        {
-          p: 4.0e-1, i: 2.0e-3, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       back_left_wheel_joint:
-        {
-          p: 4.0e-1, i: 2.0e-3, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       back_right_wheel_joint:
-        {
-          p: 4.0e-1, i: 2.0e-3, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
 dbus_control_node:
   ros__parameters:
