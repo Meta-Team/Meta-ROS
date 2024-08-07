@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "meta_hardware/motor_driver/mi_motor_driver.hpp"
@@ -14,19 +15,11 @@ namespace meta_hardware {
 
 class MiMotorNetwork {
   public:
-    MiMotorNetwork(const std::string &can_network_name, uint32_t host_id);
+    MiMotorNetwork(
+        const std::string &can_network_name, uint32_t host_id,
+        const std::vector<std::unordered_map<std::string, std::string>>
+            &joint_params);
     ~MiMotorNetwork();
-
-    /**
-     * @brief Add a MI motor to the MI motor network
-     * @param joint_id This can be basically anything, but it has to be unique.
-     * The name comes from ros2_control, where motors are identified by
-     * joint_id. But you may use any other unique number.
-     * @param motor_params The parameters of the motor.
-     */
-    void
-    add_motor(uint32_t joint_id,
-              const std::unordered_map<std::string, std::string> &motor_params);
 
     /**
      * @brief Read the motor feedback
@@ -45,14 +38,7 @@ class MiMotorNetwork {
     void write(uint32_t joint_id, double position, double velocity,
                double effort);
 
-    /**
-     * @brief Transmit the motor commands, serves no purpose in MI motor
-     * network.
-     */
-    void tx();
-
   private:
-    std::string can_network_name_;
     [[noreturn]] void rx_loop();
     std::thread rx_thread_;
 
@@ -69,7 +55,7 @@ class MiMotorNetwork {
 
     // [joint_id] -> mi_motor
     // This makes it easy to find the motor object in read() and write()
-    std::map<uint32_t, std::shared_ptr<MiMotor>> joint_id2motor_;
+    std::vector<std::shared_ptr<MiMotor>> mi_motors_;
 
     // Host ID
     uint32_t host_id_;

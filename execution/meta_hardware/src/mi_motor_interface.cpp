@@ -33,24 +33,23 @@ MetaRobotMiMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
 
 hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_configure(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-    std::string can_network_name =
-        info_.hardware_parameters.at("can_network_name");
 
-    mi_motor_network_ =
-        std::make_unique<MiMotorNetwork>(can_network_name, 0x00);
-
+    std::vector<std::unordered_map<std::string, std::string>> joint_params;
     // Add the motors to the motor networks
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         const auto &joint = info_.joints[i];
-        const auto &joint_params = joint.parameters;
-
-        mi_motor_network_->add_motor(i, joint_params);
-        joint_motor_info_[i].name = info_.joints[i].name;
+        const auto &joint_param = joint.parameters;
+        joint_motor_info_[i].name = joint.name;
         joint_motor_info_[i].mechanical_reduction =
-            std::stod(info_.joints[i].parameters.at("mechanical_reduction"));
-        joint_motor_info_[i].offset =
-            std::stod(info_.joints[i].parameters.at("offset"));
+            std::stod(joint_param.at("mechanical_reduction"));
+        joint_motor_info_[i].offset = std::stod(joint_param.at("offset"));
+        joint_params.emplace_back(joint_param);
     }
+
+    std::string can_network_name =
+        info_.hardware_parameters.at("can_network_name");
+    mi_motor_network_ =
+        std::make_unique<MiMotorNetwork>(can_network_name, 0x00, joint_params);
 
     return CallbackReturn::SUCCESS;
 }
@@ -198,9 +197,6 @@ MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
         // Write the command to the motor network
         mi_motor_network_->write(i, position, velocity, effort);
     }
-
-    // Some motor network implementations require a separate tx() call
-    mi_motor_network_->tx();
 
     return hardware_interface::return_type::OK;
 }
