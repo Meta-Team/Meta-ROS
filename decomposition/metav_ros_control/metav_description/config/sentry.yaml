@@ -37,13 +37,8 @@ omni_chassis_controller:
 
     yaw_gimbal_joint_offset: -0.25
 
-    follow_pid_gains: 
-      {
-        p: 4.0, i: 2.0e-1, d: 0.0,
-        i_clamp_max: 3.0,
-        i_clamp_min: -3.0,
-        antiwindup: true,
-      }
+    follow_pid_gains:
+      { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
 
     follow_pid_target: 0.7853981634
 
@@ -63,33 +58,13 @@ wheels_pid_controller:
 
     gains:
       front_wheel_joint:
-        {
-          p: 4.0e-1, i: 2.0e-3, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       left_wheel_joint:
-        {
-          p: 4.0e-1, i: 2.0e-3, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       back_wheel_joint:
-        {
-          p: 4.0e-1, i: 2.0e-3, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       right_wheel_joint:
-        {
-          p: 4.0e-1, i: 2.0e-3, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
 gimbal_controller:
   ros__parameters:
@@ -104,22 +79,12 @@ gimbal_controller:
     imu_topic: /imu
 
     gains:
-      yaw_gimbal_joint_pos2vel:
-        { p: 7.0, i: 0.0, d: 0.0 }
-      pitch_gimbal_joint_pos2vel:
-        { p: 30.0, i: 0.0, d: 0.05 }
+      yaw_gimbal_joint_pos2vel: { p: 7.0, i: 0.0, d: 0.0 }
+      pitch_gimbal_joint_pos2vel: { p: 30.0, i: 0.0, d: 0.05 }
       yaw_gimbal_joint_vel2eff:
-        { p: 5.0e-1, i: 2.5e-1, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 5.0e-1, i: 2.5e-1, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       pitch_gimbal_joint_vel2eff:
-        { p: 1.0e-1, i: 2.0e-2, d: 0.0,
-          i_clamp_max: 1.0,
-          i_clamp_min: -1.0,
-          antiwindup: true,
-        }
+        { p: 1.0e-1, i: 2.0e-2, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
 dbus_control_node:
   ros__parameters:
