@@ -8,7 +8,7 @@
 
     <!-- raise the robot a bit higher to prevent it from stucking in the ground -->
     <joint name="joint_base_to_footprint" type="fixed">
-        <origin rpy="0 0 0.2" xyz="0 0 0" />
+        <origin rpy="0 0 0" xyz="0 0 0.2" />
         <parent link="base_footprint" />
         <child link="base_link" />
     </joint>
@@ -39,6 +39,7 @@
             <param name="motor_model">GM6020</param>
             <param name="motor_id">1</param>
             <param name="mechanical_reduction">1.0</param>
+            <param name="offset">0.0</param>
         </joint>
     </ros2_control>
 

@@ -43,6 +43,7 @@ hardware_interface::CallbackReturn MetaRobotDjiMotorNetwork::on_configure(
         joint_motors_info_[i].joint_name = info_.joints[i].name;
         joint_motors_info_[i].mechanical_reduction =
             std::stod(joint_params.at("mechanical_reduction"));
+        joint_motors_info_[i].offset = std::stod(joint_params.at("offset"));
     }
 
     std::string can_interface =
@@ -139,8 +140,10 @@ MetaRobotDjiMotorNetwork::read(const rclcpp::Time & /*time*/,
     for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
         auto [position, velocity, effort] = dji_motor_network_->read(i);
 
-        position /= joint_motors_info_[i].mechanical_reduction;
-        velocity /= joint_motors_info_[i].mechanical_reduction;
+        double reduction = joint_motors_info_[i].mechanical_reduction;
+        double offset = joint_motors_info_[i].offset;
+        position = position / reduction + offset;
+        velocity /= reduction;
 
         joint_interface_data_[i].state_position = position;
         joint_interface_data_[i].state_velocity = velocity;
