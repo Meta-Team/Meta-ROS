@@ -141,7 +141,6 @@ MetaRobotDjiMotorNetwork::read(const rclcpp::Time & /*time*/,
 
         position /= joint_motors_info_[i].mechanical_reduction;
         velocity /= joint_motors_info_[i].mechanical_reduction;
-        effort *= joint_motors_info_[i].mechanical_reduction;
 
         joint_interface_data_[i].state_position = position;
         joint_interface_data_[i].state_velocity = velocity;
@@ -157,8 +156,6 @@ MetaRobotDjiMotorNetwork::write(const rclcpp::Time & /*time*/,
 
     for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
         double effort = joint_interface_data_[i].command_effort;
-
-        effort /= joint_motors_info_[i].mechanical_reduction;
 
         // Check if the command is valid
         // If a command interface exists, the command must not be NaN
