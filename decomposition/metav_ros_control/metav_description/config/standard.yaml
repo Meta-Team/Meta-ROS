@@ -53,13 +53,13 @@ wheels_pid_controller:
 
     gains:
       front_left_wheel_joint:
-        { p: 4.0e-1, i: 2.0e-3, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       front_right_wheel_joint:
-        { p: 4.0e-1, i: 2.0e-3, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       back_left_wheel_joint:
-        { p: 4.0e-1, i: 2.0e-3, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       back_right_wheel_joint:
-        { p: 4.0e-1, i: 2.0e-3, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
 dbus_control_node:
   ros__parameters:

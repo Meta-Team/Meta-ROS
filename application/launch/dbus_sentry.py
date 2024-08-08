@@ -33,7 +33,7 @@ def generate_launch_description():
         # deci
         Node(
             package='dbus_vehicle',
-            executable='dbus_vehicle',
+            executable='dbus_vehicle_node',
             name='dbus_vehicle',
             parameters=[config],
         ),

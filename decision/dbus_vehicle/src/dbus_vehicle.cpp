@@ -8,7 +8,7 @@
 class DbusVehicle : public rclcpp::Node
 {
 public:
-    DbusVehicle() : Node("dbus_vehicle")
+    DbusVehicle(const rclcpp::NodeOptions & options) : Node("dbus_vehicle")
     {
         // get param
         double max_vel = this->declare_parameter("control.trans_vel", 2.0);
@@ -72,12 +72,6 @@ private:
         aim_pub_->publish(*interpreter_->get_aim());
     }
 };
+#include "rclcpp_components/register_node_macro.hpp"
 
-int main(int argc, char *argv[])
-{
-    rclcpp::init(argc, argv);
-    auto node_ = std::make_shared<DbusVehicle>();
-    rclcpp::spin(node_);
-    rclcpp::shutdown();
-    return 0;
-}
+RCLCPP_COMPONENTS_REGISTER_NODE(DbusVehicle)
