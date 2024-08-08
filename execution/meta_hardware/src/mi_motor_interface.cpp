@@ -26,29 +26,30 @@ MetaRobotMiMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
     }
 
     joint_interface_data_.resize(info_.joints.size());
-    joint_motors_info_.resize(info_.joints.size());
+    joint_motor_info_.resize(info_.joints.size());
 
     return CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_configure(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-    std::string can_network_name =
-        info_.hardware_parameters.at("can_network_name");
 
-    mi_motor_network_ =
-        std::make_unique<MiMotorNetwork>(can_network_name, 0x00);
-
+    std::vector<std::unordered_map<std::string, std::string>> joint_params;
     // Add the motors to the motor networks
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         const auto &joint = info_.joints[i];
-        const auto &joint_params = joint.parameters;
-
-        mi_motor_network_->add_motor(i, joint_params);
-        joint_motors_info_[i].name = info_.joints[i].name;
-        joint_motors_info_[i].mechanical_reduction =
-            std::stod(info_.joints[i].parameters.at("mechanical_reduction"));
+        const auto &joint_param = joint.parameters;
+        joint_motor_info_[i].name = joint.name;
+        joint_motor_info_[i].mechanical_reduction =
+            std::stod(joint_param.at("mechanical_reduction"));
+        joint_motor_info_[i].offset = std::stod(joint_param.at("offset"));
+        joint_params.emplace_back(joint_param);
     }
+
+    std::string can_network_name =
+        info_.hardware_parameters.at("can_network_name");
+    mi_motor_network_ =
+        std::make_unique<MiMotorNetwork>(can_network_name, 0x00, joint_params);
 
     return CallbackReturn::SUCCESS;
 }
@@ -114,19 +115,19 @@ MetaRobotMiMotorNetwork::export_command_interfaces() {
             command_interfaces.emplace_back(
                 info_.joints[i].name, HW_IF_POSITION,
                 &joint_interface_data_[i].command_position);
-            joint_motors_info_[i].command_pos = true;
+            joint_motor_info_[i].command_pos = true;
         }
         if (contains_interface(joint_command_interfaces, "velocity")) {
             command_interfaces.emplace_back(
                 info_.joints[i].name, HW_IF_VELOCITY,
                 &joint_interface_data_[i].command_velocity);
-            joint_motors_info_[i].command_vel = true;
+            joint_motor_info_[i].command_vel = true;
         }
         if (contains_interface(joint_command_interfaces, "effort")) {
             command_interfaces.emplace_back(
                 info_.joints[i].name, HW_IF_EFFORT,
                 &joint_interface_data_[i].command_effort);
-            joint_motors_info_[i].command_eff = true;
+            joint_motor_info_[i].command_eff = true;
         }
     }
 
@@ -149,12 +150,14 @@ hardware_interface::return_type
 MetaRobotMiMotorNetwork::read(const rclcpp::Time & /*time*/,
                               const rclcpp::Duration & /*period*/) {
 
-    for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
+    for (size_t i = 0; i < joint_motor_info_.size(); ++i) {
         auto [position, velocity, effort] = mi_motor_network_->read(i);
 
-        position /= joint_motors_info_[i].mechanical_reduction;
-        velocity /= joint_motors_info_[i].mechanical_reduction;
-        effort *= joint_motors_info_[i].mechanical_reduction;
+        double reduction = joint_motor_info_[i].mechanical_reduction;
+        double offset = joint_motor_info_[i].offset;
+        position = position / reduction + offset;
+        velocity /= reduction;
+        effort *= reduction;
 
         joint_interface_data_[i].state_position = position;
         joint_interface_data_[i].state_velocity = velocity;
@@ -168,33 +171,32 @@ hardware_interface::return_type
 MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
                                const rclcpp::Duration & /*period*/) {
 
-    for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
+    for (size_t i = 0; i < joint_motor_info_.size(); ++i) {
         double position = joint_interface_data_[i].command_position;
         double velocity = joint_interface_data_[i].command_velocity;
         double effort = joint_interface_data_[i].command_effort;
 
-        position *= joint_motors_info_[i].mechanical_reduction;
-        velocity *= joint_motors_info_[i].mechanical_reduction;
-        effort /= joint_motors_info_[i].mechanical_reduction;
+        double reduction = joint_motor_info_[i].mechanical_reduction;
+        double offset = joint_motor_info_[i].offset;
+        position = (position - offset) * reduction;
+        velocity *= reduction;
+        effort /= reduction;
 
         // Check if the command is valid
         // If a command interface exists, the command must not be NaN
-        if (joint_motors_info_[i].command_pos && std::isnan(position)) {
+        if (joint_motor_info_[i].command_pos && std::isnan(position)) {
             continue;
         }
-        if (joint_motors_info_[i].command_vel && std::isnan(velocity)) {
+        if (joint_motor_info_[i].command_vel && std::isnan(velocity)) {
             continue;
         }
-        if (joint_motors_info_[i].command_eff && std::isnan(effort)) {
+        if (joint_motor_info_[i].command_eff && std::isnan(effort)) {
             continue;
         }
 
         // Write the command to the motor network
         mi_motor_network_->write(i, position, velocity, effort);
     }
-
-    // Some motor network implementations require a separate tx() call
-    mi_motor_network_->tx();
 
     return hardware_interface::return_type::OK;
 }

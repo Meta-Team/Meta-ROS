@@ -167,10 +167,10 @@
             <state_interface name="position" />
             <state_interface name="velocity" />
             <state_interface name="effort" />
-            <param name="motor_vendor">DJI</param>
             <param name="motor_model">M3508</param>
             <param name="motor_id">${motor_id}</param>
             <param name="mechanical_reduction">${mechanical_reduction}</param>
+            <param name="offset">0.0</param>
         </joint>
     </xacro:macro>
 </robot>

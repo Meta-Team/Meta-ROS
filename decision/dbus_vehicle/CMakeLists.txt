@@ -8,27 +8,15 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_auto REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
-find_package(rclcpp REQUIRED)
 ament_auto_find_build_dependencies()
 
-include_directories(include)
-
-add_executable(dbus_vehicle
+ament_auto_add_library(${PROJECT_NAME} SHARED
   src/dbus_vehicle.cpp
   src/dbus_interpreter.cpp)
-ament_target_dependencies(dbus_vehicle
-  rclcpp
-  operation_interface
-  behavior_interface
-  geometry_msgs
-)
 
-install(TARGETS
-  dbus_vehicle
-  DESTINATION lib/${PROJECT_NAME})
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "DbusVehicle"
+  EXECUTABLE ${PROJECT_NAME}_node)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -42,4 +30,4 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_package()
+ament_auto_package()

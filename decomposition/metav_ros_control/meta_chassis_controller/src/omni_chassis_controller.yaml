@@ -40,11 +40,7 @@ omni_chassis_controller:
       validation: { not_empty<>: null },
     }
   omni_wheel_radius:
-    {
-      type: double,
-      default_value: 0.0,
-      description: "Specifies radius of the omni wheels.",
-    }
+    { type: double, default_value: 0.0, description: "Specifies radius of the omni wheels." }
   control_mode:
     {
       type: int,
@@ -58,12 +54,6 @@ omni_chassis_controller:
       description: "Specifies the joint of the yaw gimbal.",
       validation: { not_empty<>: null },
     }
-  yaw_gimbal_joint_offset:
-    {
-      type: double,
-      default_value: 0.0,
-      description: "Specifies the zero point offset of the yaw gimbal motor. This should be measured from tests.",
-    }
   follow_pid_target:
     {
       type: double,
@@ -71,8 +61,4 @@ omni_chassis_controller:
       description: "Specifies target of the follow PID controller. Setting 0.0 meaning the car is always moving towards the front. Usually 0.7853981634(45 degree) gives the maximum speed.",
     }
   reference_timeout:
-    {
-      type: double,
-      default_value: 0.1,
-      description: "Specifies timeout for the reference.",
-    }
+    { type: double, default_value: 0.1, description: "Specifies timeout for the reference." }

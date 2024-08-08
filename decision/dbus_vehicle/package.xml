@@ -4,10 +4,12 @@
   <name>dbus_vehicle</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="yao29@illinois.edu">ubuntu</maintainer>
+  <maintainer email="yao29@illinois.edu">Xinchen Yao</maintainer>
+  <maintainer email="chiming2@illinois.edu">Chiming Ni</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
@@ -15,6 +17,8 @@
   <depend>operation_interface</depend>
   <depend>geometry_msgs</depend>
   <depend>behavior_interface</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

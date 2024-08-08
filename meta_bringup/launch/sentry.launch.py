@@ -1,34 +1,20 @@
-# Copyright 2021 Open Source Robotics Foundation, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch.conditions import IfCondition, UnlessCondition
 
-from launch_ros.actions import Node
+from launch_ros.actions import Node, ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
 from launch_ros.substitutions import FindPackageShare
 
 # Necessary dirty work that lets us import modules from the meta_bringup package
 import os
 import sys
 from ament_index_python.packages import get_package_share_directory
-sys.path.append(os.path.join(get_package_share_directory('meta_bringup'), 'launch'))
+sys.path.append(os.path.join(
+    get_package_share_directory('meta_bringup'), 'launch'))
 
-from launch_utils import load_controller, register_loading_order, register_sequential_loading
 
 ARGUMENTS = [
     DeclareLaunchArgument(
@@ -37,25 +23,32 @@ ARGUMENTS = [
         description='If true, the simulation will be started'),
 ]
 
+
 def generate_launch_description():
+    from launch_utils import load_controller, register_sequential_loading
+
     # Launch Arguments
     enable_simulation = LaunchConfiguration('enable_simulation')
 
     # Get URDF via xacro
     robot_description_content = Command([
-            PathJoinSubstitution([FindExecutable(name='xacro')]),
-            ' ',
-            PathJoinSubstitution([FindPackageShare('metav_description'), 'urdf', 'sentry', 'sentry.xacro']),
-            ' ',
-            'is_simulation:=', enable_simulation,
+        PathJoinSubstitution([FindExecutable(name='xacro')]),
+        ' ',
+        PathJoinSubstitution(
+            [FindPackageShare('metav_description'), 'urdf', 'sentry', 'sentry.xacro']),
+        ' ',
+        'is_simulation:=', enable_simulation,
     ])
 
     # Gazebo related launch
-    world_sdf = PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'worlds', 'rmuc2024.sdf'])
-    bridge_config = PathJoinSubstitution([FindPackageShare('meta_bringup'), 'config', 'ros_gz_bridge.yaml'])
+    world_sdf = PathJoinSubstitution(
+        [FindPackageShare('metav_gazebo'), 'worlds', 'rmuc2024.sdf'])
+    bridge_config = PathJoinSubstitution(
+        [FindPackageShare('meta_bringup'), 'config', 'ros_gz_bridge.yaml'])
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([FindPackageShare('metav_gazebo'), 'launch', 'meta_gazebo.launch.py'])],
+            [PathJoinSubstitution(
+                [FindPackageShare('metav_gazebo'), 'launch', 'meta_gazebo.launch.py'])],
         ),
         launch_arguments=[
             ('world_sdf', world_sdf),
@@ -67,20 +60,21 @@ def generate_launch_description():
         ],
         condition=IfCondition(enable_simulation)
     )
-    
+
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[
             {'use_sim_time': enable_simulation,
-            'robot_description': robot_description_content,
-            'publish_frequency': 100.0}
+             'robot_description': robot_description_content,
+             'publish_frequency': 100.0}
         ],
         output='both',
         emulate_tty=True
     )
 
-    robot_controller_config = PathJoinSubstitution([FindPackageShare('metav_description'), 'config', 'sentry.yaml'])
+    robot_controller_config = PathJoinSubstitution(
+        [FindPackageShare('metav_description'), 'config', 'sentry.yaml'])
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
@@ -103,35 +97,35 @@ def generate_launch_description():
         load_controller('omni_chassis_controller'),
     ]
 
-    dbus_control_node = Node(
-        package='dbus_control',
-        executable='dbus_control_node',
-        name='dbus_control_node',
-        parameters=[robot_controller_config],
+    dbus_container = ComposableNodeContainer(
+        name='dbus_container',
+        namespace='',
+        package='rclcpp_components',
+        executable='component_container',
+        composable_node_descriptions=[
+            ComposableNode(
+                package='dbus_control',
+                plugin='DbusControl',
+                name='dbus_control',
+                namespace='',
+                parameters=[robot_controller_config],
+            ),
+            ComposableNode(
+                package='dbus_vehicle',
+                plugin='DbusVehicle',
+                name='dbus_vehicle',
+                namespace='',
+                parameters=[robot_controller_config],
+            ),
+        ],
         output='both',
-        emulate_tty=True,
-    )
-
-    # auto_sentry_node = Node(
-    #     package='auto_sentry',
-    #     executable='auto_sentry',
-    #     name='auto_sentry_node',
-    #     parameters=[robot_controllers],
-    # )
-
-    dbus_vehicle_node = Node(
-        package='dbus_vehicle',
-        executable='dbus_vehicle',
-        name='dbus_vehicle',
-        parameters=[robot_controller_config],
-        output='both',
-        emulate_tty=True,
+        emulate_tty=True
     )
 
     ahrs_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('fdilink_ahrs'),
-                        'launch/ahrs_driver.launch.py')
+                         'launch/ahrs_driver.launch.py')
         ),
         condition=UnlessCondition(enable_simulation)
     )
@@ -149,8 +143,6 @@ def generate_launch_description():
         load_joint_state_broadcaster,
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
-        dbus_control_node,
-        # auto_sentry_node,
-        dbus_vehicle_node,
+        dbus_container,
         ahrs_launch,
     ])

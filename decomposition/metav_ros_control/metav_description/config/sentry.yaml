@@ -35,8 +35,6 @@ omni_chassis_controller:
 
     yaw_gimbal_joint: yaw_gimbal_joint
 
-    yaw_gimbal_joint_offset: -0.25
-
     follow_pid_gains:
       { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
 

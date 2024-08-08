@@ -21,15 +21,43 @@ using sockcanpp::exceptions::CanInitException;
 using std::string;
 using std::unordered_map;
 
-MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id)
-    : can_network_name_(can_network_name), host_id_(host_id) {
+MiMotorNetwork::MiMotorNetwork(
+    const std::string &can_network_name, uint32_t host_id,
+    const std::vector<std::unordered_map<std::string, std::string>>
+        &joint_params)
+    : host_id_(host_id) {
+
+    // Initialize MI motor drivers
+    for (const auto &joint_param : joint_params) {
+        string motor_model = joint_param.at("motor_model");
+        uint32_t mi_motor_id = std::stoi(joint_param.at("motor_id"));
+        double Kp = std::stod(joint_param.at("Kp"));
+        double Kd = std::stod(joint_param.at("Kd"));
+
+        auto mi_motor =
+            std::make_shared<MiMotor>(motor_model, mi_motor_id, Kp, Kd);
+        motor_id2motor_[mi_motor_id] = mi_motor;
+        mi_motors_.emplace_back(mi_motor);
+    }
+
     // Initialize CAN driver
     try {
-        can_driver_ = std::make_unique<CanDriver>(can_network_name_,
+        can_driver_ = std::make_unique<CanDriver>(can_network_name,
                                                   CanDriver::CAN_SOCK_RAW);
     } catch (CanInitException &e) {
         std::cerr << "Error initializing CAN driver: " << e.what() << std::endl;
         throw std::runtime_error("Error initializing CAN driver");
+    }
+
+    // Enable all motors
+    for (const auto &motor : mi_motors_) {
+        try {
+            can_driver_->sendMessage(
+                motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
+        } catch (CanException &e) {
+            std::cerr << "Error writing MI motor enable CAN message: "
+                      << e.what() << std::endl;
+        }
     }
 
     // Start RX thread
@@ -39,7 +67,7 @@ MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id)
 MiMotorNetwork::~MiMotorNetwork() {
     // Disable all motors
     try {
-        for (const auto &[joint_id, motor] : joint_id2motor_) {
+        for (const auto &motor : mi_motors_) {
             can_driver_->sendMessage(
                 motor->get_motor_disable_frame(static_cast<uint8_t>(host_id_)));
         }
@@ -51,35 +79,14 @@ MiMotorNetwork::~MiMotorNetwork() {
     // TODO: Join RX thread
 }
 
-void MiMotorNetwork::add_motor(
-    uint32_t joint_id, const unordered_map<string, string> &motor_params) {
-    string motor_model = motor_params.at("motor_model");
-    uint32_t mi_motor_id = std::stoi(motor_params.at("motor_id"));
-    double Kp = std::stod(motor_params.at("Kp"));
-    double Kd = std::stod(motor_params.at("Kd"));
-
-    auto mi_motor = std::make_shared<MiMotor>(motor_model, mi_motor_id, Kp, Kd);
-    motor_id2motor_[mi_motor_id] = mi_motor;
-    joint_id2motor_[joint_id] = mi_motor;
-
-    // Enable this motor
-    try {
-        can_driver_->sendMessage(
-            mi_motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
-    } catch (CanException &e) {
-        std::cerr << "Error writing MI motor enable CAN message: " << e.what()
-                  << std::endl;
-    }
-}
-
 std::tuple<double, double, double>
 MiMotorNetwork::read(uint32_t joint_id) const {
-    return joint_id2motor_.at(joint_id)->get_motor_feedback();
+    return mi_motors_[joint_id]->get_motor_feedback();
 }
 
 void MiMotorNetwork::write(uint32_t joint_id, double position, double velocity,
                            double effort) {
-    const auto &motor = joint_id2motor_.at(joint_id);
+    const auto &motor = mi_motors_[joint_id];
     try {
         can_driver_->sendMessage(
             motor->get_motor_command_frame(position, velocity, effort));
@@ -132,10 +139,6 @@ void MiMotorNetwork::process_mi_fb_frame(const CanMessage &can_msg) {
     uint8_t motor_id = (can_msg.getRawFrame().can_id >> 8) & 0xFF;
     const auto &motor = motor_id2motor_.at(motor_id);
     motor->set_motor_feedback(can_msg);
-}
-
-void MiMotorNetwork::tx() {
-    // tx() does nothing because the motor commands are sent in write()
 }
 
 } // namespace meta_hardware

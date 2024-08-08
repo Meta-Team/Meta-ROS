@@ -66,12 +66,13 @@ class MetaRobotMiMotorNetwork : public hardware_interface::SystemInterface {
       public:
         std::string name;
         double mechanical_reduction;
+        double offset;
         bool command_pos;
         bool command_vel;
         bool command_eff;
     };
     std::vector<JointMotorInfo>
-        joint_motors_info_; // local cache of joint motor info
+        joint_motor_info_; // local cache of joint motor info
 
     std::unique_ptr<MiMotorNetwork> mi_motor_network_;
 };
