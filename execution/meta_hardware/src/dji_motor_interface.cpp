@@ -33,21 +33,23 @@ hardware_interface::CallbackReturn MetaRobotDjiMotorNetwork::on_init(
 
 hardware_interface::CallbackReturn MetaRobotDjiMotorNetwork::on_configure(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-    std::string can_network_name =
-        info_.hardware_parameters.at("can_network_name");
 
-    dji_motor_network_ = std::make_unique<DjiMotorNetwork>(can_network_name);
+    std::vector<std::unordered_map<std::string, std::string>> motor_params;
 
     // Add the motors to the motor networks
     for (size_t i = 0; i < info_.joints.size(); ++i) {
-        const auto &joint = info_.joints[i];
-        const auto &joint_params = joint.parameters;
-
-        dji_motor_network_->add_motor(i, joint_params);
-        joint_motors_info_[i].name = info_.joints[i].name;
+        const auto &joint_params = info_.joints[i].parameters;
+        motor_params.push_back(joint_params);
+        joint_motors_info_[i].joint_name = info_.joints[i].name;
         joint_motors_info_[i].mechanical_reduction =
-            std::stod(info_.joints[i].parameters.at("mechanical_reduction"));
+            std::stod(joint_params.at("mechanical_reduction"));
+        joint_motors_info_[i].offset = std::stod(joint_params.at("offset"));
     }
+
+    std::string can_interface =
+        info_.hardware_parameters.at("can_network_name");
+    dji_motor_network_ =
+        std::make_unique<DjiMotorNetwork>(can_interface, motor_params);
 
     return CallbackReturn::SUCCESS;
 }
@@ -138,9 +140,13 @@ MetaRobotDjiMotorNetwork::read(const rclcpp::Time & /*time*/,
     for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
         auto [position, velocity, effort] = dji_motor_network_->read(i);
 
-        position /= joint_motors_info_[i].mechanical_reduction;
-        velocity /= joint_motors_info_[i].mechanical_reduction;
-        effort *= joint_motors_info_[i].mechanical_reduction;
+        double reduction = joint_motors_info_[i].mechanical_reduction;
+        double offset = joint_motors_info_[i].offset;
+        position = position / reduction + offset;
+        velocity /= reduction;
+        if (reduction < 0) {
+            effort = -effort;
+        }
 
         joint_interface_data_[i].state_position = position;
         joint_interface_data_[i].state_velocity = velocity;
@@ -157,12 +163,17 @@ MetaRobotDjiMotorNetwork::write(const rclcpp::Time & /*time*/,
     for (size_t i = 0; i < joint_motors_info_.size(); ++i) {
         double effort = joint_interface_data_[i].command_effort;
 
-        effort /= joint_motors_info_[i].mechanical_reduction;
-
         // Check if the command is valid
         // If a command interface exists, the command must not be NaN
         if (std::isnan(effort)) {
             continue;
+        }
+
+        // Even though DJI motors receive proportional effort commands,
+        // the mechanical reduction can be negative, which means that the 
+        // motor direction is inverted. In this case, the effort must be negated.
+        if (joint_motors_info_[i].mechanical_reduction < 0) {
+            effort = -effort;
         }
 
         // Write the command to the motor network

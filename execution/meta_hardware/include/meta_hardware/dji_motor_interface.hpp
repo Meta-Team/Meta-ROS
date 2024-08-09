@@ -62,8 +62,9 @@ class MetaRobotDjiMotorNetwork : public hardware_interface::SystemInterface {
 
     class JointMotorInfo {
       public:
-        std::string name;
+        std::string joint_name;
         double mechanical_reduction;
+        double offset;
     };
     std::vector<JointMotorInfo>
         joint_motors_info_; // local cache of joint motor info
