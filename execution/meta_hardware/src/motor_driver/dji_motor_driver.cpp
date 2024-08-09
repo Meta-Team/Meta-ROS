@@ -1,6 +1,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <linux/can.h>
 #include <stdexcept>
 #include <string>
 #include <tuple>
@@ -32,8 +33,8 @@ DjiMotor::DjiMotor(const std::string &motor_model, uint32_t dji_motor_id)
 }
 
 uint32_t DjiMotor::get_dji_motor_id() const { return dji_motor_id_; }
-uint32_t DjiMotor::get_tx_can_id() const { return tx_can_id_; }
-uint32_t DjiMotor::get_rx_can_id() const { return rx_can_id_; }
+canid_t DjiMotor::get_tx_can_id() const { return tx_can_id_; }
+canid_t DjiMotor::get_rx_can_id() const { return rx_can_id_; }
 double DjiMotor::get_maximum_current() const { return maximum_current_; }
 uint32_t DjiMotor::get_maximum_raw_effort() const {
     return maximum_raw_effort_;
