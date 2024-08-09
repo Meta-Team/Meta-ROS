@@ -144,6 +144,9 @@ MetaRobotDjiMotorNetwork::read(const rclcpp::Time & /*time*/,
         double offset = joint_motors_info_[i].offset;
         position = position / reduction + offset;
         velocity /= reduction;
+        if (reduction < 0) {
+            effort = -effort;
+        }
 
         joint_interface_data_[i].state_position = position;
         joint_interface_data_[i].state_velocity = velocity;
@@ -164,6 +167,13 @@ MetaRobotDjiMotorNetwork::write(const rclcpp::Time & /*time*/,
         // If a command interface exists, the command must not be NaN
         if (std::isnan(effort)) {
             continue;
+        }
+
+        // Even though DJI motors receive proportional effort commands,
+        // the mechanical reduction can be negative, which means that the 
+        // motor direction is inverted. In this case, the effort must be negated.
+        if (joint_motors_info_[i].mechanical_reduction < 0) {
+            effort = -effort;
         }
 
         // Write the command to the motor network
