@@ -84,7 +84,7 @@ gimbal_controller:
       pitch_gimbal_joint_vel2eff:
         { p: 1.0e-1, i: 2.0e-2, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
-dbus_control_node:
+dbus_control:
   ros__parameters:
     dbus_port: "dbus_control"
 

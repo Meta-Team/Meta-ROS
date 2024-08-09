@@ -73,12 +73,12 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    robot_controller_config = PathJoinSubstitution(
-        [FindPackageShare('metav_description'), 'config', 'sentry.yaml'])
+    robot_config = PathJoinSubstitution(
+        [FindPackageShare('meta_bringup'), 'config', 'sentry.yaml'])
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_controller_config],
+        parameters=[robot_config],
         remappings=[
             ("~/robot_description", "/robot_description"),
         ],
@@ -97,30 +97,48 @@ def generate_launch_description():
         load_controller('omni_chassis_controller'),
     ]
 
-    dbus_container = ComposableNodeContainer(
-        name='dbus_container',
-        namespace='',
-        package='rclcpp_components',
-        executable='component_container',
-        composable_node_descriptions=[
-            ComposableNode(
-                package='dbus_control',
-                plugin='DbusControl',
-                name='dbus_control',
-                namespace='',
-                parameters=[robot_controller_config],
-            ),
-            ComposableNode(
-                package='dbus_vehicle',
-                plugin='DbusVehicle',
-                name='dbus_vehicle',
-                namespace='',
-                parameters=[robot_controller_config],
-            ),
-        ],
+    dbus_control = Node(
+        package='dbus_control',
+        executable='dbus_control_node',
+        name='dbus_control',
+        parameters=[robot_config],
         output='both',
         emulate_tty=True
     )
+
+    dbus_vehicle = Node(
+        package='dbus_vehicle',
+        executable='dbus_vehicle_node',
+        name='dbus_vehicle',
+        output='both',
+        parameters=[robot_config],
+        emulate_tty=True
+    )
+
+    # dbus_container = ComposableNodeContainer(
+    #     name='dbus_container',
+    #     namespace='',
+    #     package='rclcpp_components',
+    #     executable='component_container',
+    #     composable_node_descriptions=[
+    #         ComposableNode(
+    #             package='dbus_control',
+    #             plugin='DbusControl',
+    #             name='dbus_control',
+    #             namespace='',
+    #             parameters=[robot_controller_config],
+    #         ),
+    #         ComposableNode(
+    #             package='dbus_vehicle',
+    #             plugin='DbusVehicle',
+    #             name='dbus_vehicle',
+    #             namespace='',
+    #             parameters=[robot_controller_config],
+    #         ),
+    #     ],
+    #     output='both',
+    #     emulate_tty=True
+    # )
 
     ahrs_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -143,6 +161,8 @@ def generate_launch_description():
         load_joint_state_broadcaster,
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
-        dbus_container,
+        # dbus_container,
+        dbus_control,
+        dbus_vehicle,
         ahrs_launch,
     ])
