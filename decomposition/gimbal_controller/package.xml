@@ -8,22 +8,24 @@
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <build_depend>generate_parameter_library</build_depend>
 
+  <depend>angles</depend>
   <depend>behavior_interface</depend>
   <depend>control_msgs</depend>
+  <depend>control_toolbox</depend>
   <depend>controller_interface</depend>
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
   <depend>realtime_tools</depend>
+  <depend>sensor_msgs</depend>
   <depend>std_srvs</depend>
   <depend>tf2</depend>
-  <depend>sensor_msgs</depend>
-  <depend>angles</depend>
-  <depend>control_toolbox</depend>
+  <depend>tf2_ros</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
