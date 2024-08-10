@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 
 #include "meta_hardware/can_driver/can_driver.hpp"
