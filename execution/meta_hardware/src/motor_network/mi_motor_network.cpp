@@ -104,7 +104,7 @@ void MiMotorNetwork::write_vel(uint32_t joint_id, double velocity) {
 void MiMotorNetwork::rx_loop() {
     while (rx_thread_running_) {
         try {
-            can_frame can_msg = can_driver_->read();
+            can_frame can_msg = can_driver_->read(1000);
 
             // MI motor frames are all extended frames
             if (can_msg.can_id & CAN_EFF_FLAG) {

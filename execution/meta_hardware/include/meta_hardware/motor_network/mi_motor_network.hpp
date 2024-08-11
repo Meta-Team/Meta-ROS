@@ -39,6 +39,9 @@ class MiMotorNetwork {
     void write_vel(uint32_t joint_id, double velocity);
 
   private:
+    // CAN driver
+    std::unique_ptr<CanDriver> can_driver_;
+
     void rx_loop();
     std::unique_ptr<std::jthread> rx_thread_;
     std::atomic<bool> rx_thread_running_{true};
@@ -46,9 +49,6 @@ class MiMotorNetwork {
     void process_mi_frame(const can_frame &can_msg);
     void process_mi_info_frame(const can_frame &can_msg);
     void process_mi_fb_frame(const can_frame &can_msg);
-
-    // CAN driver
-    std::unique_ptr<CanDriver> can_driver_;
 
     // [motor_id] -> mi_motor
     // This makes it easy to find the motor object in rx_loop

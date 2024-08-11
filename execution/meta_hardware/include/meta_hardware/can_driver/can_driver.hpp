@@ -74,11 +74,17 @@ class CanDriver {
         poll_fd_.events = POLLIN;
     }
 
-    can_frame read() {
+    can_frame read(int timeout_ms) {
         can_frame frame;
         while (true) {
-            // Wait indefinitely until a frame is available
-            poll(&poll_fd_, 1, -1);
+            // Wait until a frame is available
+            int poll_ret = poll(&poll_fd_, 1, timeout_ms);
+
+            if (poll_ret == 0) {
+                throw std::runtime_error("Timeout while waiting for frame");
+            } else if (poll_ret < 0) {
+                throw std::runtime_error("Failed to poll");
+            }
 
             if (poll_fd_.revents & POLLIN) {
                 ssize_t nbytes = ::read(can_socket_, &frame, sizeof(frame));

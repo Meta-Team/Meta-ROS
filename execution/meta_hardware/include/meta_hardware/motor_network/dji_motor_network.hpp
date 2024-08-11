@@ -41,6 +41,9 @@ class DjiMotorNetwork {
     void tx();
 
   private:
+    // CAN driver
+    std::unique_ptr<CanDriver> can_driver_;
+
     void rx_loop();
     std::unique_ptr<std::jthread> rx_thread_;
     std::atomic<bool> rx_thread_running_{true};
@@ -52,9 +55,6 @@ class DjiMotorNetwork {
     // 0x2FE: GM6020(current) motor  5-8
     // 0x2FF: GM6020(voltage) motor 5-8
     std::unordered_map<uint32_t, can_frame> tx_frames_;
-
-    // CAN driver
-    std::unique_ptr<CanDriver> can_driver_;
 
     // [rx_can_id] -> dji_motor
     // This makes it easy to find the motor object in rx_loop

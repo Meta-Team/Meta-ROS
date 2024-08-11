@@ -80,7 +80,7 @@ void DjiMotorNetwork::write(uint32_t joint_id, double effort) {
 void DjiMotorNetwork::rx_loop() {
     while (rx_thread_running_) {
         try {
-            can_frame can_msg = can_driver_->read();
+            can_frame can_msg = can_driver_->read(1000);
 
             const auto &motor = rx_id2motor_.at(can_msg.can_id);
 
