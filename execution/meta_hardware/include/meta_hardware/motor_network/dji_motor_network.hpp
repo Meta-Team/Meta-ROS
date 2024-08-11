@@ -44,9 +44,8 @@ class DjiMotorNetwork {
     // CAN driver
     std::unique_ptr<CanDriver> can_driver_;
 
-    void rx_loop();
+    void rx_loop(std::stop_token stop_token);
     std::unique_ptr<std::jthread> rx_thread_;
-    std::atomic<bool> rx_thread_running_{true};
 
     // Five CAN frames for tx
     // 0x1FE: GM6020(current) motor 1-4

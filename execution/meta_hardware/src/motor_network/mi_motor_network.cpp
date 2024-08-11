@@ -38,7 +38,8 @@ MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id,
     // Enable all motors
     for (const auto &motor : mi_motors_) {
         try {
-            can_driver_->write(motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
+            can_driver_->write(
+                motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
         } catch (std::runtime_error &e) {
             std::cerr << "Error writing MI motor enable CAN message: " << e.what()
                       << std::endl;
@@ -47,7 +48,8 @@ MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id,
     }
 
     // Start RX thread
-    rx_thread_ = std::make_unique<std::jthread>(&MiMotorNetwork::rx_loop, this);
+    rx_thread_ =
+        std::make_unique<std::jthread>([this](std::stop_token s) { rx_loop(s); });
 }
 
 MiMotorNetwork::~MiMotorNetwork() {
@@ -61,9 +63,6 @@ MiMotorNetwork::~MiMotorNetwork() {
         std::cerr << "Error writing MI motor disable CAN message: " << e.what()
                   << std::endl;
     }
-
-    // Stop RX thread
-    rx_thread_running_ = false;
 }
 
 std::tuple<double, double, double> MiMotorNetwork::read(uint32_t joint_id) const {
@@ -71,7 +70,7 @@ std::tuple<double, double, double> MiMotorNetwork::read(uint32_t joint_id) const
 }
 
 void MiMotorNetwork::write_dyn(uint32_t joint_id, double position, double velocity,
-                           double effort) {
+                               double effort) {
     const auto &motor = mi_motors_[joint_id];
     try {
         can_driver_->write(motor->get_motor_dyn_frame(position, velocity, effort));
@@ -101,8 +100,8 @@ void MiMotorNetwork::write_vel(uint32_t joint_id, double velocity) {
     }
 }
 
-void MiMotorNetwork::rx_loop() {
-    while (rx_thread_running_) {
+void MiMotorNetwork::rx_loop(std::stop_token stop_token) {
+    while (!stop_token.stop_requested()) {
         try {
             can_frame can_msg = can_driver_->read(1000);
 

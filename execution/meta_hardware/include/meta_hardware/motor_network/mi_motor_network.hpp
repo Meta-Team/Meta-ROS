@@ -42,9 +42,8 @@ class MiMotorNetwork {
     // CAN driver
     std::unique_ptr<CanDriver> can_driver_;
 
-    void rx_loop();
+    void rx_loop(std::stop_token stop_token);
     std::unique_ptr<std::jthread> rx_thread_;
-    std::atomic<bool> rx_thread_running_{true};
 
     void process_mi_frame(const can_frame &can_msg);
     void process_mi_info_frame(const can_frame &can_msg);
