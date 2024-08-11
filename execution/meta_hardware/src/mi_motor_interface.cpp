@@ -199,18 +199,6 @@ MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
         double velocity = joint_interface_data_[i].command_velocity;
         double effort = joint_interface_data_[i].command_effort;
 
-        // Check if the command is valid
-        // If a command interface exists, the command must not be NaN
-        if (joint_motor_info_[i].command_pos && std::isnan(position)) {
-            continue;
-        }
-        if (joint_motor_info_[i].command_vel && std::isnan(velocity)) {
-            continue;
-        }
-        if (joint_motor_info_[i].command_eff && std::isnan(effort)) {
-            continue;
-        }
-
         double reduction = joint_motor_info_[i].mechanical_reduction;
         double offset = joint_motor_info_[i].offset;
         position = (position - offset) * reduction;
@@ -219,30 +207,46 @@ MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
 
         using enum MetaRobotMiMotorNetwork::MiMotorMode;
         switch (joint_motor_info_[i].mode) {
-            case DYNAMIC:
-                mi_motor_network_->write_dyn(i, position, velocity, effort);
-                break;
-            case DYNAMIC_POS:
-                mi_motor_network_->write_dyn(i, position, 0.0, 0.0);
-                break;
-            case DYNAMIC_VEL:
-                mi_motor_network_->write_dyn(i, 0.0, velocity, 0.0);
-                break;
-            case DYNAMIC_EFF:
-                mi_motor_network_->write_dyn(i, 0.0, 0.0, effort);
-                break;
-            case DYNAMIC_POS_FF:
-                mi_motor_network_->write_dyn(i, position, 0.0, effort);
-                break;
-            case DYNAMIC_VEL_FF:
-                mi_motor_network_->write_dyn(i, 0.0, velocity, effort);
-                break;
-            case POSITION:
-                mi_motor_network_->write_pos(i, position);
-                break;
-            case VELOCITY:
-                mi_motor_network_->write_vel(i, velocity);
-                break;
+        case DYNAMIC:
+            if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
+                continue;
+            mi_motor_network_->write_dyn(i, position, velocity, effort);
+            break;
+        case DYNAMIC_POS:
+            if (std::isnan(position))
+                continue;
+            mi_motor_network_->write_dyn(i, position, 0.0, 0.0);
+            break;
+        case DYNAMIC_VEL:
+            if (std::isnan(velocity))
+                continue;
+            mi_motor_network_->write_dyn(i, 0.0, velocity, 0.0);
+            break;
+        case DYNAMIC_EFF:
+            if (std::isnan(effort))
+                continue;
+            mi_motor_network_->write_dyn(i, 0.0, 0.0, effort);
+            break;
+        case DYNAMIC_POS_FF:
+            if (std::isnan(position) || std::isnan(effort))
+                continue;
+            mi_motor_network_->write_dyn(i, position, 0.0, effort);
+            break;
+        case DYNAMIC_VEL_FF:
+            if (std::isnan(velocity) || std::isnan(effort))
+                continue;
+            mi_motor_network_->write_dyn(i, 0.0, velocity, effort);
+            break;
+        case POSITION:
+            if (std::isnan(position))
+                continue;
+            mi_motor_network_->write_pos(i, position);
+            break;
+        case VELOCITY:
+            if (std::isnan(velocity))
+                continue;
+            mi_motor_network_->write_vel(i, velocity);
+            break;
         }
     }
 
