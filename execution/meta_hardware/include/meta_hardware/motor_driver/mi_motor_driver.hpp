@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 
 #include <linux/can.h>
 
@@ -14,14 +15,15 @@
 namespace meta_hardware {
 class MiMotor {
   public:
-    MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp, double Kd);
+    explicit MiMotor(const std::unordered_map<std::string, std::string> &motor_param);
 
     ~MiMotor() = default;
 
     can_frame get_motor_enable_frame(uint8_t host_id) const;
     can_frame get_motor_disable_frame(uint8_t host_id) const;
-    can_frame get_motor_command_frame(double position, double velocity,
-                                      double effort) const;
+    can_frame get_motor_dyn_frame(double position, double velocity, double effort) const;
+    can_frame get_motor_pos_frame(double position) const;
+    can_frame get_motor_vel_frame(double velocity) const;
 
     void set_motor_feedback(const can_frame &can_msg);
 

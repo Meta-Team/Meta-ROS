@@ -1,9 +1,11 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <ranges>
 #include <vector>
 
 #include "hardware_interface/hardware_info.hpp"
+#include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "meta_hardware/mi_motor_interface.hpp"
 #include "meta_hardware/motor_network/mi_motor_network.hpp"
@@ -14,14 +16,11 @@ using hardware_interface::HW_IF_EFFORT;
 using hardware_interface::HW_IF_POSITION;
 using hardware_interface::HW_IF_VELOCITY;
 
-MetaRobotMiMotorNetwork::~MetaRobotMiMotorNetwork() {
-    on_deactivate(rclcpp_lifecycle::State());
-}
+MetaRobotMiMotorNetwork::~MetaRobotMiMotorNetwork() = default;
 
 hardware_interface::CallbackReturn
 MetaRobotMiMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
-    if (hardware_interface::SystemInterface::on_init(info) !=
-        CallbackReturn::SUCCESS) {
+    if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
         return CallbackReturn::ERROR;
     }
 
@@ -29,6 +28,35 @@ MetaRobotMiMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
     joint_motor_info_.resize(info_.joints.size());
 
     return CallbackReturn::SUCCESS;
+}
+
+MetaRobotMiMotorNetwork::MiMotorMode
+MetaRobotMiMotorNetwork::check_motor_mode(const std::string &mode, bool command_pos,
+                                          bool command_vel, bool command_eff) {
+    using enum meta_hardware::MetaRobotMiMotorNetwork::MiMotorMode;
+    if (mode == "dynamic") {
+        if (command_pos && command_vel && command_eff) {
+            return DYNAMIC;
+        } else if (command_pos && !command_vel && !command_eff) {
+            return DYNAMIC_POS;
+        } else if (!command_pos && command_vel && !command_eff) {
+            return DYNAMIC_VEL;
+        } else if (!command_pos && !command_vel && command_eff) {
+            return DYNAMIC_EFF;
+        } else if (command_pos && !command_vel && command_eff) {
+            return DYNAMIC_POS_FF;
+        } else if (!command_pos && command_vel && command_eff) {
+            return DYNAMIC_VEL_FF;
+        } else {
+            throw std::runtime_error("Invalid dynamic mode");
+        }
+    } else if (mode == "position") {
+        return POSITION;
+    } else if (mode == "velocity") {
+        return VELOCITY;
+    } else {
+        throw std::runtime_error("Unknown control mode: " + mode);
+    }
 }
 
 hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_configure(
@@ -43,11 +71,13 @@ hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_configure(
         joint_motor_info_[i].mechanical_reduction =
             std::stod(joint_param.at("mechanical_reduction"));
         joint_motor_info_[i].offset = std::stod(joint_param.at("offset"));
+        joint_motor_info_[i].mode = check_motor_mode(
+            joint_param.at("control_mode"), joint_motor_info_[i].command_pos,
+            joint_motor_info_[i].command_vel, joint_motor_info_[i].command_eff);
         joint_params.emplace_back(joint_param);
     }
 
-    std::string can_network_name =
-        info_.hardware_parameters.at("can_network_name");
+    std::string can_network_name = info_.hardware_parameters.at("can_network_name");
     mi_motor_network_ =
         std::make_unique<MiMotorNetwork>(can_network_name, 0x00, joint_params);
 
@@ -62,8 +92,8 @@ MetaRobotMiMotorNetwork::export_state_interfaces() {
     auto contains_interface =
         [](const std::vector<hardware_interface::InterfaceInfo> &interfaces,
            const std::string &interface_name) {
-            return std::find_if(
-                       interfaces.begin(), interfaces.end(),
+            return std::ranges::find_if(
+                       interfaces,
                        [&interface_name](
                            const hardware_interface::InterfaceInfo &interface) {
                            return interface.name == interface_name;
@@ -73,19 +103,16 @@ MetaRobotMiMotorNetwork::export_state_interfaces() {
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         const auto &joint_state_interfaces = info_.joints[i].state_interfaces;
         if (contains_interface(joint_state_interfaces, "position")) {
-            state_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_POSITION,
-                &joint_interface_data_[i].state_position);
+            state_interfaces.emplace_back(info_.joints[i].name, HW_IF_POSITION,
+                                          &joint_interface_data_[i].state_position);
         }
         if (contains_interface(joint_state_interfaces, "velocity")) {
-            state_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_VELOCITY,
-                &joint_interface_data_[i].state_velocity);
+            state_interfaces.emplace_back(info_.joints[i].name, HW_IF_VELOCITY,
+                                          &joint_interface_data_[i].state_velocity);
         }
         if (contains_interface(joint_state_interfaces, "effort")) {
-            state_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_EFFORT,
-                &joint_interface_data_[i].state_effort);
+            state_interfaces.emplace_back(info_.joints[i].name, HW_IF_EFFORT,
+                                          &joint_interface_data_[i].state_effort);
         }
     }
 
@@ -100,8 +127,8 @@ MetaRobotMiMotorNetwork::export_command_interfaces() {
     auto contains_interface =
         [](const std::vector<hardware_interface::InterfaceInfo> &interfaces,
            const std::string &interface_name) {
-            return std::find_if(
-                       interfaces.begin(), interfaces.end(),
+            return std::ranges::find_if(
+                       interfaces,
                        [&interface_name](
                            const hardware_interface::InterfaceInfo &interface) {
                            return interface.name == interface_name;
@@ -109,24 +136,20 @@ MetaRobotMiMotorNetwork::export_command_interfaces() {
         };
 
     for (size_t i = 0; i < info_.joints.size(); ++i) {
-        const auto &joint_command_interfaces =
-            info_.joints[i].command_interfaces;
+        const auto &joint_command_interfaces = info_.joints[i].command_interfaces;
         if (contains_interface(joint_command_interfaces, "position")) {
-            command_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_POSITION,
-                &joint_interface_data_[i].command_position);
+            command_interfaces.emplace_back(info_.joints[i].name, HW_IF_POSITION,
+                                            &joint_interface_data_[i].command_position);
             joint_motor_info_[i].command_pos = true;
         }
         if (contains_interface(joint_command_interfaces, "velocity")) {
-            command_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_VELOCITY,
-                &joint_interface_data_[i].command_velocity);
+            command_interfaces.emplace_back(info_.joints[i].name, HW_IF_VELOCITY,
+                                            &joint_interface_data_[i].command_velocity);
             joint_motor_info_[i].command_vel = true;
         }
         if (contains_interface(joint_command_interfaces, "effort")) {
-            command_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_EFFORT,
-                &joint_interface_data_[i].command_effort);
+            command_interfaces.emplace_back(info_.joints[i].name, HW_IF_EFFORT,
+                                            &joint_interface_data_[i].command_effort);
             joint_motor_info_[i].command_eff = true;
         }
     }
@@ -134,8 +157,8 @@ MetaRobotMiMotorNetwork::export_command_interfaces() {
     return command_interfaces;
 }
 
-hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_activate(
-    const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn
+MetaRobotMiMotorNetwork::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
 
     return CallbackReturn::SUCCESS;
 }
@@ -194,8 +217,33 @@ MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
         velocity *= reduction;
         effort /= reduction;
 
-        // Write the command to the motor network
-        mi_motor_network_->write(i, position, velocity, effort);
+        using enum MetaRobotMiMotorNetwork::MiMotorMode;
+        switch (joint_motor_info_[i].mode) {
+            case DYNAMIC:
+                mi_motor_network_->write_dyn(i, position, velocity, effort);
+                break;
+            case DYNAMIC_POS:
+                mi_motor_network_->write_dyn(i, position, 0.0, 0.0);
+                break;
+            case DYNAMIC_VEL:
+                mi_motor_network_->write_dyn(i, 0.0, velocity, 0.0);
+                break;
+            case DYNAMIC_EFF:
+                mi_motor_network_->write_dyn(i, 0.0, 0.0, effort);
+                break;
+            case DYNAMIC_POS_FF:
+                mi_motor_network_->write_dyn(i, position, 0.0, effort);
+                break;
+            case DYNAMIC_VEL_FF:
+                mi_motor_network_->write_dyn(i, 0.0, velocity, effort);
+                break;
+            case POSITION:
+                mi_motor_network_->write_pos(i, position);
+                break;
+            case VELOCITY:
+                mi_motor_network_->write_vel(i, velocity);
+                break;
+        }
     }
 
     return hardware_interface::return_type::OK;

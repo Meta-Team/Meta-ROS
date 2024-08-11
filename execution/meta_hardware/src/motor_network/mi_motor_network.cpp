@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <limits>
 #include <linux/can.h>
 #include <stdexcept>
 #include <string>
@@ -8,6 +9,7 @@
 #include <vector>
 
 #include "meta_hardware/can_driver/can_driver.hpp"
+#include "meta_hardware/mi_motor_interface.hpp"
 #include "meta_hardware/motor_driver/mi_motor_driver.hpp"
 #include "meta_hardware/motor_network/mi_motor_network.hpp"
 
@@ -24,10 +26,8 @@ MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id,
     for (const auto &joint_param : joint_params) {
         string motor_model = joint_param.at("motor_model");
         uint32_t mi_motor_id = std::stoi(joint_param.at("motor_id"));
-        double Kp = std::stod(joint_param.at("Kp"));
-        double Kd = std::stod(joint_param.at("Kd"));
 
-        auto mi_motor = std::make_shared<MiMotor>(motor_model, mi_motor_id, Kp, Kd);
+        auto mi_motor = std::make_shared<MiMotor>(joint_param);
         motor_id2motor_[mi_motor_id] = mi_motor;
         mi_motors_.emplace_back(mi_motor);
     }
@@ -37,11 +37,17 @@ MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id,
 
     // Enable all motors
     for (const auto &motor : mi_motors_) {
-        can_driver_->write(motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
+        try {
+            can_driver_->write(motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
+        } catch (std::runtime_error &e) {
+            std::cerr << "Error writing MI motor enable CAN message: " << e.what()
+                      << std::endl;
+            throw std::runtime_error("Failed to enable MI motor");
+        }
     }
 
     // Start RX thread
-    rx_thread_ = std::thread(&MiMotorNetwork::rx_loop, this);
+    rx_thread_ = std::make_unique<std::jthread>(&MiMotorNetwork::rx_loop, this);
 }
 
 MiMotorNetwork::~MiMotorNetwork() {
@@ -56,26 +62,27 @@ MiMotorNetwork::~MiMotorNetwork() {
                   << std::endl;
     }
 
-    // TODO: Join RX thread
+    // Stop RX thread
+    rx_thread_running_ = false;
 }
 
 std::tuple<double, double, double> MiMotorNetwork::read(uint32_t joint_id) const {
     return mi_motors_[joint_id]->get_motor_feedback();
 }
 
-void MiMotorNetwork::write(uint32_t joint_id, double position, double velocity,
+void MiMotorNetwork::write_dyn(uint32_t joint_id, double position, double velocity,
                            double effort) {
     const auto &motor = mi_motors_[joint_id];
     try {
-        can_driver_->write(motor->get_motor_command_frame(position, velocity, effort));
+        can_driver_->write(motor->get_motor_dyn_frame(position, velocity, effort));
     } catch (std::runtime_error &e) {
         std::cerr << "Error writing MI motor command CAN message: " << e.what()
                   << std::endl;
     }
 }
 
-[[noreturn]] void MiMotorNetwork::rx_loop() {
-    while (true) {
+void MiMotorNetwork::rx_loop() {
+    while (rx_thread_running_) {
         try {
             can_frame can_msg = can_driver_->read();
 

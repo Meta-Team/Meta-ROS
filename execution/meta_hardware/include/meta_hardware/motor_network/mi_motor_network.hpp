@@ -34,11 +34,14 @@ class MiMotorNetwork {
      * @param velocity The velocity to write
      * @param effort The effort to write
      */
-    void write(uint32_t joint_id, double position, double velocity, double effort);
+    void write_dyn(uint32_t joint_id, double position, double velocity, double effort);
+    void write_pos(uint32_t joint_id, double position);
+    void write_vel(uint32_t joint_id, double velocity);
 
   private:
-    [[noreturn]] void rx_loop();
-    std::thread rx_thread_;
+    void rx_loop();
+    std::unique_ptr<std::jthread> rx_thread_;
+    std::atomic<bool> rx_thread_running_{true};
 
     void process_mi_frame(const can_frame &can_msg);
     void process_mi_info_frame(const can_frame &can_msg);

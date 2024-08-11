@@ -52,6 +52,17 @@ class MetaRobotMiMotorNetwork : public hardware_interface::SystemInterface {
     hardware_interface::return_type
     write(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
+    enum class MiMotorMode {
+        DYNAMIC, // Dynamic mode with all three commands
+        DYNAMIC_POS, // Dynamic mode with only position command
+        DYNAMIC_VEL, // Dynamic mode with only velocity command
+        DYNAMIC_EFF, // Dynamic mode with only effort command
+        DYNAMIC_POS_FF, // Dynamic mode with only position command and effort feedforward
+        DYNAMIC_VEL_FF, // Dynamic mode with only velocity command and effort feedforward
+        POSITION, // Position mode
+        VELOCITY, // Velocity mode
+    };
+
   private:
     class JointInterfaceData {
       public:
@@ -72,9 +83,13 @@ class MetaRobotMiMotorNetwork : public hardware_interface::SystemInterface {
         bool command_pos;
         bool command_vel;
         bool command_eff;
+        MiMotorMode mode;
     };
     std::vector<JointMotorInfo>
         joint_motor_info_; // local cache of joint motor info
+
+    MetaRobotMiMotorNetwork::MiMotorMode check_motor_mode(const std::string &mode, bool command_pos,
+                                                          bool command_vel, bool command_eff);
 
     std::unique_ptr<MiMotorNetwork> mi_motor_network_;
 };

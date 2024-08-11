@@ -25,9 +25,18 @@ constexpr double MAX_KD = 5.0;
 
 using std::tuple;
 
-MiMotor::MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp,
-                 double Kd)
-    : motor_model_(motor_model), mi_motor_id_(mi_motor_id) {
+MiMotor::MiMotor(const std::unordered_map<std::string, std::string> &motor_param) {
+    motor_model_ = motor_param.at("motor_model");
+    mi_motor_id_ = std::stoi(motor_param.at("motor_id"));
+
+    std::string control_mode = motor_param.at("control_mode");
+    double Kp = std::numeric_limits<double>::quiet_NaN();
+    double Kd = std::numeric_limits<double>::quiet_NaN();
+    if (control_mode == "dynamic") {
+        Kp = std::stod(motor_param.at("Kp"));
+        Kd = std::stod(motor_param.at("Kd"));
+    }
+
     if (motor_model_ == "CyberGear") {
         Kp_raw_ = static_cast<uint16_t>((Kp / MAX_KP) * MAX_RAW_KP);
         Kd_raw_ = static_cast<uint16_t>((Kd / MAX_KD) * MAX_RAW_KD);
@@ -38,33 +47,24 @@ MiMotor::MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp,
 
 can_frame MiMotor::get_motor_enable_frame(uint8_t host_id) const {
     canid_t enable_can_id = 3 << 24;
+    enable_can_id |= CAN_EFF_FLAG;
     enable_can_id |= host_id << 8;
     enable_can_id |= mi_motor_id_;
-    enable_can_id |= CAN_EFF_FLAG;
     return can_frame{
         .can_id = enable_can_id, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
 }
 
 can_frame MiMotor::get_motor_disable_frame(uint8_t host_id) const {
     canid_t disable_can_id = 4 << 24;
+    disable_can_id |= CAN_EFF_FLAG;
     disable_can_id |= host_id << 8;
     disable_can_id |= mi_motor_id_;
-    disable_can_id |= CAN_EFF_FLAG;
     return can_frame{
         .can_id = disable_can_id, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
 }
 
-can_frame MiMotor::get_motor_command_frame(double position, double velocity,
-                                           double effort) const {
-    if (!std::isnan(position) && std::isnan(velocity) &&
-        std::isnan(effort)) { // Position only mode
-        velocity = 0.0;       // Set target velocity to 0
-        effort = 0.0;         // Set feedforward torque to 0
-    } else if (std::isnan(position) && !std::isnan(velocity) &&
-               std::isnan(effort)) { // Velocity only mode
-        effort = 0.0;                // Set feedforward torque to 0
-    }
-
+can_frame MiMotor::get_motor_dyn_frame(double position, double velocity,
+                                       double effort) const {
     auto position_raw = static_cast<uint16_t>((position / (2 * MAX_ABS_POSITION) + 0.5) *
                                               MAX_RAW_POSITION);
     auto velocity_raw = static_cast<uint16_t>((velocity / (2 * MAX_ABS_VELOCITY) + 0.5) *
@@ -74,9 +74,9 @@ can_frame MiMotor::get_motor_command_frame(double position, double velocity,
 
     can_frame command_frame;
     command_frame.can_id = 1 << 24;
+    command_frame.can_id |= CAN_EFF_FLAG;
     command_frame.can_id |= effort_raw << 8;
     command_frame.can_id |= mi_motor_id_;
-    command_frame.can_id |= CAN_EFF_FLAG;
 
     command_frame.can_dlc = 8;
 
@@ -93,6 +93,14 @@ can_frame MiMotor::get_motor_command_frame(double position, double velocity,
     command_frame.data[7] = Kd_raw_ & 0xFF;
 
     return command_frame;
+}
+
+can_frame MiMotor::get_motor_pos_frame(double position) const {
+    throw std::runtime_error("Position control mode not implemented");
+}
+
+can_frame MiMotor::get_motor_vel_frame(double velocity) const {
+    throw std::runtime_error("Velocity control mode not implemented");
 }
 
 void MiMotor::set_motor_feedback(const can_frame &can_msg) {
