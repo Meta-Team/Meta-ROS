@@ -7,7 +7,6 @@
 #include <string>
 #include <tuple>
 
-#include <CanMessage.hpp>
 #include <linux/can.h>
 
 #include "angles/angles.h"
@@ -15,18 +14,16 @@
 namespace meta_hardware {
 class MiMotor {
   public:
-    MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp,
-            double Kd);
+    MiMotor(const std::string &motor_model, uint8_t mi_motor_id, double Kp, double Kd);
 
     ~MiMotor() = default;
 
-    sockcanpp::CanMessage get_motor_enable_frame(uint8_t host_id) const;
-    sockcanpp::CanMessage get_motor_disable_frame(uint8_t host_id) const;
-    sockcanpp::CanMessage get_motor_command_frame(double position,
-                                                  double velocity,
-                                                  double effort) const;
+    can_frame get_motor_enable_frame(uint8_t host_id) const;
+    can_frame get_motor_disable_frame(uint8_t host_id) const;
+    can_frame get_motor_command_frame(double position, double velocity,
+                                      double effort) const;
 
-    void set_motor_feedback(const sockcanpp::CanMessage &can_msg);
+    void set_motor_feedback(const can_frame &can_msg);
 
     std::tuple<double, double, double> get_motor_feedback() const;
 

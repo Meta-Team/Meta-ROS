@@ -15,10 +15,6 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(angles REQUIRED)
 
-if (NOT TARGET sockcanpp)
-    add_subdirectory(libsockcanpp)
-endif()
-
 add_library(
   meta_hardware
   SHARED
@@ -33,10 +29,6 @@ target_include_directories(
   meta_hardware
   PUBLIC
   include
-)
-target_link_libraries(
-  meta_hardware
-  sockcanpp
 )
 ament_target_dependencies(
   meta_hardware

@@ -176,12 +176,6 @@ MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
         double velocity = joint_interface_data_[i].command_velocity;
         double effort = joint_interface_data_[i].command_effort;
 
-        double reduction = joint_motor_info_[i].mechanical_reduction;
-        double offset = joint_motor_info_[i].offset;
-        position = (position - offset) * reduction;
-        velocity *= reduction;
-        effort /= reduction;
-
         // Check if the command is valid
         // If a command interface exists, the command must not be NaN
         if (joint_motor_info_[i].command_pos && std::isnan(position)) {
@@ -193,6 +187,12 @@ MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
         if (joint_motor_info_[i].command_eff && std::isnan(effort)) {
             continue;
         }
+
+        double reduction = joint_motor_info_[i].mechanical_reduction;
+        double offset = joint_motor_info_[i].offset;
+        position = (position - offset) * reduction;
+        velocity *= reduction;
+        effort /= reduction;
 
         // Write the command to the motor network
         mi_motor_network_->write(i, position, velocity, effort);

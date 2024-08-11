@@ -4,12 +4,12 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
+#include "meta_hardware/can_driver/can_driver.hpp"
 #include "meta_hardware/motor_driver/mi_motor_driver.hpp"
-#include <CanDriver.hpp>
-#include <CanMessage.hpp>
 
 namespace meta_hardware {
 
@@ -17,8 +17,7 @@ class MiMotorNetwork {
   public:
     MiMotorNetwork(
         const std::string &can_network_name, uint32_t host_id,
-        const std::vector<std::unordered_map<std::string, std::string>>
-            &joint_params);
+        const std::vector<std::unordered_map<std::string, std::string>> &joint_params);
     ~MiMotorNetwork();
 
     /**
@@ -35,19 +34,18 @@ class MiMotorNetwork {
      * @param velocity The velocity to write
      * @param effort The effort to write
      */
-    void write(uint32_t joint_id, double position, double velocity,
-               double effort);
+    void write(uint32_t joint_id, double position, double velocity, double effort);
 
   private:
     [[noreturn]] void rx_loop();
     std::thread rx_thread_;
 
-    void process_mi_frame(const sockcanpp::CanMessage &can_msg);
-    void process_mi_info_frame(const sockcanpp::CanMessage &can_msg);
-    void process_mi_fb_frame(const sockcanpp::CanMessage &can_msg);
+    void process_mi_frame(const can_frame &can_msg);
+    void process_mi_info_frame(const can_frame &can_msg);
+    void process_mi_fb_frame(const can_frame &can_msg);
 
     // CAN driver
-    std::unique_ptr<sockcanpp::CanDriver> can_driver_;
+    std::unique_ptr<CanDriver> can_driver_;
 
     // [motor_id] -> mi_motor
     // This makes it easy to find the motor object in rx_loop
