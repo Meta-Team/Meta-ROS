@@ -81,6 +81,26 @@ void MiMotorNetwork::write_dyn(uint32_t joint_id, double position, double veloci
     }
 }
 
+void MiMotorNetwork::write_pos(uint32_t joint_id, double position) {
+    const auto &motor = mi_motors_[joint_id];
+    try {
+        can_driver_->write(motor->get_motor_pos_frame(position));
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing MI motor command CAN message: " << e.what()
+                  << std::endl;
+    }
+}
+
+void MiMotorNetwork::write_vel(uint32_t joint_id, double velocity) {
+    const auto &motor = mi_motors_[joint_id];
+    try {
+        can_driver_->write(motor->get_motor_vel_frame(velocity));
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing MI motor command CAN message: " << e.what()
+                  << std::endl;
+    }
+}
+
 void MiMotorNetwork::rx_loop() {
     while (rx_thread_running_) {
         try {
