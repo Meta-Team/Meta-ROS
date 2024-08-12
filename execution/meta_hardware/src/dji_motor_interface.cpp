@@ -14,9 +14,7 @@ using hardware_interface::HW_IF_EFFORT;
 using hardware_interface::HW_IF_POSITION;
 using hardware_interface::HW_IF_VELOCITY;
 
-MetaRobotDjiMotorNetwork::~MetaRobotDjiMotorNetwork() {
-    on_deactivate(rclcpp_lifecycle::State());
-}
+MetaRobotDjiMotorNetwork::~MetaRobotDjiMotorNetwork() = default;
 
 hardware_interface::CallbackReturn MetaRobotDjiMotorNetwork::on_init(
     const hardware_interface::HardwareInfo &info) {

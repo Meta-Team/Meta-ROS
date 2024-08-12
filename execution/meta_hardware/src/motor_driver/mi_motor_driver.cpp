@@ -1,3 +1,4 @@
+#include <bit>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -25,9 +26,11 @@ constexpr double MAX_KD = 5.0;
 
 using std::tuple;
 
-MiMotor::MiMotor(const std::unordered_map<std::string, std::string> &motor_param) {
+MiMotor::MiMotor(const std::unordered_map<std::string, std::string> &motor_param,
+                 uint8_t host_id)
+    : host_id_(host_id) {
     motor_model_ = motor_param.at("motor_model");
-    mi_motor_id_ = std::stoi(motor_param.at("motor_id"));
+    mi_motor_id_ = static_cast<uint8_t>(std::stoi(motor_param.at("motor_id")));
 
     std::string control_mode = motor_param.at("control_mode");
     double Kp = std::numeric_limits<double>::quiet_NaN();
@@ -35,6 +38,15 @@ MiMotor::MiMotor(const std::unordered_map<std::string, std::string> &motor_param
     if (control_mode == "dynamic") {
         Kp = std::stod(motor_param.at("Kp"));
         Kd = std::stod(motor_param.at("Kd"));
+        run_mode_ = RunMode::DYNAMIC;
+    } else if (control_mode == "position") {
+        run_mode_ = RunMode::POSITION;
+    } else if (control_mode == "velocity") {
+        run_mode_ = RunMode::VELOCITY;
+    } else if (control_mode == "current") {
+        run_mode_ = RunMode::CURRENT;
+    } else {
+        throw std::runtime_error("Unknown control mode: " + control_mode);
     }
 
     if (motor_model_ == "CyberGear") {
@@ -45,26 +57,26 @@ MiMotor::MiMotor(const std::unordered_map<std::string, std::string> &motor_param
     }
 }
 
-can_frame MiMotor::get_motor_enable_frame(uint8_t host_id) const {
-    canid_t enable_can_id = 3 << 24;
-    enable_can_id |= CAN_EFF_FLAG;
-    enable_can_id |= host_id << 8;
-    enable_can_id |= mi_motor_id_;
-    return can_frame{
-        .can_id = enable_can_id, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
+can_frame MiMotor::get_motor_runmode_frame() const {
+    return motor_wr_param_frame(0x7005, static_cast<uint8_t>(run_mode_));
 }
 
-can_frame MiMotor::get_motor_disable_frame(uint8_t host_id) const {
-    canid_t disable_can_id = 4 << 24;
-    disable_can_id |= CAN_EFF_FLAG;
-    disable_can_id |= host_id << 8;
-    disable_can_id |= mi_motor_id_;
-    return can_frame{
-        .can_id = disable_can_id, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
+can_frame MiMotor::motor_enable_frame() const {
+    return std::bit_cast<can_frame>(
+        mi_can_frame{.can_id = {.id = mi_motor_id_, .data = host_id_, .mode = 3},
+                     .len = 8,
+                     .data = {0, 0, 0, 0, 0, 0, 0, 0}});
 }
 
-can_frame MiMotor::get_motor_dyn_frame(double position, double velocity,
-                                       double effort) const {
+can_frame MiMotor::motor_disable_frame() const {
+    return std::bit_cast<can_frame>(
+        mi_can_frame{.can_id = {.id = mi_motor_id_, .data = host_id_, .mode = 4},
+                     .len = 8,
+                     .data = {0, 0, 0, 0, 0, 0, 0, 0}});
+}
+
+can_frame MiMotor::motor_dyn_frame(double position, double velocity,
+                                   double effort) const {
     auto position_raw = static_cast<uint16_t>((position / (2 * MAX_ABS_POSITION) + 0.5) *
                                               MAX_RAW_POSITION);
     auto velocity_raw = static_cast<uint16_t>((velocity / (2 * MAX_ABS_VELOCITY) + 0.5) *
@@ -72,38 +84,57 @@ can_frame MiMotor::get_motor_dyn_frame(double position, double velocity,
     auto effort_raw =
         static_cast<uint16_t>((effort / (2 * MAX_ABS_TORQUE) + 0.5) * MAX_RAW_TORQUE);
 
-    can_frame command_frame;
-    command_frame.can_id = 1 << 24;
-    command_frame.can_id |= CAN_EFF_FLAG;
-    command_frame.can_id |= effort_raw << 8;
-    command_frame.can_id |= mi_motor_id_;
-
-    command_frame.can_dlc = 8;
-
-    command_frame.data[0] = position_raw >> 8;
-    command_frame.data[1] = position_raw & 0xFF;
-
-    command_frame.data[2] = velocity_raw >> 8;
-    command_frame.data[3] = velocity_raw & 0xFF;
-
-    command_frame.data[4] = Kp_raw_ >> 8;
-    command_frame.data[5] = Kp_raw_ & 0xFF;
-
-    command_frame.data[6] = Kd_raw_ >> 8;
-    command_frame.data[7] = Kd_raw_ & 0xFF;
-
-    return command_frame;
+    // clang-format off
+    return std::bit_cast<can_frame>(mi_can_frame{
+        .can_id = {.id = mi_motor_id_, .data = effort_raw, .mode = 1},
+        .len = 8,
+        .data = {static_cast<uint8_t>(position_raw >> 8),
+                 static_cast<uint8_t>(position_raw & 0xFF),
+                 static_cast<uint8_t>(velocity_raw >> 8),
+                 static_cast<uint8_t>(velocity_raw & 0xFF),
+                 static_cast<uint8_t>(Kp_raw_ >> 8),
+                 static_cast<uint8_t>(Kp_raw_ & 0xFF),
+                 static_cast<uint8_t>(Kd_raw_ >> 8),
+                 static_cast<uint8_t>(Kd_raw_ & 0xFF)}});
+    // clang-format on
 }
 
-can_frame MiMotor::get_motor_pos_frame(double position) const {
-    throw std::runtime_error("Position control mode not implemented");
+can_frame MiMotor::motor_pos_frame(double position) const {
+    return motor_wr_param_frame(0x7016, static_cast<float>(position));
 }
 
-can_frame MiMotor::get_motor_vel_frame(double velocity) const {
-    throw std::runtime_error("Velocity control mode not implemented");
+can_frame MiMotor::motor_vel_frame(double velocity) const {
+    return motor_wr_param_frame(0x700A, static_cast<float>(velocity));
 }
 
-void MiMotor::set_motor_feedback(const can_frame &can_msg) {
+can_frame MiMotor::motor_wr_param_frame(uint16_t index, float value) const {
+    uint32_t value_raw = std::bit_cast<uint32_t>(value);
+
+    // clang-format off
+    return std::bit_cast<can_frame>(mi_can_frame{
+        .can_id = {.id = mi_motor_id_, .data = host_id_, .mode = 18},
+        .len = 8,
+        .data = {static_cast<uint8_t>(index & 0xFF), static_cast<uint8_t>(index >> 8),
+                 0, 0,
+                 static_cast<uint8_t>(value_raw & 0xFF),
+                 static_cast<uint8_t>(value_raw >> 8),
+                 static_cast<uint8_t>(value_raw >> 16),
+                 static_cast<uint8_t>(value_raw >> 24)}});
+    // clang-format on
+}
+
+can_frame MiMotor::motor_wr_param_frame(uint16_t index, uint8_t value) const {
+    // clang-format off
+    return std::bit_cast<can_frame>(mi_can_frame{
+        .can_id = {.id = mi_motor_id_, .data = host_id_, .mode = 18},
+        .len = 8,
+        .data = {static_cast<uint8_t>(index & 0xFF), static_cast<uint8_t>(index >> 8),
+                 0, 0,
+                 value, 0, 0, 0}});
+    // clang-format on
+}
+
+void MiMotor::set_motor_feedback(const mi_can_frame &can_msg) {
     auto position_raw =
         static_cast<uint16_t>((static_cast<uint16_t>(can_msg.data[0]) << 8) |
                               static_cast<uint16_t>(can_msg.data[1]));

@@ -45,9 +45,10 @@ class MiMotorNetwork {
     void rx_loop(std::stop_token stop_token);
     std::unique_ptr<std::jthread> rx_thread_;
 
-    void process_mi_frame(const can_frame &can_msg);
-    void process_mi_info_frame(const can_frame &can_msg);
-    void process_mi_fb_frame(const can_frame &can_msg);
+    using mi_can_frame = MiMotor::mi_can_frame;
+    void process_mi_frame(const mi_can_frame &can_msg);
+    void process_mi_info_frame(const mi_can_frame &can_msg);
+    void process_mi_fb_frame(const mi_can_frame &can_msg);
 
     // [motor_id] -> mi_motor
     // This makes it easy to find the motor object in rx_loop

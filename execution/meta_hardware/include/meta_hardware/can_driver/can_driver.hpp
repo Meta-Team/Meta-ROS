@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include <vector>
 
+#include "meta_hardware/can_driver/can_exceptions.hpp"
+
 namespace meta_hardware {
 class CanDriver {
   public:
@@ -22,7 +24,7 @@ class CanDriver {
         can_socket_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
 
         if (can_socket_ < 0) {
-            throw std::runtime_error("Failed to create socket");
+            throw CanException("Failed to create socket");
         }
 
         // Get the interface index
@@ -30,7 +32,7 @@ class CanDriver {
         std::strncpy(ifr.ifr_name, can_interface.c_str(), IFNAMSIZ);
 
         if (ioctl(can_socket_, SIOCGIFINDEX, &ifr) < 0) {
-            throw std::runtime_error("Failed to get interface index");
+            throw CanException("Failed to get interface index");
         }
 
         // Bind the socket to the interface
@@ -39,19 +41,18 @@ class CanDriver {
         addr.can_family = AF_CAN;
         addr.can_ifindex = ifr.ifr_ifindex;
 
-        if (bind(can_socket_, reinterpret_cast<sockaddr *>(&addr),
-                 sizeof(addr)) < 0) {
-            throw std::runtime_error("Failed to bind socket");
+        if (bind(can_socket_, reinterpret_cast<sockaddr *>(&addr), sizeof(addr)) < 0) {
+            throw CanException("Failed to bind socket");
         }
 
         // Set the socket to non-blocking
         int flags = fcntl(can_socket_, F_GETFL, 0);
         if (flags < 0) {
-            throw std::runtime_error("Failed to get socket flags");
+            throw CanException("Failed to get socket flags");
         }
 
         if (fcntl(can_socket_, F_SETFL, flags | O_NONBLOCK) < 0) {
-            throw std::runtime_error("Failed to set socket flags");
+            throw CanException("Failed to set socket flags");
         }
 
         // Set the filters
@@ -59,13 +60,12 @@ class CanDriver {
             if (setsockopt(can_socket_, SOL_CAN_RAW, CAN_RAW_JOIN_FILTERS,
                            &can_filters[0],
                            can_filters.size() * sizeof(can_filter)) < 0) {
-                throw std::runtime_error("Failed to set filters");
+                throw CanException("Failed to set filters");
             }
         } else if (!can_filters.empty()) {
-            if (setsockopt(can_socket_, SOL_CAN_RAW, CAN_RAW_FILTER,
-                           &can_filters[0],
+            if (setsockopt(can_socket_, SOL_CAN_RAW, CAN_RAW_FILTER, &can_filters[0],
                            can_filters.size() * sizeof(can_filter)) < 0) {
-                throw std::runtime_error("Failed to set filters");
+                throw CanException("Failed to set filters");
             }
         }
 
@@ -81,9 +81,9 @@ class CanDriver {
             int poll_ret = poll(&poll_fd_, 1, timeout_ms);
 
             if (poll_ret == 0) {
-                throw std::runtime_error("Timeout while waiting for frame");
+                throw CanIOTimedOutException("Timed out waiting for a frame");
             } else if (poll_ret < 0) {
-                throw std::runtime_error("Failed to poll");
+                throw CanIOException("Failed to poll for frame");
             }
 
             if (poll_fd_.revents & POLLIN) {
@@ -96,7 +96,7 @@ class CanDriver {
                     if (errno == EAGAIN || errno == EWOULDBLOCK) {
                         continue;
                     } else {
-                        throw std::runtime_error("Failed to read frame");
+                        throw CanIOException("Failed to read frame");
                     }
                 }
 
@@ -111,7 +111,7 @@ class CanDriver {
         // If any error occurs, the caller should handle it via exception.
         ssize_t nbytes = ::write(can_socket_, &frame, sizeof(frame));
         if (nbytes < 0) {
-            throw std::runtime_error("Failed to write frame");
+            throw CanIOException("Failed to write frame");
         }
         return nbytes;
     }

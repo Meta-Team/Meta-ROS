@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "meta_hardware/can_driver/can_driver.hpp"
+#include "meta_hardware/can_driver/can_exceptions.hpp"
 #include "meta_hardware/mi_motor_interface.hpp"
 #include "meta_hardware/motor_driver/mi_motor_driver.hpp"
 #include "meta_hardware/motor_network/mi_motor_network.hpp"
@@ -27,23 +28,28 @@ MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id,
         string motor_model = joint_param.at("motor_model");
         uint32_t mi_motor_id = std::stoi(joint_param.at("motor_id"));
 
-        auto mi_motor = std::make_shared<MiMotor>(joint_param);
+        auto mi_motor = std::make_shared<MiMotor>(joint_param, host_id);
         motor_id2motor_[mi_motor_id] = mi_motor;
         mi_motors_.emplace_back(mi_motor);
     }
 
     // Initialize CAN driver
-    can_driver_ = std::make_unique<CanDriver>(can_network_name);
+    try {
+        can_driver_ = std::make_unique<CanDriver>(can_network_name);
+    } catch (CanException &e) {
+        std::cerr << "Failed to initialize CAN driver: " << e.what() << std::endl;
+        throw std::runtime_error("Failed to initialize MI motor network");
+    }
 
     // Enable all motors
     for (const auto &motor : mi_motors_) {
         try {
-            can_driver_->write(
-                motor->get_motor_enable_frame(static_cast<uint8_t>(host_id_)));
-        } catch (std::runtime_error &e) {
+            can_driver_->write(motor->get_motor_runmode_frame());
+            can_driver_->write(motor->motor_enable_frame());
+        } catch (CanIOException &e) {
             std::cerr << "Error writing MI motor enable CAN message: " << e.what()
                       << std::endl;
-            throw std::runtime_error("Failed to enable MI motor");
+            throw std::runtime_error("Failed to enable MI motors");
         }
     }
 
@@ -56,10 +62,9 @@ MiMotorNetwork::~MiMotorNetwork() {
     // Disable all motors
     try {
         for (const auto &motor : mi_motors_) {
-            can_driver_->write(
-                motor->get_motor_disable_frame(static_cast<uint8_t>(host_id_)));
+            can_driver_->write(motor->motor_disable_frame());
         }
-    } catch (std::runtime_error &e) {
+    } catch (CanIOException &e) {
         std::cerr << "Error writing MI motor disable CAN message: " << e.what()
                   << std::endl;
     }
@@ -73,8 +78,8 @@ void MiMotorNetwork::write_dyn(uint32_t joint_id, double position, double veloci
                                double effort) {
     const auto &motor = mi_motors_[joint_id];
     try {
-        can_driver_->write(motor->get_motor_dyn_frame(position, velocity, effort));
-    } catch (std::runtime_error &e) {
+        can_driver_->write(motor->motor_dyn_frame(position, velocity, effort));
+    } catch (CanIOException &e) {
         std::cerr << "Error writing MI motor command CAN message: " << e.what()
                   << std::endl;
     }
@@ -83,8 +88,8 @@ void MiMotorNetwork::write_dyn(uint32_t joint_id, double position, double veloci
 void MiMotorNetwork::write_pos(uint32_t joint_id, double position) {
     const auto &motor = mi_motors_[joint_id];
     try {
-        can_driver_->write(motor->get_motor_pos_frame(position));
-    } catch (std::runtime_error &e) {
+        can_driver_->write(motor->motor_pos_frame(position));
+    } catch (CanIOException &e) {
         std::cerr << "Error writing MI motor command CAN message: " << e.what()
                   << std::endl;
     }
@@ -93,8 +98,8 @@ void MiMotorNetwork::write_pos(uint32_t joint_id, double position) {
 void MiMotorNetwork::write_vel(uint32_t joint_id, double velocity) {
     const auto &motor = mi_motors_[joint_id];
     try {
-        can_driver_->write(motor->get_motor_vel_frame(velocity));
-    } catch (std::runtime_error &e) {
+        can_driver_->write(motor->motor_vel_frame(velocity));
+    } catch (CanIOException &e) {
         std::cerr << "Error writing MI motor command CAN message: " << e.what()
                   << std::endl;
     }
@@ -103,22 +108,22 @@ void MiMotorNetwork::write_vel(uint32_t joint_id, double velocity) {
 void MiMotorNetwork::rx_loop(std::stop_token stop_token) {
     while (!stop_token.stop_requested()) {
         try {
-            can_frame can_msg = can_driver_->read(1000);
+            auto can_msg = std::bit_cast<mi_can_frame>(can_driver_->read(1000));
 
             // MI motor frames are all extended frames
-            if (can_msg.can_id & CAN_EFF_FLAG) {
+            if (can_msg.can_id.eff) {
                 process_mi_frame(can_msg);
             }
-        } catch (std::runtime_error &e) {
+        } catch (CanIOTimedOutException & /*e*/) {
+            continue; // Timeout is expected
+        } catch (CanIOException &e) {
             std::cerr << "Error reading CAN message: " << e.what() << std::endl;
         }
     }
 }
 
-void MiMotorNetwork::process_mi_frame(const can_frame &can_msg) {
-    canid_t can_id = can_msg.can_id & CAN_EFF_MASK;
-    uint8_t mi_frame_type = can_id >> 24;
-    switch (mi_frame_type) {
+void MiMotorNetwork::process_mi_frame(const mi_can_frame &can_msg) {
+    switch (can_msg.can_id.mode) {
     case 0x00: // MI motor info frame
         process_mi_info_frame(can_msg);
         break;
@@ -126,17 +131,17 @@ void MiMotorNetwork::process_mi_frame(const can_frame &can_msg) {
         process_mi_fb_frame(can_msg);
         break;
     default:
-        std::cerr << "Unknown MI motor frame type: " << mi_frame_type << std::endl;
+        std::cerr << "Unknown MI motor frame mode: " << can_msg.can_id.mode << std::endl;
         break;
     }
 }
 
-void MiMotorNetwork::process_mi_info_frame(const can_frame &can_msg) {
+void MiMotorNetwork::process_mi_info_frame(const mi_can_frame &can_msg) {
     // TODO: Implement this
 }
 
-void MiMotorNetwork::process_mi_fb_frame(const can_frame &can_msg) {
-    uint8_t motor_id = (can_msg.can_id >> 8) & 0xFF;
+void MiMotorNetwork::process_mi_fb_frame(const mi_can_frame &can_msg) {
+    uint8_t motor_id = can_msg.can_id.data & 0xFF;
     const auto &motor = motor_id2motor_.at(motor_id);
     motor->set_motor_feedback(can_msg);
 }
