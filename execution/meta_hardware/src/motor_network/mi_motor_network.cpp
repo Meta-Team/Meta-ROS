@@ -34,23 +34,12 @@ MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id,
     }
 
     // Initialize CAN driver
-    try {
-        can_driver_ = std::make_unique<CanDriver>(can_network_name);
-    } catch (CanException &e) {
-        std::cerr << "Failed to initialize CAN driver: " << e.what() << std::endl;
-        throw std::runtime_error("Failed to initialize MI motor network");
-    }
+    can_driver_ = std::make_unique<CanDriver>(can_network_name);
 
     // Enable all motors
     for (const auto &motor : mi_motors_) {
-        try {
-            can_driver_->write(motor->get_motor_runmode_frame());
-            can_driver_->write(motor->motor_enable_frame());
-        } catch (CanIOException &e) {
-            std::cerr << "Error writing MI motor enable CAN message: " << e.what()
-                      << std::endl;
-            throw std::runtime_error("Failed to enable MI motors");
-        }
+        can_driver_->write(motor->get_motor_runmode_frame());
+        can_driver_->write(motor->motor_enable_frame());
     }
 
     // Start RX thread
