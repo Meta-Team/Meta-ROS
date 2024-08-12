@@ -15,6 +15,8 @@
 #include "rclcpp_lifecycle/state.hpp"
 
 namespace meta_hardware {
+constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
+
 class MetaRobotDjiMotorNetwork : public hardware_interface::SystemInterface {
   public:
     ~MetaRobotDjiMotorNetwork() override;
@@ -53,10 +55,10 @@ class MetaRobotDjiMotorNetwork : public hardware_interface::SystemInterface {
   private:
     class JointInterfaceData {
       public:
-        double command_effort;
-        double state_position;
-        double state_velocity;
-        double state_effort;
+        double command_effort = NaN;
+        double state_position = NaN;
+        double state_velocity = NaN;
+        double state_effort = NaN;
     };
     std::vector<JointInterfaceData> joint_interface_data_;
 

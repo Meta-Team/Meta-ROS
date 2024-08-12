@@ -4,14 +4,16 @@
 #include <limits>
 #include <memory>
 #include <string>
-#include <tf2/tf2/LinearMath/Matrix3x3.h>
-#include <tf2/tf2/LinearMath/Quaternion.h>
 #include <vector>
 
 #include "angles/angles.h"
 #include "controller_interface/helpers.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/logging.hpp"
+#include "tf2/tf2/LinearMath/Matrix3x3.h"
+#include "tf2/tf2/LinearMath/Quaternion.h"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 
 static constexpr rmw_qos_profile_t rmw_qos_profile_services_hist_keep_all = {
     RMW_QOS_POLICY_HISTORY_KEEP_ALL,
@@ -28,8 +30,7 @@ constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
 
 using ControllerReferenceMsg =
     gimbal_controller::GimbalController::ControllerReferenceMsg;
-using ControllerFeedbackMsg =
-    gimbal_controller::GimbalController::ControllerFeedbackMsg;
+using ControllerFeedbackMsg = gimbal_controller::GimbalController::ControllerFeedbackMsg;
 
 // called from RT control loop
 void reset_controller_reference_msg(
@@ -66,8 +67,7 @@ GimbalController::GimbalController()
 controller_interface::CallbackReturn GimbalController::on_init() {
 
     try {
-        param_listener_ =
-            std::make_shared<gimbal_controller::ParamListener>(get_node());
+        param_listener_ = std::make_shared<gimbal_controller::ParamListener>(get_node());
     } catch (const std::exception &e) {
         std::cerr << "Exception thrown during controller's init with message: "
                   << e.what() << std::endl;
@@ -77,8 +77,8 @@ controller_interface::CallbackReturn GimbalController::on_init() {
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn GimbalController::on_configure(
-    const rclcpp_lifecycle::State & /*previous_state*/) {
+controller_interface::CallbackReturn
+GimbalController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
     params_ = param_listener_->get_params();
 
     // Initialize PIDs
@@ -88,13 +88,11 @@ controller_interface::CallbackReturn GimbalController::on_configure(
         get_node(), "gains." + params_.pitch_gimbal_joint.name + "_pos2vel", true);
 
     if (!yaw_pos2vel_pid_->initPid()) {
-        RCLCPP_ERROR(get_node()->get_logger(),
-                        "Failed to initialize PID for pos2vel");
+        RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for pos2vel");
         return controller_interface::CallbackReturn::FAILURE;
     }
     if (!pitch_pos2vel_pid_->initPid()) {
-        RCLCPP_ERROR(get_node()->get_logger(),
-                        "Failed to initialize PID for pos2vel");
+        RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for pos2vel");
         return controller_interface::CallbackReturn::FAILURE;
     }
 
@@ -104,13 +102,11 @@ controller_interface::CallbackReturn GimbalController::on_configure(
         get_node(), "gains." + params_.pitch_gimbal_joint.name + "_vel2eff", true);
 
     if (!yaw_vel2eff_pid_->initPid()) {
-        RCLCPP_ERROR(get_node()->get_logger(),
-                        "Failed to initialize PID for vel2eff");
+        RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for vel2eff");
         return controller_interface::CallbackReturn::FAILURE;
     }
     if (!pitch_vel2eff_pid_->initPid()) {
-        RCLCPP_ERROR(get_node()->get_logger(),
-                        "Failed to initialize PID for vel2eff");
+        RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for vel2eff");
         return controller_interface::CallbackReturn::FAILURE;
     }
 
@@ -122,19 +118,16 @@ controller_interface::CallbackReturn GimbalController::on_configure(
     // Reference Subscriber
     ref_subscriber_ = get_node()->create_subscription<ControllerReferenceMsg>(
         "~/reference", subscribers_qos,
-        std::bind(&GimbalController::reference_callback, this,
-                  std::placeholders::_1));
+        std::bind(&GimbalController::reference_callback, this, std::placeholders::_1));
 
     auto msg = std::make_shared<ControllerReferenceMsg>();
     reset_controller_reference_msg(msg, get_node());
     input_ref_.writeFromNonRT(msg);
 
     // Feedback Subscriber
-    feedback_subscriber_ =
-        get_node()->create_subscription<ControllerFeedbackMsg>(
-            params_.imu_topic, subscribers_qos,
-            std::bind(&GimbalController::feedback_callback, this,
-                      std::placeholders::_1));
+    feedback_subscriber_ = get_node()->create_subscription<ControllerFeedbackMsg>(
+        params_.imu_topic, subscribers_qos,
+        std::bind(&GimbalController::feedback_callback, this, std::placeholders::_1));
 
     auto feedback_msg = std::make_shared<ControllerFeedbackMsg>();
     reset_controller_feedback_msg(feedback_msg, get_node());
@@ -144,8 +137,7 @@ controller_interface::CallbackReturn GimbalController::on_configure(
         // State publisher
         s_publisher_ = get_node()->create_publisher<ControllerStateMsg>(
             "~/controller_state", rclcpp::SystemDefaultsQoS());
-        state_publisher_ =
-            std::make_unique<ControllerStatePublisher>(s_publisher_);
+        state_publisher_ = std::make_unique<ControllerStatePublisher>(s_publisher_);
     } catch (const std::exception &e) {
         std::cerr << "Exception thrown during publisher creation at configure "
                      "stage with message: "
@@ -172,8 +164,10 @@ GimbalController::command_interface_configuration() const {
         controller_interface::interface_configuration_type::INDIVIDUAL;
 
     command_interfaces_config.names.reserve(2);
-    command_interfaces_config.names.push_back(params_.yaw_gimbal_joint.name + "/" + HW_IF_EFFORT);
-    command_interfaces_config.names.push_back(params_.pitch_gimbal_joint.name + "/" + HW_IF_EFFORT);
+    command_interfaces_config.names.push_back(params_.yaw_gimbal_joint.name + "/" +
+                                              HW_IF_EFFORT);
+    command_interfaces_config.names.push_back(params_.pitch_gimbal_joint.name + "/" +
+                                              HW_IF_EFFORT);
 
     return command_interfaces_config;
 }
@@ -222,8 +216,8 @@ bool GimbalController::on_set_chained_mode(bool chained_mode) {
     return true || chained_mode;
 }
 
-controller_interface::CallbackReturn GimbalController::on_activate(
-    const rclcpp_lifecycle::State & /*previous_state*/) {
+controller_interface::CallbackReturn
+GimbalController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
     // Set default value in command
     reset_controller_reference_msg(*(input_ref_.readFromRT()), get_node());
     reset_controller_feedback_msg(*(input_feedback_.readFromRT()), get_node());
@@ -233,17 +227,15 @@ controller_interface::CallbackReturn GimbalController::on_activate(
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn GimbalController::on_deactivate(
-    const rclcpp_lifecycle::State & /*previous_state*/) {
+controller_interface::CallbackReturn
+GimbalController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
     RCLCPP_INFO(get_node()->get_logger(), "deactivate successful");
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::return_type
-GimbalController::update_reference_from_subscribers() {
-    auto current_ref =
-        *(input_ref_.readFromRT()); // A shared_ptr must be allocated
-                                    // immediately to prevent dangling
+controller_interface::return_type GimbalController::update_reference_from_subscribers() {
+    auto current_ref = *(input_ref_.readFromRT()); // A shared_ptr must be allocated
+                                                   // immediately to prevent dangling
 
     if (!std::isnan(current_ref->yaw) && !std::isnan(current_ref->pitch)) {
         reference_interfaces_[0] = current_ref->yaw;
@@ -263,26 +255,25 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
     auto current_feedback = *(input_feedback_.readFromRT());
 
     double yaw_pos_fb, pitch_pos_fb, roll_pos_fb;
-    auto q = tf2::Quaternion(
-        current_feedback->orientation.x, current_feedback->orientation.y,
-        current_feedback->orientation.z, current_feedback->orientation.w);
+    auto q =
+        tf2::Quaternion(current_feedback->orientation.x, current_feedback->orientation.y,
+                        current_feedback->orientation.z, current_feedback->orientation.w);
     tf2::Matrix3x3(q).getRPY(roll_pos_fb, pitch_pos_fb, yaw_pos_fb);
-
 
     double yaw_vel_fb = -current_feedback->angular_velocity.z;
     double pitch_vel_fb = -current_feedback->angular_velocity.y;
 
     double yaw_pos_ref = NaN, pitch_pos_ref = NaN;
-    double yaw_pos_err = NaN , pitch_pos_err = NaN;
+    double yaw_pos_err = NaN, pitch_pos_err = NaN;
     double yaw_vel_ref = NaN, pitch_vel_ref = NaN;
     double yaw_vel_err = NaN, pitch_vel_err = NaN;
     double yaw_eff_cmd = NaN, pitch_eff_cmd = NaN;
 
     // Calculate commands
-    if (!std::isnan(reference_interfaces_[0]) &&
-        !std::isnan(reference_interfaces_[1]) && !std::isnan(yaw_pos_fb) &&
-        !std::isnan(pitch_pos_fb) && !std::isnan(roll_pos_fb) &&
-        !std::isnan(yaw_vel_fb) && !std::isnan(pitch_vel_fb)) {
+    if (!std::isnan(reference_interfaces_[0]) && !std::isnan(reference_interfaces_[1]) &&
+        !std::isnan(yaw_pos_fb) && !std::isnan(pitch_pos_fb) &&
+        !std::isnan(roll_pos_fb) && !std::isnan(yaw_vel_fb) &&
+        !std::isnan(pitch_vel_fb)) {
         if (params_.yaw_gimbal_joint.enable) {
             // Yaw Position (IMU) to velocity (IMU) PID
             yaw_pos_ref = reference_interfaces_[0];
@@ -297,7 +288,8 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
         if (params_.pitch_gimbal_joint.enable) {
             // Pitch Position (IMU) to velocity (IMU) PID
             pitch_pos_ref = -reference_interfaces_[1];
-            pitch_pos_err = angles::shortest_angular_distance(pitch_pos_fb, pitch_pos_ref);
+            pitch_pos_err =
+                angles::shortest_angular_distance(pitch_pos_fb, pitch_pos_ref);
             pitch_vel_ref = pitch_pos2vel_pid_->computeCommand(pitch_pos_err, period);
             // Pitch Velocity (IMU) to effort (motor) PID
             pitch_vel_err = pitch_vel_ref - pitch_vel_fb;

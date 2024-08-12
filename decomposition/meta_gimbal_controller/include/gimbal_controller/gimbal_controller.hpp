@@ -9,8 +9,7 @@
 
 #include "control_toolbox/pid_ros.hpp"
 #include "controller_interface/chainable_controller_interface.hpp"
-#include "gimbal_controller/visibility_control.h"
-#include "gimbal_controller_parameters.hpp"
+#include "meta_gimbal_controller_parameters.hpp"
 #include "rclcpp/duration.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
@@ -29,40 +28,29 @@ static constexpr size_t STATE_MY_ITFS = 0;
 // name constants for command interfaces
 static constexpr size_t CMD_MY_ITFS = 0;
 
-class GimbalController
-    : public controller_interface::ChainableControllerInterface {
+class GimbalController : public controller_interface::ChainableControllerInterface {
   public:
-    GIMBAL_CONTROLLER__VISIBILITY_PUBLIC
     GimbalController();
 
-    GIMBAL_CONTROLLER__VISIBILITY_PUBLIC
     controller_interface::CallbackReturn on_init() override;
 
-    GIMBAL_CONTROLLER__VISIBILITY_PUBLIC
     controller_interface::InterfaceConfiguration
     command_interface_configuration() const override;
 
-    GIMBAL_CONTROLLER__VISIBILITY_PUBLIC
     controller_interface::InterfaceConfiguration
     state_interface_configuration() const override;
 
-    GIMBAL_CONTROLLER__VISIBILITY_PUBLIC
     controller_interface::CallbackReturn
     on_configure(const rclcpp_lifecycle::State &previous_state) override;
 
-    GIMBAL_CONTROLLER__VISIBILITY_PUBLIC
     controller_interface::CallbackReturn
     on_activate(const rclcpp_lifecycle::State &previous_state) override;
 
-    GIMBAL_CONTROLLER__VISIBILITY_PUBLIC
     controller_interface::CallbackReturn
     on_deactivate(const rclcpp_lifecycle::State &previous_state) override;
 
-    GIMBAL_CONTROLLER__VISIBILITY_PUBLIC
-    controller_interface::return_type
-    update_reference_from_subscribers() override;
+    controller_interface::return_type update_reference_from_subscribers() override;
 
-    GIMBAL_CONTROLLER__VISIBILITY_PUBLIC
     controller_interface::return_type
     update_and_write_commands(const rclcpp::Time &time,
                               const rclcpp::Duration &period) override;
@@ -77,14 +65,11 @@ class GimbalController
     gimbal_controller::Params params_;
 
     // Command subscribers
-    rclcpp::Subscription<ControllerReferenceMsg>::SharedPtr ref_subscriber_ =
-        nullptr;
-    realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerReferenceMsg>>
-        input_ref_;
+    rclcpp::Subscription<ControllerReferenceMsg>::SharedPtr ref_subscriber_ = nullptr;
+    realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerReferenceMsg>> input_ref_;
 
     // Feedback subscribers
-    rclcpp::Subscription<ControllerFeedbackMsg>::SharedPtr
-        feedback_subscriber_ = nullptr;
+    rclcpp::Subscription<ControllerFeedbackMsg>::SharedPtr feedback_subscriber_ = nullptr;
     realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerFeedbackMsg>>
         input_feedback_;
 
@@ -106,8 +91,6 @@ class GimbalController
     bool on_set_chained_mode(bool chained_mode) override;
 
   private:
-    // callback for topic interface
-    GIMBAL_CONTROLLER__VISIBILITY_LOCAL
     void reference_callback(const std::shared_ptr<ControllerReferenceMsg> msg);
     void feedback_callback(const std::shared_ptr<ControllerFeedbackMsg> msg);
 };

@@ -80,7 +80,7 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    robot_controller_config = PathJoinSubstitution([FindPackageShare('metav_description'), 'config', 'standard.yaml'])
+    robot_controller_config = PathJoinSubstitution([FindPackageShare('meta_bringup'), 'config', 'standard.yaml'])
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",

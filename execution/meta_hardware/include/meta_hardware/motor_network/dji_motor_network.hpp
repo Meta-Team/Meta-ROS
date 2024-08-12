@@ -4,11 +4,12 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <thread>
+#include <unordered_map>
 #include <vector>
 
+#include "meta_hardware/can_driver/can_driver.hpp"
 #include "meta_hardware/motor_driver/dji_motor_driver.hpp"
-#include <CanDriver.hpp>
-#include <CanMessage.hpp>
 
 namespace meta_hardware {
 
@@ -40,8 +41,11 @@ class DjiMotorNetwork {
     void tx();
 
   private:
-    [[noreturn]] void rx_loop();
-    std::thread rx_thread_;
+    // CAN driver
+    std::unique_ptr<CanDriver> can_driver_;
+
+    void rx_loop(std::stop_token stop_token);
+    std::unique_ptr<std::jthread> rx_thread_;
 
     // Five CAN frames for tx
     // 0x1FE: GM6020(current) motor 1-4
@@ -49,19 +53,7 @@ class DjiMotorNetwork {
     // 0x200: M3508/M2006 motor 1-4
     // 0x2FE: GM6020(current) motor  5-8
     // 0x2FF: GM6020(voltage) motor 5-8
-    can_frame tx_frame_1fe{
-        .can_id = 0x1FE, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
-    can_frame tx_frame_1ff{
-        .can_id = 0x1FF, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
-    can_frame tx_frame_200{
-        .can_id = 0x200, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
-    can_frame tx_frame_2fe{
-        .can_id = 0x2FE, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
-    can_frame tx_frame_2ff{
-        .can_id = 0x2FF, .can_dlc = 8, .data = {0, 0, 0, 0, 0, 0, 0, 0}};
-
-    // CAN driver
-    std::unique_ptr<sockcanpp::CanDriver> can_driver_;
+    std::unordered_map<uint32_t, can_frame> tx_frames_;
 
     // [rx_can_id] -> dji_motor
     // This makes it easy to find the motor object in rx_loop

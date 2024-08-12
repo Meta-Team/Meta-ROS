@@ -13,4 +13,11 @@
       MI motor network hardware interface.
     </description>
   </class>
+  <class name="meta_hardware/MetaRobotBrtEncoderNetwork"
+    type="meta_hardware::MetaRobotBrtEncoderNetwork"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      BRT encoder network hardware interface.
+    </description>
+  </class>
 </library>
