@@ -30,9 +30,6 @@ This is a documentation describing how this project is designed ->
 
 ## Quickstart
 
-### Upgrade CMake
-Our project requires at least CMake 2.23 to compile, which is higher than the stock CMake version comes with Ubuntu 22.04. Please take a look at [Kitware APT Repository](https://apt.kitware.com/) to update your CMake version.
-
 ### Clone the Project
 First, create a workspace and clone the project.
 
