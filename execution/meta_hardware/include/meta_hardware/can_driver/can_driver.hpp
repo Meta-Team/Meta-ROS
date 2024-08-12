@@ -24,7 +24,7 @@ class CanDriver {
         can_socket_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
 
         if (can_socket_ < 0) {
-            throw CanException("Failed to create socket");
+            throw CanException("Failed to create socket: " + std::string(strerror(errno)));
         }
 
         // Get the interface index
@@ -32,7 +32,7 @@ class CanDriver {
         std::strncpy(ifr.ifr_name, can_interface.c_str(), IFNAMSIZ);
 
         if (ioctl(can_socket_, SIOCGIFINDEX, &ifr) < 0) {
-            throw CanException("Failed to get interface index");
+            throw CanException("Failed to get interface index: " + std::string(strerror(errno)));
         }
 
         // Bind the socket to the interface
@@ -48,11 +48,11 @@ class CanDriver {
         // Set the socket to non-blocking
         int flags = fcntl(can_socket_, F_GETFL, 0);
         if (flags < 0) {
-            throw CanException("Failed to get socket flags");
+            throw CanException("Failed to get socket flags: " + std::string(strerror(errno)));
         }
 
         if (fcntl(can_socket_, F_SETFL, flags | O_NONBLOCK) < 0) {
-            throw CanException("Failed to set socket flags");
+            throw CanException("Failed to set socket flags: " + std::string(strerror(errno)));
         }
 
         // Set the filters
@@ -60,12 +60,12 @@ class CanDriver {
             if (setsockopt(can_socket_, SOL_CAN_RAW, CAN_RAW_JOIN_FILTERS,
                            &can_filters[0],
                            can_filters.size() * sizeof(can_filter)) < 0) {
-                throw CanException("Failed to set filters");
+                throw CanException("Failed to set filters: " + std::string(strerror(errno)));
             }
         } else if (!can_filters.empty()) {
             if (setsockopt(can_socket_, SOL_CAN_RAW, CAN_RAW_FILTER, &can_filters[0],
                            can_filters.size() * sizeof(can_filter)) < 0) {
-                throw CanException("Failed to set filters");
+                throw CanException("Failed to set filters: " + std::string(strerror(errno)));
             }
         }
 
@@ -83,7 +83,7 @@ class CanDriver {
             if (poll_ret == 0) {
                 throw CanIOTimedOutException("Timed out waiting for a frame");
             } else if (poll_ret < 0) {
-                throw CanIOException("Failed to poll for frame");
+                throw CanIOException("Failed to poll for frame: " + std::string(strerror(errno)));
             }
 
             if (poll_fd_.revents & POLLIN) {
@@ -96,7 +96,7 @@ class CanDriver {
                     if (errno == EAGAIN || errno == EWOULDBLOCK) {
                         continue;
                     } else {
-                        throw CanIOException("Failed to read frame");
+                        throw CanIOException("Failed to read frame: " + std::string(strerror(errno)));
                     }
                 }
 
@@ -111,7 +111,7 @@ class CanDriver {
         // If any error occurs, the caller should handle it via exception.
         ssize_t nbytes = ::write(can_socket_, &frame, sizeof(frame));
         if (nbytes < 0) {
-            throw CanIOException("Failed to write frame");
+            throw CanIOException("Failed to write frame: " + std::string(strerror(errno)));
         }
         return nbytes;
     }
