@@ -18,8 +18,8 @@ Source of this file are templates in
 [RosTeamWorkspace](https://github.com/StoglRobotics/ros_team_workspace) repository.
 -->
 
-<library path="gimbal_controller">
-  <class name="gimbal_controller/GimbalController"
+<library path="meta_gimbal_controller">
+  <class name="meta_gimbal_controller/GimbalController"
          type="gimbal_controller::GimbalController" base_class_type="controller_interface::ChainableControllerInterface">
   <description>
     GimbalController ros2_control controller.

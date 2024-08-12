@@ -9,7 +9,7 @@
 
 #include "control_toolbox/pid_ros.hpp"
 #include "controller_interface/chainable_controller_interface.hpp"
-#include "gimbal_controller_parameters.hpp"
+#include "meta_gimbal_controller_parameters.hpp"
 #include "rclcpp/duration.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"

@@ -9,7 +9,7 @@ controller_manager:
       type: pid_controller/PidController
 
     gimbal_controller:
-      type: gimbal_controller/GimbalController
+      type: meta_gimbal_controller/GimbalController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
