@@ -77,6 +77,9 @@ can_frame MiMotor::motor_disable_frame() const {
 
 can_frame MiMotor::motor_dyn_frame(double position, double velocity,
                                    double effort) const {
+    position = std::clamp(position, -MAX_ABS_POSITION, MAX_ABS_POSITION);
+    velocity = std::clamp(velocity, -MAX_ABS_VELOCITY, MAX_ABS_VELOCITY);
+    effort = std::clamp(effort, -MAX_ABS_TORQUE, MAX_ABS_TORQUE);
     auto position_raw = static_cast<uint16_t>((position / (2 * MAX_ABS_POSITION) + 0.5) *
                                               MAX_RAW_POSITION);
     auto velocity_raw = static_cast<uint16_t>((velocity / (2 * MAX_ABS_VELOCITY) + 0.5) *
