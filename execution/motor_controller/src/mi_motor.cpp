@@ -1,3 +1,5 @@
+// data decoding is inspired by https://gitee.com/SMBU-POLARBEAR/MotorDrive
+
 #include "motor_controller/mi_motor.h"
 #include "motor_controller/motor_driver.h"
 #include <cmath>
@@ -11,15 +13,19 @@
 umap<int, unique_ptr<CanDriver>> MiMotor::can_drivers;
 umap<int, std::thread> MiMotor::rx_threads;
 umap<int, can_frame> MiMotor::rx_frames;
-umap<int, umap<int, std::shared_ptr<MiMotor>>> MiMotor::instances;
+umap<int, umap<int, MiMotor*>> MiMotor::instances;
 
-MiMotor::MiMotor(const string& rid, int hid, string /*type*/, string port, int cali) :
+MiMotor::MiMotor(const string& rid, int hid, string /*type*/, string port) :
     MotorDriver(rid, hid)
 {
-    set_port(port.back() - '0'); // this->port is set here
-    instances[this->port][this->hid] = std::shared_ptr<MiMotor>(this);
+    this->port = port.back() - '0';
+    instances[this->port][this->hid] = this;
+
+    create_port(this->port);
 
     start();
+
+    goal_helper(0, 0, 0, 0, 0);
 
     tx_thread = std::thread(&MiMotor::tx_loop, this);
 }
@@ -28,6 +34,7 @@ MiMotor::~MiMotor()
 {
     stop();
     if (tx_thread.joinable()) tx_thread.join();
+    destroy_port(port);
 }
 
 void MiMotor::set_goal(double goal_pos, double goal_vel, double goal_tor)
@@ -49,11 +56,11 @@ void MiMotor::set_param(double p2v_kp, double /*p2v_ki*/, double p2v_kd,
 
 std::tuple<double, double, double> MiMotor::get_state()
 {
-    return std::make_tuple(
+    return {
         position,
         velocity,
         torque
-    );
+    };
 }
 
 void MiMotor::print_info()
@@ -66,23 +73,22 @@ void MiMotor::print_info()
 
 void MiMotor::goal_helper(float pos, float vel, float tor, float kp , float kd)
 {
-    parsed_frame.ext_id.mode = 1;
-    parsed_frame.ext_id.id = hid;
-    parsed_frame.ext_id.data = float_to_uint(tor, T_MIN, T_MAX, 16);
-    parsed_frame.ext_id.res = 0;
-    parsed_frame.data[0]=float_to_uint(pos,P_MIN,P_MAX,16) >> 8;
-    parsed_frame.data[1]=float_to_uint(pos,P_MIN,P_MAX,16);
-    parsed_frame.data[2]=float_to_uint(vel,V_MIN,V_MAX,16) >> 8;
-    parsed_frame.data[3]=float_to_uint(vel,V_MIN,V_MAX,16);
-    parsed_frame.data[4]=float_to_uint(kp,KP_MIN,KP_MAX,16) >> 8;
-    parsed_frame.data[5]=float_to_uint(kp,KP_MIN,KP_MAX,16);
-    parsed_frame.data[6]=float_to_uint(kd,KD_MIN,KD_MAX,16) >> 8;
-    parsed_frame.data[7]=float_to_uint(kd,KD_MIN,KD_MAX,16);
+    control_msg.ext_id.mode = 1;
+    control_msg.ext_id.id = hid;
+    control_msg.ext_id.data = float_to_uint(tor, T_MIN, T_MAX, 16);
+    control_msg.ext_id.res = 0;
+    control_msg.data[0] = float_to_uint(pos, P_MIN, P_MAX, 16) >> 8;
+    control_msg.data[1] = float_to_uint(pos, P_MIN, P_MAX, 16);
+    control_msg.data[2] = float_to_uint(vel, V_MIN, V_MAX, 16) >> 8;
+    control_msg.data[3] = float_to_uint(vel, V_MIN, V_MAX, 16);
+    control_msg.data[4] = float_to_uint(kp, KP_MIN, KP_MAX, 16) >> 8;
+    control_msg.data[5] = float_to_uint(kp, KP_MIN, KP_MAX, 16);
+    control_msg.data[6] = float_to_uint(kd, KD_MIN, KD_MAX, 16) >> 8;
+    control_msg.data[7] = float_to_uint(kd, KD_MIN, KD_MAX, 16);
 }
 
-void MiMotor::set_port(int port)
+void MiMotor::create_port(int port)
 {
-    this->port = port;
     if (can_drivers.find(port) == can_drivers.end())
     {
         can_drivers[port] = std::make_unique<CanDriver>(port);
@@ -90,12 +96,21 @@ void MiMotor::set_port(int port)
     }
 }
 
-void MiMotor::tx()
+void MiMotor::destroy_port(int port)
+{
+    if (instances[port].empty())
+    {
+        can_drivers.erase(port);
+        if (rx_threads[port].joinable()) rx_threads[port].join();
+    }
+}
+
+void MiMotor::tx(TxMsg msg)
 {
     can_frame tx_frame;
     tx_frame.can_dlc = 8;
-    tx_frame.can_id = *reinterpret_cast<uint32_t*>(&parsed_frame.ext_id) | CAN_EFF_FLAG; // id
-    std::memcpy(tx_frame.data, parsed_frame.data.data(), 8); // data
+    tx_frame.can_id = *reinterpret_cast<uint32_t*>(&msg.ext_id) | CAN_EFF_FLAG; // id
+    std::memcpy(tx_frame.data, msg.data.data(), 8); // data
     can_drivers[port]->send_frame(tx_frame);
 }
 
@@ -103,7 +118,7 @@ void MiMotor::tx_loop()
 {
     while (rclcpp::ok())
     {
-        tx();
+        tx(control_msg);
         rclcpp::sleep_for(std::chrono::milliseconds(TX_FREQ));
     }
 }
@@ -120,13 +135,13 @@ void MiMotor::process_rx(const can_frame& frame)
     uint16_t buffer;
     auto& rx_data = frame.data;
     buffer = (rx_data[0] << 8 | rx_data[1]);
-    position = ((float)buffer-32767.5)/32767.5*4*3.1415926f;;
+    position = ((float)buffer - 32767.5) / 32767.5 * 4 * 3.1415926f;
 
     buffer = (rx_data[2] << 8 | rx_data[3]);
-    velocity = ((float)buffer-32767.5)/32767.5*30.0f;
+    velocity = ((float)buffer - 32767.5) / 32767.5 * 30.0f;
 
     buffer = (rx_data[4] << 8 | rx_data[5]);
-    torque = ((float)buffer-32767.5)/32767.5*12.0f;
+    torque = ((float)buffer - 32767.5) / 32767.5 * 12.0f;
 
     // buffer = (rx_data[6] << 8 | rx_data[7]);
     // temperature = (float)buffer/10.0f;
@@ -150,22 +165,24 @@ void MiMotor::rx_loop(int port)
 
 void MiMotor::start()
 {
-    parsed_frame.ext_id.mode = 3;
-    parsed_frame.ext_id.id = hid;
-    parsed_frame.ext_id.res = 0;
-    parsed_frame.ext_id.data = MASTER_ID;
-    parsed_frame.data.fill(0); // data doesn't matter
-    tx();
+    TxMsg start_msg;
+    start_msg.ext_id.mode = 3;
+    start_msg.ext_id.id = hid;
+    start_msg.ext_id.res = 0;
+    start_msg.ext_id.data = MASTER_ID;
+    start_msg.data.fill(0);
+    tx(start_msg);
 }
 
 void MiMotor::stop()
 {
-    parsed_frame.ext_id.mode = 4;
-    parsed_frame.ext_id.id = hid;
-    parsed_frame.ext_id.res = 0;
-    parsed_frame.ext_id.data = MASTER_ID;
-    parsed_frame.data.fill(0); // data doesn't matter
-    tx();
+    TxMsg stop_msg;
+    stop_msg.ext_id.mode = 4;
+    stop_msg.ext_id.id = hid;
+    stop_msg.ext_id.res = 0;
+    stop_msg.ext_id.data = MASTER_ID;
+    stop_msg.data.fill(0);
+    tx(stop_msg);
 }
 
 uint32_t MiMotor::float_to_uint(float x, float x_min, float x_max, int bits)

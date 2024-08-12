@@ -4,7 +4,10 @@
 #include "motor_driver.h"
 #include "unitreeMotor/unitreeMotor.h"
 #include "serialPort/SerialPort.h"
+#include <memory>
+#include <string>
 #include <thread>
+#include <unordered_map>
 
 #define UPDATE_FREQ 10 // ms
 #define CALI_TIMEOUT 3 // seconds
@@ -28,13 +31,15 @@ public:
     void print_info() override;
 
 private:
+    std::shared_ptr<SerialPort> port; ///< The serial port used to communicate with the motor.
     MotorType type; ///< The type of the motor.
     double kp, kd;
-    SerialPort serial_port; ///< The serial port used to communicate with the motor.
     MotorCmd goal_cmd; ///< The current goal command for the motor. Its symbols differ from the documentation.
     MotorData feedback_data; ///< The current feedback data for the motor. Its symbols differ from the documentation.
 
     std::thread control_thread; ///< The thread for the control loop.
+
+    static std::unordered_map<std::string, std::shared_ptr<SerialPort>> serial_ports; ///< The serial ports used to communicate with the motor.
 
     /**
      * @brief Send the goal command and receive the feedback data.

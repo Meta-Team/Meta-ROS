@@ -15,5 +15,6 @@ def generate_launch_description():
             executable='motor_controller',
             name='motor_controller',
             parameters=[config],
+            output='screen',
         ),
     ])

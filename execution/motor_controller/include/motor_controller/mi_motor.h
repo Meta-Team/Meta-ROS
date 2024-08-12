@@ -20,7 +20,9 @@ using std::unique_ptr;
 
 #define TX_FREQ 10
 
-#define MASTER_ID 1
+#define MASTER_ID 0 // must be zero
+// or the motor will keep sending feedback frames once enabled
+// and it cannot be disabled
 
 #define P_MIN -12.5f
 #define P_MAX 12.5f
@@ -49,7 +51,7 @@ using std::unique_ptr;
 class MiMotor : public MotorDriver
 {
 public:
-    MiMotor(const string& rid, int hid, string type, string port, int cali);
+    MiMotor(const string& rid, int hid, string type, string port);
 
     ~MiMotor();
 
@@ -67,9 +69,9 @@ private:
     static umap<int, thread> rx_threads; // {port, thread}
     static umap<int, can_frame> rx_frames; // {port, frame}
 
-    static umap<int, umap<int, std::shared_ptr<MiMotor>>> instances; // {port, {hid, instance}}
+    static umap<int, umap<int, MiMotor*>> instances; // {port, {hid, instance}}
 
-    struct Frame
+    struct TxMsg
     {
         struct [[gnu::packed]] ExtId
         {
@@ -83,7 +85,7 @@ private:
         std::array<uint8_t, 8> data;
     };
 
-    Frame parsed_frame; // The frame to be sent.
+    TxMsg control_msg; // The control message to be sent.
 
     double position; // The current position of the motor.
     double velocity; // The current velocity of the motor.
@@ -106,18 +108,29 @@ private:
     void goal_helper(float pos, float vel, float tor, float kp , float kd);
 
     /**
-     * @brief Sets the port number of the CAN bus.
-     * @param port The port number of the CAN bus.
-     * @note Threads for receiving data are created for each port.
+     * @brief Create a CAN port when no port is available.
+     * @param port The port number.
+     * @note This create a new feedback loop thread if the port is not in the array.
      */
-    void set_port(int port);
+    static void create_port(int port);
 
     /**
-     * @brief Sends the parsed frame to the motor.
-     * @note This first converts the parsed frame to a can_frame and then sends it.
+     * @brief Destroy the CAN port when no motor is using it.
+     * @param port The port number.
+     * @note This function joins the threads for receiving and transmitting data.
      */
-    void tx();
+    static void destroy_port(int port);
 
+    /**
+     * @brief Sends a message to the motor.
+     * @param msg The message to be sent.
+     * @note This first converts the message to a CAN frame before sending it.
+     */
+    void tx(TxMsg msg);
+
+    /**
+     * @brief The transmission loop for sending data to the motor.
+     */
     void tx_loop();
 
     /**

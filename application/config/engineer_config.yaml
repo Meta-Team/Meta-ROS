@@ -24,7 +24,7 @@
         RF: 3.11
 
     motor:
-      count:   15
+      enables: [true,      true,      true,      true,      true,      true,      true,      true,      true,      true,      true,      true,      true,      true,      true]
       rids:    ["LF_V",    "RF_V",    "RB_V",    "LB_V",    "LF_D",    "RF_D",    "RB_D",    "LB_D",    "J1",      "J2",      "J3",      "J4",      "J5",      "J6",      "J7"]
       hids:    [3,         1,         4,         2,         4,         3,         2,         1,         4,         0,         1,         2,         3,         1,         5]
       ports:   ["CAN1",    "CAN1",    "CAN1",    "CAN1",    "CAN1",    "CAN1",    "CAN1",    "CAN1",    "CAN0",    "USB2",    "USB2",    "CAN0",    "CAN0",    "CAN0",    "CAN0"]

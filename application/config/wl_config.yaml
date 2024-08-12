@@ -11,20 +11,20 @@
       deadzone: 0.15 # percentage
 
     motor:
-      count:  4
-      rids:   ["L_LEG",   "R_LEG",   "R_WHL",   "L_WHL"]
-      hids:   [2,         1,         1,         3]
-      ports:  ["CAN0",    "CAN0",    "CAN0",    "CAN0"]
-      brands: ["DM",      "DM",      "DJI",     "DJI"]
-      types:  ["4310",    "4310",    "3508",    "3508"]
+      enables: [true,      true,      true,      true]
+      rids:    ["L_LEG",   "R_LEG",   "R_WHL",   "L_WHL"]
+      hids:    [2,         1,         1,         3]
+      ports:   ["CAN0",    "CAN0",    "CAN0",    "CAN0"]
+      brands:  ["DM",      "DM",      "DJI",     "DJI"]
+      types:   ["4310",    "4310",    "3508",    "3508"]
 
       p2v:
-        kps:  [3.4E+1,    3.4E+1,    0.0,       0.0]
-        kis:  [0.0,       0.0,       0.0,       0.0]
-        kds:  [9.8E-1,    9.8E-1,    0.0,       0.0]
+        kps:   [3.4E+1,    3.4E+1,    0.0,       0.0]
+        kis:   [0.0,       0.0,       0.0,       0.0]
+        kds:   [9.8E-1,    9.8E-1,    0.0,       0.0]
       v2t:
-        kps:  [0.0,       0.0,       3.0E-2,    3.0E-2]
-        kis:  [0.0,       0.0,       1.0E-2,    1.0E-2]
-        kds:  [0.0,       0.0,       0.0,       0.0]
+        kps:   [0.0,       0.0,       3.0E-2,    3.0E-2]
+        kis:   [0.0,       0.0,       1.0E-2,    1.0E-2]
+        kds:   [0.0,       0.0,       0.0,       0.0]
 
-      cali:   [0,         0,         0,         0]
+      cali:    [0,         0,         0,         0]

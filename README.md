@@ -13,11 +13,8 @@ This project is hoped to be modular, readable and easy to maintain.
 
 ## Doc
 
-There's a document describing how this project is designed -> 
-[Meta-ROS-Doc Web](https://yao-xinchen.github.io/Meta-ROS-Doc/meta-ros.html)
-
-Its source code is provided here ->
-[Meta-ROS-Doc Source](https://github.com/Yao-Xinchen/Meta-ROS-Doc)
+This is a documentation describing how this project is designed -> 
+[Meta-ROS-Doc Web](https://meta-team.github.io/Meta-ROS-Wiki)
 
 ## Dependencies
 
@@ -33,11 +30,14 @@ Its source code is provided here ->
 
 ## Quickstart
 
+### Upgrade CMake
+Our project requires at least CMake 2.23 to compile, which is higher than the stock CMake version comes with Ubuntu 22.04. Please take a look at [Kitware APT Repository](https://apt.kitware.com/) to update your CMake version.
+
 ### Clone the Project
 First, create a workspace and clone the project.
 
 ```Bash
-mkdir -p metav/src && cd metav/src
+mkdir -p meta_ws/src && cd meta_ws/src
 git clone --recurse-submodules https://github.com/Meta-Team/Meta-ROS
 ```
 
