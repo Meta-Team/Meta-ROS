@@ -75,7 +75,7 @@ def generate_launch_description():
         condition=IfCondition(enable_simulation)
     )
 
-    robot_controller_config = PathJoinSubstitution([FindPackageShare('metav_description'), 'config', 'multiple_motors.yaml'])
+    robot_controller_config = PathJoinSubstitution([FindPackageShare('meta_bringup'), 'config', 'multiple_motors.yaml'])
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",

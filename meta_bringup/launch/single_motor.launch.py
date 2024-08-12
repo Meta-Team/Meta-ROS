@@ -76,7 +76,7 @@ def generate_launch_description():
     )
     
     # ROS2 Control related launch
-    robot_controller_config = PathJoinSubstitution([FindPackageShare('metav_description'), 'config', 'single_motor.yaml'])
+    robot_controller_config = PathJoinSubstitution([FindPackageShare('meta_bringup'), 'config', 'single_motor.yaml'])
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
