@@ -108,14 +108,14 @@ void MiMotorNetwork::write_vel(uint32_t joint_id, double velocity) {
 void MiMotorNetwork::rx_loop(std::stop_token stop_token) {
     while (!stop_token.stop_requested()) {
         try {
-            auto can_msg = std::bit_cast<mi_can_frame>(can_driver_->read(1000));
+            auto can_msg = std::bit_cast<mi_can_frame>(can_driver_->read(2000));
 
             // MI motor frames are all extended frames
             if (can_msg.can_id.eff) {
                 process_mi_frame(can_msg);
             }
         } catch (CanIOTimedOutException & /*e*/) {
-            continue; // Timeout is expected
+            std::cerr << "Timed out waiting for MI motor feedback." << std::endl;
         } catch (CanIOException &e) {
             std::cerr << "Error reading CAN message: " << e.what() << std::endl;
         }

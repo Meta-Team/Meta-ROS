@@ -8,6 +8,7 @@
 #include <thread>
 #include <vector>
 
+#include "meta_hardware/can_driver/can_exceptions.hpp"
 #include "meta_hardware/motor_driver/dji_motor_driver.hpp"
 #include "meta_hardware/motor_network/dji_motor_network.hpp"
 
@@ -49,8 +50,10 @@ DjiMotorNetwork::DjiMotorNetwork(
 DjiMotorNetwork::~DjiMotorNetwork() {
     // Send zero effort to all motors
     for (canid_t tx_can_id : {0x1FE, 0x1FF, 0x200, 0x2FE, 0x2FF}) {
-        can_frame tx_frame{.can_id = tx_can_id, .len = 8, .data = {0}};
-        can_driver_->write(tx_frame);
+        if (tx_frames_.contains(tx_can_id)) {
+            can_frame tx_frame{.can_id = tx_can_id, .len = 8, .data = {0}};
+            can_driver_->write(tx_frame);
+        }
     }
 }
 
@@ -75,7 +78,7 @@ void DjiMotorNetwork::write(uint32_t joint_id, double effort) {
 void DjiMotorNetwork::rx_loop(std::stop_token stop_token) {
     while (!stop_token.stop_requested()) {
         try {
-            can_frame can_msg = can_driver_->read(1000);
+            can_frame can_msg = can_driver_->read(2000);
 
             const auto &motor = rx_id2motor_.at(can_msg.can_id);
 
@@ -90,7 +93,9 @@ void DjiMotorNetwork::rx_loop(std::stop_token stop_token) {
                                       static_cast<uint16_t>(can_msg.data[5]));
 
             motor->set_motor_feedback(position_raw, velocity_raw, current_raw);
-        } catch (std::runtime_error &e) {
+        } catch (CanIOTimedOutException & /*e*/) {
+            std::cerr << "Timed out waiting for DJI motor feedback." << std::endl;
+        } catch (CanIOException &e) {
             std::cerr << "Error reading CAN message: " << e.what() << std::endl;
         }
     }
@@ -103,7 +108,7 @@ void DjiMotorNetwork::tx() {
                 can_driver_->write(tx_frames_[frame_id]);
             }
         }
-    } catch (std::runtime_error &e) {
+    } catch (CanIOException &e) {
         std::cerr << "Error writing CAN message: " << e.what() << std::endl;
     }
 }
