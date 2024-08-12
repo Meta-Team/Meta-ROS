@@ -26,14 +26,14 @@ class DjiMotorNetwork {
      * @param joint_id The joint ID of the motor
      * @return A tuple of (position, velocity, effort)
      */
-    std::tuple<double, double, double> read(uint32_t joint_id) const;
+    std::tuple<double, double, double> read(size_t joint_id) const;
 
     /**
      * @brief Write the motor command
      * @param joint_id The joint ID of the motor
      * @param effort The effort to write
      */
-    void write(uint32_t joint_id, double effort);
+    void write(size_t joint_id, double effort);
 
     /**
      * @brief Transmit the motor commands

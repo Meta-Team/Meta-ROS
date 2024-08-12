@@ -61,11 +61,11 @@ DjiMotorNetwork::~DjiMotorNetwork() {
     }
 }
 
-std::tuple<double, double, double> DjiMotorNetwork::read(uint32_t joint_id) const {
+std::tuple<double, double, double> DjiMotorNetwork::read(size_t joint_id) const {
     return motors_[joint_id]->get_motor_feedback();
 }
 
-void DjiMotorNetwork::write(uint32_t joint_id, double effort) {
+void DjiMotorNetwork::write(size_t joint_id, double effort) {
     const auto &motor = motors_[joint_id];
     uint32_t dji_motor_id = motor->get_dji_motor_id();
     uint32_t tx_can_id = motor->get_tx_can_id();
