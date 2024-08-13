@@ -59,7 +59,6 @@ MiMotor::MiMotor(const std::unordered_map<std::string, std::string> &motor_param
     } else {
         throw std::runtime_error("Unknown control mode: " + control_mode);
     }
-
 }
 
 can_frame MiMotor::motor_runmode_frame() const {
@@ -167,15 +166,9 @@ can_frame MiMotor::motor_wr_param_frame(uint16_t index, uint8_t value) const {
 }
 
 void MiMotor::set_motor_feedback(const mi_can_frame &can_msg) {
-    auto position_raw =
-        static_cast<uint16_t>((static_cast<uint16_t>(can_msg.data[0]) << 8) |
-                              static_cast<uint16_t>(can_msg.data[1]));
-    auto velocity_raw =
-        static_cast<uint16_t>((static_cast<uint16_t>(can_msg.data[2]) << 8) |
-                              static_cast<uint16_t>(can_msg.data[3]));
-    auto torque_raw =
-        static_cast<uint16_t>((static_cast<uint16_t>(can_msg.data[4]) << 8) |
-                              static_cast<uint16_t>(can_msg.data[5]));
+    auto position_raw = static_cast<uint16_t>(can_msg.data[0] << 8 | can_msg.data[1]);
+    auto velocity_raw = static_cast<uint16_t>(can_msg.data[2] << 8 | can_msg.data[3]);
+    auto torque_raw = static_cast<uint16_t>(can_msg.data[4] << 8 | can_msg.data[5]);
 
     position_ = (position_raw / double(MAX_RAW_POSITION)) * (2 * MAX_ABS_POSITION) -
                 MAX_ABS_POSITION;
