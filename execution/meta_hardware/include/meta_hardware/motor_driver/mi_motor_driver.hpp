@@ -46,9 +46,13 @@ class MiMotor {
 
     ~MiMotor() = default;
 
-    can_frame get_motor_runmode_frame() const;
+    can_frame motor_runmode_frame() const;
     can_frame motor_enable_frame() const;
     can_frame motor_disable_frame() const;
+    can_frame motor_limit_frame() const;
+    can_frame motor_loc_kp_frame() const;
+    can_frame motor_spd_kp_frame() const;
+    can_frame motor_spd_ki_frame() const;
     can_frame motor_dyn_frame(double position, double velocity, double effort) const;
     can_frame motor_pos_frame(double position) const;
     can_frame motor_vel_frame(double velocity) const;
@@ -59,6 +63,8 @@ class MiMotor {
     void set_motor_feedback(const mi_can_frame &can_msg);
 
     std::tuple<double, double, double> get_motor_feedback() const;
+
+    RunMode get_run_mode() const { return run_mode_; }
 
   private:
     // Motor information
@@ -75,6 +81,11 @@ class MiMotor {
     uint16_t Kp_raw_{0};
     uint16_t Kd_raw_{0};
     RunMode run_mode_;
+    float limit_cur_{0.0};
+    float limit_spd_{0.0};
+    float loc_kp_{0.0};
+    float spd_kp_{0.0};
+    float spd_ki_{0.0};
 };
 
 } // namespace meta_hardware

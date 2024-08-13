@@ -36,10 +36,21 @@ MiMotorNetwork::MiMotorNetwork(const string &can_network_name, uint32_t host_id,
     // Initialize CAN driver
     can_driver_ = std::make_unique<CanDriver>(can_network_name);
 
-    // Enable all motors
+    // Enable all motors and set parameters
     for (const auto &motor : mi_motors_) {
-        can_driver_->write(motor->get_motor_runmode_frame());
+        can_driver_->write(motor->motor_runmode_frame());
         can_driver_->write(motor->motor_enable_frame());
+
+        if (motor->get_run_mode() == MiMotor::RunMode::POSITION) {
+            can_driver_->write(motor->motor_limit_frame());
+            can_driver_->write(motor->motor_loc_kp_frame());
+            can_driver_->write(motor->motor_spd_kp_frame());
+            can_driver_->write(motor->motor_spd_ki_frame());
+        } else if (motor->get_run_mode() == MiMotor::RunMode::VELOCITY) {
+            can_driver_->write(motor->motor_limit_frame());
+            can_driver_->write(motor->motor_spd_kp_frame());
+            can_driver_->write(motor->motor_spd_ki_frame());
+        }
     }
 
     // Start RX thread

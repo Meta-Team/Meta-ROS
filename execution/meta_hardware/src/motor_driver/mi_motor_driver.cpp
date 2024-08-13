@@ -32,16 +32,27 @@ MiMotor::MiMotor(const std::unordered_map<std::string, std::string> &motor_param
     motor_model_ = motor_param.at("motor_model");
     mi_motor_id_ = static_cast<uint8_t>(std::stoi(motor_param.at("motor_id")));
 
+    if (motor_model_ != "CyberGear") {
+        throw std::runtime_error("Unknown motor model: " + motor_model_);
+    }
+
     std::string control_mode = motor_param.at("control_mode");
-    double Kp = std::numeric_limits<double>::quiet_NaN();
-    double Kd = std::numeric_limits<double>::quiet_NaN();
     if (control_mode == "dynamic") {
-        Kp = std::stod(motor_param.at("Kp"));
-        Kd = std::stod(motor_param.at("Kd"));
+        double Kp = std::stod(motor_param.at("Kp"));
+        double Kd = std::stod(motor_param.at("Kd"));
+        Kp_raw_ = static_cast<uint16_t>((Kp / MAX_KP) * MAX_RAW_KP);
+        Kd_raw_ = static_cast<uint16_t>((Kd / MAX_KD) * MAX_RAW_KD);
         run_mode_ = RunMode::DYNAMIC;
     } else if (control_mode == "position") {
+        limit_spd_ = std::stof(motor_param.at("limit_spd"));
+        loc_kp_ = std::stof(motor_param.at("loc_kp"));
+        spd_kp_ = std::stof(motor_param.at("spd_kp"));
+        spd_ki_ = std::stof(motor_param.at("spd_ki"));
         run_mode_ = RunMode::POSITION;
     } else if (control_mode == "velocity") {
+        limit_cur_ = std::stof(motor_param.at("limit_cur"));
+        spd_kp_ = std::stof(motor_param.at("spd_kp"));
+        spd_ki_ = std::stof(motor_param.at("spd_ki"));
         run_mode_ = RunMode::VELOCITY;
     } else if (control_mode == "current") {
         run_mode_ = RunMode::CURRENT;
@@ -49,15 +60,9 @@ MiMotor::MiMotor(const std::unordered_map<std::string, std::string> &motor_param
         throw std::runtime_error("Unknown control mode: " + control_mode);
     }
 
-    if (motor_model_ == "CyberGear") {
-        Kp_raw_ = static_cast<uint16_t>((Kp / MAX_KP) * MAX_RAW_KP);
-        Kd_raw_ = static_cast<uint16_t>((Kd / MAX_KD) * MAX_RAW_KD);
-    } else {
-        throw std::runtime_error("Unknown motor model: " + motor_model_);
-    }
 }
 
-can_frame MiMotor::get_motor_runmode_frame() const {
+can_frame MiMotor::motor_runmode_frame() const {
     return motor_wr_param_frame(0x7005, static_cast<uint8_t>(run_mode_));
 }
 
@@ -73,6 +78,30 @@ can_frame MiMotor::motor_disable_frame() const {
         mi_can_frame{.can_id = {.id = mi_motor_id_, .data = host_id_, .mode = 4},
                      .len = 8,
                      .data = {0, 0, 0, 0, 0, 0, 0, 0}});
+}
+
+can_frame MiMotor::motor_limit_frame() const {
+    using enum RunMode;
+    switch (run_mode_) {
+    case POSITION:
+        return motor_wr_param_frame(0x7017, limit_spd_);
+    case VELOCITY:
+        return motor_wr_param_frame(0x7018, limit_cur_);
+    default:
+        throw std::runtime_error("Cannot set limits for this run mode");
+    }
+}
+
+can_frame MiMotor::motor_loc_kp_frame() const {
+    return motor_wr_param_frame(0x701E, loc_kp_);
+}
+
+can_frame MiMotor::motor_spd_kp_frame() const {
+    return motor_wr_param_frame(0x701F, spd_kp_);
+}
+
+can_frame MiMotor::motor_spd_ki_frame() const {
+    return motor_wr_param_frame(0x7020, spd_ki_);
 }
 
 can_frame MiMotor::motor_dyn_frame(double position, double velocity,
