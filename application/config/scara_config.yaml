@@ -6,7 +6,7 @@
       end_angular_vel: 0.0 # rad/s
 
     motor:
-      count:   7
+      enables: [true,      true,      true,      true,      true,      true,      true]
       rids:    ["J1",      "J2",      "J3",      "J4",      "J5",      "J6",      "J7"]
       hids:    [4,         0,         1,         2,         3,         1,         5]
       ports:   ["CAN0",    "USB0",    "USB0",    "CAN0",    "CAN0",    "CAN0",    "CAN0"]

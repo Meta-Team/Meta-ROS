@@ -2,14 +2,22 @@
 #include "motor_controller/motor_driver.h"
 #include "unitreeMotor/unitreeMotor.h"
 #include "rclcpp/rclcpp.hpp"
+#include <memory>
+
+std::unordered_map<std::string, std::shared_ptr<SerialPort>> UnitreeMotor::serial_ports;
 
 UnitreeMotor::UnitreeMotor(const string& rid, int hid, const string& type, const string& port, int cali)
-    : MotorDriver(rid, hid), serial_port("/dev/tty" + port)
+    : MotorDriver(rid, hid)
 {
     if (type == "GO") this->type = MotorType::GO_M8010_6;
     else if (type == "A1") this->type = MotorType::A1;
     else if (type == "B1") this->type = MotorType::B1;
     else RCLCPP_ERROR(rclcpp::get_logger("unitree_driver"), "Unknown motor type: %s", type.c_str());
+
+    if (serial_ports.find(port) == serial_ports.end())
+        serial_ports[port] = std::make_shared<SerialPort>("/dev/" + port);
+
+    this->port = serial_ports[port];
 
     goal_cmd.motorType = this->type;
     feedback_data.motorType = this->type;
@@ -90,12 +98,12 @@ void UnitreeMotor::stop()
     goal_cmd.q   = 0.0;
     goal_cmd.dq  = 0.0;
     goal_cmd.tau = 0.0;
-    serial_port.sendRecv(&goal_cmd, &feedback_data);
+    this->port->sendRecv(&goal_cmd, &feedback_data);
 }
 
 void UnitreeMotor::send_recv()
 {
-    serial_port.sendRecv(&goal_cmd, &feedback_data);
+    this->port->sendRecv(&goal_cmd, &feedback_data);
 }
 
 void UnitreeMotor::control_loop()
