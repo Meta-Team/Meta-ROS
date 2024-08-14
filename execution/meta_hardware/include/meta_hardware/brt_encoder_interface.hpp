@@ -1,5 +1,5 @@
-#ifndef META_HARDWARE__MI_MOTOR_INTERFACE_HPP_
-#define META_HARDWARE__MI_MOTOR_INTERFACE_HPP_
+#ifndef META_HARDWARE__BRITTER_ENCODER_INTERFACE_HPP_
+#define META_HARDWARE__BRITTER_ENCODER_INTERFACE_HPP_
 
 #include <map>
 #include <string>
@@ -73,4 +73,4 @@ class MetaRobotBrtEncoderNetwork : public hardware_interface::SystemInterface {
 
 } // namespace meta_hardware
 
-#endif // META_HARDWARE__MI_MOTOR_INTERFACE_HPP_
+#endif // META_HARDWARE__BRITTER_ENCODER_INTERFACE_HPP_
