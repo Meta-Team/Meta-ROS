@@ -92,7 +92,7 @@
     </xacro:macro>
 
     <xacro:macro name="gimbal_transmission"
-        params="prefix mechanical_reduction offset can_network motor_id">
+        params="prefix mechanical_reduction offset motor_id">
         <joint name="${prefix}_gimbal_joint">
             <command_interface name="effort" />
             <state_interface name="position" />
