@@ -26,14 +26,14 @@ class DjiMotorNetwork {
      * @param joint_id The joint ID of the motor
      * @return A tuple of (position, velocity, effort)
      */
-    std::tuple<double, double, double> read(uint32_t joint_id) const;
+    std::tuple<double, double, double> read(size_t joint_id) const;
 
     /**
      * @brief Write the motor command
      * @param joint_id The joint ID of the motor
      * @param effort The effort to write
      */
-    void write(uint32_t joint_id, double effort);
+    void write(size_t joint_id, double effort);
 
     /**
      * @brief Transmit the motor commands
@@ -41,9 +41,11 @@ class DjiMotorNetwork {
     void tx();
 
   private:
-    void rx_loop();
+    // CAN driver
+    std::unique_ptr<CanDriver> can_driver_;
+
+    void rx_loop(std::stop_token stop_token);
     std::unique_ptr<std::jthread> rx_thread_;
-    std::atomic<bool> rx_thread_running_{true};
 
     // Five CAN frames for tx
     // 0x1FE: GM6020(current) motor 1-4
@@ -52,9 +54,6 @@ class DjiMotorNetwork {
     // 0x2FE: GM6020(current) motor  5-8
     // 0x2FF: GM6020(voltage) motor 5-8
     std::unordered_map<uint32_t, can_frame> tx_frames_;
-
-    // CAN driver
-    std::unique_ptr<CanDriver> can_driver_;
 
     // [rx_can_id] -> dji_motor
     // This makes it easy to find the motor object in rx_loop

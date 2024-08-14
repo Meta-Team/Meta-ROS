@@ -15,10 +15,6 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(angles REQUIRED)
 
-if (NOT TARGET sockcanpp)
-    add_subdirectory(libsockcanpp)
-endif()
-
 add_library(
   meta_hardware
   SHARED
@@ -28,15 +24,14 @@ add_library(
   src/mi_motor_interface.cpp
   src/motor_network/mi_motor_network.cpp
   src/motor_driver/mi_motor_driver.cpp
+  src/brt_encoder_interface.cpp
+  src/motor_network/brt_encoder_network.cpp
+  src/motor_driver/brt_encoder_driver.cpp
 )
 target_include_directories(
   meta_hardware
   PUBLIC
   include
-)
-target_link_libraries(
-  meta_hardware
-  sockcanpp
 )
 ament_target_dependencies(
   meta_hardware
