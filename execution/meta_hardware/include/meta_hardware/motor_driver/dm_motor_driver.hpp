@@ -5,7 +5,11 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
+#include <sys/types.h>
 #include <tuple>
+
+#include "CanMessage.hpp"
+#include <linux/can.h>
 
 #include "angles/angles.h"
 
@@ -13,7 +17,8 @@ namespace meta_hardware {
 class DmMotor {
   public:
     DmMotor(const std::string &motor_model, uint32_t dm_motor_id,std::string mode, 
-            double max_vel, double max_pos, double max_effort);
+            double max_vel, double max_pos, double max_effort, uint32_t Kp, uint32_t Kd,
+            uint32_t Tff);
 
     ~DmMotor() = default;
 
@@ -28,10 +33,16 @@ class DmMotor {
     uint32_t get_rx_can_id() const;
     DmMode get_mode() const { return mode_; }
 
-    void set_motor_feedback(uint8_t error_code, uint8_t id, 
-                            uint16_t position_raw, uint16_t velocity_raw, 
-                            uint16_t effort_raw, uint8_t temperature_mos, 
-                            uint8_t temperature_rotor);
+    sockcanpp::CanMessage get_motor_enable_frame(uint8_t master_id) const;
+    sockcanpp::CanMessage get_motor_disable_frame(uint8_t master_id) const;
+    sockcanpp::CanMessage get_motor_save_initial_frame(uint8_t master_id) const;
+    sockcanpp::CanMessage get_motor_clear_error_frame(uint8_t master_id) const;
+    sockcanpp::CanMessage get_motor_command_frame(double position,
+                                                  double velocity,
+                                                  double effort) const;
+    
+    
+    void set_motor_feedback(const sockcanpp::CanMessage &can_msg);
     std::tuple<double, double, double> get_motor_feedback() const;
 
   private:
@@ -45,6 +56,10 @@ class DmMotor {
     double max_vel_;
     double max_pos_;
     double max_effort_;
+
+    uint32_t kp_;
+    uint32_t kd_;
+    uint32_t tff_;
 
     // Motor feedback
     uint8_t error_code_{0};

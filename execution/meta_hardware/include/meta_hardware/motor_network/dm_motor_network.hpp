@@ -51,11 +51,6 @@ class DmMotorNetwork {
     uint32_t master_id_;
 
     // Five CAN frames for tx
-    // 0x1FE: GM6020(current) motor 1-4
-    // 0x1FF: M3508/M2006 motor 5-8 / GM6020(voltage) motor 1-4
-    // 0x200: M3508/M2006 motor 1-4
-    // 0x2FE: GM6020(current) motor  5-8
-    // 0x2FF: GM6020(voltage) motor 5-8
     std::unordered_map<uint32_t, can_frame> tx_frames_;
 
     // CAN driver

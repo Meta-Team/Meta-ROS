@@ -86,34 +86,6 @@ void DmMotorNetwork::rx_loop() {
 
             const auto &motor = motor_id2motor_.at(can_msg.can_id);
 
-            auto error_code = static_cast<uint8_t>
-                (static_cast<uint8_t>(can_msg.data[0]) >> 4);
-            
-            auto id = static_cast<uint8_t>
-                ((static_cast<uint8_t>(can_msg.data[0]) & 0x0F));
-
-            auto position_raw = static_cast<int32_t>
-                (((static_cast<uint32_t>(can_msg.data[1]) & 0xFF) << 8) | 
-                (static_cast<uint32_t>(can_msg.data[2]) & 0xFF) 
-                );
-
-            auto velocity_raw = static_cast<int32_t>
-                (((static_cast<uint32_t>(can_msg.data[3]) & 0xFF) << 8) | 
-                ((static_cast<uint32_t>(can_msg.data[4]) & 0xC0) >> 12) 
-                );
-
-            auto torque_raw = static_cast<int32_t>
-                (((static_cast<uint32_t>(can_msg.data[4]) & 0x3F) << 4) | 
-                (static_cast<uint32_t>(can_msg.data[5]) & 0xFF) 
-                );
-
-            auto temperature_mos = static_cast<uint8_t>
-                (static_cast<uint8_t>(can_msg.data[6]));
-
-            
-            auto temperature_rotor = static_cast<uint8_t>
-                (static_cast<uint8_t>(can_msg.data[7]));
-
             motor->set_motor_feedback(error_code, id, position_raw, velocity_raw, 
                                       torque_raw, temperature_mos, temperature_rotor);
         } catch (std::runtime_error &e) {
