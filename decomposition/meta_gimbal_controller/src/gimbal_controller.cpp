@@ -4,27 +4,16 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Vector3.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_ros/buffer_interface.h>
 #include <vector>
 
 #include "angles/angles.h"
 #include "controller_interface/helpers.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/logging.hpp"
-#include "tf2/tf2/LinearMath/Matrix3x3.h"
-#include "tf2/tf2/LinearMath/Quaternion.h"
-#include "tf2_ros/buffer.h"
-#include "tf2_ros/transform_listener.h"
-
-static constexpr rmw_qos_profile_t rmw_qos_profile_services_hist_keep_all = {
-    RMW_QOS_POLICY_HISTORY_KEEP_ALL,
-    1, // message queue depth
-    RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-    RMW_QOS_POLICY_DURABILITY_VOLATILE,
-    RMW_QOS_DEADLINE_DEFAULT,
-    RMW_QOS_LIFESPAN_DEFAULT,
-    RMW_QOS_POLICY_LIVELINESS_SYSTEM_DEFAULT,
-    RMW_QOS_LIVELINESS_LEASE_DURATION_DEFAULT,
-    false};
 
 constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
 
@@ -32,7 +21,6 @@ using ControllerReferenceMsg =
     gimbal_controller::GimbalController::ControllerReferenceMsg;
 using ControllerFeedbackMsg = gimbal_controller::GimbalController::ControllerFeedbackMsg;
 
-// called from RT control loop
 void reset_controller_reference_msg(
     const std::shared_ptr<ControllerReferenceMsg> &msg,
     const std::shared_ptr<rclcpp_lifecycle::LifecycleNode> & /*node*/) {
@@ -58,11 +46,8 @@ void reset_controller_feedback_msg(
 
 using hardware_interface::HW_IF_EFFORT;
 using hardware_interface::HW_IF_POSITION;
-// using hardware_interface::HW_IF_VELOCITY;
 
 namespace gimbal_controller {
-GimbalController::GimbalController()
-    : controller_interface::ChainableControllerInterface() {}
 
 controller_interface::CallbackReturn GimbalController::on_init() {
 
@@ -132,6 +117,9 @@ GimbalController::on_configure(const rclcpp_lifecycle::State & /*previous_state*
     auto feedback_msg = std::make_shared<ControllerFeedbackMsg>();
     reset_controller_feedback_msg(feedback_msg, get_node());
     input_feedback_.writeFromNonRT(feedback_msg);
+
+    tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_node()->get_clock());
+    tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
 
     try {
         // State publisher
@@ -224,12 +212,27 @@ GimbalController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/
 
     reference_interfaces_.assign(reference_interfaces_.size(), NaN);
 
+    // Get transform from IMU to gimbal
+    geometry_msgs::msg::TransformStamped trans;
+
+    try {
+        trans = tf_buffer_->lookupTransform("gimbal_imu", "pitch_gimbal",
+                                            tf2::TimePointZero, tf2::Duration(1));
+    } catch (tf2::LookupException &e) {
+        RCLCPP_ERROR(get_node()->get_logger(), "Failed to lookup transform: %s",
+                     e.what());
+        return controller_interface::CallbackReturn::ERROR;
+    }
+
+    q_imu2gimbal_ =
+        tf2::Quaternion(trans.transform.rotation.x, trans.transform.rotation.y,
+                        trans.transform.rotation.z, trans.transform.rotation.w);
+
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::CallbackReturn
 GimbalController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
-    RCLCPP_INFO(get_node()->get_logger(), "deactivate successful");
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
@@ -254,14 +257,21 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
     // Collect IMU feedback
     auto current_feedback = *(input_feedback_.readFromRT());
 
-    double yaw_pos_fb, pitch_pos_fb, roll_pos_fb;
-    auto q =
-        tf2::Quaternion(current_feedback->orientation.x, current_feedback->orientation.y,
-                        current_feedback->orientation.z, current_feedback->orientation.w);
-    tf2::Matrix3x3(q).getRPY(roll_pos_fb, pitch_pos_fb, yaw_pos_fb);
+    // Transform IMU feedback to gimbal frame
+    tf2::Quaternion q_imu;
+    fromMsg(current_feedback->orientation, q_imu);
+    auto q_gimbal = q_imu * q_imu2gimbal_;
 
-    double yaw_vel_fb = -current_feedback->angular_velocity.z;
-    double pitch_vel_fb = -current_feedback->angular_velocity.y;
+    // Transform angular velocity feedback to gimbal frame
+    tf2::Vector3 v_imu;
+    fromMsg(current_feedback->angular_velocity, v_imu);
+    auto v_gimbal = tf2::quatRotate(q_imu2gimbal_.inverse(), v_imu);
+
+    double yaw_pos_fb, pitch_pos_fb, roll_pos_fb;
+    tf2::Matrix3x3(q_gimbal).getRPY(roll_pos_fb, pitch_pos_fb, yaw_pos_fb);
+
+    double yaw_vel_fb = v_gimbal.z();
+    double pitch_vel_fb = v_gimbal.y();
 
     double yaw_pos_ref = NaN, pitch_pos_ref = NaN;
     double yaw_pos_err = NaN, pitch_pos_err = NaN;

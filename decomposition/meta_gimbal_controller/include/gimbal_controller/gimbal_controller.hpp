@@ -16,6 +16,10 @@
 #include "realtime_tools/realtime_buffer.h"
 #include "realtime_tools/realtime_publisher.h"
 #include "std_srvs/srv/set_bool.hpp"
+#include "tf2/tf2/LinearMath/Matrix3x3.h"
+#include "tf2/tf2/LinearMath/Quaternion.h"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 
 #include "behavior_interface/msg/aim.hpp"
 #include "control_msgs/msg/multi_dof_state_stamped.hpp"
@@ -30,7 +34,7 @@ static constexpr size_t CMD_MY_ITFS = 0;
 
 class GimbalController : public controller_interface::ChainableControllerInterface {
   public:
-    GimbalController();
+    GimbalController() = default;
 
     controller_interface::CallbackReturn on_init() override;
 
@@ -72,6 +76,10 @@ class GimbalController : public controller_interface::ChainableControllerInterfa
     rclcpp::Subscription<ControllerFeedbackMsg>::SharedPtr feedback_subscriber_ = nullptr;
     realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerFeedbackMsg>>
         input_feedback_;
+
+    std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+    std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
+    tf2::Quaternion q_imu2gimbal_;
 
     std::shared_ptr<control_toolbox::PidROS> yaw_pos2vel_pid_;
     std::shared_ptr<control_toolbox::PidROS> pitch_pos2vel_pid_;
