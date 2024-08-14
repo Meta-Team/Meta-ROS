@@ -18,10 +18,8 @@ namespace meta_hardware {
 class DmMotorNetwork {
   public:
     DmMotorNetwork(
-        std::string can_interface,
-        uint32_t master_id,
-        const std::vector<std::unordered_map<std::string, std::string>>
-            &motor_params);
+        const std::string &can_network_name, uint8_t master_id,
+        const std::vector<std::unordered_map<std::string, std::string>> &joint_params);
     ~DmMotorNetwork();
 
     /**
@@ -34,27 +32,21 @@ class DmMotorNetwork {
     /**
      * @brief Write the motor command
      * @param joint_id The joint ID of the motor
+     * @param position The position to write
+     * @param velocity The velocity to write
      * @param effort The effort to write
      */
-    void write(uint32_t joint_id, double effort);
-
-    /**
-     * @brief Transmit the motor commands
-     */
-    void tx();
+    void write_mit(uint32_t joint_id, double position, double velocity, double effort);
+    void write_pos(uint32_t joint_id, double position, double velocity);
+    void write_vel(uint32_t joint_id, double velocity);
 
   private:
-    void rx_loop();
-    std::unique_ptr<std::jthread> rx_thread_;
-    std::atomic<bool> rx_thread_running_{true};
-
-    uint32_t master_id_;
-
-    // Five CAN frames for tx
-    std::unordered_map<uint32_t, can_frame> tx_frames_;
-
     // CAN driver
     std::unique_ptr<CanDriver> can_driver_;
+
+    void rx_loop(std::stop_token stop_token);
+    std::unique_ptr<std::jthread> rx_thread_;
+
 
     // [rx_can_id] -> dm_motor
     // This makes it easy to find the motor object in rx_loop
@@ -62,7 +54,10 @@ class DmMotorNetwork {
 
     // [joint_id] -> dm_motor
     // This makes it easy to find the motor object in read() and write()
-    std::vector<std::shared_ptr<DmMotor>> motors_;
+    std::vector<std::shared_ptr<DmMotor>> dm_motors_;
+
+    // Master ID
+    uint32_t master_id_;
 };
 
 } // namespace meta_hardware

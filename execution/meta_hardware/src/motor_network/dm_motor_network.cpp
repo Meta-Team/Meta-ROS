@@ -13,25 +13,20 @@
 
 namespace meta_hardware {
 
-DmMotorNetwork::DmMotorNetwork(
-    std::string can_interface,
-    uint32_t master_id,
-    const std::vector<std::unordered_map<std::string, std::string>>
-        &motor_params) : master_id_(master_id) {
+DmMotorNetwork::DmMotorNetwork(const std::string &can_network_name, uint8_t master_id,
+                               const std::vector<std::unordered_map<std::string, std::string>> &joint_params)
+        : master_id_(master_id) {
+
     std::vector<can_filter> can_filters;
 
-    for (const auto &motor_param : motor_params) {
-        std::string motor_model = motor_param.at("motor_model");
-        uint32_t dm_motor_id = std::stoi(motor_param.at("motor_id"));
-        std::string motor_mode = motor_param.at("motor_mode");
-        double max_vel = std::stod(motor_param.at("max_vel"));
-        double max_pos = std::stod(motor_param.at("max_pos"));
-        double max_torque = std::stod(motor_param.at("max_torque"));
-
+    for (const auto &joint_param : joint_params) {
+        std::string motor_model = joint_param.at("motor_model");
+        uint32_t dm_motor_id = std::stoi(joint_param.at("motor_id"));
+        std::string motor_mode = joint_param.at("motor_mode");
 
         auto dm_motor = 
-            std::make_shared<DmMotor>(motor_model, dm_motor_id, motor_mode, max_vel, max_pos, max_torque);
-        motors_.emplace_back(dm_motor);
+            std::make_shared<DmMotor>(joint_params, master_id);
+        dm_motors_.emplace_back(dm_motor);
 
         motor_id2motor_[dm_motor_id] = dm_motor;
 
@@ -42,67 +37,76 @@ DmMotorNetwork::DmMotorNetwork(
 
     // Initialize CAN driver
     can_driver_ =
-        std::make_unique<CanDriver>(can_interface, false, can_filters);
+        std::make_unique<CanDriver>(can_network_name, false, can_filters);
+
+    // Enable all motors
+    for (const auto &motor : dm_motors_) {
+        can_driver_->write(motor->motor_enable_frame());
+    }
 
     // Initialize RX thread
     rx_thread_ =
-        std::make_unique<std::jthread>(&DmMotorNetwork::rx_loop, this);
+        std::make_unique<std::jthread>([this](std::stop_token s) { rx_loop(s); });
 }
 
 DmMotorNetwork::~DmMotorNetwork() {
-    // Send zero effort to all motors
-    for (canid_t tx_can_id : {0x1FE, 0x1FF, 0x200, 0x2FE, 0x2FF}) {
-        can_frame tx_frame{.can_id = tx_can_id, .len = 8, .data = {0}};
-        can_driver_->write(tx_frame);
+    // Disable all motors
+    try {
+        for (const auto &motor : dm_motors_) {
+            can_driver_->write(motor->motor_disable_frame());
+        }
+    } catch (CanIOException &e) {
+        std::cerr << "Error writing DM motor disable CAN message: " << e.what()
+                  << std::endl;
     }
-
-    // Stop the RX thread
-    rx_thread_running_ = false;
 }
 
 std::tuple<double, double, double>
 DmMotorNetwork::read(uint32_t joint_id) const {
-    return motors_[joint_id]->get_motor_feedback();
+    return dm_motors_[joint_id]->get_motor_feedback();
 }
 
-void DmMotorNetwork::write(uint32_t joint_id, double effort) {
-    const auto &motor = motors_[joint_id];
-    uint32_t dm_motor_id = motor->get_dm_motor_id();
-    uint32_t tx_can_id = motor->get_tx_can_id();
-
-    // uint32_t maximum_raw_effort = motor->get_maximum_raw_effort();
-    // effort = std::clamp(effort, -1.0, 1.0);
-    // auto effort_raw = static_cast<int16_t>(effort * maximum_raw_effort);
-
-    // can_frame &tx_frame = tx_frames_[tx_can_id];
-    // tx_frame.data[2 * ((dm_motor_id - 1) % 4)] = effort_raw >> 8;
-    // tx_frame.data[2 * ((dm_motor_id - 1) % 4) + 1] = effort_raw & 0xFF;
-}
-
-void DmMotorNetwork::rx_loop() {
-    while (rx_thread_running_) {
-        try {
-            can_frame can_msg = can_driver_->read();
-
-            const auto &motor = motor_id2motor_.at(can_msg.can_id);
-
-            motor->set_motor_feedback(error_code, id, position_raw, velocity_raw, 
-                                      torque_raw, temperature_mos, temperature_rotor);
-        } catch (std::runtime_error &e) {
-            std::cerr << "Error reading CAN message: " << e.what() << std::endl;
-        }
+void DmMotorNetwork::write_mit(uint32_t joint_id, double position, double velocity, double effort){
+    const auto &motor = dm_motors_[joint_id];
+    try {
+        can_driver_->write(motor->motor_mit_frame(position, velocity, effort));
+    } catch (CanIOException &e) {
+        std::cerr << "Error writing DM motor command CAN message: " << e.what()
+                  << std::endl;
     }
 }
 
-void DmMotorNetwork::tx() {
+void DmMotorNetwork::write_pos(uint32_t joint_id, double position, double velocity){
+    const auto &motor = dm_motors_[joint_id];
     try {
-        for (auto &frame_id : {0x1fe, 0x1ff, 0x200, 0x2fe, 0x2ff}) {
-            if (tx_frames_.contains(frame_id)) {
-                can_driver_->write(tx_frames_[frame_id]);
-            }
+        can_driver_->write(motor->motor_pos_frame(position, velocity));
+    } catch (CanIOException &e) {
+        std::cerr << "Error writing DM motor command CAN message: " << e.what()
+                  << std::endl;
+    }
+}
+
+void DmMotorNetwork::write_vel(uint32_t joint_id, double velocity){
+    const auto &motor = dm_motors_[joint_id];
+    try {
+        can_driver_->write(motor->motor_vel_frame(velocity));
+    } catch (CanIOException &e) {
+        std::cerr << "Error writing DM motor command CAN message: " << e.what()
+                  << std::endl;
+    }
+}
+
+void DmMotorNetwork::rx_loop(std::stop_token stop_token) {
+    while (!stop_token.stop_requested()) {
+        try {
+            auto can_msg = can_driver_->read(2000);
+            const auto &motor = motor_id2motor_.at(can_msg.can_id);
+            motor->set_motor_feedback(can_msg);
+        } catch (CanIOTimedOutException & /*e*/) {
+            std::cerr << "Timed out waiting for DM motor feedback." << std::endl;
+        } catch (CanIOException &e) {
+            std::cerr << "Error reading CAN message: " << e.what() << std::endl;
         }
-    } catch (std::runtime_error &e) {
-        std::cerr << "Error writing CAN message: " << e.what() << std::endl;
     }
 }
 

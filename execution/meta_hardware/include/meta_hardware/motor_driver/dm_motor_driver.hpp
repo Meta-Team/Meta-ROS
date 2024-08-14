@@ -34,19 +34,19 @@ class DmMotor {
     uint32_t get_dm_motor_id() const;
     uint32_t get_tx_can_id() const;
     uint32_t get_rx_can_id() const;
-    RunMode get_mode() const { return run_mode_; }
-
-
-    can_frame motor_enable_frame(uint8_t master_id) const;
-    can_frame motor_disable_frame(uint8_t master_id) const;
-    can_frame motor_save_initial_frame(uint8_t master_id) const;
-    can_frame motor_clear_error_frame(uint8_t master_id) const;
+    
+    can_frame motor_enable_frame() const;
+    can_frame motor_disable_frame() const;
+    can_frame motor_save_initial_frame() const;
+    can_frame motor_clear_error_frame() const;
     can_frame motor_mit_frame(double position, double velocity, double effort) const;
     can_frame motor_pos_frame(double position, double velocity) const;
     can_frame motor_vel_frame(double velocity) const;
 
     void set_motor_feedback(const sockcanpp::CanMessage &can_msg);
     std::tuple<double, double, double> get_motor_feedback() const;
+
+    RunMode get_run_mode() const { return run_mode_; }
 
   private:
     // helper function

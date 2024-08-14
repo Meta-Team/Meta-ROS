@@ -65,32 +65,32 @@ DmMotor::DmMotor(const std::unordered_map<std::string, std::string> &motor_param
 uint32_t DmMotor::get_dm_motor_id() const { return dm_motor_id_; }
 canid_t DmMotor::get_tx_can_id() const { return tx_can_id_; }
 
-can_frame DmMotor::motor_enable_frame(uint8_t master_id) const{
-    canid_t enable_can_id = master_id;
+can_frame DmMotor::motor_enable_frame() const{
+    canid_t enable_can_id = tx_can_id_;
     can_frame enable_frame{.can_id = enable_can_id,
                            .can_dlc = 8,
                            .data = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC}};
     return enable_frame;
 }
 
-can_frame DmMotor::motor_disable_frame(uint8_t master_id) const{
-    canid_t disable_can_id = master_id;
+can_frame DmMotor::motor_disable_frame() const{
+    canid_t disable_can_id = tx_can_id_;
     can_frame disable_frame{.can_id = disable_can_id,
                             .can_dlc = 8,
                             .data = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD}};
     return disable_frame;
 }
 
-can_frame DmMotor::motor_save_initial_frame(uint8_t master_id) const{
-    canid_t disable_can_id = master_id;
+can_frame DmMotor::motor_save_initial_frame() const{
+    canid_t disable_can_id = tx_can_id_;
     can_frame disable_frame{.can_id = disable_can_id,
                             .can_dlc = 8,
                             .data = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE}};
     return disable_frame;
 }
 
-can_frame DmMotor::motor_clear_error_frame(uint8_t master_id) const{
-    canid_t disable_can_id = master_id;
+can_frame DmMotor::motor_clear_error_frame() const{
+    canid_t disable_can_id = tx_can_id_;
     can_frame disable_frame{.can_id = disable_can_id,
                             .can_dlc = 8,
                             .data = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFB}};
