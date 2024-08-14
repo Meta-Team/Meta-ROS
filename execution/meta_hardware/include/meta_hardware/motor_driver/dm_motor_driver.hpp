@@ -7,6 +7,7 @@
 #include <string>
 #include <sys/types.h>
 #include <tuple>
+#include <unordered_map>
 
 #include "CanMessage.hpp"
 #include <linux/can.h>
@@ -16,50 +17,60 @@
 namespace meta_hardware {
 class DmMotor {
   public:
-    DmMotor(const std::string &motor_model, uint32_t dm_motor_id,std::string mode, 
-            double max_vel, double max_pos, double max_effort, uint32_t Kp, uint32_t Kd,
-            uint32_t Tff);
+    // DmMotor(const std::string &motor_model, uint32_t dm_motor_id,std::string mode, 
+    //         double max_vel, double max_pos, double max_effort, uint32_t Kp, uint32_t Kd,
+    //         uint32_t Tff);
+    DmMotor(const std::unordered_map<std::string, std::string> &motor_param,
+                 uint8_t master_id);
 
     ~DmMotor() = default;
 
-    enum DmMode {
+    enum RunMode {
         MIT,
-        POS,
-        VEL,
+        POSITION,
+        VELOCITY,
     };
 
     uint32_t get_dm_motor_id() const;
     uint32_t get_tx_can_id() const;
     uint32_t get_rx_can_id() const;
-    DmMode get_mode() const { return mode_; }
+    RunMode get_mode() const { return run_mode_; }
 
-    sockcanpp::CanMessage get_motor_enable_frame(uint8_t master_id) const;
-    sockcanpp::CanMessage get_motor_disable_frame(uint8_t master_id) const;
-    sockcanpp::CanMessage get_motor_save_initial_frame(uint8_t master_id) const;
-    sockcanpp::CanMessage get_motor_clear_error_frame(uint8_t master_id) const;
-    sockcanpp::CanMessage get_motor_command_frame(double position,
-                                                  double velocity,
-                                                  double effort) const;
-    
-    
+
+    can_frame motor_enable_frame(uint8_t master_id) const;
+    can_frame motor_disable_frame(uint8_t master_id) const;
+    can_frame motor_save_initial_frame(uint8_t master_id) const;
+    can_frame motor_clear_error_frame(uint8_t master_id) const;
+    can_frame motor_mit_frame(double position, double velocity, double effort) const;
+    can_frame motor_pos_frame(double position, double velocity) const;
+    can_frame motor_vel_frame(double velocity) const;
+
     void set_motor_feedback(const sockcanpp::CanMessage &can_msg);
     std::tuple<double, double, double> get_motor_feedback() const;
 
   private:
+    // helper function
+    uint32_t double_to_raw(float value, float max, float min, uint8_t bit) const;
+
     // Motor information
     std::string motor_model_;
     uint32_t dm_motor_id_;
-    DmMode mode_;
+    RunMode run_mode_;
     uint32_t tx_can_id_;
     uint32_t rx_can_id_;
+
+    uint32_t master_id_;
 
     double max_vel_;
     double max_pos_;
     double max_effort_;
 
-    uint32_t kp_;
-    uint32_t kd_;
-    uint32_t tff_;
+    double Kp_;
+    double Kd_;
+    uint32_t Tff_;
+    uint8_t Kp_raw_;
+    uint16_t Kd_raw_;
+    uint16_t Tff_raw_;
 
     // Motor feedback
     uint8_t error_code_{0};

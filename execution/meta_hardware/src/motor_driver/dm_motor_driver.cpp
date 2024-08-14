@@ -15,26 +15,44 @@
 
 namespace meta_hardware {
 
-using sockcanpp::CanMessage;
 using std::tuple;
 
-DmMotor::DmMotor(const std::string &motor_model, uint32_t dm_motor_id, std::string mode,
-                 double max_vel, double max_pos, double max_effort, uint32_t Kp, uint32_t Kd,
-                 uint32_t Tff)
-    : motor_model_(motor_model), dm_motor_id_(dm_motor_id), 
-    max_vel_(max_vel), max_pos_(max_pos), max_effort_(max_effort), kp_(Kp), kd_(Kd), tff_(Tff) {
+constexpr double MAX_KP = 500.0;
+constexpr double MIN_KP = 0.0;
+constexpr double MAX_KD = 5.0;
+constexpr double MIN_KD = 0.0;
 
+DmMotor::DmMotor(const std::unordered_map<std::string, std::string> &motor_param,
+                 uint8_t master_id) : master_id_(master_id) {
+
+    motor_model_ = motor_param.at("motor_model");
+    dm_motor_id_ = static_cast<uint8_t>(std::stoi(motor_param.at("motor_id")));
+
+    max_pos_ = std::stod(motor_param.at("max_pos"));
+    max_vel_ = std::stod(motor_param.at("max_vel"));
+    max_effort_ = std::stod(motor_param.at("max_effort"));
+
+    std::string control_mode = motor_param.at("control_mode");
     uint32_t id_offeset = 0;
-    if (mode == "MIT") {
-        mode_ = DmMode::MIT;
-    } else if (mode == "POS") {
-        mode_ = DmMode::POS;
+
+    if (control_mode == "MIT") {
+        Kp_ = std::stod(motor_param.at("Kp"));
+        Kd_ = std::stod(motor_param.at("Kd"));
+        Tff_ = std::stod(motor_param.at("Tff"));
+
+        Kp_raw_ = static_cast<uint8_t>((Kp_ - MAX_KP)/(MAX_KP - MIN_KP)) * ( (1 << 8) - 1);
+        Kd_raw_ = static_cast<uint16_t>((Kd_ - MAX_KD)/(MAX_KD - MIN_KD)) * ( (1 << 12) - 1);
+
+        run_mode_ = RunMode::MIT;
+
+    } else if (control_mode == "postition") {
+        run_mode_ = RunMode::POSITION;
         id_offeset = 0x100;
-    } else if (mode == "VEL") {
-        mode_ = DmMode::VEL;
+    } else if (control_mode == "velocity") {
+        run_mode_ = RunMode::VELOCITY;
         id_offeset = 0x200;
     } else {
-        throw std::runtime_error("Unknown motor mode: " + mode);
+        throw std::runtime_error("Unknown motor mode: " + control_mode);
     }
 
     if (motor_model_ == "4310") {
@@ -47,67 +65,87 @@ DmMotor::DmMotor(const std::string &motor_model, uint32_t dm_motor_id, std::stri
 uint32_t DmMotor::get_dm_motor_id() const { return dm_motor_id_; }
 canid_t DmMotor::get_tx_can_id() const { return tx_can_id_; }
 
-CanMessage DmMotor::get_motor_enable_frame(uint8_t master_id) const{
-    canid_t enable_can_id = 3 << 24;
-    enable_can_id |= master_id << 8;
-    enable_can_id |= dm_motor_id_;
+can_frame DmMotor::motor_enable_frame(uint8_t master_id) const{
+    canid_t enable_can_id = master_id;
     can_frame enable_frame{.can_id = enable_can_id,
                            .can_dlc = 8,
                            .data = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC}};
-    return CanMessage(enable_frame);
+    return enable_frame;
 }
 
-CanMessage DmMotor::get_motor_disable_frame(uint8_t master_id) const{
-    canid_t disable_can_id = 4 << 24;
-    disable_can_id |= master_id << 8;
-    disable_can_id |= dm_motor_id_;
+can_frame DmMotor::motor_disable_frame(uint8_t master_id) const{
+    canid_t disable_can_id = master_id;
     can_frame disable_frame{.can_id = disable_can_id,
                             .can_dlc = 8,
                             .data = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD}};
-    return CanMessage(disable_frame);
+    return disable_frame;
 }
 
-CanMessage DmMotor::get_motor_command_frame(double position,double velocity,double effort) const{
-    uint32_t can_id_offset = 0x00;  
-
-    if (!std::isnan(position) && std::isnan(velocity) &&
-        std::isnan(effort)) {       // Position only mode
-        velocity = 0.0;               // Set target velocity to 0
-        effort = 0.0;                 // Set feedforward torque to 0
-    } else if (std::isnan(position) && !std::isnan(velocity) &&
-               std::isnan(effort)) {    // Velocity only mode
-        effort = 0.0;                     // Set feedforward torque to 0
-        can_id_offset = 0x100;
-    } else{
-        can_id_offset = 0x200;
-    }
-
-    // Only Implement the MIT mode
-    
-    can_frame command_frame;
-    command_frame.can_id = id_ + can_id_offset; 
-
-    auto position_raw = static_cast<uint16_t>();
-    auto velocity_raw = static_cast<uint16_t>();
-    auto effort_raw = static_cast<uint16_t>();
-
-    command_frame.can_dlc = 8;
-
-    command_frame.data[0] = position_raw >> 8;
-    command_frame.data[1] = position_raw & 0xFF;
-
-    command_frame.data[2] = velocity_raw >> 8;
-    command_frame.data[3] = velocity_raw & 0xFF;
-
-    command_frame.data[4] = Kp_raw_ >> 8;
-    command_frame.data[5] = Kp_raw_ & 0xFF;
-
-    command_frame.data[6] = Kd_raw_ >> 8;
-    command_frame.data[7] = Kd_raw_ & 0xFF;
-
-    return CanMessage(command_frame);
+can_frame DmMotor::motor_save_initial_frame(uint8_t master_id) const{
+    canid_t disable_can_id = master_id;
+    can_frame disable_frame{.can_id = disable_can_id,
+                            .can_dlc = 8,
+                            .data = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE}};
+    return disable_frame;
 }
 
+can_frame DmMotor::motor_clear_error_frame(uint8_t master_id) const{
+    canid_t disable_can_id = master_id;
+    can_frame disable_frame{.can_id = disable_can_id,
+                            .can_dlc = 8,
+                            .data = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFB}};
+    return disable_frame;
+}
+
+can_frame DmMotor::motor_mit_frame(double position, double velocity, double effort) const{
+    uint16_t velocity_raw = double_to_raw(velocity, max_vel_, -max_vel_, 16);
+    uint16_t position_raw = double_to_raw(position, max_pos_, -max_pos_, 16);
+    uint16_t effort_raw = double_to_raw(effort, max_effort_, -max_effort_, 16);
+    can_frame frame = {
+        .can_id = tx_can_id_,
+        .can_dlc = 8,
+        .data = { static_cast<uint8_t>((position_raw & 0xFF00) >> 8),
+                  static_cast<uint8_t>(position_raw & 0x00FF), 
+                  static_cast<uint8_t>((velocity_raw & 0x0FF0) >> 4),
+                  static_cast<uint8_t>(((velocity_raw & 0x000F) << 4) | ((Kp_raw_ & 0x0F00) >> 8)), 
+                  static_cast<uint8_t>(Kp_raw_ & 0x00FF),
+                  static_cast<uint8_t>((Kd_raw_ & 0x0FF0) >> 4),
+                  static_cast<uint8_t>(((Kd_raw_ & 0x000F) << 4) | ((effort_raw & 0x0F00) >> 8)), 
+                  static_cast<uint8_t>(effort_raw & 0x00FF)}
+    };
+    return frame;
+}
+
+can_frame DmMotor::motor_pos_frame(double position, double velocity) const{
+    uint32_t velocity_raw = double_to_raw(velocity, max_vel_, -max_vel_, 32);
+    uint32_t position_raw = double_to_raw(position, max_pos_, -max_pos_, 32);
+    can_frame frame = {
+        .can_id = tx_can_id_,
+        .can_dlc = 8,
+        .data = {   static_cast<uint8_t>((position_raw & 0xFF000000) >> 24),
+                    static_cast<uint8_t>((position_raw & 0x00FF0000) >> 16),
+                    static_cast<uint8_t>((position_raw & 0x0000FF00) >> 8), 
+                    static_cast<uint8_t>(position_raw & 0x000000FF),
+                    static_cast<uint8_t>((velocity_raw & 0xFF000000) >> 24),
+                    static_cast<uint8_t>((velocity_raw & 0x00FF0000) >> 16),
+                    static_cast<uint8_t>((velocity_raw & 0x0000FF00) >> 8), 
+                    static_cast<uint8_t>(velocity_raw & 0x000000FF)}
+    };
+    return frame;
+}
+
+can_frame DmMotor::motor_vel_frame(double velocity) const{
+    uint32_t velocity_raw = double_to_raw(velocity, max_vel_, -max_vel_, 32);
+    can_frame frame = {
+        .can_id = tx_can_id_,
+        .can_dlc = 4,
+        .data = {   static_cast<uint8_t>((velocity_raw & 0xFF000000) >> 24),
+                    static_cast<uint8_t>((velocity_raw & 0x00FF0000) >> 16),
+                    static_cast<uint8_t>((velocity_raw & 0x0000FF00) >> 8), 
+                    static_cast<uint8_t>(velocity_raw & 0x000000FF)}
+    };
+    return frame;
+}
 
 void DmMotor::set_motor_feedback(const sockcanpp::CanMessage &can_msg){
 
@@ -156,6 +194,11 @@ void DmMotor::set_motor_feedback(const sockcanpp::CanMessage &can_msg){
 
 std::tuple<double, double, double> DmMotor::get_motor_feedback() const {
     return {position_, velocity_, toruqe_};
+}
+
+uint32_t DmMotor::double_to_raw(float value, float max, float min, uint8_t bit) const {
+    double span = max - min;
+    return (int) ((value-min)*((float)((1<<bit)-1))/span);
 }
 
 } // namespace meta_hardware
