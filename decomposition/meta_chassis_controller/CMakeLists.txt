@@ -5,71 +5,34 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
   add_compile_options(-Wall -Wextra -Werror=conversion -Werror=unused-but-set-variable -Werror=return-type -Werror=shadow)
 endif()
 
-# find dependencies
-set(THIS_PACKAGE_INCLUDE_DEPENDS
-  angles
-  control_toolbox
-  control_msgs
-  controller_interface
-  hardware_interface
-  pluginlib
-  rclcpp
-  rclcpp_lifecycle
-  realtime_tools
-  std_srvs
-  Eigen3
-)
-
 find_package(ament_cmake REQUIRED)
-find_package(generate_parameter_library REQUIRED)
-foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
-  find_package(${Dependency} REQUIRED)
-endforeach()
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
 
-# Add omni_chassis_controller library related compile commands
 generate_parameter_library(omni_chassis_controller_parameters
   src/omni_chassis_controller.yaml
-  include/meta_chassis_controller/validate_omni_chassis_controller_parameters.hpp
 )
-add_library(
-  meta_chassis_controller
+generate_parameter_library(agv_chassis_controller_parameters
+  src/agv_chassis_controller.yaml
+)
+ament_auto_add_library(
+  ${PROJECT_NAME}
   SHARED
   src/omni_chassis_controller.cpp
   src/omni_wheel_kinematics.cpp
 )
-target_include_directories(meta_chassis_controller PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
-target_link_libraries(meta_chassis_controller omni_chassis_controller_parameters)
-ament_target_dependencies(meta_chassis_controller ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(meta_chassis_controller
+  omni_chassis_controller_parameters
+  agv_chassis_controller_parameters)
 
 pluginlib_export_plugin_description_file(
   controller_interface meta_chassis_controller.xml)
 
-install(
-  TARGETS
-  meta_chassis_controller
-  RUNTIME DESTINATION bin
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-)
-
-install(
-  DIRECTORY include/
-  DESTINATION include/${PROJECT_NAME}
-)
-
 if(BUILD_TESTING)
+
 endif()
 
-ament_export_include_directories(
-  include
-)
-ament_export_dependencies(
-  ${THIS_PACKAGE_INCLUDE_DEPENDS}
-)
-ament_export_libraries(
-  omni_chassis_controller
-)
-
-ament_package()
+ament_auto_package()
