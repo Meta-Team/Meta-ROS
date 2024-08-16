@@ -1,0 +1,48 @@
+agv_chassis_controller:
+  agv_wheel_joints:
+    {
+      type: string_array,
+      default_value: [],
+      description: "Specifies joints of the AGV wheels.",
+      read_only: true,
+      validation: { unique<>: null, not_empty<>: null },
+    }
+  agv_wheel_center_x:
+    {
+      type: double_array,
+      default_value: [],
+      description: "Specifies the x coordinate of the AGV wheel center.",
+      read_only: true,
+      validation: { not_empty<>: null },
+    }
+  agv_wheel_center_y:
+    {
+      type: double_array,
+      default_value: [],
+      description: "Specifies the y coordinate of the AGV wheel center.",
+      read_only: true,
+      validation: { not_empty<>: null },
+    }
+  agv_wheel_radius:
+    { type: double, default_value: 0.0, description: "Specifies radius of the AGV wheels." }
+  control_mode:
+    {
+      type: int,
+      default_value: 0,
+      description: "Specifies control mode of the AGV wheel controller. 0: CHASSIS, 1: GIMBAL, 2: CHASSIS_FOLLOW_GIMBAL.",
+    }
+  yaw_gimbal_joint:
+    {
+      type: string,
+      default_value: "",
+      description: "Specifies the joint of the yaw gimbal.",
+      validation: { not_empty<>: null },
+    }
+  follow_pid_target:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Specifies target of the follow PID controller. Setting 0.0 meaning the car is always moving towards the front. Usually 0.7853981634(45 degree) gives the maximum speed.",
+    }
+  reference_timeout:
+    { type: double, default_value: 0.1, description: "Specifies timeout for the reference." }

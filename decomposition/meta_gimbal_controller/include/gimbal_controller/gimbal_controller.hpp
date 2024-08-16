@@ -79,7 +79,7 @@ class GimbalController : public controller_interface::ChainableControllerInterfa
 
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
-    tf2::Quaternion q_imu2gimbal_;
+    tf2::Quaternion rot_imu2gimbal_;
 
     std::shared_ptr<control_toolbox::PidROS> yaw_pos2vel_pid_;
     std::shared_ptr<control_toolbox::PidROS> pitch_pos2vel_pid_;

@@ -48,7 +48,7 @@
         <gazebo>
             <plugin filename="ign_ros2_control-system"
                 name="ign_ros2_control::IgnitionROS2ControlPlugin">
-                <parameters>$(find metav_description)/config/single_motor.yaml</parameters>
+                <parameters>$(find meta_bringup)/config/single_motor.yaml</parameters>
             </plugin>
         </gazebo>
     </xacro:if>
