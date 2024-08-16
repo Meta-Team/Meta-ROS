@@ -64,8 +64,6 @@ hardware_interface::CallbackReturn MetaRobotDmMotorNetwork::on_configure(
     }
 
     std::string can_network_name = info_.hardware_parameters.at("can_network_name");
-    // TODO: Add master ID to the hardware parameters, master ID is not 0x00
-
     int master_id = std::stoi(info_.hardware_parameters.at("master_id"));
     dm_motor_network_ =
         std::make_unique<DmMotorNetwork>(can_network_name, master_id, joint_params);

@@ -25,7 +25,7 @@ DmMotorNetwork::DmMotorNetwork(const std::string &can_network_name, uint8_t mast
         std::string motor_mode = joint_param.at("motor_mode");
 
         auto dm_motor = 
-            std::make_shared<DmMotor>(joint_params, master_id);
+            std::make_shared<DmMotor>(joint_param, master_id);
         dm_motors_.emplace_back(dm_motor);
 
         motor_id2motor_[dm_motor_id] = dm_motor;

@@ -24,6 +24,9 @@ add_library(
   src/mi_motor_interface.cpp
   src/motor_network/mi_motor_network.cpp
   src/motor_driver/mi_motor_driver.cpp
+  src/dm_motor_interface.cpp
+  src/motor_network/dm_motor_network.cpp
+  src/motor_driver/dm_motor_driver.cpp
   src/brt_encoder_interface.cpp
   src/motor_network/brt_encoder_network.cpp
   src/motor_driver/brt_encoder_driver.cpp
