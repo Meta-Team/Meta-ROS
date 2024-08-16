@@ -7,8 +7,8 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "meta_hardware/mi_motor_interface.hpp"
-#include "meta_hardware/motor_network/mi_motor_network.hpp"
+#include "meta_hardware/dm_motor_interface.hpp"
+#include "meta_hardware/motor_network/dm_motor_network.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace meta_hardware {
@@ -16,10 +16,10 @@ using hardware_interface::HW_IF_EFFORT;
 using hardware_interface::HW_IF_POSITION;
 using hardware_interface::HW_IF_VELOCITY;
 
-MetaRobotMiMotorNetwork::~MetaRobotMiMotorNetwork() = default;
+MetaRobotDmMotorNetwork::~MetaRobotDmMotorNetwork() = default;
 
 hardware_interface::CallbackReturn
-MetaRobotMiMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
+MetaRobotDmMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
     if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
         return CallbackReturn::ERROR;
     }
@@ -30,26 +30,12 @@ MetaRobotMiMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
     return CallbackReturn::SUCCESS;
 }
 
-MetaRobotMiMotorNetwork::MiMotorMode
-MetaRobotMiMotorNetwork::check_motor_mode(const std::string &mode, bool command_pos,
+MetaRobotDmMotorNetwork::DmMotorMode
+MetaRobotDmMotorNetwork::check_motor_mode(const std::string &mode, bool command_pos,
                                           bool command_vel, bool command_eff) {
-    using enum meta_hardware::MetaRobotMiMotorNetwork::MiMotorMode;
-    if (mode == "dynamic") {
-        if (command_pos && command_vel && command_eff) {
-            return DYNAMIC;
-        } else if (command_pos && !command_vel && !command_eff) {
-            return DYNAMIC_POS;
-        } else if (!command_pos && command_vel && !command_eff) {
-            return DYNAMIC_VEL;
-        } else if (!command_pos && !command_vel && command_eff) {
-            return DYNAMIC_EFF;
-        } else if (command_pos && !command_vel && command_eff) {
-            return DYNAMIC_POS_FF;
-        } else if (!command_pos && command_vel && command_eff) {
-            return DYNAMIC_VEL_FF;
-        } else {
-            throw std::runtime_error("Invalid dynamic mode");
-        }
+    using enum meta_hardware::MetaRobotDmMotorNetwork::DmMotorMode;
+    if (mode == "mit") {
+        return MIT;
     } else if (mode == "position") {
         return POSITION;
     } else if (mode == "velocity") {
@@ -59,7 +45,7 @@ MetaRobotMiMotorNetwork::check_motor_mode(const std::string &mode, bool command_
     }
 }
 
-hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_configure(
+hardware_interface::CallbackReturn MetaRobotDmMotorNetwork::on_configure(
     const rclcpp_lifecycle::State & /*previous_state*/) {
 
     std::vector<std::unordered_map<std::string, std::string>> joint_params;
@@ -78,14 +64,17 @@ hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_configure(
     }
 
     std::string can_network_name = info_.hardware_parameters.at("can_network_name");
-    mi_motor_network_ =
-        std::make_unique<MiMotorNetwork>(can_network_name, 0x00, joint_params);
+    // TODO: Add master ID to the hardware parameters, master ID is not 0x00
+
+    int master_id = std::stoi(info_.hardware_parameters.at("master_id"));
+    dm_motor_network_ =
+        std::make_unique<DmMotorNetwork>(can_network_name, master_id, joint_params);
 
     return CallbackReturn::SUCCESS;
 }
 
 std::vector<hardware_interface::StateInterface>
-MetaRobotMiMotorNetwork::export_state_interfaces() {
+MetaRobotDmMotorNetwork::export_state_interfaces() {
     std::vector<hardware_interface::StateInterface> state_interfaces;
 
     // Helper function to check if the interface exists
@@ -120,7 +109,7 @@ MetaRobotMiMotorNetwork::export_state_interfaces() {
 }
 
 std::vector<hardware_interface::CommandInterface>
-MetaRobotMiMotorNetwork::export_command_interfaces() {
+MetaRobotDmMotorNetwork::export_command_interfaces() {
     std::vector<hardware_interface::CommandInterface> command_interfaces;
 
     // Helper function to check if the interface exists
@@ -158,23 +147,23 @@ MetaRobotMiMotorNetwork::export_command_interfaces() {
 }
 
 hardware_interface::CallbackReturn
-MetaRobotMiMotorNetwork::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
+MetaRobotDmMotorNetwork::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
 
     return CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn MetaRobotMiMotorNetwork::on_deactivate(
+hardware_interface::CallbackReturn MetaRobotDmMotorNetwork::on_deactivate(
     const rclcpp_lifecycle::State & /*previous_state*/) {
 
     return CallbackReturn::SUCCESS;
 }
 
 hardware_interface::return_type
-MetaRobotMiMotorNetwork::read(const rclcpp::Time & /*time*/,
+MetaRobotDmMotorNetwork::read(const rclcpp::Time & /*time*/,
                               const rclcpp::Duration & /*period*/) {
 
     for (size_t i = 0; i < joint_motor_info_.size(); ++i) {
-        auto [position, velocity, effort] = mi_motor_network_->read(i);
+        auto [position, velocity, effort] = dm_motor_network_->read(i);
 
         double reduction = joint_motor_info_[i].mechanical_reduction;
         double offset = joint_motor_info_[i].offset;
@@ -191,7 +180,7 @@ MetaRobotMiMotorNetwork::read(const rclcpp::Time & /*time*/,
 }
 
 hardware_interface::return_type
-MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
+MetaRobotDmMotorNetwork::write(const rclcpp::Time & /*time*/,
                                const rclcpp::Duration & /*period*/) {
 
     for (size_t i = 0; i < joint_motor_info_.size(); ++i) {
@@ -205,47 +194,22 @@ MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
         velocity *= reduction;
         effort /= reduction;
 
-        using enum MetaRobotMiMotorNetwork::MiMotorMode;
+        using enum MetaRobotDmMotorNetwork::DmMotorMode;
         switch (joint_motor_info_[i].mode) {
-        case DYNAMIC:
+        case MIT:
             if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
                 continue;
-            mi_motor_network_->write_dyn(i, position, velocity, effort);
-            break;
-        case DYNAMIC_POS:
-            if (std::isnan(position))
-                continue;
-            mi_motor_network_->write_dyn(i, position, 0.0, 0.0);
-            break;
-        case DYNAMIC_VEL:
-            if (std::isnan(velocity))
-                continue;
-            mi_motor_network_->write_dyn(i, 0.0, velocity, 0.0);
-            break;
-        case DYNAMIC_EFF:
-            if (std::isnan(effort))
-                continue;
-            mi_motor_network_->write_dyn(i, 0.0, 0.0, effort);
-            break;
-        case DYNAMIC_POS_FF:
-            if (std::isnan(position) || std::isnan(effort))
-                continue;
-            mi_motor_network_->write_dyn(i, position, 0.0, effort);
-            break;
-        case DYNAMIC_VEL_FF:
-            if (std::isnan(velocity) || std::isnan(effort))
-                continue;
-            mi_motor_network_->write_dyn(i, 0.0, velocity, effort);
+            dm_motor_network_->write_mit(i, position, velocity, effort);
             break;
         case POSITION:
-            if (std::isnan(position))
+            if (std::isnan(position) || std::isnan(velocity))
                 continue;
-            mi_motor_network_->write_pos(i, position);
+            dm_motor_network_->write_pos(i, position, velocity);
             break;
         case VELOCITY:
             if (std::isnan(velocity))
                 continue;
-            mi_motor_network_->write_vel(i, velocity);
+            dm_motor_network_->write_vel(i, velocity);
             break;
         }
     }
@@ -257,5 +221,5 @@ MetaRobotMiMotorNetwork::write(const rclcpp::Time & /*time*/,
 
 #include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(meta_hardware::MetaRobotMiMotorNetwork,
+PLUGINLIB_EXPORT_CLASS(meta_hardware::MetaRobotDmMotorNetwork,
                        hardware_interface::SystemInterface)

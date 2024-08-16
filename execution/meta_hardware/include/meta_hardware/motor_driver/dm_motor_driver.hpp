@@ -9,7 +9,6 @@
 #include <tuple>
 #include <unordered_map>
 
-#include "CanMessage.hpp"
 #include <linux/can.h>
 
 #include "angles/angles.h"
@@ -43,7 +42,7 @@ class DmMotor {
     can_frame motor_pos_frame(double position, double velocity) const;
     can_frame motor_vel_frame(double velocity) const;
 
-    void set_motor_feedback(const sockcanpp::CanMessage &can_msg);
+    void set_motor_feedback(const can_frame &can_msg);
     std::tuple<double, double, double> get_motor_feedback() const;
 
     RunMode get_run_mode() const { return run_mode_; }

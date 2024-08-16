@@ -9,7 +9,7 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
-#include "meta_hardware/motor_network/mi_motor_network.hpp"
+#include "meta_hardware/motor_network/dm_motor_network.hpp"
 #include "meta_hardware/visibility_control.h"
 #include "rclcpp/macros.hpp"
 #include "rclcpp_lifecycle/state.hpp"
@@ -86,7 +86,7 @@ class MetaRobotDmMotorNetwork : public hardware_interface::SystemInterface {
     MetaRobotDmMotorNetwork::DmMotorMode check_motor_mode(const std::string &mode, bool command_pos,
                                                           bool command_vel, bool command_eff);
 
-    std::unique_ptr<MiMotorNetwork> mi_motor_network_;
+    std::unique_ptr<DmMotorNetwork> dm_motor_network_;
 };
 
 } // namespace meta_hardware
