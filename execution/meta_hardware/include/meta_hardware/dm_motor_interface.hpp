@@ -83,8 +83,7 @@ class MetaRobotDmMotorNetwork : public hardware_interface::SystemInterface {
     std::vector<JointMotorInfo>
         joint_motor_info_; // local cache of joint motor info
 
-    MetaRobotDmMotorNetwork::DmMotorMode check_motor_mode(const std::string &mode, bool command_pos,
-                                                          bool command_vel, bool command_eff);
+    MetaRobotDmMotorNetwork::DmMotorMode check_motor_mode(const std::string &mode);
 
     std::unique_ptr<DmMotorNetwork> dm_motor_network_;
 };

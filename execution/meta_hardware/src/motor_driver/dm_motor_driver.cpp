@@ -34,7 +34,7 @@ DmMotor::DmMotor(const std::unordered_map<std::string, std::string> &motor_param
     std::string control_mode = motor_param.at("control_mode");
     uint32_t id_offeset = 0;
 
-    if (control_mode == "MIT") {
+    if (control_mode == "mit") {
         Kp_ = std::stod(motor_param.at("Kp"));
         Kd_ = std::stod(motor_param.at("Kd"));
         Tff_ = std::stod(motor_param.at("Tff"));

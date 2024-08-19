@@ -31,8 +31,7 @@ MetaRobotDmMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
 }
 
 MetaRobotDmMotorNetwork::DmMotorMode
-MetaRobotDmMotorNetwork::check_motor_mode(const std::string &mode, bool command_pos,
-                                          bool command_vel, bool command_eff) {
+MetaRobotDmMotorNetwork::check_motor_mode(const std::string &mode) {
     using enum meta_hardware::MetaRobotDmMotorNetwork::DmMotorMode;
     if (mode == "mit") {
         return MIT;
@@ -58,8 +57,7 @@ hardware_interface::CallbackReturn MetaRobotDmMotorNetwork::on_configure(
             std::stod(joint_param.at("mechanical_reduction"));
         joint_motor_info_[i].offset = std::stod(joint_param.at("offset"));
         joint_motor_info_[i].mode = check_motor_mode(
-            joint_param.at("control_mode"), joint_motor_info_[i].command_pos,
-            joint_motor_info_[i].command_vel, joint_motor_info_[i].command_eff);
+            joint_param.at("control_mode"));
         joint_params.emplace_back(joint_param);
     }
 

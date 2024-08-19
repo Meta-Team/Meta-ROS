@@ -22,7 +22,7 @@ DmMotorNetwork::DmMotorNetwork(const std::string &can_network_name, uint8_t mast
     for (const auto &joint_param : joint_params) {
         std::string motor_model = joint_param.at("motor_model");
         uint32_t dm_motor_id = std::stoi(joint_param.at("motor_id"));
-        std::string motor_mode = joint_param.at("motor_mode");
+        std::string motor_mode = joint_param.at("control_mode");
 
         auto dm_motor = 
             std::make_shared<DmMotor>(joint_param, master_id);

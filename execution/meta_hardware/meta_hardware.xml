@@ -6,6 +6,13 @@
       DJI motor network hardware interface.
     </description>
   </class>
+  <class name="meta_hardware/MetaRobotDmMotorNetwork"
+    type="meta_hardware::MetaRobotDmMotorNetwork"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      DM motor network hardware interface.
+    </description>
+  </class>
   <class name="meta_hardware/MetaRobotMiMotorNetwork"
     type="meta_hardware::MetaRobotMiMotorNetwork"
     base_class_type="hardware_interface::SystemInterface">
