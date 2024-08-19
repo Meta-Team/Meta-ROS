@@ -37,7 +37,7 @@
             name="single_motor_control" type="system">
             <hardware>
                 <plugin>meta_hardware/MetaRobotDmMotorNetwork</plugin>
-                <param name="can_network_name">cagi n0</param>
+                <param name="can_network_name">can0</param>
                 <param name="master_id">1</param>
             </hardware>
             <joint name="motor_joint">
