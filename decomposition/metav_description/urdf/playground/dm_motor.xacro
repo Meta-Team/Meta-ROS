@@ -26,7 +26,7 @@
             </hardware>
             <joint name="motor_joint">
                 <command_interface name="velocity" />
-                <state_interface name="position" />
+                <command_interface name="position" />
                 <state_interface name="velocity" />
             </joint>
         </ros2_control>
@@ -51,7 +51,7 @@
                 <param name="max_vel">45</param>
                 <param name="max_effort">18</param>
                 <param name="offset">0.0</param>
-                <param name="control_mode">mit</param>
+                <param name="control_mode">position</param>
                 <param name="Kp">0.0</param>
                 <param name="Kd">1.0</param>
                 <param name="Tff">0.0</param>

@@ -44,7 +44,7 @@ DmMotor::DmMotor(const std::unordered_map<std::string, std::string> &motor_param
 
         run_mode_ = RunMode::MIT;
 
-    } else if (control_mode == "postition") {
+    } else if (control_mode == "position") {
         run_mode_ = RunMode::POSITION;
         id_offeset = 0x100;
     } else if (control_mode == "velocity") {

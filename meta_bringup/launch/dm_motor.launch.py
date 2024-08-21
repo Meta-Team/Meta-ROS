@@ -94,7 +94,6 @@ def generate_launch_description():
     # List of controllers to be loaded sequentially
     # Order in this list is IMPORTANT
     load_controllers = [
-        load_controller('motor_pos2vel_pid_controller'),
         load_controller('forward_position_controller'),
     ]
 
