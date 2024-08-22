@@ -16,9 +16,6 @@
 namespace meta_hardware {
 class DmMotor {
   public:
-    // DmMotor(const std::string &motor_model, uint32_t dm_motor_id,std::string mode, 
-    //         double max_vel, double max_pos, double max_effort, uint32_t Kp, uint32_t Kd,
-    //         uint32_t Tff);
     DmMotor(const std::unordered_map<std::string, std::string> &motor_param,
                  uint8_t master_id);
 
@@ -66,10 +63,8 @@ class DmMotor {
 
     double Kp_;
     double Kd_;
-    uint32_t Tff_;
     uint8_t Kp_raw_;
     uint16_t Kd_raw_;
-    uint16_t Tff_raw_;
 
     // Motor feedback
     uint8_t error_code_{0};

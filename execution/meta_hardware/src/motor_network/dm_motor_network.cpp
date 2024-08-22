@@ -100,7 +100,7 @@ void DmMotorNetwork::rx_loop(std::stop_token stop_token) {
     while (!stop_token.stop_requested()) {
         try {
             auto can_msg = can_driver_->read(2000);
-            const auto &motor = motor_id2motor_.at(can_msg.can_id);
+            const auto &motor = motor_id2motor_.at(can_msg.data[0] & 0x0F);
             motor->set_motor_feedback(can_msg);
         } catch (CanIOTimedOutException & /*e*/) {
             std::cerr << "Timed out waiting for DM motor feedback." << std::endl;

@@ -12,4 +12,4 @@ forward_position_controller:
   ros__parameters:
     joints:
       - motor_joint
-    interface_name: velocity
+    interface_name: position

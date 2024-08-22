@@ -38,23 +38,22 @@
             <hardware>
                 <plugin>meta_hardware/MetaRobotDmMotorNetwork</plugin>
                 <param name="can_network_name">can0</param>
-                <param name="master_id">1</param>
+                <param name="master_id">0</param>
             </hardware>
             <joint name="motor_joint">
-                <command_interface name="velocity" />
+                <command_interface name="position" />
                 <state_interface name="velocity" />
                 <state_interface name="effort" />
                 <param name="motor_model">4310</param>
                 <param name="motor_id">1</param>
-                <param name="mechanical_reduction">-1.0</param>
+                <param name="mechanical_reduction">1.0</param>
                 <param name="max_pos">12.5</param>
                 <param name="max_vel">45</param>
                 <param name="max_effort">18</param>
                 <param name="offset">0.0</param>
-                <param name="control_mode">position</param>
-                <param name="Kp">0.0</param>
+                <param name="control_mode">mit</param>
+                <param name="Kp">50.0</param>
                 <param name="Kd">1.0</param>
-                <param name="Tff">0.0</param>
             </joint>
         </ros2_control>
 

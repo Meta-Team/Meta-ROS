@@ -54,6 +54,11 @@ class MetaRobotDmMotorNetwork : public hardware_interface::SystemInterface {
 
     enum class DmMotorMode {
         MIT, // Dynamic mode with all three commands
+        MIT_POS,
+        MIT_VEL,
+        MIT_EFF,
+        MIT_POS_FF,
+        MIT_VEL_FF,
         POSITION, // Position mode
         VELOCITY, // Velocity mode
     };
@@ -83,7 +88,8 @@ class MetaRobotDmMotorNetwork : public hardware_interface::SystemInterface {
     std::vector<JointMotorInfo>
         joint_motor_info_; // local cache of joint motor info
 
-    MetaRobotDmMotorNetwork::DmMotorMode check_motor_mode(const std::string &mode);
+    MetaRobotDmMotorNetwork::DmMotorMode check_motor_mode(const std::string &mode,bool command_pos,
+                                          bool command_vel, bool command_eff);
 
     std::unique_ptr<DmMotorNetwork> dm_motor_network_;
 };

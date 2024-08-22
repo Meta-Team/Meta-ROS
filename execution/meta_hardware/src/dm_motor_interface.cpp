@@ -31,10 +31,25 @@ MetaRobotDmMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
 }
 
 MetaRobotDmMotorNetwork::DmMotorMode
-MetaRobotDmMotorNetwork::check_motor_mode(const std::string &mode) {
+MetaRobotDmMotorNetwork::check_motor_mode(const std::string &mode,bool command_pos,
+                                          bool command_vel, bool command_eff) {
     using enum meta_hardware::MetaRobotDmMotorNetwork::DmMotorMode;
     if (mode == "mit") {
-        return MIT;
+        if (command_pos && command_vel && command_eff) {
+            return MIT;
+        } else if (command_pos && !command_vel && !command_eff) {
+            return MIT_POS;
+        } else if (!command_pos && command_vel && !command_eff) {
+            return MIT_VEL;
+        } else if (!command_pos && !command_vel && command_eff) {
+            return MIT_EFF;
+        } else if (command_pos && !command_vel && command_eff) {
+            return MIT_POS_FF;
+        } else if (!command_pos && command_vel && command_eff) {
+            return MIT_VEL_FF;
+        } else {
+            throw std::runtime_error("Invalid dynamic mode");
+        }
     } else if (mode == "position") {
         return POSITION;
     } else if (mode == "velocity") {
@@ -57,7 +72,8 @@ hardware_interface::CallbackReturn MetaRobotDmMotorNetwork::on_configure(
             std::stod(joint_param.at("mechanical_reduction"));
         joint_motor_info_[i].offset = std::stod(joint_param.at("offset"));
         joint_motor_info_[i].mode = check_motor_mode(
-            joint_param.at("control_mode"));
+            joint_param.at("control_mode"),joint_motor_info_[i].command_pos,
+            joint_motor_info_[i].command_vel, joint_motor_info_[i].command_eff);
         joint_params.emplace_back(joint_param);
     }
 
@@ -196,6 +212,33 @@ MetaRobotDmMotorNetwork::write(const rclcpp::Time & /*time*/,
             if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
                 continue;
             dm_motor_network_->write_mit(i, position, velocity, effort);
+            break;
+
+        case MIT_POS:
+            if (std::isnan(position))
+                continue;
+            dm_motor_network_->write_mit(i, position, 0.0, 0.0);
+            break;
+        case MIT_VEL:
+            if (std::isnan(velocity))
+                continue;
+            std::cout << "Writing velocity" << std::endl;
+            dm_motor_network_->write_mit(i, 0.0, velocity, 0.0);
+            break;
+        case MIT_EFF:
+        if (std::isnan(effort))
+                continue;
+            dm_motor_network_->write_mit(i, 0.0, 0.0, effort);
+            break;
+        case MIT_POS_FF:
+            if (std::isnan(position) || std::isnan(effort))
+                continue;
+            dm_motor_network_->write_mit(i, position, 0.0, effort);
+            break;
+        case MIT_VEL_FF:
+            if (std::isnan(velocity) || std::isnan(effort))
+                continue;
+            dm_motor_network_->write_mit(i, 0.0, velocity, effort);
             break;
         case POSITION:
             if (std::isnan(position) || std::isnan(velocity))

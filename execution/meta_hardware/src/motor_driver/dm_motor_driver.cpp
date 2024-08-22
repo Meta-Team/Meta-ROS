@@ -37,10 +37,9 @@ DmMotor::DmMotor(const std::unordered_map<std::string, std::string> &motor_param
     if (control_mode == "mit") {
         Kp_ = std::stod(motor_param.at("Kp"));
         Kd_ = std::stod(motor_param.at("Kd"));
-        Tff_ = std::stod(motor_param.at("Tff"));
 
-        Kp_raw_ = static_cast<uint8_t>((Kp_ - MAX_KP)/(MAX_KP - MIN_KP)) * ( (1 << 8) - 1);
-        Kd_raw_ = static_cast<uint16_t>((Kd_ - MAX_KD)/(MAX_KD - MIN_KD)) * ( (1 << 12) - 1);
+        Kp_raw_ = static_cast<uint8_t>((Kp_ - MIN_KP)/(MAX_KP - MIN_KP) * ( (1 << 8) - 1));
+        Kd_raw_ = static_cast<uint16_t>((Kd_ - MIN_KD)/(MAX_KD - MIN_KD) * ( (1 << 12) - 1));
 
         run_mode_ = RunMode::MIT;
 
@@ -97,9 +96,9 @@ can_frame DmMotor::motor_clear_error_frame() const{
 }
 
 can_frame DmMotor::motor_mit_frame(double position, double velocity, double effort) const{
-    uint16_t velocity_raw = double_to_raw(velocity, max_vel_, -max_vel_, 16);
+    uint16_t velocity_raw = double_to_raw(velocity, max_vel_, -max_vel_, 12);
     uint16_t position_raw = double_to_raw(position, max_pos_, -max_pos_, 16);
-    uint16_t effort_raw = double_to_raw(effort, max_effort_, -max_effort_, 16);
+    uint16_t effort_raw = double_to_raw(effort, max_effort_, -max_effort_, 12);
     can_frame frame = {
         .can_id = tx_can_id_,
         .can_dlc = 8,
