@@ -131,10 +131,14 @@ can_frame MiMotor::motor_dyn_frame(double position, double velocity,
 }
 
 can_frame MiMotor::motor_pos_frame(double position) const {
+    position = std::clamp(position, -MAX_ABS_POSITION, MAX_ABS_POSITION);
+
     return motor_wr_param_frame(0x7016, static_cast<float>(position));
 }
 
 can_frame MiMotor::motor_vel_frame(double velocity) const {
+    velocity = std::clamp(velocity, -MAX_ABS_VELOCITY, MAX_ABS_VELOCITY);
+
     return motor_wr_param_frame(0x700A, static_cast<float>(velocity));
 }
 
