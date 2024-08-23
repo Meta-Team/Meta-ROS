@@ -159,12 +159,12 @@ void DmMotor::set_motor_feedback(const can_frame &can_msg){
         );
 
     auto velocity_raw = static_cast<int32_t>
-        (((static_cast<uint32_t>(can_msg.data[3]) & 0xFF) << 8) | 
-        ((static_cast<uint32_t>(can_msg.data[4]) & 0xC0) >> 12) 
+        (((static_cast<uint32_t>(can_msg.data[3]) & 0xFF) << 4) | 
+        ((static_cast<uint32_t>(can_msg.data[4]) & 0xF0) >> 4) 
         );
 
     auto effort_raw = static_cast<int32_t>
-        (((static_cast<uint32_t>(can_msg.data[4]) & 0x3F) << 4) | 
+        (((static_cast<uint32_t>(can_msg.data[4]) & 0x0F) << 8) | 
         (static_cast<uint32_t>(can_msg.data[5]) & 0xFF) 
         );
 
