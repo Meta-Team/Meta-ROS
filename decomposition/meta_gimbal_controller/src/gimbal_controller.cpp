@@ -5,10 +5,8 @@
 #include <memory>
 #include <string>
 #include <tf2/LinearMath/Quaternion.h>
-#include <tf2/LinearMath/Vector3.h>
-#include <tf2/time.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#include <tf2_ros/buffer_interface.h>
 #include <vector>
 
 #include "angles/angles.h"
@@ -118,10 +116,6 @@ GimbalController::on_configure(const rclcpp_lifecycle::State & /*previous_state*
     auto feedback_msg = std::make_shared<ControllerFeedbackMsg>();
     reset_controller_feedback_msg(feedback_msg, get_node());
     input_feedback_.writeFromNonRT(feedback_msg);
-
-    tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_node()->get_clock());
-    tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
-
     try {
         // State publisher
         s_publisher_ = get_node()->create_publisher<ControllerStateMsg>(
@@ -213,23 +207,6 @@ GimbalController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/
 
     reference_interfaces_.assign(reference_interfaces_.size(), NaN);
 
-    // Get transform from IMU to gimbal
-    geometry_msgs::msg::TransformStamped trans;
-
-    try {
-        trans =
-            tf_buffer_->lookupTransform("gimbal_imu", "pitch_gimbal", tf2::TimePointZero,
-                                        tf2::durationFromSec(10.0)); // wait for 10s
-    } catch (tf2::LookupException &e) {
-        RCLCPP_ERROR(get_node()->get_logger(), "Failed to lookup transform: %s",
-                     e.what());
-        return controller_interface::CallbackReturn::ERROR;
-    }
-
-    rot_imu2gimbal_ =
-        tf2::Quaternion(trans.transform.rotation.x, trans.transform.rotation.y,
-                        trans.transform.rotation.z, trans.transform.rotation.w);
-
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
@@ -259,21 +236,13 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
     // Collect IMU feedback
     auto current_feedback = *(input_feedback_.readFromRT());
 
-    // Transform IMU feedback to gimbal frame
+    double yaw_pos_fb, pitch_pos_fb, roll_pos_fb;
     tf2::Quaternion q_imu;
     fromMsg(current_feedback->orientation, q_imu);
-    tf2::Quaternion q_gimbal = q_imu * rot_imu2gimbal_;
+    tf2::Matrix3x3(q_imu).getRPY(roll_pos_fb, pitch_pos_fb, yaw_pos_fb);
 
-    // Transform angular velocity feedback to gimbal frame
-    tf2::Vector3 v_imu;
-    fromMsg(current_feedback->angular_velocity, v_imu);
-    tf2::Vector3 v_gimbal = tf2::quatRotate(rot_imu2gimbal_.inverse(), v_imu);
-
-    double yaw_pos_fb, pitch_pos_fb, roll_pos_fb;
-    tf2::Matrix3x3(q_gimbal).getRPY(roll_pos_fb, pitch_pos_fb, yaw_pos_fb);
-
-    double yaw_vel_fb = v_gimbal.z();
-    double pitch_vel_fb = v_gimbal.y();
+    double yaw_vel_fb = current_feedback->angular_velocity.z;
+    double pitch_vel_fb = current_feedback->angular_velocity.y;
 
     double yaw_pos_ref = NaN, pitch_pos_ref = NaN;
     double yaw_pos_err = NaN, pitch_pos_err = NaN;
