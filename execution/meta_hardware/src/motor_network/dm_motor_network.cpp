@@ -76,10 +76,10 @@ void DmMotorNetwork::write_mit(uint32_t joint_id, double position, double veloci
     }
 }
 
-void DmMotorNetwork::write_pos(uint32_t joint_id, double position, double velocity){
+void DmMotorNetwork::write_pos(uint32_t joint_id, double position){
     const auto &motor = dm_motors_[joint_id];
     try {
-        can_driver_->write(motor->motor_pos_frame(position, velocity));
+        can_driver_->write(motor->motor_pos_frame(position));
     } catch (CanIOException &e) {
         std::cerr << "Error writing DM motor command CAN message: " << e.what()
                   << std::endl;

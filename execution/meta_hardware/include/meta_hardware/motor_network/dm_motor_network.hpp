@@ -37,7 +37,7 @@ class DmMotorNetwork {
      * @param effort The effort to write
      */
     void write_mit(uint32_t joint_id, double position, double velocity, double effort);
-    void write_pos(uint32_t joint_id, double position, double velocity);
+    void write_pos(uint32_t joint_id, double position);
     void write_vel(uint32_t joint_id, double velocity);
 
   private:

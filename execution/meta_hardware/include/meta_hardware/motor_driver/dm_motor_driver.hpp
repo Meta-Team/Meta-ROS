@@ -36,7 +36,7 @@ class DmMotor {
     can_frame motor_save_initial_frame() const;
     can_frame motor_clear_error_frame() const;
     can_frame motor_mit_frame(double position, double velocity, double effort) const;
-    can_frame motor_pos_frame(double position, double velocity) const;
+    can_frame motor_pos_frame(double position) const;
     can_frame motor_vel_frame(double velocity) const;
 
     void set_motor_feedback(const can_frame &can_msg);

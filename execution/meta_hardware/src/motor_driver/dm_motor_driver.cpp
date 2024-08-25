@@ -1,3 +1,4 @@
+#include <bit>
 #include <cmath>
 #include <cstdint>
 #include <limits>
@@ -114,33 +115,34 @@ can_frame DmMotor::motor_mit_frame(double position, double velocity, double effo
     return frame;
 }
 
-can_frame DmMotor::motor_pos_frame(double position, double velocity) const{
-    uint32_t velocity_raw = double_to_raw(velocity, max_vel_, -max_vel_, 32);
-    uint32_t position_raw = double_to_raw(position, max_pos_, -max_pos_, 32);
+can_frame DmMotor::motor_pos_frame(double position) const{
+    double velocity = max_vel_;
+    uint32_t velocity_raw = std::bit_cast<uint32_t>(static_cast<float>(velocity));
+    uint32_t position_raw = std::bit_cast<uint32_t>(static_cast<float>(position));
     can_frame frame = {
         .can_id = tx_can_id_,
         .can_dlc = 8,
-        .data = {   static_cast<uint8_t>((position_raw & 0xFF000000) >> 24),
-                    static_cast<uint8_t>((position_raw & 0x00FF0000) >> 16),
-                    static_cast<uint8_t>((position_raw & 0x0000FF00) >> 8), 
-                    static_cast<uint8_t>(position_raw & 0x000000FF),
-                    static_cast<uint8_t>((velocity_raw & 0xFF000000) >> 24),
-                    static_cast<uint8_t>((velocity_raw & 0x00FF0000) >> 16),
-                    static_cast<uint8_t>((velocity_raw & 0x0000FF00) >> 8), 
-                    static_cast<uint8_t>(velocity_raw & 0x000000FF)}
+        .data = {   static_cast<uint8_t>((position_raw & 0x000000FF)),
+                    static_cast<uint8_t>((position_raw & 0x0000FF00) >> 8),
+                    static_cast<uint8_t>((position_raw & 0x00FF0000) >> 16), 
+                    static_cast<uint8_t>((position_raw & 0xFF000000) >> 24),
+                    static_cast<uint8_t>((velocity_raw & 0x000000FF)),
+                    static_cast<uint8_t>((velocity_raw & 0x0000FF00) >> 8),
+                    static_cast<uint8_t>((velocity_raw & 0x00FF0000) >> 16), 
+                    static_cast<uint8_t>((velocity_raw & 0xFF000000) >> 24)}
     };
     return frame;
 }
 
 can_frame DmMotor::motor_vel_frame(double velocity) const{
-    uint32_t velocity_raw = double_to_raw(velocity, max_vel_, -max_vel_, 32);
+    uint32_t velocity_raw = std::bit_cast<uint32_t>(static_cast<float>(velocity));
     can_frame frame = {
         .can_id = tx_can_id_,
         .can_dlc = 4,
-        .data = {   static_cast<uint8_t>((velocity_raw & 0xFF000000) >> 24),
-                    static_cast<uint8_t>((velocity_raw & 0x00FF0000) >> 16),
-                    static_cast<uint8_t>((velocity_raw & 0x0000FF00) >> 8), 
-                    static_cast<uint8_t>(velocity_raw & 0x000000FF)}
+        .data = {   static_cast<uint8_t>((velocity_raw & 0x000000FF)),
+                    static_cast<uint8_t>((velocity_raw & 0x0000FF00) >> 8),
+                    static_cast<uint8_t>((velocity_raw & 0x00FF0000) >> 16), 
+                    static_cast<uint8_t>((velocity_raw & 0xFF000000) >> 24)}
     };
     return frame;
 }

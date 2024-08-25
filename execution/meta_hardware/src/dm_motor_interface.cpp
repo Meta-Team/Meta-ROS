@@ -241,9 +241,10 @@ MetaRobotDmMotorNetwork::write(const rclcpp::Time & /*time*/,
             dm_motor_network_->write_mit(i, 0.0, velocity, effort);
             break;
         case POSITION:
-            if (std::isnan(position) || std::isnan(velocity))
+            if (std::isnan(position)){
                 continue;
-            dm_motor_network_->write_pos(i, position, velocity);
+            }
+            dm_motor_network_->write_pos(i, position);
             break;
         case VELOCITY:
             if (std::isnan(velocity))
