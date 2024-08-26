@@ -30,6 +30,7 @@ add_library(
   src/brt_encoder_interface.cpp
   src/motor_network/brt_encoder_network.cpp
   src/motor_driver/brt_encoder_driver.cpp
+  src/im1253c_interface.cpp
 )
 target_include_directories(
   meta_hardware
