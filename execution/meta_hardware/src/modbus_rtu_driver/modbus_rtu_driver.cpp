@@ -4,6 +4,9 @@
 #include <string>
 #include <chrono>
 #include <boost/crc.hpp>
+#include <sys/types.h>
+#include <iostream>
+#include <vector>
 
 ModbusRtuDriver::ModbusRtuDriver(std::unordered_map<std::string, std::string> serial_params): 
     owned_ctx_{new IoContext(2)},
@@ -83,7 +86,7 @@ void ModbusRtuDriver::set_command(int addr, int func, int reg, int len){
     command_[4] = static_cast<uint8_t>(len >> 8);
     command_[5] = static_cast<uint8_t>(len & 0xFF);
     boost::crc_16_type crc_16;
-    crc_16.process_bytes(&command_, 6);
+    crc_16.process_bytes(command_.data(), 6);
     int crc = crc_16.checksum();
     command_[6] = static_cast<uint8_t>(crc & 0xFF);
     command_[7] = static_cast<uint8_t>(crc >> 8);
@@ -91,14 +94,60 @@ void ModbusRtuDriver::set_command(int addr, int func, int reg, int len){
 }
 
 void ModbusRtuDriver::rx_tx_loop(std::stop_token stop_token){
+    std::vector<uint8_t> address(1);
+    std::vector<uint8_t> response(2);
+    std::vector<uint8_t> data;
+    std::vector<uint8_t> response_crc(2);
+    std::vector<uint8_t> response_without_crc;
     while (!stop_token.stop_requested()) {
         std::this_thread::sleep_until(awake_time());
 
         // Send Command with blocking
         serial_driver_->port()->send(command_);
         // Receive Response with blocking
-        response_.clear();
-        serial_driver_->port()->receive(response_);
+
+        response_without_crc.clear();
+        serial_driver_->port()->receive(address);
+        response_without_crc.emplace_back(address[0]);
+        if( address[0] == command_[0]){
+            serial_driver_->port()->receive(address);
+            serial_driver_->port()->receive(response);
+            uint8_t func_code = response[0];
+            if(func_code != command_[1]){
+                std::cout << " Function Code Mismatch. Expected: " 
+                << command_[1] << " Received: " << func_code << std::endl;
+                continue;
+            }else if(func_code == 0x03){
+                uint8_t byte_count = response[1];
+                data.resize(byte_count);
+
+                serial_driver_->port()->receive(data);
+
+                response_without_crc.emplace_back(func_code);
+                response_without_crc.emplace_back(byte_count);
+                for(uint8_t i = 0; i < data.size(); i++){
+                    response_without_crc.emplace_back(data[i]);
+                }
+
+                boost::crc_16_type crc_16;
+                crc_16.process_bytes(response_without_crc.data(), response_without_crc.size());
+                int calc_crc = crc_16.checksum();
+                serial_driver_->port()->receive(response_crc);
+                if((static_cast<int>(response_crc[0]) + (static_cast<int>(response_crc[1]) << 8))== calc_crc){
+                    reg_data_ = data;
+                }else{
+                    std::cout << " CRC Mismatch. " << std::endl;
+                }
+            }else if(func_code == 0x10){
+                std::vector<uint8_t> write_response(6);
+                // get write response
+                serial_driver_->port()->receive(write_response);
+                // TODO: Check if the response is the same as the command
+            }
+
+        }else{
+            std::cout << " Device Address Not Found. Device Address: " << address[0] << std::endl;
+        }
     }
 }
 

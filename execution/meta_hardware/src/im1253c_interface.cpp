@@ -1,20 +1,26 @@
+#include <cstdint>
 #include <iostream>
 #include <limits>
 #include <memory>
 #include <ranges>
+#include <string>
 #include <vector>
 
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "meta_hardware/im1253c_interface.hpp"
+#include "meta_hardware/modbus_rtu_driver/modbus_rtu_driver.hpp"
 #include "meta_hardware/motor_network/mi_motor_network.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+
+constexpr int DEVICE_ADDRESS = 0x01;
+constexpr int FUNCTION_CODE_READ = 0x03;
+constexpr int REGISTER_ADDRESS = 0x48;
+constexpr int REGISTER_NUM = 3;  // 3 registers for voltage, current and power
+
 namespace meta_hardware {
-using hardware_interface::HW_IF_EFFORT;
-using hardware_interface::HW_IF_POSITION;
-using hardware_interface::HW_IF_VELOCITY;
 
 MetaRobotIm1253cManager::~MetaRobotIm1253cManager() = default;
 
@@ -23,36 +29,16 @@ MetaRobotIm1253cManager::on_init(const hardware_interface::HardwareInfo &info) {
     if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
         return CallbackReturn::ERROR;
     }
-
-    // joint_interface_data_.resize(info_.joints.size());
-    // joint_motor_info_.resize(info_.joints.size());
-
     return CallbackReturn::SUCCESS;
 }
 
 
 hardware_interface::CallbackReturn MetaRobotIm1253cManager::on_configure(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-
-    std::vector<std::unordered_map<std::string, std::string>> joint_params;
-    // Add the motors to the motor networks
-    // for (size_t i = 0; i < info_.joints.size(); ++i) {
-    //     const auto &joint = info_.joints[i];
-    //     const auto &joint_param = joint.parameters;
-    //     joint_motor_info_[i].name = joint.name;
-    //     joint_motor_info_[i].mechanical_reduction =
-    //         std::stod(joint_param.at("mechanical_reduction"));
-    //     joint_motor_info_[i].offset = std::stod(joint_param.at("offset"));
-    //     joint_motor_info_[i].mode = check_motor_mode(
-    //         joint_param.at("control_mode"), joint_motor_info_[i].command_pos,
-    //         joint_motor_info_[i].command_vel, joint_motor_info_[i].command_eff);
-    //     joint_params.emplace_back(joint_param);
-    // }
-
-    // std::string can_network_name = info_.hardware_parameters.at("can_network_name");
-    // mi_motor_network_ =
-    //     std::make_unique<MiMotorNetwork>(can_network_name, 0x00, joint_params);
-
+    for (size_t i = 0; i < info_.sensors.size(); ++i) {
+        device_.emplace_back(std::make_unique<ModbusRtuDriver>(info_.hardware_parameters));
+        device_[i]->set_command(DEVICE_ADDRESS, FUNCTION_CODE_READ, REGISTER_ADDRESS, REGISTER_NUM);
+    }
     return CallbackReturn::SUCCESS;
 }
 
@@ -72,21 +58,21 @@ MetaRobotIm1253cManager::export_state_interfaces() {
                        }) != interfaces.end();
         };
 
-    // for (size_t i = 0; i < info_.joints.size(); ++i) {
-    //     const auto &joint_state_interfaces = info_.joints[i].state_interfaces;
-    //     if (contains_interface(joint_state_interfaces, "position")) {
-    //         state_interfaces.emplace_back(info_.joints[i].name, HW_IF_POSITION,
-    //                                       &joint_interface_data_[i].state_position);
-    //     }
-    //     if (contains_interface(joint_state_interfaces, "velocity")) {
-    //         state_interfaces.emplace_back(info_.joints[i].name, HW_IF_VELOCITY,
-    //                                       &joint_interface_data_[i].state_velocity);
-    //     }
-    //     if (contains_interface(joint_state_interfaces, "effort")) {
-    //         state_interfaces.emplace_back(info_.joints[i].name, HW_IF_EFFORT,
-    //                                       &joint_interface_data_[i].state_effort);
-    //     }
-    // }
+    for (size_t i = 0; i < info_.sensors.size(); ++i) {
+        const auto &sensors_state_interfaces = info_.sensors[i].state_interfaces;
+        if (contains_interface(sensors_state_interfaces, "voltage")) {
+            state_interfaces.emplace_back(info_.sensors[i].name, std::string("voltage"),
+                                          &sensor_interface_data_[i].state_voltage);
+        }
+        if (contains_interface(sensors_state_interfaces, "current")) {
+            state_interfaces.emplace_back(info_.sensors[i].name, std::string("current"),
+                                          &sensor_interface_data_[i].state_current);
+        }
+        if (contains_interface(sensors_state_interfaces, "power")) {
+            state_interfaces.emplace_back(info_.sensors[i].name, std::string("power"),
+                                          &sensor_interface_data_[i].state_power);
+        }
+    }
 
     return state_interfaces;
 }
@@ -94,58 +80,29 @@ MetaRobotIm1253cManager::export_state_interfaces() {
 std::vector<hardware_interface::CommandInterface>
 MetaRobotIm1253cManager::export_command_interfaces() {
     std::vector<hardware_interface::CommandInterface> command_interfaces;
-
-    // Helper function to check if the interface exists
-    // auto contains_interface =
-    //     [](const std::vector<hardware_interface::InterfaceInfo> &interfaces,
-    //        const std::string &interface_name) {
-    //         return std::ranges::find_if(
-    //                    interfaces,
-    //                    [&interface_name](
-    //                        const hardware_interface::InterfaceInfo &interface) {
-    //                        return interface.name == interface_name;
-    //                    }) != interfaces.end();
-    //     };
-
-    // for (size_t i = 0; i < info_.joints.size(); ++i) {
-    //     const auto &joint_command_interfaces = info_.joints[i].command_interfaces;
-    //     if (contains_interface(joint_command_interfaces, "position")) {
-    //         command_interfaces.emplace_back(info_.joints[i].name, HW_IF_POSITION,
-    //                                         &joint_interface_data_[i].command_position);
-    //         joint_motor_info_[i].command_pos = true;
-    //     }
-    //     if (contains_interface(joint_command_interfaces, "velocity")) {
-    //         command_interfaces.emplace_back(info_.joints[i].name, HW_IF_VELOCITY,
-    //                                         &joint_interface_data_[i].command_velocity);
-    //         joint_motor_info_[i].command_vel = true;
-    //     }
-    //     if (contains_interface(joint_command_interfaces, "effort")) {
-    //         command_interfaces.emplace_back(info_.joints[i].name, HW_IF_EFFORT,
-    //                                         &joint_interface_data_[i].command_effort);
-    //         joint_motor_info_[i].command_eff = true;
-    //     }
-    // }
-
     return command_interfaces;
 }
 
 hardware_interface::CallbackReturn
 MetaRobotIm1253cManager::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
-
     return CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn MetaRobotIm1253cManager::on_deactivate(
     const rclcpp_lifecycle::State & /*previous_state*/) {
-
     return CallbackReturn::SUCCESS;
 }
 
 hardware_interface::return_type
 MetaRobotIm1253cManager::read(const rclcpp::Time & /*time*/,
                               const rclcpp::Duration & /*period*/) {
-
     return hardware_interface::return_type::OK;
+    for(size_t i = 0; i < info_.sensors.size(); i++){
+        std::vector<uint8_t> sensor_data_raw = device_[i]->get_reg_data(); 
+        sensor_interface_data_[i].state_voltage = static_cast<double>(sensor_data_raw[0])/100.0;
+        sensor_interface_data_[i].state_current = static_cast<double>(sensor_data_raw[1])/100.0;
+        sensor_interface_data_[i].state_power = static_cast<double>(sensor_data_raw[2]); 
+    }
 }
 
 hardware_interface::return_type
