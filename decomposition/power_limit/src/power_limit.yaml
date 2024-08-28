@@ -1,0 +1,17 @@
+power_limit:
+  name:
+    {
+      type: string,
+      default_value: "",
+      description: "",
+      read_only: true,
+      validation: { not_empty<>: null },
+    }
+  motor_joint:
+    {
+      type: string,
+      default_value: "",
+      description: "Specifies the the motor power to measure.",
+      read_only: true,
+      validation: { not_empty<>: null },
+    }
