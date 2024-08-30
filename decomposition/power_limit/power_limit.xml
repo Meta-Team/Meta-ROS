@@ -18,10 +18,10 @@ Source of this file are templates in
 [RosTeamWorkspace](https://github.com/StoglRobotics/ros_team_workspace) repository.
 -->
 
-<library path="power_limit_controller">
-  <class name="PowerLimitController"
-    type="PowerLimitController"
-    base_class_type="controller_interface::ChainableControllerInterface">
+<library path="power_limit">
+  <class name="power_limit/PowerLimitController"
+    type="power_limit::PowerLimitController"
+    base_class_type="controller_interface::ControllerInterface">
     <description>
       The controller to read the power limit from im1253c.
     </description>

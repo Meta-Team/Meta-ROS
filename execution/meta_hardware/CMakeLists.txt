@@ -15,6 +15,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(angles REQUIRED)
 find_package(Boost REQUIRED)
+find_package(serial_driver REQUIRED)
 
 add_library(
   meta_hardware
@@ -46,6 +47,7 @@ ament_target_dependencies(
   rclcpp_lifecycle
   angles
   Boost
+  serial_driver
 )
 # prevent pluginlib from using boost
 target_compile_definitions(meta_hardware PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

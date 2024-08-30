@@ -27,4 +27,11 @@
       BRT encoder network hardware interface.
     </description>
   </class>
+  <class name="meta_hardware/MetaRobotIm1253cManager"
+    type="meta_hardware::MetaRobotIm1253cManager"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      IM1253C manager hardware interface.
+    </description>
+  </class>
 </library>

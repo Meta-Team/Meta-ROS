@@ -6,7 +6,8 @@
 #include <vector>
 
 #include "device_interface/msg/motor_power.hpp"
-#include "controller_interface/chainable_controller_interface.hpp"
+// #include "controller_interface/chainable_controller_interface.hpp"
+#include "controller_interface/controller_interface.hpp"
 #include "rclcpp/duration.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
@@ -25,7 +26,7 @@ enum class control_mode_type : std::uint8_t {
     CHASSIS_FOLLOW_GIMBAL = 2,
 };
 
-class PowerLimitController : public controller_interface::ChainableControllerInterface {
+class PowerLimitController : public controller_interface::ControllerInterface {
   public:
     PowerLimitController();
 
@@ -46,10 +47,8 @@ class PowerLimitController : public controller_interface::ChainableControllerInt
     controller_interface::CallbackReturn
     on_deactivate(const rclcpp_lifecycle::State &previous_state) override;
 
-    controller_interface::return_type update_reference_from_subscribers() override;
-
     controller_interface::return_type
-    update_and_write_commands(const rclcpp::Time &time,
+    update(const rclcpp::Time &time,
                               const rclcpp::Duration &period) override;
 
     // using ControllerStateMsg = control_msgs::msg::JointControllerState;
@@ -74,11 +73,6 @@ class PowerLimitController : public controller_interface::ChainableControllerInt
     rclcpp::Publisher<MotorPowerMsg>::SharedPtr s_publisher_;
     std::unique_ptr<MotorPowerPublisher> state_publisher_;
 
-    // override methods from ChainableControllerInterface
-    std::vector<hardware_interface::CommandInterface>
-    on_export_reference_interfaces() override;
-
-    bool on_set_chained_mode(bool chained_mode) override;
 };
 
 } // namespace power_limit

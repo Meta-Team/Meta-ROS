@@ -45,7 +45,7 @@ def generate_launch_description():
     robot_description_content = Command([
             PathJoinSubstitution([FindExecutable(name='xacro')]),
             ' ',
-            PathJoinSubstitution([FindPackageShare('metav_description'), 'urdf', 'playground', 'im1253c.xacro']),
+            PathJoinSubstitution([FindPackageShare('metav_description'), 'urdf', 'playground', 'power_test.xacro']),
             ' ',
             'is_simulation:=', enable_simulation,
     ])
@@ -69,7 +69,7 @@ def generate_launch_description():
         ),
         launch_arguments=[
             ('world_sdf', world_sdf),
-            ('robot_name', 'dm_motor'),
+            ('robot_name', 'im1253c_test'),
             ('bridge_config_file', bridge_config),
         ],
         condition=IfCondition(enable_simulation)
@@ -94,20 +94,14 @@ def generate_launch_description():
     # List of controllers to be loaded sequentially
     # Order in this list is IMPORTANT
     load_controllers = [
-        load_controller('forward_position_controller'),
+        load_controller('power_limit'),
+        # load_controller('forward_position_controller'),
     ]
 
     motor_tester_node = Node(
         package='motor_tester',
         executable='motor_tester',
         name='motor_tester_node',
-        parameters=[robot_controller_config],
-    )
-
-    dbus_control_node = Node(
-        package='dbus_control',
-        executable='dbus_control_node',
-        name='dbus_control_node',
         parameters=[robot_controller_config],
     )
 
@@ -125,5 +119,5 @@ def generate_launch_description():
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
         motor_tester_node,
-        dbus_control_node,
+        # dbus_control_node,
     ])

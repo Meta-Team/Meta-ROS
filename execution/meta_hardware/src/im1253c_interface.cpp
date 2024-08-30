@@ -1,9 +1,11 @@
 #include <cstdint>
+#include <exception>
 #include <iostream>
 #include <limits>
 #include <memory>
 #include <ranges>
 #include <string>
+#include <system_error>
 #include <vector>
 
 #include "hardware_interface/hardware_info.hpp"
@@ -29,6 +31,7 @@ MetaRobotIm1253cManager::on_init(const hardware_interface::HardwareInfo &info) {
     if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
         return CallbackReturn::ERROR;
     }
+    sensor_interface_data_.resize(info_.sensors.size());
     return CallbackReturn::SUCCESS;
 }
 
@@ -96,13 +99,17 @@ hardware_interface::CallbackReturn MetaRobotIm1253cManager::on_deactivate(
 hardware_interface::return_type
 MetaRobotIm1253cManager::read(const rclcpp::Time & /*time*/,
                               const rclcpp::Duration & /*period*/) {
-    return hardware_interface::return_type::OK;
     for(size_t i = 0; i < info_.sensors.size(); i++){
-        std::vector<uint8_t> sensor_data_raw = device_[i]->get_reg_data(); 
+        std::vector<int> sensor_data_raw = device_[i]->get_reg_data(); 
         sensor_interface_data_[i].state_voltage = static_cast<double>(sensor_data_raw[0])/100.0;
         sensor_interface_data_[i].state_current = static_cast<double>(sensor_data_raw[1])/100.0;
         sensor_interface_data_[i].state_power = static_cast<double>(sensor_data_raw[2]); 
+        // std::cout << "Voltage: " << sensor_interface_data_[i].state_voltage << std::endl;
+        // std::cout << "Current: " << sensor_interface_data_[i].state_current << std::endl;
+        // std::cout << "Power: " << sensor_interface_data_[i].state_power << std::endl;
     }
+
+    return hardware_interface::return_type::OK;
 }
 
 hardware_interface::return_type

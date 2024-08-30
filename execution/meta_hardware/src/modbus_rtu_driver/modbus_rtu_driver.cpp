@@ -1,11 +1,14 @@
 
 #include "meta_hardware/modbus_rtu_driver/modbus_rtu_driver.hpp"
+#include <cstddef>
 #include <cstdint>
+#include <ctime>
 #include <string>
 #include <chrono>
 #include <boost/crc.hpp>
 #include <sys/types.h>
 #include <iostream>
+#include <thread>
 #include <vector>
 
 ModbusRtuDriver::ModbusRtuDriver(std::unordered_map<std::string, std::string> serial_params): 
@@ -26,6 +29,7 @@ ModbusRtuDriver::ModbusRtuDriver(std::unordered_map<std::string, std::string> se
             receive_thread_ = std::make_unique<std::jthread>([this](std::stop_token s) { rx_tx_loop(s); });
         }
     } catch (const std::exception & ex) {
+        std::cerr << "Error creating serial port: " << device_name_ << " - " << ex.what() << std::endl;
         throw ex;
     }
 
@@ -68,14 +72,14 @@ void ModbusRtuDriver::read_params(std::unordered_map<std::string, std::string> s
         throw std::runtime_error("Unknown stop bits(Please Use Floating Point Notation): " + std::to_string(sb));
     }
 
-    std::string device_name = serial_params.at("device_name");
+    device_name_ = serial_params.at("device_name");
 };
 
 
 auto ModbusRtuDriver::awake_time()
 {
     using std::chrono::operator""ms;
-    return std::chrono::steady_clock::now() + 2ms;
+    return std::chrono::steady_clock::now() + 10ms;
 }
 
 void ModbusRtuDriver::set_command(int addr, int func, int reg, int len){
@@ -85,69 +89,55 @@ void ModbusRtuDriver::set_command(int addr, int func, int reg, int len){
     command_[3] = static_cast<uint8_t>(reg & 0xFF);
     command_[4] = static_cast<uint8_t>(len >> 8);
     command_[5] = static_cast<uint8_t>(len & 0xFF);
-    boost::crc_16_type crc_16;
+    boost::crc_optimal<16, 0x8005, 0xFFFF, 0, true, true> crc_16;
     crc_16.process_bytes(command_.data(), 6);
     int crc = crc_16.checksum();
     command_[6] = static_cast<uint8_t>(crc & 0xFF);
     command_[7] = static_cast<uint8_t>(crc >> 8);
+    reg_data_.resize(len);
     
 }
 
 void ModbusRtuDriver::rx_tx_loop(std::stop_token stop_token){
-    std::vector<uint8_t> address(1);
-    std::vector<uint8_t> response(2);
-    std::vector<uint8_t> data;
-    std::vector<uint8_t> response_crc(2);
-    std::vector<uint8_t> response_without_crc;
-    while (!stop_token.stop_requested()) {
-        std::this_thread::sleep_until(awake_time());
+    int reg_num = static_cast<int>(command_[4] << 8 | command_[5]);
+    int response_size = reg_num * 2 + 5;
+    
+    std::cout << "Reponse Size:" << response_size << std::endl;
 
+    while (!stop_token.stop_requested()) {
+        auto start_time = std::chrono::steady_clock::now(); 
+
+        // std::cout << "Sending Command..." << std::endl;
         // Send Command with blocking
         serial_driver_->port()->send(command_);
-        // Receive Response with blocking
+        
 
-        response_without_crc.clear();
-        serial_driver_->port()->receive(address);
-        response_without_crc.emplace_back(address[0]);
-        if( address[0] == command_[0]){
-            serial_driver_->port()->receive(address);
-            serial_driver_->port()->receive(response);
-            uint8_t func_code = response[0];
-            if(func_code != command_[1]){
-                std::cout << " Function Code Mismatch. Expected: " 
-                << command_[1] << " Received: " << func_code << std::endl;
-                continue;
-            }else if(func_code == 0x03){
-                uint8_t byte_count = response[1];
-                data.resize(byte_count);
+        using std::chrono::operator""ms;
+        std::this_thread::sleep_for(100ms);
 
-                serial_driver_->port()->receive(data);
+        std::vector<uint8_t> response(response_size);
+        serial_driver_->port()->receive(response);
 
-                response_without_crc.emplace_back(func_code);
-                response_without_crc.emplace_back(byte_count);
-                for(uint8_t i = 0; i < data.size(); i++){
-                    response_without_crc.emplace_back(data[i]);
-                }
-
-                boost::crc_16_type crc_16;
-                crc_16.process_bytes(response_without_crc.data(), response_without_crc.size());
-                int calc_crc = crc_16.checksum();
-                serial_driver_->port()->receive(response_crc);
-                if((static_cast<int>(response_crc[0]) + (static_cast<int>(response_crc[1]) << 8))== calc_crc){
-                    reg_data_ = data;
-                }else{
-                    std::cout << " CRC Mismatch. " << std::endl;
-                }
-            }else if(func_code == 0x10){
-                std::vector<uint8_t> write_response(6);
-                // get write response
-                serial_driver_->port()->receive(write_response);
-                // TODO: Check if the response is the same as the command
+        if(response[0] == command_[0] && response[1] == command_[1] && response[2] == (uint8_t)reg_num*2){
+            // TODO: Only Implementing Reading Mode; Wrting Mode Not Implemented.
+            for(int i = 0; i < reg_num; i++){
+                reg_data_[i] = static_cast<int>(response[3 + i * 2] << 8 | response[4 + i * 2]);
             }
-
+            boost::crc_optimal<16, 0x8005, 0xFFFF, 0, true, true> crc_16;
+            crc_16.process_bytes(response.data(), response_size - 2);
+            int crc = crc_16.checksum();
+            if((crc & 0xFF) != response[response_size - 2] || (crc >> 8) != response[response_size - 1]){
+                std::cout << "CRC Checked Failure. " << std::endl;
+            }
         }else{
-            std::cout << " Device Address Not Found. Device Address: " << address[0] << std::endl;
+            std::cout << "Feedback Format Error." << std::endl;
         }
+        // for(size_t i = 0; i < response.size(); i++){
+        //     std::cout << std::hex << static_cast<int>(response[i]) << " ";
+        // }
+        // std::cout << std::endl;
+
+        std::this_thread::sleep_until(start_time + 250ms);
     }
 }
 

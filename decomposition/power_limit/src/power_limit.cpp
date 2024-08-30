@@ -1,5 +1,6 @@
 #include "power_limit/power_limit.hpp"
 
+#include <controller_interface/controller_interface.hpp>
 #include <limits>
 #include <memory>
 #include <string>
@@ -12,7 +13,7 @@
 namespace power_limit {
 
 PowerLimitController::PowerLimitController()
-    : controller_interface::ChainableControllerInterface() {}
+    : controller_interface::ControllerInterface() {}
 
 controller_interface::CallbackReturn PowerLimitController::on_init() {
 
@@ -65,20 +66,9 @@ PowerLimitController::state_interface_configuration() const {
     state_interfaces_config.names.push_back(params_.name + "/voltage");
     state_interfaces_config.names.push_back(params_.name + "/current");
     state_interfaces_config.names.push_back(params_.name + "/power");
-    state_interfaces_config.names.push_back(params_.motor_joint + "/" + hardware_interface::HW_IF_VELOCITY);
-    state_interfaces_config.names.push_back(params_.motor_joint + "/" + hardware_interface::HW_IF_EFFORT);
+    // state_interfaces_config.names.push_back(params_.motor_joint + "/" + hardware_interface::HW_IF_VELOCITY);
+    // state_interfaces_config.names.push_back(params_.motor_joint + "/" + hardware_interface::HW_IF_EFFORT);
     return state_interfaces_config;
-}
-
-std::vector<hardware_interface::CommandInterface>
-PowerLimitController::on_export_reference_interfaces() {
-    std::vector<hardware_interface::CommandInterface> reference_interfaces;
-    return reference_interfaces;
-}
-
-bool PowerLimitController::on_set_chained_mode(bool chained_mode) {
-    // Always accept switch to/from chained mode
-    return true || chained_mode;
 }
 
 controller_interface::CallbackReturn
@@ -93,27 +83,22 @@ PowerLimitController::on_deactivate(const rclcpp_lifecycle::State & /*previous_s
 }
 
 controller_interface::return_type
-PowerLimitController::update_reference_from_subscribers() {
-    return controller_interface::return_type::OK;
-}
-
-controller_interface::return_type
-PowerLimitController::update_and_write_commands(const rclcpp::Time &/*time*/,
+PowerLimitController::update(const rclcpp::Time &/*time*/,
                                                  const rclcpp::Duration &/*period*/) {
     if (param_listener_->is_old(params_)) {
         params_ = param_listener_->get_params();
     }
-    MotorPowerMsg msg;
 
     if (state_publisher_ && state_publisher_->trylock()) {
         state_publisher_->msg_.voltage = state_interfaces_[0].get_value();
         state_publisher_->msg_.current = state_interfaces_[1].get_value();
         state_publisher_->msg_.power = state_interfaces_[2].get_value();
-        state_publisher_->msg_.motor_velocity = state_interfaces_[3].get_value();
-        state_publisher_->msg_.motor_effort = state_interfaces_[4].get_value();
+        // state_publisher_->msg_.motor_velocity = state_interfaces_[3].get_value();
+        // state_publisher_->msg_.motor_effort = state_interfaces_[4].get_value();
+        state_publisher_->msg_.motor_velocity = 0.0;
+        state_publisher_->msg_.motor_effort = 0.0;
         state_publisher_->unlockAndPublish();
     }
-
 
     return controller_interface::return_type::OK;
 }
@@ -125,4 +110,4 @@ PowerLimitController::update_and_write_commands(const rclcpp::Time &/*time*/,
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(power_limit::PowerLimitController,
-                       controller_interface::ChainableControllerInterface)
+                       controller_interface::ControllerInterface)

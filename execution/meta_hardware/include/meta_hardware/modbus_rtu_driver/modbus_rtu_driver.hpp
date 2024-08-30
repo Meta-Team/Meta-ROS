@@ -18,7 +18,7 @@ public:
     ~ModbusRtuDriver();
 
     void set_command(int addr, int func, int reg, int len);
-    std::vector<uint8_t> get_reg_data(){return reg_data_;}; 
+    std::vector<int> get_reg_data(){return reg_data_;}; 
 
 private:
     std::unique_ptr<IoContext> owned_ctx_;
@@ -33,7 +33,7 @@ private:
     drivers::serial_driver::StopBits stop_bits_;
 
     std::vector<uint8_t> command_;
-    std::vector<uint8_t> reg_data_;
+    std::vector<int> reg_data_;
     
     void rx_tx_loop(std::stop_token stop_token);
     auto awake_time();

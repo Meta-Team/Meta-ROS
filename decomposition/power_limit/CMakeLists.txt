@@ -27,7 +27,7 @@ target_link_libraries(power_limit
   power_limit_parameters)
 
 pluginlib_export_plugin_description_file(
-  controller_interface power_limit_controller.xml)
+  controller_interface power_limit.xml)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -41,4 +41,4 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_package()
+ament_auto_package()
