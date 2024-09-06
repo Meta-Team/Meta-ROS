@@ -3,6 +3,8 @@
 
 #include <hardware_interface/handle.hpp>
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
+#include <memory>
+#include <rclcpp/subscription.hpp>
 
 #include "control_toolbox/pid_ros.hpp"
 #include "controller_interface/chainable_controller_interface.hpp"
@@ -14,16 +16,18 @@
 
 
 #include "control_msgs/msg/joint_controller_state.hpp"
+#include "control_msgs/msg/multi_dof_state_stamped.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "behavior_interface/msg/shoot.hpp"
-#include <memory>
-#include <rclcpp/subscription.hpp>
+#include "meta_shoot_controller_parameters.hpp"
 
-namespace meta_shoot_controller {
+
+
+namespace shoot_controller {
     class ShootController : public controller_interface::ChainableControllerInterface {
     public:
-        ShootController();
+        ShootController()=default;
 
         controller_interface::CallbackReturn 
         on_init() override;
@@ -48,25 +52,45 @@ namespace meta_shoot_controller {
         controller_interface::return_type
         update_and_write_commands(const rclcpp::Time &time,
                                 const rclcpp::Duration &period) override;
-    
+
     protected:
         // override methods from ChainableControllerInterface
         std::vector<hardware_interface::CommandInterface>
-        on_export_reference_interfaces() override;
+            on_export_reference_interfaces() override;
         bool on_set_chained_mode(bool chained_mode) override;
+        
 
     private:
+        using ControllerReferenceMsg = behavior_interface::msg::Shoot;
+        using ControllerStateMsg = control_msgs::msg::MultiDOFStateStamped;
+        using ControllerStatePublisher = realtime_tools::RealtimePublisher<ControllerStateMsg>;
+
+        double friction_wheel_speed_;
+        bool friction_wheel_on_;
+        bool bullet_loader_on_;
+
         std::shared_ptr<control_toolbox::PidROS> fric1_vel_pid_;
         std::shared_ptr<control_toolbox::PidROS> fric2_vel_pid_;
         std::shared_ptr<control_toolbox::PidROS> load_vel_pid_;
+        
+        std::shared_ptr<shoot_controller::ParamListener> param_listener_;
+        shoot_controller::Params params_;
 
-        using ControllerReferenceMsg = behavior_interface::msg::Shoot;
+        rclcpp::Publisher<ControllerStateMsg>::SharedPtr s_publisher_;
+        std::unique_ptr<ControllerStatePublisher> state_publisher_;
 
+        // Command subscribers
         rclcpp::Subscription<ControllerReferenceMsg>::SharedPtr ref_subscriber_;
-        realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerReferenceMsg>> ref_buf_;   
+        realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerReferenceMsg>> input_ref_;   
 
         void reference_callback(const std::shared_ptr<ControllerReferenceMsg> msg);
         void feedback_callback(const std::shared_ptr<hardware_interface::StateInterface> motor_feedback);
+
+        void reset_controller_reference_msg(const std::shared_ptr<ControllerReferenceMsg> &msg,
+        const std::shared_ptr<rclcpp_lifecycle::LifecycleNode> & node);
+
+        
+
     };
 }
 #endif // SHOOT_CONTROLLER__SHOOT_CONTROLLER_HPP_ 
