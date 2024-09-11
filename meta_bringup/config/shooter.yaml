@@ -1,0 +1,19 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 250 # Hz
+
+    shoot_controller:
+      type: shoot_controller/ShootController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+shoot_controller:
+  ros__parameters:
+    friction_wheel:
+      velocity: 0.1
+      inverse: false
+
+    bullet_loader:
+      velocity: 0.1
+

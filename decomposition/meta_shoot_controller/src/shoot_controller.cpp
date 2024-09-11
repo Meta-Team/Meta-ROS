@@ -247,3 +247,8 @@ namespace shoot_controller {
         input_ref_.writeFromNonRT(msg);
     }   
 }
+
+#include "pluginlib/class_list_macros.hpp"
+
+PLUGINLIB_EXPORT_CLASS(shoot_controller::ShootController,
+                       controller_interface::ChainableControllerInterface)
