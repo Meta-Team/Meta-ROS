@@ -28,18 +28,18 @@ namespace shoot_controller {
     }
 
     controller_interface::CallbackReturn 
-    ShootController::on_configure(const rclcpp_lifecycle::State &previous_state){
+    ShootController::on_configure(const rclcpp_lifecycle::State &/*previous_state*/){
         params_ = param_listener_->get_params();
         friction_wheel_speed_ = params_.friction_wheel.velocity;
 
         fric1_vel_pid_ = std::make_shared<control_toolbox::PidROS>(
-            get_node(), "gains.friction_wheel1_vel", true
+            get_node(), "gains.friction_wheel1_joint_vel2eff", true
         );
         fric2_vel_pid_ = std::make_shared<control_toolbox::PidROS>(
-            get_node(), "gains.friction_wheel2_vel", true
+            get_node(), "gains.friction_wheel2_joint_vel2eff", true
         );
         load_vel_pid_ = std::make_shared<control_toolbox::PidROS>(
-            get_node(), "gains.load_vel", true
+            get_node(), "gains.bullet_loader_joint_vel2eff", true
         );
 
         if (!fric1_vel_pid_->initPid()) {
@@ -93,7 +93,7 @@ namespace shoot_controller {
     }
 
     controller_interface::CallbackReturn 
-    ShootController::on_activate(const rclcpp_lifecycle::State &previous_state){
+    ShootController::on_activate(const rclcpp_lifecycle::State &/*previous_state*/){
         reset_controller_reference_msg(*(input_ref_.readFromRT()), get_node());
         
         reference_interfaces_.assign(reference_interfaces_.size(), NaN);
@@ -101,7 +101,7 @@ namespace shoot_controller {
     }
 
     controller_interface::CallbackReturn
-    ShootController::on_deactivate(const rclcpp_lifecycle::State &previous_state){
+    ShootController::on_deactivate(const rclcpp_lifecycle::State &/*previous_state*/){
         return controller_interface::CallbackReturn::SUCCESS;
     }
 
