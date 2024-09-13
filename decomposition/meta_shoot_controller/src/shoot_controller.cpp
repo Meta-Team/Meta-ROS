@@ -65,6 +65,7 @@ namespace shoot_controller {
             "~/reference", subscribers_qos,
             std::bind(&ShootController::reference_callback, this, std::placeholders::_1));
 
+        
         auto msg = std::make_shared<ControllerReferenceMsg>();
         reset_controller_reference_msg(msg, get_node());
         input_ref_.writeFromNonRT(msg);
@@ -112,9 +113,9 @@ namespace shoot_controller {
         controller_interface::interface_configuration_type::INDIVIDUAL;
 
         command_interfaces_config.names.reserve(3);
-        command_interfaces_config.names.push_back("friction_wheel1/" + std::string(HW_IF_EFFORT));
-        command_interfaces_config.names.push_back("friction_wheel2/" + std::string(HW_IF_EFFORT));
-        command_interfaces_config.names.push_back( "bullet_loader" + std::string(HW_IF_EFFORT));
+        command_interfaces_config.names.push_back("friction_wheel1_joint/" + std::string(HW_IF_EFFORT));
+        command_interfaces_config.names.push_back("friction_wheel2_joint/" + std::string(HW_IF_EFFORT));
+        command_interfaces_config.names.push_back( "bullet_loader_joint/" + std::string(HW_IF_EFFORT));
 
         return command_interfaces_config;
     }
@@ -128,9 +129,9 @@ namespace shoot_controller {
 
         // Joint position state of yaw gimbal is required
         state_interfaces_config.names.reserve(3);
-        state_interfaces_config.names.push_back("friction_wheel1/" + std::string(HW_IF_VELOCITY));
-        state_interfaces_config.names.push_back("friction_wheel2/" + std::string(HW_IF_VELOCITY));
-        state_interfaces_config.names.push_back("bullet_loader/" + std::string(HW_IF_VELOCITY));
+        state_interfaces_config.names.push_back("friction_wheel1_joint/" + std::string(HW_IF_VELOCITY));
+        state_interfaces_config.names.push_back("friction_wheel2_joint/" + std::string(HW_IF_VELOCITY));
+        state_interfaces_config.names.push_back("bullet_loader_joint/" + std::string(HW_IF_VELOCITY));
 
     return state_interfaces_config;
     }
@@ -140,7 +141,7 @@ namespace shoot_controller {
         const std::shared_ptr<rclcpp_lifecycle::LifecycleNode> & /*node*/) {
         msg->fric_state = false;
         msg->fric_state = false;
-        msg->feed_speed = 0.0;
+        msg->feed_speed = NaN;
     }
 
     controller_interface::return_type ShootController::update_reference_from_subscribers(){
@@ -171,9 +172,10 @@ namespace shoot_controller {
                                 const rclcpp::Duration &  period ){
 
         double fric1_vel_ref = NaN, fric2_vel_ref = NaN, load_vel_ref = NaN;
-        double fric1_vel_fb, fric2_vel_fb, load_vel_fb;
+        double fric1_vel_fb = NaN, fric2_vel_fb = NaN, load_vel_fb = NaN;
         double fric1_vel_err = NaN, fric2_vel_err = NaN, load_vel_err = NaN;
         double fric1_eff_cmd = NaN, fric2_eff_cmd = NaN, load_eff_cmd = NaN;
+
 
         fric1_vel_ref = reference_interfaces_[0];
         fric2_vel_ref = reference_interfaces_[0];
@@ -183,42 +185,46 @@ namespace shoot_controller {
         fric2_vel_fb = state_interfaces_[1].get_value();
         load_vel_fb = state_interfaces_[2].get_value();
 
-        fric1_vel_err = fric1_vel_ref - fric1_vel_fb;
-        fric1_vel_err = fric2_vel_ref - fric2_vel_fb;
-        load_vel_err = load_vel_ref - load_vel_fb;
+        if(!std::isnan(fric1_vel_ref) && !std::isnan(fric1_vel_fb) &&
+            !std::isnan(fric2_vel_ref) && !std::isnan(fric2_vel_fb) &&
+            !std::isnan(load_vel_ref) && !std::isnan(load_vel_fb)){
+                
+            fric1_vel_err = fric1_vel_ref - fric1_vel_fb;
+            fric2_vel_err = fric2_vel_ref - fric2_vel_fb;
+            load_vel_err = load_vel_ref - load_vel_fb;
 
-        fric1_eff_cmd = fric1_vel_pid_->computeCommand(fric1_vel_err, period);
-        fric2_eff_cmd = fric2_vel_pid_->computeCommand(fric2_vel_err, period);
-        load_eff_cmd = load_vel_pid_->computeCommand(load_vel_err, period);
+            fric1_eff_cmd = fric1_vel_pid_->computeCommand(fric1_vel_err, period);
+            fric2_eff_cmd = fric2_vel_pid_->computeCommand(fric2_vel_err, period);
+            load_eff_cmd = load_vel_pid_->computeCommand(load_vel_err, period);
 
-        command_interfaces_[0].set_value(fric1_vel_pid_->computeCommand(fric1_vel_err, period));
-        command_interfaces_[1].set_value(fric2_vel_pid_->computeCommand(fric2_vel_err, period));
-        command_interfaces_[2].set_value(load_vel_pid_->computeCommand(load_vel_err, period));
+            command_interfaces_[0].set_value(fric1_eff_cmd);
+            command_interfaces_[1].set_value(fric2_eff_cmd);
+            command_interfaces_[2].set_value(load_eff_cmd);
+        }
+
+        
         
         // Publish state
     if (state_publisher_ && state_publisher_->trylock()) {
         state_publisher_->msg_.header.stamp = time;
-        if (friction_wheel_on_) {
-            state_publisher_->msg_.dof_states[0].reference = fric1_vel_ref;
-            state_publisher_->msg_.dof_states[0].feedback = fric1_vel_fb;
-            state_publisher_->msg_.dof_states[0].error = fric1_vel_err;
-            state_publisher_->msg_.dof_states[0].time_step = period.seconds();
-            state_publisher_->msg_.dof_states[0].output = fric1_eff_cmd;
 
-            state_publisher_->msg_.dof_states[1].reference = fric2_vel_ref;
-            state_publisher_->msg_.dof_states[1].feedback = fric2_vel_fb;
-            state_publisher_->msg_.dof_states[1].error = fric2_vel_err;
-            state_publisher_->msg_.dof_states[1].time_step = period.seconds();
-            state_publisher_->msg_.dof_states[1].output = fric2_eff_cmd;
-        }
+        state_publisher_->msg_.dof_states[0].reference = fric1_vel_ref;
+        state_publisher_->msg_.dof_states[0].feedback = fric1_vel_fb;
+        state_publisher_->msg_.dof_states[0].error = fric1_vel_err;
+        state_publisher_->msg_.dof_states[0].time_step = period.seconds();
+        state_publisher_->msg_.dof_states[0].output = fric1_eff_cmd;
 
-        if (bullet_loader_on_) {
-            state_publisher_->msg_.dof_states[2].reference = load_vel_ref;
-            state_publisher_->msg_.dof_states[2].feedback = load_vel_fb;
-            state_publisher_->msg_.dof_states[2].error = load_vel_err;
-            state_publisher_->msg_.dof_states[2].time_step = period.seconds();
-            state_publisher_->msg_.dof_states[2].output = load_eff_cmd;
-        }
+        state_publisher_->msg_.dof_states[1].reference = fric2_vel_ref;
+        state_publisher_->msg_.dof_states[1].feedback = fric2_vel_fb;
+        state_publisher_->msg_.dof_states[1].error = fric2_vel_err;
+        state_publisher_->msg_.dof_states[1].time_step = period.seconds();
+        state_publisher_->msg_.dof_states[1].output = fric2_eff_cmd;
+        
+        state_publisher_->msg_.dof_states[2].reference = load_vel_ref;
+        state_publisher_->msg_.dof_states[2].feedback = load_vel_fb;
+        state_publisher_->msg_.dof_states[2].error = load_vel_err;
+        state_publisher_->msg_.dof_states[2].time_step = period.seconds();
+        state_publisher_->msg_.dof_states[2].output = load_eff_cmd;
 
         state_publisher_->unlockAndPublish();
     }
@@ -227,7 +233,7 @@ namespace shoot_controller {
 
     std::vector<hardware_interface::CommandInterface> 
     ShootController::on_export_reference_interfaces() {
-        reference_interfaces_.resize(3, NaN);
+        reference_interfaces_.resize(2, NaN);
 
         std::vector<hardware_interface::CommandInterface> reference_interfaces;
         reference_interfaces.reserve(reference_interfaces_.size());
@@ -246,6 +252,10 @@ namespace shoot_controller {
         const std::shared_ptr<ControllerReferenceMsg> msg) {
         input_ref_.writeFromNonRT(msg);
     }   
+
+    bool ShootController::on_set_chained_mode(bool chained_mode){
+        return true || chained_mode;
+    }
 }
 
 #include "pluginlib/class_list_macros.hpp"

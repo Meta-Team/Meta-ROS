@@ -18,8 +18,8 @@ Source of this file are templates in
 [RosTeamWorkspace](https://github.com/StoglRobotics/ros_team_workspace) repository.
 -->
 
-<library path="shoot_controller">
-  <class name="shoot_controller/ShootController"
+<library path="meta_shoot_controller">
+  <class name="meta_shoot_controller/ShootController"
     type="shoot_controller::ShootController"
     base_class_type="controller_interface::ChainableControllerInterface">
     <description>

@@ -34,7 +34,7 @@
                 <param name="can_network_name">can0</param>
             </hardware>
         </xacro:unless>
-        <joint name="fric1_joint">
+        <joint name="friction_wheel1_joint">
             <command_interface name="effort" />
             <state_interface name="position" />
             <state_interface name="velocity" />
@@ -44,7 +44,7 @@
             <param name="mechanical_reduction">1.0</param>
             <param name="offset">0.0</param>
         </joint>
-        <joint name="fric2_joint">
+        <joint name="friction_wheel2_joint">
             <command_interface name="effort" />
             <state_interface name="position" />
             <state_interface name="velocity" />

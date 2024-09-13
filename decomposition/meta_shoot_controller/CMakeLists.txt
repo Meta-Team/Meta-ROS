@@ -20,6 +20,9 @@ ament_auto_add_library(
   src/shoot_controller.cpp
 )
 
+pluginlib_export_plugin_description_file(
+  controller_interface shoot_controller.xml)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
