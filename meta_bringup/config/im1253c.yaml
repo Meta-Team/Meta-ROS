@@ -1,0 +1,65 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 250 # Hz
+
+    power_limit:
+      type: power_limit/PowerLimitController
+      
+    # forward_position_controller:
+    #   type: forward_command_controller/ForwardCommandController
+
+    # motor_pos2vel_pid_controller:
+    #   type: pid_controller/PidController
+
+    # motor_vel2eff_pid_controller:
+    #   type: pid_controller/PidController
+
+    # joint_state_broadcaster:
+    #   type: joint_state_broadcaster/JointStateBroadcaster
+
+power_limit:
+  ros__parameters:
+    name: im1253c
+    motor_joint: motor_joint
+
+# forward_position_controller:
+#   ros__parameters:
+#     joints:
+#       - motor_pos2vel_pid_controller/motor_joint
+#     interface_name: position
+
+# motor_pos2vel_pid_controller:
+#   ros__parameters:
+#     dof_names:
+#       - motor_vel2eff_pid_controller/motor_joint
+
+#     reference_and_state_dof_names:
+#       - motor_joint
+
+#     command_interface: velocity
+
+#     reference_and_state_interfaces: ["position"]
+
+#     gains:
+#       motor_vel2eff_pid_controller/motor_joint:
+#         { p: 10.0, i: 0.0, d: 0.0, angle_wraparound: true }
+
+# motor_vel2eff_pid_controller:
+#   ros__parameters:
+#     dof_names:
+#       - motor_joint
+
+#     command_interface: effort
+
+#     reference_and_state_interfaces: ["velocity"]
+
+#     gains:
+#       motor_joint:
+#         {
+#           p: 1.0e-2,
+#           i: 3.0e-1,
+#           d: 0.0,
+#           i_clamp_max: 1.0,
+#           i_clamp_min: -1.0,
+#           antiwindup: true,
+#         }

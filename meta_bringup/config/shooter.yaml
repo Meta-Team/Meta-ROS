@@ -1,0 +1,27 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 250 # Hz
+
+    shoot_controller:
+      type: meta_shoot_controller/ShootController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+shoot_controller:
+  ros__parameters:
+    friction_wheel:
+      velocity: 50.0
+      inverse: false
+
+    bullet_loader:
+      velocity: 0.1
+
+    gains:
+      friction_wheel1_joint_vel2eff:
+        { p: 6.0e-3, i: 0.0, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+      friction_wheel2_joint_vel2eff:
+        { p: 0.0e-3, i: 0.0, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+      bullet_loader_joint_vel2eff:
+        { p: 2.0e-3, i: 0.0, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+

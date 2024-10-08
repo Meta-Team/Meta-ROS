@@ -1,0 +1,23 @@
+shoot_controller:
+  friction_wheel:
+    velocity:
+      {
+        type: double,
+        default_value: 0.0,
+        description: "Specifies the velocity of the friction wheel set.",
+      }
+    inverse:
+      {
+        type: bool,
+        default_value: false,
+        description: "Specifies whether the friction wheel set is inverse.",
+      }
+  bullet_loader:
+    velocity:
+      {
+        type: double,
+        default_value: 0.0,
+        description: "Specifies the velocity of the friction wheel.",
+      }
+  
+

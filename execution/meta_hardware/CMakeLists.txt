@@ -14,6 +14,8 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(angles REQUIRED)
+find_package(Boost REQUIRED)
+find_package(serial_driver REQUIRED)
 
 add_library(
   meta_hardware
@@ -24,9 +26,14 @@ add_library(
   src/mi_motor_interface.cpp
   src/motor_network/mi_motor_network.cpp
   src/motor_driver/mi_motor_driver.cpp
+  src/dm_motor_interface.cpp
+  src/motor_network/dm_motor_network.cpp
+  src/motor_driver/dm_motor_driver.cpp
   src/brt_encoder_interface.cpp
   src/motor_network/brt_encoder_network.cpp
   src/motor_driver/brt_encoder_driver.cpp
+  src/im1253c_interface.cpp
+  src/modbus_rtu_driver/modbus_rtu_driver.cpp
 )
 target_include_directories(
   meta_hardware
@@ -39,6 +46,8 @@ ament_target_dependencies(
   rclcpp
   rclcpp_lifecycle
   angles
+  Boost
+  serial_driver
 )
 # prevent pluginlib from using boost
 target_compile_definitions(meta_hardware PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
