@@ -113,9 +113,9 @@ namespace shoot_controller {
         controller_interface::interface_configuration_type::INDIVIDUAL;
 
         command_interfaces_config.names.reserve(3);
-        command_interfaces_config.names.push_back("friction_wheel1_joint/" + std::string(HW_IF_EFFORT));
-        command_interfaces_config.names.push_back("friction_wheel2_joint/" + std::string(HW_IF_EFFORT));
-        command_interfaces_config.names.push_back( "bullet_loader_joint/" + std::string(HW_IF_EFFORT));
+        command_interfaces_config.names.push_back("fric1_shooter_joint/" + std::string(HW_IF_EFFORT));
+        command_interfaces_config.names.push_back("fric2_shooter_joint/" + std::string(HW_IF_EFFORT));
+        command_interfaces_config.names.push_back( "loader_shooter_joint/" + std::string(HW_IF_EFFORT));
 
         return command_interfaces_config;
     }
@@ -129,9 +129,9 @@ namespace shoot_controller {
 
         // Joint position state of yaw gimbal is required
         state_interfaces_config.names.reserve(3);
-        state_interfaces_config.names.push_back("friction_wheel1_joint/" + std::string(HW_IF_VELOCITY));
-        state_interfaces_config.names.push_back("friction_wheel2_joint/" + std::string(HW_IF_VELOCITY));
-        state_interfaces_config.names.push_back("bullet_loader_joint/" + std::string(HW_IF_VELOCITY));
+        state_interfaces_config.names.push_back("fric1_shooter_joint/" + std::string(HW_IF_VELOCITY));
+        state_interfaces_config.names.push_back("fric2_shooter_joint/" + std::string(HW_IF_VELOCITY));
+        state_interfaces_config.names.push_back("loader_shooter_joint/" + std::string(HW_IF_VELOCITY));
 
     return state_interfaces_config;
     }

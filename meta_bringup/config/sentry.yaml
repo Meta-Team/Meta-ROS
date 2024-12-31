@@ -14,6 +14,9 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
+    shoot_controller:
+      type: meta_shoot_controller/ShootController
+
 omni_chassis_controller:
   ros__parameters:
     omni_wheel_joints:
@@ -84,6 +87,23 @@ gimbal_controller:
       pitch_gimbal_joint_vel2eff:
         { p: 1.0e-1, i: 2.0e-2, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
+shoot_controller:
+  ros__parameters:
+    friction_wheel:
+      velocity: -500.0
+      inverse: false
+
+    bullet_loader:
+      velocity: 0.1
+
+    gains:
+      friction_wheel1_joint_vel2eff:
+        { p: 6.0e-3, i: 0.0, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+      friction_wheel2_joint_vel2eff:
+        { p: 6.0e-3, i: 0.0, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+      bullet_loader_joint_vel2eff:
+        { p: 1.0e-1, i: 5.0e-1, d: 0.0e-2, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+
 dbus_control:
   ros__parameters:
     dbus_port: "dbus_control"
@@ -92,6 +112,7 @@ dbus_vehicle:
   ros__parameters:
     enable_ros2_control: true
     aim_topic: "/gimbal_controller/reference"
+    shoot_topic: "/shoot_controller/reference"
     control:
       trans_vel: 2.5 # m/s
       rot_vel: 3.0 # rad/s

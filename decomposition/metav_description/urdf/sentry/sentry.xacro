@@ -24,6 +24,9 @@
     <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.gimbal.xacro" />
     <xacro:gimbal />
 
+    <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.shooter.xacro" />
+    <xacro:shooter />
+
     <xacro:include filename="$(find metav_description)/urdf/common/sensor_imu.xacro" />
     <xacro:sensor_imu connected_to="pitch_gimbal" imu_name="gimbal_imu" xyz="0 0 0.1"
         rpy="0 0 0" />
@@ -46,6 +49,12 @@
                 motor_id="5" />
             <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="-1.0" offset="0.0"
                 motor_id="6" />
+            <xacro:shooter_transmission prefix="fric1" mechanical_reduction="1.0" offset="0.25"
+                motor_id="5" />
+            <xacro:shooter_transmission prefix="fric2" mechanical_reduction="-1.0" offset="0.0"
+                motor_id="6" />
+            <xacro:shooter_transmission prefix="loader" mechanical_reduction="36.0" offset="0.0"
+                motor_id="7" />
         </ros2_control>
     </xacro:unless>
 
