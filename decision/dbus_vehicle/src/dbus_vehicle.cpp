@@ -16,6 +16,7 @@ public:
         double aim_sens = this->declare_parameter("control.stick_sens", 1.57);
         double deadzone = this->declare_parameter("control.deadzone", 0.05);
         std::string aim_topic = this->declare_parameter("aim_topic", "aim");
+        std::string shoot_topic = this->declare_parameter("shoot_topic", "shoot");
         RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, aim_sens: %f, deadzone: %f",
             max_vel, max_omega, aim_sens, deadzone);
         enable_ros2_control_ = this->declare_parameter("enable_ros2_control", false);
@@ -29,7 +30,7 @@ public:
         } else {
             move_pub_ = this->create_publisher<behavior_interface::msg::Move>("move", 10);
         }
-        shoot_pub_ = this->create_publisher<behavior_interface::msg::Shoot>("shoot", 10);
+        shoot_pub_ = this->create_publisher<behavior_interface::msg::Shoot>(shoot_topic, 10);
         aim_pub_ = this->create_publisher<behavior_interface::msg::Aim>(aim_topic, 10);
         dbus_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
             "dbus_control", 10,

@@ -16,10 +16,9 @@ using hardware_interface::HW_IF_VELOCITY;
 
 MetaRobotDjiMotorNetwork::~MetaRobotDjiMotorNetwork() = default;
 
-hardware_interface::CallbackReturn MetaRobotDjiMotorNetwork::on_init(
-    const hardware_interface::HardwareInfo &info) {
-    if (hardware_interface::SystemInterface::on_init(info) !=
-        CallbackReturn::SUCCESS) {
+hardware_interface::CallbackReturn
+MetaRobotDjiMotorNetwork::on_init(const hardware_interface::HardwareInfo &info) {
+    if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
         return CallbackReturn::ERROR;
     }
 
@@ -44,10 +43,8 @@ hardware_interface::CallbackReturn MetaRobotDjiMotorNetwork::on_configure(
         joint_motors_info_[i].offset = std::stod(joint_params.at("offset"));
     }
 
-    std::string can_interface =
-        info_.hardware_parameters.at("can_network_name");
-    dji_motor_network_ =
-        std::make_unique<DjiMotorNetwork>(can_interface, motor_params);
+    std::string can_interface = info_.hardware_parameters.at("can_network_name");
+    dji_motor_network_ = std::make_unique<DjiMotorNetwork>(can_interface, motor_params);
 
     return CallbackReturn::SUCCESS;
 }
@@ -60,8 +57,8 @@ MetaRobotDjiMotorNetwork::export_state_interfaces() {
     auto contains_interface =
         [](const std::vector<hardware_interface::InterfaceInfo> &interfaces,
            const std::string &interface_name) {
-            return std::find_if(
-                       interfaces.begin(), interfaces.end(),
+            return std::ranges::find_if(
+                       interfaces,
                        [&interface_name](
                            const hardware_interface::InterfaceInfo &interface) {
                            return interface.name == interface_name;
@@ -71,19 +68,16 @@ MetaRobotDjiMotorNetwork::export_state_interfaces() {
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         const auto &joint_state_interfaces = info_.joints[i].state_interfaces;
         if (contains_interface(joint_state_interfaces, "position")) {
-            state_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_POSITION,
-                &joint_interface_data_[i].state_position);
+            state_interfaces.emplace_back(info_.joints[i].name, HW_IF_POSITION,
+                                          &joint_interface_data_[i].state_position);
         }
         if (contains_interface(joint_state_interfaces, "velocity")) {
-            state_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_VELOCITY,
-                &joint_interface_data_[i].state_velocity);
+            state_interfaces.emplace_back(info_.joints[i].name, HW_IF_VELOCITY,
+                                          &joint_interface_data_[i].state_velocity);
         }
         if (contains_interface(joint_state_interfaces, "effort")) {
-            state_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_EFFORT,
-                &joint_interface_data_[i].state_effort);
+            state_interfaces.emplace_back(info_.joints[i].name, HW_IF_EFFORT,
+                                          &joint_interface_data_[i].state_effort);
         }
     }
 
@@ -98,8 +92,8 @@ MetaRobotDjiMotorNetwork::export_command_interfaces() {
     auto contains_interface =
         [](const std::vector<hardware_interface::InterfaceInfo> &interfaces,
            const std::string &interface_name) {
-            return std::find_if(
-                       interfaces.begin(), interfaces.end(),
+            return std::ranges::find_if(
+                       interfaces,
                        [&interface_name](
                            const hardware_interface::InterfaceInfo &interface) {
                            return interface.name == interface_name;
@@ -107,12 +101,10 @@ MetaRobotDjiMotorNetwork::export_command_interfaces() {
         };
 
     for (size_t i = 0; i < info_.joints.size(); ++i) {
-        const auto &joint_command_interfaces =
-            info_.joints[i].command_interfaces;
+        const auto &joint_command_interfaces = info_.joints[i].command_interfaces;
         if (contains_interface(joint_command_interfaces, "effort")) {
-            command_interfaces.emplace_back(
-                info_.joints[i].name, HW_IF_EFFORT,
-                &joint_interface_data_[i].command_effort);
+            command_interfaces.emplace_back(info_.joints[i].name, HW_IF_EFFORT,
+                                            &joint_interface_data_[i].command_effort);
         }
     }
 
@@ -168,7 +160,7 @@ MetaRobotDjiMotorNetwork::write(const rclcpp::Time & /*time*/,
         }
 
         // Even though DJI motors receive proportional effort commands,
-        // the mechanical reduction can be negative, which means that the 
+        // the mechanical reduction can be negative, which means that the
         // motor direction is inverted. In this case, the effort must be negated.
         if (joint_motors_info_[i].mechanical_reduction < 0) {
             effort = -effort;

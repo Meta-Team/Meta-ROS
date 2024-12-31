@@ -30,7 +30,7 @@ static constexpr size_t CMD_MY_ITFS = 0;
 
 class GimbalController : public controller_interface::ChainableControllerInterface {
   public:
-    GimbalController();
+    GimbalController() = default;
 
     controller_interface::CallbackReturn on_init() override;
 

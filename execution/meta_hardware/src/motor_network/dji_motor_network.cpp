@@ -36,7 +36,7 @@ DjiMotorNetwork::DjiMotorNetwork(
 
         // Update the can filter
         can_filters.push_back(
-            {.can_id = dji_motor->get_rx_can_id(), .can_mask = CAN_SFF_MASK});
+            {.can_id = dji_motor->get_rx_can_id(), .can_mask = CAN_EFF_MASK});
     }
 
     // Initialize CAN driver
@@ -52,16 +52,20 @@ DjiMotorNetwork::~DjiMotorNetwork() {
     for (canid_t tx_can_id : {0x1FE, 0x1FF, 0x200, 0x2FE, 0x2FF}) {
         if (tx_frames_.contains(tx_can_id)) {
             can_frame tx_frame{.can_id = tx_can_id, .len = 8, .data = {0}};
-            can_driver_->write(tx_frame);
+            try {
+                can_driver_->write(tx_frame);
+            } catch (CanIOException &e) {
+                std::cerr << "Error writing CAN message: " << e.what() << std::endl;
+            }
         }
     }
 }
 
-std::tuple<double, double, double> DjiMotorNetwork::read(uint32_t joint_id) const {
+std::tuple<double, double, double> DjiMotorNetwork::read(size_t joint_id) const {
     return motors_[joint_id]->get_motor_feedback();
 }
 
-void DjiMotorNetwork::write(uint32_t joint_id, double effort) {
+void DjiMotorNetwork::write(size_t joint_id, double effort) {
     const auto &motor = motors_[joint_id];
     uint32_t dji_motor_id = motor->get_dji_motor_id();
     uint32_t tx_can_id = motor->get_tx_can_id();

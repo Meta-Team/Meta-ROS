@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<robot name="shooter" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="is_simulation" default="true" />
+
+    <link name="base_footprint">
+    </link>
+
+    <!-- raise the robot a bit higher to prevent it from stucking in the ground -->
+    <joint name="joint_base_to_footprint" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0.2" />
+        <parent link="base_footprint" />
+        <child link="base_link" />
+    </joint>
+
+    <link name="base_link" />
+
+    <xacro:include filename="$(find metav_description)/urdf/playground/motor.xacro" />
+    <xacro:motor name="friction_wheel1" connected_to="base_link" x="-100" y="100" />
+    <xacro:motor name="friction_wheel2" connected_to="base_link" x="100" y="100" />
+    <xacro:motor name="bullet_loader" connected_to="base_link" x="0" y="0" />
+
+
+    <ros2_control
+        name="motor_control" type="system">
+        <xacro:if value="$(arg is_simulation)">
+            <hardware>
+                <plugin>ign_ros2_control/IgnitionSystem</plugin>
+            </hardware>
+        </xacro:if>
+        <xacro:unless value="$(arg is_simulation)">
+            <hardware>
+                <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
+                <param name="can_network_name">can0</param>
+            </hardware>
+        </xacro:unless>
+        <joint name="friction_wheel1_joint">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <param name="motor_model">M3508</param>
+            <param name="motor_id">1</param>
+            <param name="mechanical_reduction">1.0</param>
+            <param name="offset">0.0</param>
+        </joint>
+        <joint name="friction_wheel2_joint">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <param name="motor_model">M3508</param>
+            <param name="motor_id">2</param>
+            <param name="mechanical_reduction">1.0</param>
+            <param name="offset">0.0</param>
+        </joint>
+        <joint name="bullet_loader_joint">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <param name="motor_model">M2006</param>
+            <param name="motor_id">3</param>
+            <param name="mechanical_reduction">1.0</param>
+            <param name="offset">0.0</param>
+        </joint>
+    </ros2_control>
+
+    <xacro:if
+        value="$(arg is_simulation)">
+        <gazebo>
+            <plugin filename="ign_ros2_control-system"
+                name="ign_ros2_control::IgnitionROS2ControlPlugin">
+                <parameters>$(find meta_bringup)/config/single_motor.yaml</parameters>
+            </plugin>
+        </gazebo>
+    </xacro:if>
+</robot>

@@ -24,9 +24,12 @@
     <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.gimbal.xacro" />
     <xacro:gimbal />
 
+    <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.shooter.xacro" />
+    <xacro:shooter />
+
     <xacro:include filename="$(find metav_description)/urdf/common/sensor_imu.xacro" />
     <xacro:sensor_imu connected_to="pitch_gimbal" imu_name="gimbal_imu" xyz="0 0 0.1"
-        rpy="3.14159 0 0" />
+        rpy="0 0 0" />
 
     <xacro:include filename="$(find metav_description)/urdf/common/sensor_mid360.xacro" />
     <xacro:sensor_mid360 connected_to="yaw_gimbal" name="livox_frame" xyz="0.1687 0 0.11"
@@ -38,18 +41,20 @@
                 <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
                 <param name="can_network_name">can1</param>
             </hardware>
-            <xacro:wheel_transmission prefix="front" mechanical_reduction="20.0"
-                can_network="can1" motor_id="1" />
-            <xacro:wheel_transmission prefix="right" mechanical_reduction="20.0"
-                can_network="can1" motor_id="3" />
-            <xacro:wheel_transmission prefix="left" mechanical_reduction="20.0"
-                can_network="can1" motor_id="4" />
-            <xacro:wheel_transmission prefix="back" mechanical_reduction="20.0"
-                can_network="can1" motor_id="2" />
+            <xacro:wheel_transmission prefix="front" mechanical_reduction="20.0" motor_id="1" />
+            <xacro:wheel_transmission prefix="right" mechanical_reduction="20.0" motor_id="3" />
+            <xacro:wheel_transmission prefix="left" mechanical_reduction="20.0" motor_id="4" />
+            <xacro:wheel_transmission prefix="back" mechanical_reduction="20.0" motor_id="2" />
             <xacro:gimbal_transmission prefix="yaw" mechanical_reduction="1.0" offset="0.25"
-                can_network="can1" motor_id="5" />
+                motor_id="5" />
             <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="-1.0" offset="0.0"
-                can_network="can1" motor_id="6" />
+                motor_id="6" />
+            <xacro:shooter_transmission prefix="fric1" mechanical_reduction="1.0" offset="0.25"
+                motor_id="5" />
+            <xacro:shooter_transmission prefix="fric2" mechanical_reduction="-1.0" offset="0.0"
+                motor_id="6" />
+            <xacro:shooter_transmission prefix="loader" mechanical_reduction="36.0" offset="0.0"
+                motor_id="7" />
         </ros2_control>
     </xacro:unless>
 
@@ -58,18 +63,14 @@
             <hardware>
                 <plugin>ign_ros2_control/IgnitionSystem</plugin>
             </hardware>
-            <xacro:wheel_transmission prefix="front" mechanical_reduction="20.0"
-                can_network="can1" motor_id="1" />
-            <xacro:wheel_transmission prefix="right" mechanical_reduction="20.0"
-                can_network="can1" motor_id="3" />
-            <xacro:wheel_transmission prefix="left" mechanical_reduction="20.0"
-                can_network="can1" motor_id="4" />
-            <xacro:wheel_transmission prefix="back" mechanical_reduction="20.0"
-                can_network="can1" motor_id="2" />
+            <xacro:wheel_transmission prefix="front" mechanical_reduction="20.0" motor_id="1" />
+            <xacro:wheel_transmission prefix="right" mechanical_reduction="20.0" motor_id="3" />
+            <xacro:wheel_transmission prefix="left" mechanical_reduction="20.0" motor_id="4" />
+            <xacro:wheel_transmission prefix="back" mechanical_reduction="20.0" motor_id="2" />
             <xacro:gimbal_transmission prefix="yaw" mechanical_reduction="1.0" offset="0.25"
-                can_network="can1" motor_id="5" />
+                motor_id="5" />
             <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="-1.0" offset="0.0"
-                can_network="can1" motor_id="6" />
+                motor_id="6" />
         </ros2_control>
     </xacro:if>
 

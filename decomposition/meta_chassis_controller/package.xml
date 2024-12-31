@@ -13,6 +13,8 @@
 
   <depend>angles</depend>
 
+  <depend>behavior_interface</depend>
+
   <depend>control_toolbox</depend>
 
   <depend>control_msgs</depend>

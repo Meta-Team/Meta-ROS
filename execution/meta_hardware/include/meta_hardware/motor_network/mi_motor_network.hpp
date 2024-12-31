@@ -16,7 +16,7 @@ namespace meta_hardware {
 class MiMotorNetwork {
   public:
     MiMotorNetwork(
-        const std::string &can_network_name, uint32_t host_id,
+        const std::string &can_network_name, uint8_t host_id,
         const std::vector<std::unordered_map<std::string, std::string>> &joint_params);
     ~MiMotorNetwork();
 
@@ -52,14 +52,14 @@ class MiMotorNetwork {
 
     // [motor_id] -> mi_motor
     // This makes it easy to find the motor object in rx_loop
-    std::map<uint32_t, std::shared_ptr<MiMotor>> motor_id2motor_;
+    std::map<uint8_t, std::shared_ptr<MiMotor>> motor_id2motor_;
 
     // [joint_id] -> mi_motor
     // This makes it easy to find the motor object in read() and write()
     std::vector<std::shared_ptr<MiMotor>> mi_motors_;
 
     // Host ID
-    uint32_t host_id_;
+    uint8_t host_id_;
 };
 
 } // namespace meta_hardware

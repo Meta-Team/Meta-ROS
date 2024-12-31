@@ -58,16 +58,19 @@ void DbusInterpreter::update()
     {
         shoot_->fric_state = false;
         shoot_->feed_state = false;
+        shoot_->feed_speed = 0;
     }
     else if (rsw == "MID")
     {
         shoot_->fric_state = true;
         shoot_->feed_state = false;
+        shoot_->feed_speed = 0;
     }
     else if (rsw == "DOWN")
     {
         shoot_->fric_state = true;
         shoot_->feed_state = true;
+        shoot_->feed_speed = -4.0;
     }
 }
 

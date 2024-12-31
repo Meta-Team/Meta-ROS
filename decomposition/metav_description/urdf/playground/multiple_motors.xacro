@@ -87,7 +87,7 @@
         <gazebo>
             <plugin filename="ign_ros2_control-system"
                 name="ign_ros2_control::IgnitionROS2ControlPlugin">
-                <parameters>$(find metav_description)/config/multiple_motors.yaml</parameters>
+                <parameters>$(find meta_bringup)/config/multiple_motors.yaml</parameters>
             </plugin>
         </gazebo>
     </xacro:if>

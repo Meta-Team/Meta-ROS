@@ -23,7 +23,7 @@ BrtEncoderNetwork::BrtEncoderNetwork(const string &can_network_name,
 
     std::vector<can_filter> filters;
 
-    // Initialize MI motor drivers
+    // Initialize BRITTER encoder drivers
     for (const auto &joint_param : joint_params) {
         uint32_t brt_encoder_id = std::stoi(joint_param.at("encoder_id"));
 
@@ -36,12 +36,7 @@ BrtEncoderNetwork::BrtEncoderNetwork(const string &can_network_name,
     filters.push_back({.can_id = 0x001, .can_mask = CAN_EFF_MASK});
 
     // Initialize CAN driver
-    try {
-        can_driver_ = std::make_unique<CanDriver>(can_network_name, false, filters);
-    } catch (CanException &e) {
-        std::cerr << "Failed to initialize CAN driver: " << e.what() << std::endl;
-        throw std::runtime_error("Failed to initialize MI motor network");
-    }
+    can_driver_ = std::make_unique<CanDriver>(can_network_name, false, filters);
 
     // Start RX thread
     rx_thread_ =
@@ -62,7 +57,7 @@ void BrtEncoderNetwork::rx_loop(std::stop_token stop_token) {
             uint8_t encoder_id = can_msg.data[1];
             encoder_id2encoder_.at(encoder_id)->set_encoder_feedback(can_msg);
         } catch (CanIOTimedOutException & /*e*/) {
-            std::cerr << "Timed out waiting for MI motor feedback." << std::endl;
+            std::cerr << "Timed out waiting for BRITTER encoder feedback." << std::endl;
         } catch (CanIOException &e) {
             std::cerr << "Error reading CAN message: " << e.what() << std::endl;
         }

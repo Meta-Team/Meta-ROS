@@ -1,0 +1,33 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 250 # Hz
+
+    forward_position_controller:
+      type: forward_command_controller/ForwardCommandController
+
+    motor_pos2vel_pid_controller:
+      type: pid_controller/PidController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+forward_position_controller:
+  ros__parameters:
+    joints:
+      - motor_pos2vel_pid_controller/motor_joint
+    interface_name: position
+
+motor_pos2vel_pid_controller:
+  ros__parameters:
+    dof_names:
+      - motor_joint
+
+    reference_and_state_dof_names:
+      - motor_joint
+
+    command_interface: effort
+
+    reference_and_state_interfaces: ["position"]
+
+    gains:
+      motor_joint: { p: 12.0, i: 0.0, d: 0.0, angle_wraparound: true }
