@@ -9,7 +9,9 @@
 #include "behavior_interface/msg/move.hpp"
 #include "behavior_interface/msg/shoot.hpp"
 #include "behavior_interface/msg/aim.hpp"
+#include "behavior_interface/msg/chassis.hpp"
 #include "geometry_msgs/msg/twist.hpp"
+#include <behavior_interface/msg/detail/chassis__struct.hpp>
 
 #define PERIOD 10 // ms
 
@@ -17,6 +19,7 @@ using operation_interface::msg::DbusControl;
 using behavior_interface::msg::Move;
 using behavior_interface::msg::Shoot;
 using behavior_interface::msg::Aim;
+using behavior_interface::msg::Chassis;
 
 class DbusInterpreter
 {
@@ -34,6 +37,8 @@ public:
 
     Aim::SharedPtr get_aim() const;
 
+    Chassis::SharedPtr get_chassis() const;
+
     bool is_active() const { return active; }
 
 private:
@@ -49,6 +54,7 @@ private:
     Move::SharedPtr move_;
     Shoot::SharedPtr shoot_;
     Aim::SharedPtr aim_;
+    Chassis::SharedPtr chassis_;
 
     void update();
 

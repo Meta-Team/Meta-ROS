@@ -9,10 +9,11 @@ DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_se
     ls_x = ls_y = rs_x = rs_y = wheel = 0;
     lsw = rsw = "";
 
-    // initialize move, shoot, and aim
+    // initialize move, shoot, aim, and chassis state
     move_ = std::make_shared<Move>();
     shoot_ = std::make_shared<Shoot>();
     aim_ = std::make_shared<Aim>();
+    chassis_ = std::make_shared<Chassis>();
 
     // initialize update thread
     update_thread = std::thread([this](){
@@ -50,9 +51,16 @@ void DbusInterpreter::update()
 
     move_->vel_x = max_vel * ls_x;
     move_->vel_y = max_vel * ls_y;
-    move_->omega = max_omega * wheel;
     aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_4);
+    move_->omega = max_omega * wheel;
     aim_->yaw += aim_sens * rs_y * PERIOD / 1000;
+    if(wheel > 0.01){      
+        chassis_->mode = behavior_interface::msg::Chassis::CHASSIS;
+    }else{
+        chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+    }
+    
+    
     
     if (rsw == "UP")
     {
@@ -104,6 +112,11 @@ Shoot::SharedPtr DbusInterpreter::get_shoot() const
 Aim::SharedPtr DbusInterpreter::get_aim() const
 {
     return aim_;
+}
+
+Chassis::SharedPtr DbusInterpreter::get_chassis() const
+{
+    return chassis_;
 }
 
 void DbusInterpreter::curb(double &val, double max_val)

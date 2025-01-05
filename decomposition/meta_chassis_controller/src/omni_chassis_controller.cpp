@@ -78,7 +78,7 @@ OmniChassisController::on_configure(const rclcpp_lifecycle::State & /*previous_s
 
     subscribers_qos = rclcpp::SystemDefaultsQoS();
     subscribers_qos.reliable();
-    subscribers_qos.transient_local();
+    // subscribers_qos.transient_local();
 
     chassis_sub_ = get_node()->create_subscription<behavior_interface::msg::Chassis>(
         "/chassis_cmd", subscribers_qos,
