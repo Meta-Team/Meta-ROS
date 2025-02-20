@@ -80,11 +80,11 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    robot_controller_config = PathJoinSubstitution([FindPackageShare('meta_bringup'), 'config', 'standard.yaml'])
+    robot_config = PathJoinSubstitution([FindPackageShare('meta_bringup'), 'config', 'standard.yaml'])
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_controller_config],
+        parameters=[robot_config],
         remappings=[
             ("~/robot_description", "/robot_description"),
         ],
@@ -107,25 +107,18 @@ def generate_launch_description():
         package='dbus_control',
         executable='dbus_control_node',
         name='dbus_control_node',
-        parameters=[robot_controller_config],
+        parameters=[robot_config],
         output='both',
         emulate_tty=True,
     )
 
-    # auto_sentry_node = Node(
-    #     package='auto_sentry',
-    #     executable='auto_sentry',
-    #     name='auto_sentry_node',
-    #     parameters=[robot_controllers],
-    # )
-
     dbus_vehicle_node = Node(
         package='dbus_vehicle',
-        executable='dbus_vehicle',
+        executable='dbus_vehicle_node',
         name='dbus_vehicle',
-        parameters=[robot_controller_config],
         output='both',
-        emulate_tty=True,
+        parameters=[robot_config],
+        emulate_tty=True
     )
 
     ahrs_launch = IncludeLaunchDescription(

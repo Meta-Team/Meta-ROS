@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<robot name="sentry" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="shooter" params="">
+
+        <!-- friction wheel 1 -->
+        <link name="fric1_wheel">
+            <inertial>
+                <mass value="0.2" />
+                <origin xyz="0 0 0" />
+                <inertia ixx="0" ixy="0" ixz="0" iyy="0"
+                    iyz="0" izz="0" />
+            </inertial>
+        </link>
+
+        <joint name="fric1_shooter_joint" type="continuous">
+            <origin xyz="0 0 0.162"
+                rpy="0 0 0" />
+            <dynamics damping="0.0" friction="0.1" />
+            <limit effort="1.2" velocity="31" />
+            <parent link="fric1_base" />
+            <child link="fric1_wheel" />
+            <axis xyz="0 0 1" />
+        </joint>
+
+        <link name="fric1_base" />
+
+        <joint name="fric1_fixed_joint" type="fixed">
+            <parent link="yaw_gimbal" />
+            <child link="fric1_base" />
+        </joint>
+
+        <!-- friction wheel 2 -->
+        <link name="fric2_wheel">
+            <inertial>
+                <mass value="0.2" />
+                <origin xyz="0 0 0" />
+                <inertia ixx="0" ixy="0" ixz="0" iyy="0"
+                    iyz="0" izz="0" />
+            </inertial>
+        </link>
+
+        <joint name="fric2_shooter_joint" type="continuous">
+            <origin xyz="0 0 0.162"
+                rpy="0 0 0" />
+            <dynamics damping="0.0" friction="0.1" />
+            <limit effort="1.2" velocity="31" />
+            <parent link="fric2_base" />
+            <child link="fric2_wheel" />
+            <axis xyz="0 0 1" />
+        </joint>
+
+        <link name="fric2_base" />
+
+        <joint name="fric2_fixed_joint" type="fixed">
+            <parent link="yaw_gimbal" />
+            <child link="fric2_base" />
+        </joint>
+
+        <!-- loader -->
+        <link name="loader_wheel">
+            <inertial>
+                <mass value="0.2" />
+                <origin xyz="0 0 0" />
+                <inertia ixx="0" ixy="0" ixz="0" iyy="0"
+                    iyz="0" izz="0" />
+            </inertial>
+        </link>
+
+        <joint name="loader_shooter_joint" type="continuous">
+            <origin xyz="0 0 0.162"
+                rpy="0 0 0" />
+            <dynamics damping="0.0" friction="0.1" />
+            <limit effort="1.2" velocity="31" />
+            <parent link="loader_base" />
+            <child link="loader_wheel" />
+            <axis xyz="0 0 1" />
+        </joint>
+
+        <link name="loader_base" />
+
+        <joint name="loader_fixed_joint" type="fixed">
+            <parent link="yaw_gimbal" />
+            <child link="loader_base" />
+        </joint>
+
+        
+
+    </xacro:macro>
+
+    <xacro:macro name="shooter_transmission"
+        params="prefix mechanical_reduction offset motor_id">
+        <joint name="${prefix}_shooter_joint">
+            <command_interface name="effort" />
+            <state_interface name="position" /> 
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <param name="motor_model">M2006</param>
+            <param name="motor_id">${motor_id}</param>
+            <param name="mechanical_reduction">${mechanical_reduction}</param>
+            <param name="offset">${offset}</param>
+        </joint>
+    </xacro:macro>
+
+</robot>
