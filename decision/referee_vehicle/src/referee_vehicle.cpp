@@ -2,6 +2,8 @@
 #include "referee_vehicle/referee_interpreter.h"
 #include "geometry_msgs/msg/twist.hpp"
 #include <memory>
+#include <operation_interface/msg/detail/key_mouse__struct.hpp>
+#include <rclcpp/subscription.hpp>
 
 #define PUB_RATE 15 // ms
 
@@ -18,6 +20,7 @@ public:
         std::string aim_topic = this->declare_parameter("aim_topic", "aim");
         std::string shoot_topic = this->declare_parameter("shoot_topic", "shoot");
         std::string chassis_topic = this->declare_parameter("chassis_topic","chassis_cmd");
+        std::string key_topic = this->declare_parameter("key_topic", "key_mouse");
         RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, aim_sens: %f, deadzone: %f",
             max_vel, max_omega, aim_sens, deadzone);
         enable_ros2_control_ = this->declare_parameter("enable_ros2_control", false);
@@ -34,9 +37,12 @@ public:
         shoot_pub_ = this->create_publisher<behavior_interface::msg::Shoot>(shoot_topic, 10);
         aim_pub_ = this->create_publisher<behavior_interface::msg::Aim>(aim_topic, 10);
         chassis_pub_ = this->create_publisher<behavior_interface::msg::Chassis>(chassis_topic, 10);
-        referee_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
+        dbus_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
             "referee_control", 10,
-            std::bind(&RefereeVehicle::referee_callback, this, std::placeholders::_1));
+            std::bind(&RefereeVehicle::dbus_callback, this, std::placeholders::_1));
+        key_sub_ = this->create_subscription<operation_interface::msg::KeyMouse>(
+            key_topic, 10,
+            std::bind(&RefereeVehicle::key_callback, this, std::placeholders::_1));
 
         // timer
         timer_ = this->create_wall_timer(
@@ -49,6 +55,7 @@ public:
 
 private:
     rclcpp::Subscription<operation_interface::msg::DbusControl>::SharedPtr dbus_sub_;
+    rclcpp::Subscription<operation_interface::msg::KeyMouse>::SharedPtr key_sub_;
     std::unique_ptr<RefereeInterpreter> interpreter_;
     rclcpp::Publisher<behavior_interface::msg::Move>::SharedPtr move_pub_;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr move_pub_ros2_control_;
@@ -59,9 +66,14 @@ private:
 
     bool enable_ros2_control_;
 
-    void referee_callback(const operation_interface::msg::DbusControl::SharedPtr msg)
+    void dbus_callback(const operation_interface::msg::DbusControl::SharedPtr msg)
     {
-        interpreter_->input(msg);
+        interpreter_->dbus_input(msg);
+    }
+
+    void key_callback(const operation_interface::msg::KeyMouse::SharedPtr msg)
+    {
+        interpreter_->key_input(msg);
     }
 
     void timer_callback()

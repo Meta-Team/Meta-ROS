@@ -1,4 +1,6 @@
 #include "referee_vehicle/referee_interpreter.h"
+#include <behavior_interface/msg/detail/move__struct.hpp>
+#include <behavior_interface/msg/detail/shoot__struct.hpp>
 #include <cmath>
 
 RefereeInterpreter::RefereeInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone)
@@ -16,6 +18,7 @@ RefereeInterpreter::RefereeInterpreter(double max_vel, double max_omega, double 
     chassis_ = std::make_shared<Chassis>();
 
     // initialize update thread
+    last_update_time_ = std::chrono::steady_clock::now();
     update_thread = std::thread([this](){
         while (rclcpp::ok())
         {
@@ -30,7 +33,7 @@ RefereeInterpreter::~RefereeInterpreter()
     if (update_thread.joinable()) update_thread.join();
 }
 
-void RefereeInterpreter::input(const operation_interface::msg::DbusControl::SharedPtr msg)
+void RefereeInterpreter::dbus_input(const operation_interface::msg::DbusControl::SharedPtr msg)
 {
     ls_x = msg->ls_x; apply_deadzone(ls_x); // forward is positive
     ls_y = msg->ls_y; apply_deadzone(ls_y); // left is positive
@@ -41,45 +44,81 @@ void RefereeInterpreter::input(const operation_interface::msg::DbusControl::Shar
     rsw = msg->rsw;
 }
 
+void RefereeInterpreter::key_input(const KeyMouse::SharedPtr msg)
+{
+    w_ = msg->w;
+    a_ = msg->a;
+    s_ = msg->s;
+    d_ = msg->d;
+    shift_ = msg->shift;
+    ctrl_ = msg->ctrl;
+    q_ = msg->q;
+    e_ = msg->e;
+    r_ = msg->r;
+    f_ = msg->f;
+    g_ = msg->g;
+    z_ = msg->z;
+    x_ = msg->x;
+    c_ = msg->c;
+    v_ = msg->v;
+    b_ = msg->b;
+}
+
 void RefereeInterpreter::update()
 {
-    active = (lsw == "MID");
+    active = (lsw == "DOWN");
     if (!active)
     {
         return; // do not update if not active, this prevents yaw and pitch from accumulating in standby
     }
 
-    move_->vel_x = max_vel * ls_x;
-    move_->vel_y = max_vel * ls_y;
-    aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_4);
-    move_->omega = max_omega * wheel;
-    aim_->yaw += aim_sens * rs_y * PERIOD / 1000;
-    if(wheel > 0.01){      
-        chassis_->mode = behavior_interface::msg::Chassis::CHASSIS;
-    }else{
-        chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
-    }
-    
-    
-    
-    if (rsw == "UP")
-    {
-        shoot_->fric_state = false;
-        shoot_->feed_state = false;
-        shoot_->feed_speed = 0;
-    }
-    else if (rsw == "MID")
-    {
-        shoot_->fric_state = true;
-        shoot_->feed_state = false;
-        shoot_->feed_speed = 0;
-    }
-    else if (rsw == "DOWN")
-    {
-        shoot_->fric_state = true;
+    // move_->vel_x = max_vel * ls_x;
+    // move_->vel_y = max_vel * ls_y;
+    // aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_4);
+    // move_->omega = max_omega * wheel;
+    // aim_->yaw += aim_sens * rs_y * PERIOD / 1000;
+    // if(wheel > 0.01){      
+    //     chassis_->mode = behavior_interface::msg::Chassis::CHASSIS;
+    // }else{
+    //     chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+    // }
+
+    int move_x = 0, move_y = 0;
+    if(a_) move_x -= max_vel;
+    if(d_) move_x += max_vel;
+    move_->vel_x += move_x;
+
+    if(w_) move_y += max_vel;
+    if(s_) move_y -= max_vel;
+    move_->vel_y += move_y;
+
+    if(left_button_){
         shoot_->feed_state = true;
-        shoot_->feed_speed = -4.0;
+        shoot_->feed_speed = 5.0;       // TODO: Modify this feed speed according to the level of the robot
+    }else{  
+        shoot_->feed_state = false;
+        shoot_->feed_speed = 0.0;
     }
+
+    aim_->yaw += mouse_x_ * 1.0 * PERIOD / 1000;   // TODO: Modify this ratio and test later
+    aim_->pitch += mouse_y_ * 1.0 * PERIOD / 1000;  curb(aim_->pitch, M_PI_4);
+
+    // To ensure that the change take place only once per key press
+    auto current_time = std::chrono::steady_clock::now();
+
+    if(std::chrono::duration_cast<std::chrono::milliseconds>(
+        current_time-last_update_time_) > std::chrono::milliseconds(100)){
+        if(c_)  // TOGGLE CHASSIS MODE
+        {
+            if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
+                chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+            }else{
+                chassis_->mode = behavior_interface::msg::Chassis::GYRO;
+            }
+        }
+        last_update_time_ = std::chrono::steady_clock::now();
+    }
+    
 }
 
 void RefereeInterpreter::apply_deadzone(double &val)
