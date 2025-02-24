@@ -104,6 +104,41 @@ void DbusInterpreter::update()
 
     if(lsw == "DOWN"){
         // TODO: Implement Keyboard Actions
+        int move_x = 0, move_y = 0;
+        if(a_) move_x -= max_vel;
+        if(d_) move_x += max_vel;
+        move_->vel_x += move_x;
+
+        if(w_) move_y += max_vel;
+        if(s_) move_y -= max_vel;
+        move_->vel_y += move_y;
+
+        if(left_button_){
+            shoot_->feed_state = true;
+            shoot_->feed_speed = 5.0;       // TODO: Modify this feed speed according to the level of the robot
+        }else{  
+            shoot_->feed_state = false;
+            shoot_->feed_speed = 0.0;
+        }
+
+        aim_->yaw += mouse_x_ * 1.0 * PERIOD / 1000;   // TODO: Modify this ratio and test later
+        aim_->pitch += mouse_y_ * 1.0 * PERIOD / 1000;  curb(aim_->pitch, M_PI_4);
+
+        // To ensure that the change take place only once per key press
+        // auto current_time = std::chrono::steady_clock::now();
+        auto current_time = rclcpp::Clock().now();
+
+        if(current_time.seconds()-last_update_time_.seconds() > 0.1){
+            if(c_)  // TOGGLE CHASSIS MODE
+            {
+                if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
+                    chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+                }else{
+                    chassis_->mode = behavior_interface::msg::Chassis::GYRO;
+                }
+            }
+            last_update_time_ = current_time = rclcpp::Clock().now();
+        }
     }
     
     
