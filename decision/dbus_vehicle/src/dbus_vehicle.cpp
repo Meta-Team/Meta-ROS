@@ -20,7 +20,7 @@ public:
         std::string chassis_topic = this->declare_parameter("chassis_topic","chassis_cmd");
         RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, aim_sens: %f, deadzone: %f",
             max_vel, max_omega, aim_sens, deadzone);
-        enable_key_mouse_ = this->declare_parameter("key_mouse_enable", true);
+        enable_key_mouse_ = this->declare_parameter("enable_key_mouse_", true);
         enable_ros2_control_ = this->declare_parameter("enable_ros2_control", false);
 
         interpreter_ = std::make_unique<DbusInterpreter>(max_vel, max_omega, aim_sens, deadzone);

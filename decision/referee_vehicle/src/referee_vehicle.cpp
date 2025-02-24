@@ -20,8 +20,8 @@ public:
         std::string aim_topic = this->declare_parameter("aim_topic", "aim");
         std::string shoot_topic = this->declare_parameter("shoot_topic", "shoot");
         std::string chassis_topic = this->declare_parameter("chassis_topic","chassis_cmd");
-        std::string key_mouse_enable = this->declare_parameter("key_mouse_enable", "false");
-        if(key_mouse_enable_ == "true"){
+        enable_key_mouse_ = this->declare_parameter("enable_key_mouse", false);
+        if(enable_key_mouse_){
             std::string key_topic = this->declare_parameter("key_topic", "key_mouse");
         }
         std::string key_topic = this->declare_parameter("key_topic", "key_mouse");
@@ -44,10 +44,13 @@ public:
         dbus_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
             "referee_control", 10,
             std::bind(&RefereeVehicle::dbus_callback, this, std::placeholders::_1));
-        key_sub_ = this->create_subscription<operation_interface::msg::KeyMouse>(
-            key_topic, 10,
-            std::bind(&RefereeVehicle::key_callback, this, std::placeholders::_1));
 
+        if(enable_key_mouse_){
+            key_sub_ = this->create_subscription<operation_interface::msg::KeyMouse>(
+                key_topic, 10,
+                std::bind(&RefereeVehicle::key_callback, this, std::placeholders::_1));    
+        }
+       
         // timer
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(PUB_RATE), [this](){
@@ -68,9 +71,7 @@ private:
     rclcpp::Publisher<behavior_interface::msg::Chassis>::SharedPtr chassis_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
-    bool enable_ros2_control_;
-
-    std::string key_mouse_enable_;
+    bool enable_ros2_control_, enable_key_mouse_;
 
     void dbus_callback(const operation_interface::msg::DbusControl::SharedPtr msg)
     {
