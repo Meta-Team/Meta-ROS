@@ -17,8 +17,8 @@ RefereeInterpreter::RefereeInterpreter(double max_vel, double max_omega, double 
     aim_ = std::make_shared<Aim>();
     chassis_ = std::make_shared<Chassis>();
 
+    last_update_time_ = rclcpp::Clock().now();
     // initialize update thread
-    last_update_time_ = std::chrono::steady_clock::now();
     update_thread = std::thread([this](){
         while (rclcpp::ok())
         {
@@ -66,7 +66,7 @@ void RefereeInterpreter::key_input(const KeyMouse::SharedPtr msg)
 
 void RefereeInterpreter::update()
 {
-    active = (lsw == "DOWN");
+    active != (lsw == "MID" || lsw == "UP");        // Active only when the left switch in DOWN and default lsw == "" 
     if (!active)
     {
         return; // do not update if not active, this prevents yaw and pitch from accumulating in standby
@@ -104,11 +104,10 @@ void RefereeInterpreter::update()
     aim_->pitch += mouse_y_ * 1.0 * PERIOD / 1000;  curb(aim_->pitch, M_PI_4);
 
     // To ensure that the change take place only once per key press
-    auto current_time = std::chrono::steady_clock::now();
-    // auto current_time = rclcpp::Clock().now();
+    // auto current_time = std::chrono::steady_clock::now();
+    auto current_time = rclcpp::Clock().now();
 
-    if(std::chrono::duration_cast<std::chrono::milliseconds>(
-        current_time-last_update_time_) > std::chrono::milliseconds(100)){
+    if(current_time.seconds()-last_update_time_.seconds() > 0.1){
         if(c_)  // TOGGLE CHASSIS MODE
         {
             if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
@@ -117,7 +116,7 @@ void RefereeInterpreter::update()
                 chassis_->mode = behavior_interface::msg::Chassis::GYRO;
             }
         }
-        last_update_time_ = std::chrono::steady_clock::now();
+        last_update_time_ = current_time = rclcpp::Clock().now();
     }
     
 }

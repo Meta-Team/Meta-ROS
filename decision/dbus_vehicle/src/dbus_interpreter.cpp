@@ -15,6 +15,8 @@ DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_se
     aim_ = std::make_shared<Aim>();
     chassis_ = std::make_shared<Chassis>();
 
+    // Last Update Time
+    last_update_time_ = rclcpp::Clock().now();
     // initialize update thread
     update_thread = std::thread([this](){
         while (rclcpp::ok())
@@ -41,6 +43,27 @@ void DbusInterpreter::input(const operation_interface::msg::DbusControl::SharedP
     rsw = msg->rsw;
 }
 
+void DbusInterpreter::input_key(const operation_interface::msg::KeyMouse::SharedPtr msg)
+{
+    w_ = msg->w;
+    a_ = msg->a;
+    s_ = msg->s;
+    d_ = msg->d;
+    shift_ = msg->shift;
+    ctrl_ = msg->ctrl;
+    q_ = msg->q;
+    e_ = msg->e;
+    r_ = msg->r;
+    f_ = msg->f;
+    g_ = msg->g;
+    z_ = msg->z;
+    x_ = msg->x;
+    c_ = msg->c;
+    v_ = msg->v;
+    b_ = msg->b;
+
+}
+
 void DbusInterpreter::update()
 {
     active = (lsw == "MID");
@@ -60,8 +83,6 @@ void DbusInterpreter::update()
         chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
     }
     
-    
-    
     if (rsw == "UP")
     {
         shoot_->fric_state = false;
@@ -80,6 +101,12 @@ void DbusInterpreter::update()
         shoot_->feed_state = true;
         shoot_->feed_speed = -4.0;
     }
+
+    if(lsw == "DOWN"){
+        // TODO: Implement Keyboard Actions
+    }
+    
+    
 }
 
 void DbusInterpreter::apply_deadzone(double &val)

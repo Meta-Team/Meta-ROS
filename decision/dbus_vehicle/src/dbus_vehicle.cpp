@@ -20,6 +20,7 @@ public:
         std::string chassis_topic = this->declare_parameter("chassis_topic","chassis_cmd");
         RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, aim_sens: %f, deadzone: %f",
             max_vel, max_omega, aim_sens, deadzone);
+        enable_key_mouse_ = this->declare_parameter("key_mouse_enable", true);
         enable_ros2_control_ = this->declare_parameter("enable_ros2_control", false);
 
         interpreter_ = std::make_unique<DbusInterpreter>(max_vel, max_omega, aim_sens, deadzone);
@@ -37,6 +38,11 @@ public:
         dbus_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
             "dbus_control", 10,
             std::bind(&DbusVehicle::dbus_callback, this, std::placeholders::_1));
+        if(enable_key_mouse_){
+            key_sub_ = this->create_subscription<operation_interface::msg::KeyMouse>(
+                "key_mouse", 10,
+                std::bind(&DbusVehicle::key_callback, this, std::placeholders::_1));
+        }
 
         // timer
         timer_ = this->create_wall_timer(
@@ -49,6 +55,7 @@ public:
 
 private:
     rclcpp::Subscription<operation_interface::msg::DbusControl>::SharedPtr dbus_sub_;
+    rclcpp::Subscription<operation_interface::msg::KeyMouse>::SharedPtr key_sub_;
     std::unique_ptr<DbusInterpreter> interpreter_;
     rclcpp::Publisher<behavior_interface::msg::Move>::SharedPtr move_pub_;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr move_pub_ros2_control_;
@@ -57,11 +64,16 @@ private:
     rclcpp::Publisher<behavior_interface::msg::Chassis>::SharedPtr chassis_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
-    bool enable_ros2_control_;
+    bool enable_ros2_control_, enable_key_mouse_;
 
     void dbus_callback(const operation_interface::msg::DbusControl::SharedPtr msg)
     {
         interpreter_->input(msg);
+    }
+
+    void key_callback(const operation_interface::msg::KeyMouse::SharedPtr msg)
+    {
+        interpreter_->input_key(msg);
     }
 
     void timer_callback()

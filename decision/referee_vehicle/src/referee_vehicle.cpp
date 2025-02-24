@@ -20,6 +20,10 @@ public:
         std::string aim_topic = this->declare_parameter("aim_topic", "aim");
         std::string shoot_topic = this->declare_parameter("shoot_topic", "shoot");
         std::string chassis_topic = this->declare_parameter("chassis_topic","chassis_cmd");
+        std::string key_mouse_enable = this->declare_parameter("key_mouse_enable", "false");
+        if(key_mouse_enable_ == "true"){
+            std::string key_topic = this->declare_parameter("key_topic", "key_mouse");
+        }
         std::string key_topic = this->declare_parameter("key_topic", "key_mouse");
         RCLCPP_INFO(this->get_logger(), "max_vel: %f, max_omega: %f, aim_sens: %f, deadzone: %f",
             max_vel, max_omega, aim_sens, deadzone);
@@ -65,6 +69,8 @@ private:
     rclcpp::TimerBase::SharedPtr timer_;
 
     bool enable_ros2_control_;
+
+    std::string key_mouse_enable_;
 
     void dbus_callback(const operation_interface::msg::DbusControl::SharedPtr msg)
     {

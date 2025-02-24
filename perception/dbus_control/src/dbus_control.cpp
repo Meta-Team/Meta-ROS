@@ -6,11 +6,13 @@ DbusControl::DbusControl(const rclcpp::NodeOptions & options)
 {
     node_ = rclcpp::Node::make_shared("dbus_control", options);
     std::string port = node_->declare_parameter("dbus_port", "ttyUSB0");
+    std::string key_mouse_enable_ = node_->declare_parameter("key_mouse_enable", "true");
     dbus = std::make_unique<Dbus>("/dev/" + port);
 
     dbus_pub_ = node_->create_publisher<operation_interface::msg::DbusControl>("dbus_control", 10);
-    keymouse_pub_ = node_->create_publisher<operation_interface::msg::KeyMouse>("key_mouse", 10);
-
+    if (key_mouse_enable_ == "true"){
+        keymouse_pub_ = node_->create_publisher<operation_interface::msg::KeyMouse>("key_mouse", 10);
+    }auto keymouse_msg = dbus->keymouse_msg();
     timer_ = node_->create_wall_timer(std::chrono::milliseconds(PUB_RATE), std::bind(&DbusControl::timer_callback, this));
 
     RCLCPP_INFO(node_->get_logger(), "DbusControl initialized");
@@ -29,9 +31,11 @@ void DbusControl::timer_callback()
 {
     if (!dbus->valid()) return;
     auto controller_msg = dbus->controller_msg();
-    auto keymouse_msg = dbus->keymouse_msg();
     dbus_pub_->publish(controller_msg);
-    keymouse_pub_->publish(keymouse_msg);
+    if(key_mouse_enable_=="true"){
+        auto keymouse_msg = dbus->keymouse_msg();
+        keymouse_pub_->publish(keymouse_msg);
+    } 
 }
 
 #include "rclcpp_components/register_node_macro.hpp"

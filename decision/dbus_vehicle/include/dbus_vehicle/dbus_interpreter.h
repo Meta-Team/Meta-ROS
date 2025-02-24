@@ -6,6 +6,7 @@
 #include <thread>
 
 #include "operation_interface/msg/dbus_control.hpp"
+#include "operation_interface/msg/key_mouse.hpp"
 #include "behavior_interface/msg/move.hpp"
 #include "behavior_interface/msg/shoot.hpp"
 #include "behavior_interface/msg/aim.hpp"
@@ -16,6 +17,7 @@
 #define PERIOD 10 // ms
 
 using operation_interface::msg::DbusControl;
+using operation_interface::msg::KeyMouse;
 using behavior_interface::msg::Move;
 using behavior_interface::msg::Shoot;
 using behavior_interface::msg::Aim;
@@ -29,6 +31,8 @@ public:
     ~DbusInterpreter();
 
     void input(const DbusControl::SharedPtr msg);
+
+    void input_key(const KeyMouse::SharedPtr msg);
 
     Move::SharedPtr get_move() const;
     geometry_msgs::msg::Twist get_move_ros2_control() const;
@@ -46,6 +50,15 @@ private:
 
     double ls_x, ls_y, rs_x, rs_y, wheel;
     std::string lsw, rsw;
+    double mouse_x_ = 0.0, mouse_y_ = 0.0, mouse_z_ = 0.0;
+    bool left_button_ = false, right_button_ = false;
+    bool w_ = false, a_ = false, s_ = false;
+    bool d_ = false, shift_ = false, ctrl_ = false;
+    bool q_ = false, e_ = false, r_ = false;
+    bool f_ = false, g_ = false, z_ = false;
+    bool x_ = false, c_ = false, v_, b_ = false;
+
+    rclcpp::Time last_update_time_;
 
     double max_vel, max_omega, max_feed, max_shoot, aim_sens, deadzone;
 

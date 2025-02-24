@@ -58,8 +58,7 @@ private:
     bool f_ = false, g_ = false, z_ = false;
     bool x_ = false, c_ = false, v_, b_ = false;
 
-    // std::chrono::milliseconds last_update_time_;
-    std::chrono::steady_clock::time_point last_update_time_;
+    rclcpp::Time last_update_time_;
 
     std::string lsw, rsw;
 
