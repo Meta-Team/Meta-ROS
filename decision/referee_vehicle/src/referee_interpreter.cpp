@@ -105,6 +105,7 @@ void RefereeInterpreter::update()
 
     // To ensure that the change take place only once per key press
     auto current_time = std::chrono::steady_clock::now();
+    // auto current_time = rclcpp::Clock().now();
 
     if(std::chrono::duration_cast<std::chrono::milliseconds>(
         current_time-last_update_time_) > std::chrono::milliseconds(100)){
