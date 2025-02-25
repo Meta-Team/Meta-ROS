@@ -69,6 +69,7 @@ dbus_vehicle:
   ros__parameters:
     enable_ros2_control: true
     aim_topic: "/gimbal_controller/reference"
+    shoot_topic: "/shoot_controller/reference"
     control:
       trans_vel: 2.5 # m/s
       rot_vel: 3.0 # rad/s
