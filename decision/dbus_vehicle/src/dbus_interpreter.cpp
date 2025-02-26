@@ -15,8 +15,13 @@ DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_se
     aim_ = std::make_shared<Aim>();
     chassis_ = std::make_shared<Chassis>();
 
+    // initialize chassis mode
+    chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+
     // Last Update Time
     last_update_time_ = rclcpp::Clock().now();
+    last_c_ = false;
+
     // initialize update thread
     update_thread = std::thread([this](){
         while (rclcpp::ok())
@@ -61,7 +66,10 @@ void DbusInterpreter::input_key(const operation_interface::msg::KeyMouse::Shared
     c_ = msg->c;
     v_ = msg->v;
     b_ = msg->b;
-
+    left_button_ = msg->left_button;
+    right_button_ = msg->right_button;
+    mouse_x_ = msg->mouse_x;
+    mouse_y_ = msg->mouse_y;
 }
 
 void DbusInterpreter::update()
@@ -77,11 +85,6 @@ void DbusInterpreter::update()
     aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_4);
     move_->omega = max_omega * wheel;
     aim_->yaw += aim_sens * rs_y * PERIOD / 1000;
-    if(wheel > 0.01){      
-        chassis_->mode = behavior_interface::msg::Chassis::CHASSIS;
-    }else{
-        chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
-    }
     
     if (rsw == "UP")
     {
@@ -92,54 +95,53 @@ void DbusInterpreter::update()
     else if (rsw == "MID")
     {
         shoot_->fric_state = true;
-        shoot_->feed_state = false;
-        shoot_->feed_speed = 0;
+        if(left_button_){   
+            shoot_->feed_state = true;       
+            shoot_->feed_speed = 5.0;
+        }else{
+            shoot_->feed_state = false; 
+            shoot_->feed_speed = 0.0;
+        }
     }
     else if (rsw == "DOWN")
     {
         shoot_->fric_state = true;
         shoot_->feed_state = true;
-        shoot_->feed_speed = -4.0;
+        shoot_->feed_speed = 5.0;
     }
 
-    if(lsw == "DOWN"){
-        // TODO: Implement Keyboard Actions
-        int move_x = 0, move_y = 0;
-        if(a_) move_x -= max_vel;
-        if(d_) move_x += max_vel;
-        move_->vel_x += move_x;
 
-        if(w_) move_y += max_vel;
-        if(s_) move_y -= max_vel;
-        move_->vel_y += move_y;
+    // TODO: Implement Keyboard Actions
+    int move_x = 0, move_y = 0;
+    if(w_) move_x += max_vel;
+    if(s_) move_x -= max_vel;
+    move_->vel_x += move_x;
 
-        if(left_button_){
-            shoot_->feed_state = true;
-            shoot_->feed_speed = 5.0;       // TODO: Modify this feed speed according to the level of the robot
-        }else{  
-            shoot_->feed_state = false;
-            shoot_->feed_speed = 0.0;
-        }
+    if(a_) move_y += max_vel;
+    if(d_) move_y -= max_vel;
+    move_->vel_y += move_y;
 
-        aim_->yaw += mouse_x_ * 1.0 * PERIOD / 1000;   // TODO: Modify this ratio and test later
-        aim_->pitch += mouse_y_ * 1.0 * PERIOD / 1000;  curb(aim_->pitch, M_PI_4);
+    aim_->yaw -= mouse_x_ * aim_sens * PERIOD / 30;   
+    aim_->pitch -= mouse_y_ * aim_sens * PERIOD / 30;  curb(aim_->pitch, M_PI_4);
+    if(q_) aim_->yaw += aim_sens * 0.5 * PERIOD / 1000;
+    if(e_) aim_->yaw -= aim_sens * 0.5 * PERIOD / 1000;
 
-        // To ensure that the change take place only once per key press
-        // auto current_time = std::chrono::steady_clock::now();
-        auto current_time = rclcpp::Clock().now();
+    // To ensure that the change take place only once per key press
+    auto current_time = rclcpp::Clock().now();
 
-        if(current_time.seconds()-last_update_time_.seconds() > 0.1){
-            if(c_)  // TOGGLE CHASSIS MODE
-            {
-                if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
-                    chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
-                }else{
-                    chassis_->mode = behavior_interface::msg::Chassis::GYRO;
-                }
+    if(current_time.seconds()-last_update_time_.seconds() > 0.2){
+        if(c_ && !last_c_)  // TOGGLE CHASSIS MODE
+        {
+            if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
+                chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+            }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
+                chassis_->mode = behavior_interface::msg::Chassis::GYRO;
             }
-            last_update_time_ = current_time = rclcpp::Clock().now();
         }
+        last_update_time_ = rclcpp::Clock().now();
     }
+    // last_c_ = c_;
+
     
     
 }

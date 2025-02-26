@@ -41,7 +41,7 @@ omni_chassis_controller:
     follow_pid_gains:
       { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
 
-    follow_pid_target: 0.7853981634
+    follow_pid_target: 0.0
 
     reference_timeout: 0.2
 
