@@ -10,6 +10,28 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
+find_package(rclcpp_components)
+
+add_library(super_capacitor SHARED
+  src/super_capacitor_controller.cpp
+)
+
+target_include_directories(super_capacitor PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+rclcpp_components_register_node(super_capacitor
+  PLUGIN "XidiCapacitorDriver"
+  EXECUTABLE super_capacitor_node)
+
+ament_target_dependencies(super_capacitor
+  rclcpp
+  rclcpp_components
+  serial_driver
+  operation_interface
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

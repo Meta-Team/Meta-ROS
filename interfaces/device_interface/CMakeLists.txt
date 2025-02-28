@@ -28,6 +28,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/AngularPosition.msg"
   "msg/Relay.msg"
   "srv/CapacitorState.srv"
+  "msg/CapacitorCmd.msg"
 )
 ament_export_dependencies(rosidl_default_runtime)
 
