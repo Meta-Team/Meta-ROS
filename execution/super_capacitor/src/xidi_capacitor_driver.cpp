@@ -1,11 +1,20 @@
-#include "xidi_capacitor_driver.h"
+#include <thread>
+#include <iostream>
+#include <exception>
+#include <linux/can.h>
+#include <stdexcept>
 
-namespace super_capacitor_plugin{
+#include "meta_hardware/can_driver/can_driver.hpp"
+#include "meta_hardware/can_driver/can_exceptions.hpp"
+#include "super_capacitor/super_capacitor_base.h"
+#include "super_capacitor/xidi_capacitor_driver.h"
+
+namespace super_capacitor_plugins {
 XidiCapacitorDriver::XidiCapacitorDriver(std::string can_interface)
 {
-    can_filters.push_back({.can_id = 0x211, .can_mask = CAN_EFF_MASK});
+    can_filters_.push_back({.can_id = 0x211, .can_mask = CAN_EFF_MASK});
     // Initialize CAN driver
-    can_driver_ = std::make_unique<CanDriver>(can_interface, false, can_filters);
+    can_driver_ = std::make_unique<meta_hardware::CanDriver>(can_interface, false, can_filters_);
 
     // Initialize RX thread
     rx_thread_ =
@@ -25,7 +34,7 @@ std::unordered_map<std::string, double> XidiCapacitorDriver::get_state() {
         {"input_voltage", input_voltage_},
         {"capacitor_voltage", capacitor_voltage_},
         {"input_current", input_current_}, 
-        {"target_power", target_power_}
+        {"target_power", target_power_fb_}
     };
 }
 
@@ -44,10 +53,8 @@ void XidiCapacitorDriver::rx_loop(std::stop_token stop_token) {
                             (static_cast<uint16_t>(can_msg.data[3]) << 8)) / 100.0);
             input_current_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[0]) |
                             (static_cast<uint16_t>(can_msg.data[1]) << 8)) / 100.0);
-            capacitor_current_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[2]) |
+            target_power_fb_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[2]) |
                             (static_cast<uint16_t>(can_msg.data[3]) << 8)) / 100.0);
-        } catch (const std::out_of_range &e) {
-            std::cerr << "Unknown capacitor CAN ID: " << can_msg.can_id << std::endl;
         } catch (const CanIOException &e) {
             std::cerr << "Error reading super capacitor CAN message: " << e.what() << std::endl;
         }
@@ -55,8 +62,8 @@ void XidiCapacitorDriver::rx_loop(std::stop_token stop_token) {
 
 }
 
-XidiCapacitorDriver::tx(){
-    canframe tx_frame{.can_id = 0x210, .len = 2, .data = {0}};
+void XidiCapacitorDriver::tx(){
+    can_frame tx_frame{.can_id = 0x210, .len = 2, .data = {0}};
     tx_frame.data[0] = static_cast<uint8_t>(static_cast<uint32_t>(target_power_ * 100.0) >> 8);
     tx_frame.data[1] = static_cast<uint8_t>(static_cast<uint32_t>(target_power_ * 100.0) & 0xFF);
     try {
@@ -69,7 +76,8 @@ XidiCapacitorDriver::tx(){
 XidiCapacitorDriver::~XidiCapacitorDriver() {
     return;
 }
+
 }
 
 #include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(super_capacitor_plugins::XidiCapacitorDriver, super_capacitor_base::SuperCapacitor)
+PLUGINLIB_EXPORT_CLASS(super_capacitor_plugins::XidiCapacitorDriver, super_capacitor_base::SuperCapacitorBase)

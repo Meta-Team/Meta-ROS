@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(super_capacitor)
 
+set (CMAKE_CXX_STANDARD 20)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -11,6 +13,7 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(ament_cmake_auto REQUIRED)
+# find_package(pluginlib REQUIRED)
 ament_auto_find_build_dependencies()
 find_package(rclcpp_components)
 
@@ -23,8 +26,6 @@ target_include_directories(super_capacitor PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
-pluginlib_export_plugin_description_file(super_capacitor_base plugins.xml)
-
 rclcpp_components_register_node(super_capacitor
   PLUGIN "XidiCapacitorDriver"
   EXECUTABLE super_capacitor_node)
@@ -33,10 +34,12 @@ ament_target_dependencies(super_capacitor
   rclcpp
   rclcpp_components
   serial_driver
-  operation_interface
+  device_interface
   pluginlib
-  super_capacitor_base
+  meta_hardware
 )
+
+pluginlib_export_plugin_description_file(super_capacitor_base plugins.xml)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

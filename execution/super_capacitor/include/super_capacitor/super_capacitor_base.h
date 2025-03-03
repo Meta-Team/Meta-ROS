@@ -1,28 +1,29 @@
-#ifdef SUPER_CAPACITOR_BASE_H
+#ifndef SUPER_CAPACITOR_BASE_H
 #define SUPER_CAPACITOR_BASE_H
 #include <unordered_map>
 #include <string>
 #include <linux/can.h>
+#include <stop_token>
 
-namespace super_capacitor_base{
-class SuperCapcitorBase : public SuperCapacitorBaseInterface
+namespace super_capacitor_base
+{
+class SuperCapacitorBase
 {
 public:
-    SuperCapacitorBase(std::string can_interface) = default;
+    explicit SuperCapacitorBase(std::string can_interface);
 
-    virtual void set_target_power(float target_power) = 0;
+    virtual void set_target_power(double target_power) = 0;
 
-    virtual void set_referee_power(float referee_power) = 0;
+    virtual void set_referee_power(double referee_power) = 0;
 
-    virtual std::unordered_map<std::string, double> get_state();
+    virtual std::unordered_map<std::string, double> get_state() = 0;
 
-    std::string get_device_name();
+    virtual std::string get_device_name() = 0;
 
-    ~SuperCapcitorBase() = default;
+    virtual ~SuperCapacitorBase() = default;
 
-private:
     virtual void tx() = 0;
-
+protected:
     virtual void rx_loop(std::stop_token stop_token) = 0;
 };
 }

@@ -3,7 +3,7 @@
 <package format="3">
   <name>super_capacitor</name>
   <version>0.0.0</version>
-  <description>Super capcitor module for Meta</description>
+  <description>Super capacitor module for Meta</description>
   <maintainer email="raventhatfly@gmail.com">wfy</maintainer>
   <license>Apache-2.0</license>
 
@@ -14,8 +14,9 @@
 
   <depend>rclcpp</depend>
   <depend>serial_driver</depend>
-  <depend>plugin_lib</depend>
-  <depend>operation_interface</depend>
+  <depend>pluginlib</depend>
+  <depend>device_interface</depend>
+  <depend>meta_hardware</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
