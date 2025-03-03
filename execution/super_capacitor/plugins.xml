@@ -1,4 +1,5 @@
 <library path="super_capacitor">
-  <class type="super_capacitor_plugins::XidiSuperCapacitorDriver" base_class_type="super_capacitor_base::SuperCapacitorBase">
+  <class type="super_capacitor::XidiSuperCapacitorDriver" base_class_type="super_capacitor::SuperCapacitorBase">
     <description>This is a super capacitor plugin.</description>
   </class>
+</library>

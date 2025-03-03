@@ -5,12 +5,14 @@
 #include <linux/can.h>
 #include <stop_token>
 
-namespace super_capacitor_base
+namespace super_capacitor
 {
 class SuperCapacitorBase
 {
 public:
-    explicit SuperCapacitorBase(std::string can_interface);
+    SuperCapacitorBase();
+
+    virtual void init(std::string can_interface) = 0;
 
     virtual void set_target_power(double target_power) = 0;
 

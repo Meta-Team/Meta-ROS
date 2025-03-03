@@ -9,12 +9,14 @@
 #include "super_capacitor/super_capacitor_base.h"
 #include "meta_hardware/can_driver/can_driver.hpp"
 
-namespace super_capacitor_plugins {
+namespace super_capacitor {
 
-class XidiCapacitorDriver : public super_capacitor_base::SuperCapacitorBase
+class XidiCapacitorDriver : public super_capacitor::SuperCapacitorBase
 {
 public:
-    explicit XidiCapacitorDriver(std::string can_interface);
+    explicit XidiCapacitorDriver();
+
+    void init(std::string can_interface) override;
 
     void set_target_power(double target_power) override;
 
@@ -26,7 +28,7 @@ public:
 
     ~XidiCapacitorDriver() override;
     
-private:
+protected:
     double target_power_, referee_power_;
     std::vector<can_filter> can_filters_;
     std::unique_ptr<meta_hardware::CanDriver> can_driver_;
