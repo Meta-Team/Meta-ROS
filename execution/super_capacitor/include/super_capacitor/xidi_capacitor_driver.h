@@ -1,21 +1,29 @@
-#include "super_capacitor_base.h"
+#include <thread>
 
-namespace super_capacitor
-{
-class Xidi_CapacitorDriver : public SuperCapacitorBase
+#include "super_capacitor_base/super_capacitor_base.h"
+
+namespace super_capacitor_plugin{
+class XidiCapacitorDriver : public SuperCapacitorBase
 {
 public:
-    Xidi_CapacitorDriver() = default;
+    XidiCapacitorDriver(std::string can_interface);
 
-    void set_target_power(float target_power);
+    void set_target_power(double target_power);
 
-    void set_referee_power(float referee_power) = 0;
+    void set_referee_power(double referee_power);
 
-    void can_tx() = 0;
+    std::string get_device_name();
 
-    void can_rx() = 0;
-
-    // virtual ~Xidi_CapacitorDriver() = default;
+    void ~XidiCapacitorDriver();
+    
+private:
+    // CAN driver
+    std::vector<can_filter> can_filters_;
+    std::unique_ptr<CanDriver> can_driver_;
+    void rx_loop(std::stop_token stop_token);
+    std::unique_ptr<std::jthread> rx_thread_;
+    double input_voltage_, capacitor_voltage_, input_current_, target_power_;
+    void tx();
 
 };
 }

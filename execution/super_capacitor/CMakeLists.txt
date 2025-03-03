@@ -16,11 +16,14 @@ find_package(rclcpp_components)
 
 add_library(super_capacitor SHARED
   src/super_capacitor_controller.cpp
+  src/xidi_capacitor_driver.cpp
 )
 
 target_include_directories(super_capacitor PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
+
+pluginlib_export_plugin_description_file(super_capacitor_base plugins.xml)
 
 rclcpp_components_register_node(super_capacitor
   PLUGIN "XidiCapacitorDriver"
@@ -31,6 +34,8 @@ ament_target_dependencies(super_capacitor
   rclcpp_components
   serial_driver
   operation_interface
+  pluginlib
+  super_capacitor_base
 )
 
 if(BUILD_TESTING)
