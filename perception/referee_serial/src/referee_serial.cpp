@@ -30,7 +30,8 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     auto dev_path = "/dev/" + dev_name; // default: /dev/referee_serial
     ctx_ = std::make_unique<IoContext>(2);
     config_ = std::make_unique<SerialPortConfig>(baud, fc, pt, sb);
-    port_ = std::make_unique<SerialPort>(*ctx_, dev_name, *config_);
+    serial_driver_ = std::make_unique<SerialDriver>(*ctx_);
+    serial_driver_->init_port(dev_path, *config_);
     RCLCPP_INFO(node_->get_logger(), "RefereeSerial using serial port: %s", dev_path.c_str());
 
     // create publishers
@@ -41,9 +42,9 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     robot_state_pub_ = node_->create_publisher<operation_interface::msg::RobotState>("robot_state", 10);
 
     // open serial port
-    if (!port_->is_open())
+    if (!serial_driver_->port()->is_open())
     {
-        port_->open();
+        serial_driver_->port()->open();
         receive_thread = std::thread(&RefereeSerial::receive, this);
     }
 
@@ -56,9 +57,9 @@ RefereeSerial::~RefereeSerial()
     {
         receive_thread.join();
     }
-    if (port_->is_open())
+    if (serial_driver_->port()->is_open())
     {
-        port_->close();
+        serial_driver_->port()->close();
     }
     if (ctx_)
     {
@@ -79,7 +80,7 @@ void RefereeSerial::receive()
     while (rclcpp::ok())
     {
         try {
-            port_->receive(prefix);
+            serial_driver_->port()->receive(prefix);
 
             if (KeyMouse::is_wanted_pre(prefix)) // key mouse
             {
@@ -129,7 +130,7 @@ void RefereeSerial::handle_frame(const std::vector<uint8_t>& prefix,
 {
     std::vector<uint8_t> frame;
     frame.resize(sizeof(typename PARSE::FrameType) - prefix.size());
-    port_->receive(frame);
+    serial_driver_->port()->receive(frame);
     frame.insert(frame.begin(), prefix.begin(), prefix.end());
 
     PARSE info(frame); // parse the frame
@@ -152,11 +153,11 @@ void RefereeSerial::reopen_port()
 {
     RCLCPP_WARN(node_->get_logger(), "Reopening serial port");
     try {
-        if (port_->is_open())
+        if (serial_driver_->port()->is_open())
         {
-            port_->close();
+            serial_driver_->port()->close();
         }
-        port_->open();
+        serial_driver_->port()->open();
         RCLCPP_INFO(node_->get_logger(), "Serial port reopened");
     }
     catch (const std::exception & e)
