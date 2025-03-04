@@ -10,7 +10,7 @@ namespace super_capacitor
 class SuperCapacitorBase
 {
 public:
-    SuperCapacitorBase();
+    SuperCapacitorBase() = default;
 
     virtual void init(std::string can_interface) = 0;
 

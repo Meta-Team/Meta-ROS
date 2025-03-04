@@ -9,50 +9,60 @@
 #include "super_capacitor/super_capacitor_base.h"
 #include "super_capacitor/super_capacitor_controller.h"
 #include "meta_hardware/can_driver/can_driver.hpp"
+#include "super_capacitor/xidi_capacitor_driver.h"
 
 
-SuperCapacitorController::SuperCapacitorController() : Node("SuperCapacitorController")
+SuperCapacitorController::SuperCapacitorController(const rclcpp::NodeOptions & options)
 {
+    node_ = rclcpp::Node::make_shared("super_capacitor_controller", options);
 
     // get parameters
-    std::string can_interface = this->declare_parameter("can_interface", std::string("can0"));
-
+    std::string can_interface = node_->declare_parameter("can_interface", std::string("can0"));
+    std::string capacitor_device = node_->declare_parameter("capacitor_device", std::string("xidi"));
     // create subscriptions
-    goal_sub_ = this->create_subscription<device_interface::msg::CapacitorCmd>(
-        "super_capacitor_goal", 10, [this](const device_interface::msg::CapacitorCmd::SharedPtr msg){
-            goal_sub_callback(msg);
-        });
-
+    // goal_sub_ = node_->create_subscription<device_interface::msg::CapacitorCmd>(
+    //     "super_capacitor_goal", 10, [node_](const device_interface::msg::CapacitorCmd::SharedPtr msg){
+    //         goal_sub_callback(msg);
+    //     });
+    goal_sub_ = node_->create_subscription<device_interface::msg::CapacitorCmd>(
+        "super_capacitor_goal", 10, std::bind(&SuperCapacitorController::goal_sub_callback, this, std::placeholders::_1));
     // create a timer for publishing super capacitor state
-    state_pub_ = this->create_publisher<device_interface::msg::CapacitorState>("super_capacitor_state", 10);
-    pub_timer_ = this->create_wall_timer(
-        std::chrono::milliseconds(100), [this](){
-            pub_state();
-        });
+    state_pub_ = node_->create_publisher<device_interface::msg::CapacitorState>("super_capacitor_state", 10);
+    pub_timer_ = node_->create_wall_timer(
+        std::chrono::milliseconds(100), std::bind(&SuperCapacitorController::pub_state, this));
 
     // complete initialization
-    tx_timer_ = this->create_wall_timer(
-        std::chrono::milliseconds(100), [this](){
-            send_command();
-        });
+    tx_timer_ = node_->create_wall_timer(
+        std::chrono::milliseconds(100), std::bind(&SuperCapacitorController::send_command, this));
 
 
-    pluginlib::ClassLoader<super_capacitor::SuperCapacitorBase> capacitor_loader("super_capacitor","super_capacitor::SuperCapacitorBase");
+    // pluginlib::ClassLoader<super_capacitor::SuperCapacitorBase> capacitor_loader("super_capacitor","super_capacitor::SuperCapacitorBase");
 
     try
     {
-        capacitor_ = capacitor_loader.createSharedInstance("SuperCapacitorBase");
-        capacitor_->init(can_interface);
+        // capacitor_ = capacitor_loader.createSharedInstance("super_capacitor::XidiCapacitorDriver");
+        // capacitor_->init(can_interface);
+        if(capacitor_device == "xidi"){
+            capacitor_ = std::make_shared<super_capacitor::XidiCapacitorDriver>();
+            capacitor_->init(can_interface);
+        }else{
+            RCLCPP_ERROR(node_->get_logger(), "Unknown capacitor device: %s", capacitor_device.c_str());
+        }
+        
     }
     catch(pluginlib::PluginlibException& ex)
     {
         printf("The plugin failed to load for some reason. Error: %s\n", ex.what());
     }
-    RCLCPP_INFO(this->get_logger(), "SuperCapacitorController initialized");
+    RCLCPP_INFO(node_->get_logger(), "SuperCapacitorController initialized");
+}
+
+rclcpp::node_interfaces::NodeBaseInterface::SharedPtr SuperCapacitorController::get_node_base_interface() const
+{
+    return node_->get_node_base_interface();
 }
 
 void SuperCapacitorController::goal_sub_callback(const device_interface::msg::CapacitorCmd::SharedPtr msg){
-    // RCLCPP_INFO(this->get_logger(), "Received super capacitor goal");
     target_power_.store(msg->target_power,std::memory_order_relaxed);
     referee_power_.store(msg->referee_power,std::memory_order_relaxed);
     capacitor_->set_target_power(target_power_.load(std::memory_order_relaxed));
@@ -80,3 +90,7 @@ void SuperCapacitorController::pub_state() {
 SuperCapacitorController::~SuperCapacitorController() {
     // Destructor implementation
 }
+
+#include "rclcpp_components/register_node_macro.hpp"
+
+RCLCPP_COMPONENTS_REGISTER_NODE(SuperCapacitorController)

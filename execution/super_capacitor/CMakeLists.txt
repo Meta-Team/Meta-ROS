@@ -27,7 +27,7 @@ target_include_directories(super_capacitor PRIVATE
   $<INSTALL_INTERFACE:include>)
 
 rclcpp_components_register_node(super_capacitor
-  PLUGIN "XidiCapacitorDriver"
+  PLUGIN "SuperCapacitorController"
   EXECUTABLE super_capacitor_node)
 
 ament_target_dependencies(super_capacitor
@@ -39,24 +39,12 @@ ament_target_dependencies(super_capacitor
   meta_hardware
 )
 
-# ament_export_libraries(
-#   super_capacitor
-# )
-# ament_export_targets(
-#   export_${PROJECT_NAME}
-# )
-
-
-
 pluginlib_export_plugin_description_file(super_capacitor plugins.xml)
 
 install(DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}/
 )
 
-# install(TARGETS super_capacitor
-#   LIBRARY DESTINATION lib
-# )
 install(
   TARGETS super_capacitor
   EXPORT export_${PROJECT_NAME}

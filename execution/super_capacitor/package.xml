@@ -13,6 +13,7 @@
   <test_depend>ament_lint_common</test_depend>
 
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>serial_driver</depend>
   <depend>pluginlib</depend>
   <depend>device_interface</depend>
