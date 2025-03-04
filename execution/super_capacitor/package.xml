@@ -18,6 +18,8 @@
   <depend>device_interface</depend>
   <depend>meta_hardware</depend>
 
+  <exec_depend>ros2launch</exec_depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>

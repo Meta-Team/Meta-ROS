@@ -76,3 +76,7 @@ void SuperCapacitorController::pub_state() {
     if (state.contains("cap_state")) msg.cap_state = state.at("cap_state");
     state_pub_->publish(msg);
 }
+
+SuperCapacitorController::~SuperCapacitorController() {
+    // Destructor implementation
+}

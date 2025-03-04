@@ -39,7 +39,38 @@ ament_target_dependencies(super_capacitor
   meta_hardware
 )
 
-pluginlib_export_plugin_description_file(super_capacitor_base plugins.xml)
+# ament_export_libraries(
+#   super_capacitor
+# )
+# ament_export_targets(
+#   export_${PROJECT_NAME}
+# )
+
+
+
+pluginlib_export_plugin_description_file(super_capacitor plugins.xml)
+
+install(DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# install(TARGETS super_capacitor
+#   LIBRARY DESTINATION lib
+# )
+install(
+  TARGETS super_capacitor
+  EXPORT export_${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+ament_export_libraries(
+  super_capacitor
+)
+ament_export_targets(
+  export_${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
