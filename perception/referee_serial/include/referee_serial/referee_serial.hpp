@@ -20,9 +20,9 @@
 using spb = asio::serial_port_base;
 using drivers::serial_driver::FlowControl;
 using drivers::serial_driver::Parity;
-using drivers::serial_driver::SerialPort;
 using drivers::serial_driver::StopBits;
 using drivers::serial_driver::SerialPortConfig;
+using drivers::serial_driver::SerialDriver;
 
 /**
  * @class RefereeSerial
@@ -91,7 +91,7 @@ private:
     // Serial port
     std::unique_ptr<IoContext> ctx_;
     std::unique_ptr<SerialPortConfig> config_;
-    std::unique_ptr<SerialPort> port_;
+    std::unique_ptr<SerialDriver> serial_driver_;
     static std::string dev_name; ///< The path to the serial port.
     static constexpr const char* dev_null = "/dev/null";
     static constexpr uint32_t baud = 115200;
