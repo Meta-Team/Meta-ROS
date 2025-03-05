@@ -1,27 +1,33 @@
 agv_chassis_controller:
-  agv_wheel_joints:
+  agv_vel_joints:
     {
       type: string_array,
       default_value: [],
-      description: "Specifies joints of the AGV wheels.",
+      description: "Specifies velocity joints of the AGV wheels.",
+      read_only: true,
+      validation: { unique<>: null, not_empty<>: null },
+    }
+  agv_pos_joints:
+    {
+      type: string_array,
+      default_value: [],
+      description: "Specifies position joints of the AGV wheels.",
       read_only: true,
       validation: { unique<>: null, not_empty<>: null },
     }
   agv_wheel_center_x:
     {
-      type: double_array,
-      default_value: [],
+      type: double,
+      default_value: 0.0,
       description: "Specifies the x coordinate of the AGV wheel center.",
       read_only: true,
-      validation: { not_empty<>: null },
     }
   agv_wheel_center_y:
     {
-      type: double_array,
-      default_value: [],
+      type: double,
+      default_value: 0.0,
       description: "Specifies the y coordinate of the AGV wheel center.",
       read_only: true,
-      validation: { not_empty<>: null },
     }
   agv_wheel_radius:
     { type: double, default_value: 0.0, description: "Specifies radius of the AGV wheels." }

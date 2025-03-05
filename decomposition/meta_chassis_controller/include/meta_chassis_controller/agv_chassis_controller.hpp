@@ -8,8 +8,8 @@
 #include "behavior_interface/msg/chassis.hpp"
 #include "control_toolbox/pid_ros.hpp"
 #include "controller_interface/chainable_controller_interface.hpp"
-#include "meta_chassis_controller/omni_wheel_kinematics.hpp"
-#include "omni_chassis_controller_parameters.hpp"
+#include "meta_chassis_controller/agv_wheel_kinematics.hpp"
+#include "agv_chassis_controller_parameters.hpp"
 #include "rclcpp/duration.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
@@ -28,7 +28,7 @@ enum class control_mode_type : std::uint8_t {
     CHASSIS_FOLLOW_GIMBAL = 2,
 };
 
-class OmniChassisController : public controller_interface::ChainableControllerInterface {
+class AgvChassisController : public controller_interface::ChainableControllerInterface {
   public:
     AgvChassisController();
 
@@ -61,7 +61,10 @@ class OmniChassisController : public controller_interface::ChainableControllerIn
 
   private:
     std::shared_ptr<agv_chassis_controller::ParamListener> param_listener_;
-    omni_chassis_controller::Params params_;
+    agv_chassis_controller::Params params_;
+
+    std::vector<double> wheels_vel_;
+    std::vector<double> wheels_pos_;
 
     std::shared_ptr<control_toolbox::PidROS> follow_pid_;
 
@@ -79,8 +82,8 @@ class OmniChassisController : public controller_interface::ChainableControllerIn
     rclcpp::Publisher<ControllerStateMsg>::SharedPtr s_publisher_;
     std::unique_ptr<ControllerStatePublisher> state_publisher_;
 
-    // Omni wheel kinematics
-    std::unique_ptr<OmniWheelKinematics> omni_wheel_kinematics_;
+    // Agv wheel kinematics
+    std::unique_ptr<AgvWheelKinematics> agv_wheel_kinematics_;
 
     // override methods from ChainableControllerInterface
     std::vector<hardware_interface::CommandInterface>

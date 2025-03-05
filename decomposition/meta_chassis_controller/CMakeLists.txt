@@ -20,6 +20,8 @@ ament_auto_add_library(
   SHARED
   src/omni_chassis_controller.cpp
   src/omni_wheel_kinematics.cpp
+  src/agv_chassis_controller.cpp
+  src/agv_wheel_kinematics.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"

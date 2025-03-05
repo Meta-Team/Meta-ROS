@@ -17,6 +17,11 @@ constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
 using ControllerReferenceMsg =
     meta_chassis_controller::AgvChassisController::ControllerReferenceMsg;
 
+
+namespace meta_chassis_controller {
+using hardware_interface::HW_IF_POSITION;
+using hardware_interface::HW_IF_VELOCITY;
+
 void reset_controller_reference_msg(
     const std::shared_ptr<ControllerReferenceMsg> &msg,
     const std::shared_ptr<rclcpp_lifecycle::LifecycleNode> &node) {
@@ -33,10 +38,6 @@ void reset_chassis_cmd_msg(const std::shared_ptr<behavior_interface::msg::Chassi
     msg->mode = behavior_interface::msg::Chassis::CHASSIS;
     msg->max_power = NaN;
 }
-
-namespace meta_chassis_controller {
-using hardware_interface::HW_IF_POSITION;
-using hardware_interface::HW_IF_VELOCITY;
 
 AgvChassisController::AgvChassisController()
     : controller_interface::ChainableControllerInterface() {}
@@ -59,10 +60,12 @@ controller_interface::CallbackReturn
 AgvChassisController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
     params_ = param_listener_->get_params();
 
-    agv_wheel_kinematics_ = std::make_unique<AgvWheelKinematics>(
-        params_.agv_wheel_forward_angles, params_.agv_wheel_center_x,
-        params_.agv_wheel_center_y, params_.agv_wheel_sliding_angles,
-        params_.agv_wheel_radius);
+    agv_wheel_kinematics_ = std::make_unique<AgvWheelKinematics>(params_.agv_wheel_center_x, params_.agv_wheel_center_y, params_.agv_wheel_radius);
+    // Set Wheels Velocities and Positions
+    wheels_vel_.resize(4);
+    wheels_pos_.resize(4);
+    std::fill(wheels_vel_.begin(), wheels_vel_.end(), 0);
+    std::fill(wheels_pos_.begin(), wheels_pos_.end(), 0);
 
     // topics QoS
     auto subscribers_qos = rclcpp::SystemDefaultsQoS();
@@ -132,9 +135,12 @@ AgvChassisController::command_interface_configuration() const {
     command_interfaces_config.type =
         controller_interface::interface_configuration_type::INDIVIDUAL;
 
-    command_interfaces_config.names.reserve(params_.agv_wheel_joints.size());
-    for (const auto &joint : params_.agv_wheel_joints) {
+    command_interfaces_config.names.reserve(params_.agv_vel_joints.size() + params_.agv_pos_joints.size());
+    for (const auto &joint : params_.agv_vel_joints) {
         command_interfaces_config.names.push_back(joint + "/" + HW_IF_VELOCITY);
+    }
+    for (const auto &joint : params_.agv_pos_joints) {
+        command_interfaces_config.names.push_back(joint + "/" + HW_IF_POSITION);
     }
 
     return command_interfaces_config;
@@ -261,9 +267,10 @@ AgvChassisController::update_and_write_commands(const rclcpp::Time &time,
             return controller_interface::return_type::ERROR;
         }
 
-        Eigen::VectorXd wheel_vels = agv_wheel_kinematics_->inverse(twist);
-        for (size_t i = 0; i < command_interfaces_.size(); i++) {
-            command_interfaces_[i].set_value(wheel_vels[static_cast<Eigen::Index>(i)]);
+        agv_wheel_kinematics_->inverse(twist, wheels_pos_, wheels_vel_);
+        for (size_t i = 0; i < 4; i++) {
+            command_interfaces_[i].set_value(wheels_vel_[static_cast<Eigen::Index>(i)]);
+            command_interfaces_[i + 4].set_value(wheels_pos_[static_cast<Eigen::Index>(i)]);
         }
     }
 

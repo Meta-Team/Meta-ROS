@@ -5,26 +5,19 @@
 
 namespace meta_chassis_controller {
 
-class OmniWheelKinematics {
+class AgvWheelKinematics {
   public:
-    OmniWheelKinematics(const std::vector<double> &omni_wheel_forward_angles,
-                        const std::vector<double> &omni_wheel_center_x,
-                        const std::vector<double> &omni_wheel_center_y,
-                        const std::vector<double> &omni_wheel_sliding_angles,
-                        double omni_wheel_radius);
-    ~OmniWheelKinematics() = default;
+    AgvWheelKinematics(const double agv_wheel_center_x, const double agv_wheel_center_y, const double agv_wheel_radius); 
+    ~AgvWheelKinematics() = default;
 
-    std::vector<double> forward(const std::vector<double> &wheels_vel);
-    Eigen::VectorXd inverse(Eigen::Vector3d twist) const;
-
+    // std::vector<double> forward(const std::vector<double> &wheels_vel);
+    void inverse(Eigen::VectorXd, std::vector<double> & curr_pos, std::vector<double> & curr_vel);
+    
   private:
     void init();
-    std::vector<double> omni_wheel_forward_angles_;
-    std::vector<double> omni_wheel_center_x_;
-    std::vector<double> omni_wheel_center_y_;
-    std::vector<double> omni_wheel_sliding_angles_;
-    double omni_wheel_radius_;
-    Eigen::MatrixXd motion_mat_;
+    double agv_wheel_center_x_, agv_wheel_center_y_, agv_wheel_radius_, agv_radius_;
+    std::tuple<double, double> get_output(double curr_pos, double curr_vel, double target_pos, double target_vel);
+    // Eigen::MatrixXd motion_mat_;
 };
 
 } // namespace meta_chassis_controller
