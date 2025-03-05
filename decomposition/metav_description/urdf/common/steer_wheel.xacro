@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<robot name="steer_wheel" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="wheel_radius" value="0.0762" />
+    <xacro:property name="roller_radius" value="0.009" />
+
+    <xacro:macro name="steer_wheel"
+        params="prefix connected_to wheel_x_offset wheel_y_offset wheel_z_offset rotation_degree roller_type max_effort max_velocity">
+        <!--  link  -->
+        <link name="${prefix}_steer">
+            <visual>
+                <geometry>
+                    <mesh filename="file://$(find metav_description)/meshes/common/steer_wheel.stl"
+                        scale="0.001 0.001 0.001" />
+                </geometry>
+                <material name="gray">
+                    <color rgba="0.250 0.250 0.250 1.000" />
+                </material>
+            </visual>
+            <inertial>
+                <mass value="0.59" />
+                <inertia ixx="1.416e-3" ixy="0.0" ixz="0.0" iyy="2.749e-3" iyz="0.0" izz="1.416e-3" />
+            </inertial>
+        </link>
+        <!-- TODO: Params unchanged -->
+        <link name="${prefix}_wheel">
+            <visual>
+                <geometry>
+                    <mesh filename="file://$(find metav_description)/meshes/common/steer_wheel.stl"
+                        scale="0.001 0.001 0.001" />
+                </geometry>
+                <material name="gray">
+                    <color rgba="0.250 0.250 0.250 1.000" />
+                </material>
+            </visual>
+            <inertial>
+                <mass value="0.59" />
+                <inertia ixx="1.416e-3" ixy="0.0" ixz="0.0" iyy="2.749e-3" iyz="0.0" izz="1.416e-3" />
+            </inertial>
+        </link>
+
+        <!--  joint  -->
+        <joint name="${prefix}_vel_joint" type="continuous">
+            <axis xyz="0 1 0" />
+            <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_offset_z}"
+                rpy="0 0 ${rotation_degree}" />
+            <!--      limit not work while type="continuous"-->
+            <limit effort="${max_effort}" velocity="${max_velocity}" lower="-1e9" upper="1e9" />
+            <dynamics damping="0.0" friction="0.05" />
+            <parent link="${connected_to}" />
+            <child link="${prefix}_steer" />
+        </joint>
+
+        <joint name="${prefix}_pos_joint" type="continuous">
+            <axis xyz="0 1 0" />
+            <origin xyz="${wheel_x_offset} ${wheel_y_offset} ${wheel_offset_z}"
+                rpy="0 0 ${rotation_degree}" />
+            <!--      limit not work while type="continuous"-->
+            <limit effort="${max_effort}" velocity="${max_velocity}" lower="-1e9" upper="1e9" />
+            <dynamics damping="0.0" friction="0.05" />
+            <parent link="${connected_to}" />
+            <child link="${prefix}_wheel" />
+        </joint>
+
+    </xacro:macro>
+
+    <xacro:macro name="wheel_transmission" params="prefix mechanical_reduction motor_id">
+        <joint name="${prefix}_vel_joint">
+            <command_interface name="effort">
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <param name="motor_model">M3508</param>
+            <param name="motor_id">${motor_id}</param>
+            <param name="mechanical_reduction">${mechanical_reduction}</param>
+            <param name="offset">0.0</param>
+        </joint>
+        <joint name="${prefix}_pos_joint">
+            <command_interface name="effort">
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <param name="motor_model">GM6020</param>
+            <param name="motor_id">${motor_id}</param>
+            <param name="mechanical_reduction">${mechanical_reduction}</param>
+            <param name="offset">0.0</param>
+        </joint>
+    </xacro:macro>
+</robot>
