@@ -90,7 +90,7 @@ gimbal_controller:
 shoot_controller:
   ros__parameters:
     friction_wheel:
-      velocity: -500.0
+      velocity: -700.0
       inverse: false
 
     bullet_loader:
