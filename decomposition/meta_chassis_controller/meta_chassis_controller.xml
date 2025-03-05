@@ -26,4 +26,11 @@ Source of this file are templates in
       OmniChassisController ros2_control controller.
     </description>
   </class>
+  <class name="meta_chassis_controller/AgvChassisController"
+    type="meta_chassis_controller::AgvChassisController"
+    base_class_type="controller_interface::ChainableControllerInterface">
+    <description>
+      AgvChassisController ros2_control controller.
+    </description>
+  </class>
 </library>
