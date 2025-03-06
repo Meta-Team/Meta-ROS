@@ -121,26 +121,37 @@ void DbusInterpreter::update()
     if(d_) move_y -= max_vel;
     move_->vel_y += move_y;
 
-    aim_->yaw -= mouse_x_ * aim_sens * PERIOD / 30;   
-    aim_->pitch -= mouse_y_ * aim_sens * PERIOD / 30;  curb(aim_->pitch, M_PI_4);
+    aim_->yaw -= mouse_x_ * aim_sens * PERIOD / 200;   
+    aim_->pitch -= mouse_y_ * aim_sens * PERIOD / 200;  curb(aim_->pitch, M_PI_4);
     if(q_) aim_->yaw += aim_sens * 0.5 * PERIOD / 1000;
     if(e_) aim_->yaw -= aim_sens * 0.5 * PERIOD / 1000;
 
     // To ensure that the change take place only once per key press
     auto current_time = rclcpp::Clock().now();
 
-    if(current_time.seconds()-last_update_time_.seconds() > 0.2){
-        if(c_ && !last_c_)  // TOGGLE CHASSIS MODE
-        {
-            if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
-                chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
-            }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
-                chassis_->mode = behavior_interface::msg::Chassis::GYRO;
-            }
+    // if(current_time.seconds()-last_update_time_.seconds() > 0.2){
+    //     if(c_ && !last_c_)  // TOGGLE CHASSIS MODE
+    //     {
+    //         if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
+    //             chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+    //         }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
+    //             chassis_->mode = behavior_interface::msg::Chassis::GYRO;
+    //         }
+    //     }
+    //     last_update_time_ = rclcpp::Clock().now();
+    // }
+
+    if(c_ && !last_c_){
+        if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
+            chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+        }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
+            chassis_->mode = behavior_interface::msg::Chassis::GYRO;
         }
-        last_update_time_ = rclcpp::Clock().now();
     }
-    // last_c_ = c_;
+    last_c_ = c_;
+    if(ctrl_){
+        chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+    }
 
     
     
