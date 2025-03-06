@@ -17,7 +17,7 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="file://$(find metav_description)/meshes/sentry/chassis.stl" scale="1.0 1.0 1.0"/>
+                    <mesh filename="file://$(find metav_description)/meshes/sentry25/chassis.stl" scale="1.0 1.0 1.0"/>
                 </geometry>
                 <material name="silver">
                     <color rgba="0.700 0.700 0.700 1.000"/>
@@ -31,22 +31,22 @@
             </collision>
         </link>
 
-        <xacro:omni_wheel prefix="front" connected_to="base_link"
+        <xacro:steer_wheel prefix="left_forward" connected_to="base_link"
                           wheel_x_offset="${chassis_radius}" wheel_y_offset="0.0"
                           wheel_z_offset="${wheel_offset_z}" rotation_degree="${-pi/2}" roller_type="${roller_type}"
                           max_effort="3.42" max_velocity="73"
         />
-        <xacro:omni_wheel prefix="right" connected_to="base_link"
+        <xacro:steer_wheel prefix="left_back" connected_to="base_link"
                           wheel_x_offset="0.0" wheel_y_offset="${-chassis_radius}"
                           wheel_z_offset="${wheel_offset_z}" rotation_degree="${pi}" roller_type="${roller_type}"
                           max_effort="3.42" max_velocity="73"
         />
-        <xacro:omni_wheel prefix="left" connected_to="base_link"
+        <xacro:steer_wheel prefix="right_forward" connected_to="base_link"
                           wheel_x_offset="0.0" wheel_y_offset="${chassis_radius}"
                           wheel_z_offset="${wheel_offset_z}" rotation_degree="${0}" roller_type="${roller_type}"
                           max_effort="3.42" max_velocity="73"
         />
-        <xacro:omni_wheel prefix="back" connected_to="base_link"
+        <xacro:steer_wheel prefix="right_back" connected_to="base_link"
                           wheel_x_offset="${-chassis_radius}" wheel_y_offset="${0}"
                           wheel_z_offset="${wheel_offset_z}" rotation_degree="${pi/2}" roller_type="${roller_type}"
                           max_effort="3.42" max_velocity="73"
