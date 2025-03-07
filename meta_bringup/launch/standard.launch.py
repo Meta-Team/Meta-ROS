@@ -122,6 +122,15 @@ def generate_launch_description():
         emulate_tty=True
     )
 
+    super_capacitor_node = Node(
+        package='super_capacitor',
+        executable='super_capacitor_node',
+        name='capacitor',
+        output='both',
+        parameters=[robot_config],
+        emulate_tty=True
+    )
+
     ahrs_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('fdilink_ahrs'),
@@ -147,4 +156,5 @@ def generate_launch_description():
         # auto_sentry_node,
         dbus_vehicle_node,
         ahrs_launch,
+        super_capacitor_node,
     ])

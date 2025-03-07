@@ -37,7 +37,7 @@
         <ros2_control name="dji_motors_chassis" type="system">
             <hardware>
                 <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
-                <param name="can_network_name">can2</param>
+                <param name="can_network_name">can1</param>
             </hardware>
             <xacro:wheel_transmission prefix="front_left" mechanical_reduction="20.0" motor_id="1" />
             <xacro:wheel_transmission prefix="front_right" mechanical_reduction="20.0" motor_id="2" />
@@ -49,7 +49,7 @@
         <ros2_control name="dji_motors_gimbal" type="system">
             <hardware>
                 <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
-                <param name="can_network_name">can1</param>
+                <param name="can_network_name">can2</param>
             </hardware>
             <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="20.0" motor_id="1" offset="0"/>
             <xacro:shooter_transmission prefix="fric1" mechanical_reduction="-1.0" offset="0.25"
