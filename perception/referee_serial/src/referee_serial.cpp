@@ -10,6 +10,7 @@
 #include <rclcpp/utilities.hpp>
 #include <string>
 #include <vector>
+#include <queue>
 #include "referee_serial/crc.h"
 
 #define DEBUG false
@@ -74,14 +75,19 @@ rclcpp::node_interfaces::NodeBaseInterface::SharedPtr RefereeSerial::get_node_ba
 
 void RefereeSerial::receive()
 {
-    std::vector<uint8_t> prefix(7); // header + cmd_id
+    std::vector<uint8_t> prefix; // header + cmd_id
+    std::vector<uint8_t> receive_bit(1);
     RCLCPP_INFO(node_->get_logger(), "Receiving serial frames");
 
     while (rclcpp::ok())
     {
         try {
-            serial_driver_->port()->receive(prefix);
-
+            serial_driver_->port()->receive(receive_bit);
+            prefix.push_back(receive_bit[0]);
+            if (prefix.size() < 7)
+                continue;
+            while (prefix.size() > 7)
+                prefix.erase(prefix.begin());
             if (KeyMouse::is_wanted_pre(prefix)) // key mouse
             {
                 handle_frame<operation_interface::msg::KeyMouse, KeyMouse>(
