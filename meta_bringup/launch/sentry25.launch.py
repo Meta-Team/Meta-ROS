@@ -35,7 +35,7 @@ def generate_launch_description():
         PathJoinSubstitution([FindExecutable(name='xacro')]),
         ' ',
         PathJoinSubstitution(
-            [FindPackageShare('metav_description'), 'urdf', 'sentry', 'sentry.xacro']),
+            [FindPackageShare('metav_description'), 'urdf', 'sentry25', 'sentry.xacro']),
         ' ',
         'is_simulation:=', enable_simulation,
     ])
@@ -92,7 +92,10 @@ def generate_launch_description():
     # List of controllers to be loaded sequentially
     # Order in this list is IMPORTANT
     load_controllers = [
-        # load_controller('wheels_pid_controller'),
+        load_controller('wheels_pid_controller'),
+        load_controller('steer_pos2vel_pid_controller'),
+        # load_controller('steer_vel2eff_pid_controller'),
+        
         # load_controller('gimbal_controller'),
         load_controller('agv_chassis_controller'),
         # load_controller('shoot_controller')

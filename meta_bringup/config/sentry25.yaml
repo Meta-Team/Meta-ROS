@@ -2,10 +2,16 @@ controller_manager:
   ros__parameters:
     update_rate: 200 # Hz
 
-    omni_chassis_controller:
-      type: meta_chassis_controller/OmniChassisController
+    agv_chassis_controller:
+      type: meta_chassis_controller/AgvChassisController
 
     wheels_pid_controller:
+      type: pid_controller/PidController
+
+    steer_pos2vel_pid_controller:
+      type: pid_controller/PidController
+
+    steer_vel2eff_pid_controller:
       type: pid_controller/PidController
 
     gimbal_controller:
@@ -25,10 +31,14 @@ agv_chassis_controller:
       - wheels_pid_controller/right_forward_vel_joint
       - wheels_pid_controller/right_back_vel_joint
     agv_pos_joints:
-      - wheels_pid_controller/left_forward_pos_joint
-      - wheels_pid_controller/left_back_pos_joint
-      - wheels_pid_controller/right_forward_pos_joint
-      - wheels_pid_controller/right_back_pos_joint
+      # - steer_pos2vel_pid_controller/left_forward_pos_joint
+      # - steer_pos2vel_pid_controller/left_back_pos_joint
+      # - steer_pos2vel_pid_controller/right_forward_pos_joint
+      # - steer_pos2vel_pid_controller/right_back_pos_joint
+      - left_forward_pos_joint
+      - left_back_pos_joint
+      - right_forward_pos_joint
+      - right_back_pos_joint
 
     agv_wheel_center_x: 0.225
     agv_wheel_center_y: 0.225
@@ -44,6 +54,12 @@ agv_chassis_controller:
 
     follow_pid_target: 0.7853981634
 
+    steer_pos_pos2vel_gains:
+      { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
+    steer_pos_vel2eff_gains:
+      { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
+
+
     reference_timeout: 0.2
 
 wheels_pid_controller:
@@ -53,10 +69,6 @@ wheels_pid_controller:
       - left_back_vel_joint
       - right_forward_vel_joint
       - right_back_vel_joint
-      - left_forward_pos_joint
-      - left_back_pos_joint
-      - right_forward_pos_joint
-      - right_back_pos_joint
 
     command_interface: effort
 
@@ -71,14 +83,52 @@ wheels_pid_controller:
         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       right_back_vel_joint:
         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
-      left_forward_pos_joint:
-        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
-      left_back_pos_joint:
-        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
-      right_forward_pos_joint:
-        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
-      right_back_pos_joint:
-        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+
+
+# steer_vel2eff_pid_controller:
+#   ros__parameters:
+#     dof_names:
+#       - left_forward_pos_joint
+#       - left_back_pos_joint
+#       - right_forward_pos_joint
+#       - right_back_pos_joint
+
+#     command_interface: effort
+
+#     reference_and_state_interfaces: ["vel_cmd"]
+
+#     gains:
+#       left_forward_pos_joint:
+#         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+#       left_back_pos_joint:
+#         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+#       right_forward_pos_joint:
+#         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+#       right_back_pos_joint:
+#         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+
+# steer_pos2vel_pid_controller:
+#   ros__parameters:
+#     dof_names:
+#       - left_forward_pos_joint
+#       - left_back_pos_joint
+#       - right_forward_pos_joint
+#       - right_back_pos_joint
+
+#     command_interface: effort
+
+#     reference_and_state_interfaces: ["position"]
+
+#     gains:
+#       left_forward_pos_joint:
+#         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+#       left_back_pos_joint:
+#         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+#       right_forward_pos_joint:
+#         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+#       right_back_pos_joint:
+#         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }         # TODO: PID parameters to finish
+
 
 gimbal_controller:
   ros__parameters:

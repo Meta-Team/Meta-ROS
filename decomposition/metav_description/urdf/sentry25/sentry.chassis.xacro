@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<robot name="sentry" xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:include filename="$(find metav_description)/urdf/common/omni_wheel.xacro"/>
+<robot name="sentry25" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find metav_description)/urdf/common/steer_wheel.xacro"/>
 
     <xacro:property name="chassis_radius" value="0.245"/>
     <xacro:property name="wheel_offset_z" value="0.0"/>

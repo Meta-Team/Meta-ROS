@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="sentry" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="sentry25" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:arg name="is_simulation" default="true" />
 
@@ -13,7 +13,7 @@
         <child link="base_link" />
     </joint>
 
-    <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.chassis.xacro" />
+    <xacro:include filename="$(find metav_description)/urdf/sentry25/sentry.chassis.xacro" />
     <xacro:if value="$(arg is_simulation)">
         <xacro:chassis roller_type="simple" />
     </xacro:if>
@@ -21,10 +21,10 @@
         <xacro:chassis roller_type="none" />
     </xacro:unless>
 
-    <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.gimbal.xacro" />
+    <xacro:include filename="$(find metav_description)/urdf/sentry25/sentry.gimbal.xacro" />
     <xacro:gimbal />
 
-    <xacro:include filename="$(find metav_description)/urdf/sentry/sentry.shooter.xacro" />
+    <xacro:include filename="$(find metav_description)/urdf/sentry25/sentry.shooter.xacro" />
     <xacro:shooter />
 
     <xacro:include filename="$(find metav_description)/urdf/common/sensor_imu.xacro" />

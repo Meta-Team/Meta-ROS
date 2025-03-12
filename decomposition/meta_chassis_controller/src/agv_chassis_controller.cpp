@@ -21,6 +21,7 @@ using ControllerReferenceMsg =
 namespace meta_chassis_controller {
 using hardware_interface::HW_IF_POSITION;
 using hardware_interface::HW_IF_VELOCITY;
+using hardware_interface::HW_IF_EFFORT;
 
 void reset_controller_reference_msg(
     const std::shared_ptr<ControllerReferenceMsg> &msg,
@@ -140,7 +141,7 @@ AgvChassisController::command_interface_configuration() const {
         command_interfaces_config.names.push_back(joint + "/" + HW_IF_VELOCITY);
     }
     for (const auto &joint : params_.agv_pos_joints) {
-        command_interfaces_config.names.push_back(joint + "/" + HW_IF_POSITION);
+        command_interfaces_config.names.push_back(joint + "/" + HW_IF_EFFORT);
     }
 
     return command_interfaces_config;
@@ -268,6 +269,7 @@ AgvChassisController::update_and_write_commands(const rclcpp::Time &time,
         }
 
         agv_wheel_kinematics_->inverse(twist, wheels_pos_, wheels_vel_);
+        
         for (size_t i = 0; i < 4; i++) {
             command_interfaces_[i].set_value(wheels_vel_[static_cast<Eigen::Index>(i)]);
             command_interfaces_[i + 4].set_value(wheels_pos_[static_cast<Eigen::Index>(i)]);
