@@ -50,5 +50,17 @@ agv_chassis_controller:
       default_value: 0.0,
       description: "Specifies target of the follow PID controller. Setting 0.0 meaning the car is always moving towards the front. Usually 0.7853981634(45 degree) gives the maximum speed.",
     }
+  steer_pos2vel_gains:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Specifies target of the follow PID controller. Setting 0.0 meaning the car is always moving towards the front. Usually 0.7853981634(45 degree) gives the maximum speed.",
+    }
+  steer_vel2eff_gains:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Specifies target of the follow PID controller. Setting 0.0 meaning the car is always moving towards the front. Usually 0.7853981634(45 degree) gives the maximum speed.",
+    }
   reference_timeout:
     { type: double, default_value: 0.1, description: "Specifies timeout for the reference." }

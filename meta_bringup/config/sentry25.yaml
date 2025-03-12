@@ -54,10 +54,20 @@ agv_chassis_controller:
 
     follow_pid_target: 0.7853981634
 
-    steer_pos_pos2vel_gains:
-      { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
-    steer_pos_vel2eff_gains:
-      { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
+    # steer_pos2vel_gains:
+    #   { p: 45.0, i: 5.5, d: 1.0E4, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
+    # steer_vel2eff_gains:
+    #   { p: 1.0, i: 35.0, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
+
+    steer_pos2vel_gains:
+      # { p: 7.0, i: 0.0, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
+      { p: 0.0, i: 0.0, d: 0.0 }
+    steer_vel2eff_gains:
+      { p: 1.0e-2, i: 2.5e-1, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+    # steer_pos2vel_gains:
+    #   { p: 0.0, i: 0.0, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
+    # steer_vel2eff_gains:
+    #   { p: 1.0, i: 0.0, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
 
 
     reference_timeout: 0.2

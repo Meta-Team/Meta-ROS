@@ -68,6 +68,23 @@ AgvChassisController::on_configure(const rclcpp_lifecycle::State & /*previous_st
     std::fill(wheels_vel_.begin(), wheels_vel_.end(), 0);
     std::fill(wheels_pos_.begin(), wheels_pos_.end(), 0);
 
+    // Initialize PIDs
+    steer_pos2vel_pid_ = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "steer_pos2vel_gains", true);
+
+    if (!steer_pos2vel_pid_->initPid()) {
+        RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for pos2vel");
+        return controller_interface::CallbackReturn::FAILURE;
+    }
+
+    steer_vel2eff_pid_ = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "steer_vel2eff_gains", true);
+
+    if (!steer_vel2eff_pid_->initPid()) {
+        RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for vel2eff");
+        return controller_interface::CallbackReturn::FAILURE;
+    }
+
     // topics QoS
     auto subscribers_qos = rclcpp::SystemDefaultsQoS();
     subscribers_qos.keep_last(1);
@@ -142,6 +159,7 @@ AgvChassisController::command_interface_configuration() const {
     }
     for (const auto &joint : params_.agv_pos_joints) {
         command_interfaces_config.names.push_back(joint + "/" + HW_IF_EFFORT);
+        std::cout << "command interfaces: " << params_.agv_vel_joints.size() + params_.agv_pos_joints.size() << std::endl;
     }
 
     return command_interfaces_config;
@@ -154,9 +172,21 @@ AgvChassisController::state_interface_configuration() const {
         controller_interface::interface_configuration_type::INDIVIDUAL;
 
     // Joint position state of yaw gimbal is required
-    state_interfaces_config.names.reserve(1);
+    state_interfaces_config.names.reserve(9);
     state_interfaces_config.names.push_back(params_.yaw_gimbal_joint + "/" +
                                             HW_IF_POSITION);
+
+    for(const auto &joint : params_.agv_pos_joints){
+        state_interfaces_config.names.push_back(joint + "/" +
+                                            HW_IF_POSITION);
+    }
+
+    for(const auto &joint : params_.agv_pos_joints){
+        state_interfaces_config.names.push_back(joint + "/" +
+                                            HW_IF_VELOCITY);
+        std::cout <<"state interfaces: " << joint << std::endl;
+    }
+
 
     return state_interfaces_config;
 }
@@ -268,11 +298,22 @@ AgvChassisController::update_and_write_commands(const rclcpp::Time &time,
             return controller_interface::return_type::ERROR;
         }
 
-        agv_wheel_kinematics_->inverse(twist, wheels_pos_, wheels_vel_);
+        // agv_wheel_kinematics_->inverse(twist, wheels_pos_, wheels_vel_);
+
+        for(int i = 0; i < params_.agv_pos_joints.size(); i++){         // FIXME: Magical Number
+            double steer_pos_ref = wheels_pos_[static_cast<Eigen::Index>(i)];
+            double steer_pos_fb = state_interfaces_[1 + i].get_value();
+            double steer_vel_fb = state_interfaces_[1 + i + params_.agv_pos_joints.size()].get_value();
+            double steer_pos_err = angles::shortest_angular_distance(steer_pos_fb, steer_pos_ref);
+            double steer_vel_ref = steer_pos2vel_pid_->computeCommand(steer_pos_err, period);
+            double steer_vel_err = steer_vel_ref - steer_vel_fb;
+            double steer_eff_cmd = steer_vel2eff_pid_->computeCommand(steer_vel_err, period);
+            command_interfaces_[i + params_.agv_vel_joints.size()].set_value(steer_eff_cmd);
+        }
         
-        for (size_t i = 0; i < 4; i++) {
+        for (size_t i = 0; i < params_.agv_pos_joints.size(); i++) {
             command_interfaces_[i].set_value(wheels_vel_[static_cast<Eigen::Index>(i)]);
-            command_interfaces_[i + 4].set_value(wheels_pos_[static_cast<Eigen::Index>(i)]);
+            
         }
     }
 
