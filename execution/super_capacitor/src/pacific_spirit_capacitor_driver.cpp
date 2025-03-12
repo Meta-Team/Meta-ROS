@@ -15,7 +15,8 @@ PacificSpiritCapacitorDriver::PacificSpiritCapacitorDriver()
     : super_capacitor::SuperCapacitorBase(){}
 
 void PacificSpiritCapacitorDriver::init(std::string can_interface){
-    can_filters_.push_back({.can_id = 0x2c8, .can_mask = CAN_EFF_MASK});
+    can_filters_.push_back({.can_id = 0x2c7, .can_mask = CAN_EFF_MASK});
+    can_filters_.push_back({.can_id = 0x2c6, .can_mask = CAN_EFF_MASK});
     // Initialize CAN driver
     can_driver_ = std::make_unique<meta_hardware::CanDriver>(can_interface, false, can_filters_);
 
@@ -37,7 +38,11 @@ std::unordered_map<std::string, double> PacificSpiritCapacitorDriver::get_state(
         {"max_discharge_power", max_discharge_power_},
         {"base_power", base_power_},
         {"cap_energy_percentage", cap_energy_percentage_}, 
-        {"cap_state", cap_state_}
+        {"cap_state", cap_state_},
+        {"input_voltage", input_voltage_},
+        {"capacitor_voltage", capacitor_voltage_},
+        {"input_current", input_current_}, 
+        {"target_power", target_power_fb_}
     };
 }
 
@@ -49,15 +54,26 @@ void PacificSpiritCapacitorDriver::rx_loop(std::stop_token stop_token) {
     while (!stop_token.stop_requested()) {
         try {
             can_frame can_msg = can_driver_->read(2000);
-
-            max_discharge_power_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[0]) |
-                            (static_cast<uint16_t>(can_msg.data[1]) << 8)) / 100.0);
-            base_power_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[2]) |
-                            (static_cast<uint16_t>(can_msg.data[3]) << 8)) / 100.0);
-            cap_energy_percentage_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[4]) |
-                            (static_cast<uint16_t>(can_msg.data[5]) << 8)) / 100.0);
-            cap_state_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[6]) |
-                            (static_cast<uint16_t>(can_msg.data[7]) << 8)) / 100.0);
+            if(can_msg.can_id == 0x2c7){
+                max_discharge_power_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[0]) |
+                            (static_cast<uint16_t>(can_msg.data[1]) << 8))) / 100.0;
+                base_power_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[2]) |
+                                (static_cast<uint16_t>(can_msg.data[3]) << 8))) / 100.0;
+                cap_energy_percentage_ = static_cast<double>(static_cast<int16_t>(static_cast<int16_t>(can_msg.data[4]) |
+                                (static_cast<int16_t>(can_msg.data[5]) << 8)));
+                cap_state_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[6]) |
+                                (static_cast<uint16_t>(can_msg.data[7]) << 8)));
+            }else if(can_msg.can_id == 0x2c6){
+                input_voltage_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[0]) |
+                            (static_cast<uint16_t>(can_msg.data[1]) << 8))) / 100.0;
+                capacitor_voltage_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[2]) |
+                            (static_cast<uint16_t>(can_msg.data[3]) << 8))) / 100.0;
+                input_current_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[4]) |
+                            (static_cast<uint16_t>(can_msg.data[5]) << 8))) / 100.0;
+                target_power_fb_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[6]) |
+                            (static_cast<uint16_t>(can_msg.data[7]) << 8))) / 100.0;
+            }
+            
         } catch (const meta_hardware::CanIOException &e) {
             std::cerr << "Error reading super capacitor CAN message: " << e.what() << std::endl;
         }
@@ -66,7 +82,7 @@ void PacificSpiritCapacitorDriver::rx_loop(std::stop_token stop_token) {
 }
 
 void PacificSpiritCapacitorDriver::tx(){
-    can_frame tx_frame{.can_id = 0x2c7, .len = 8, .data = {0}};
+    can_frame tx_frame{.can_id = 0x2c8, .len = 8, .data = {0}};
     tx_frame.data[0] = static_cast<uint8_t>(static_cast<uint32_t>(target_power_ * 100.0) & 0xFF);
     tx_frame.data[1] = static_cast<uint8_t>(static_cast<uint32_t>(target_power_ * 100.0) >> 8);
     tx_frame.data[2] = static_cast<uint8_t>(static_cast<uint32_t>(referee_power_ * 100.0) & 0xFF);

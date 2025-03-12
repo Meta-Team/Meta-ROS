@@ -35,6 +35,7 @@ protected:
     void rx_loop(std::stop_token stop_token) override;
     std::unique_ptr<std::jthread> rx_thread_;
     double max_discharge_power_, base_power_, cap_energy_percentage_, cap_state_;
+    double input_voltage_, capacitor_voltage_, input_current_, target_power_fb_;
     void tx() override;
 
 };
