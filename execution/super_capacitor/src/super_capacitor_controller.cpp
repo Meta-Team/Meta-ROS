@@ -10,6 +10,7 @@
 #include "super_capacitor/super_capacitor_controller.h"
 #include "meta_hardware/can_driver/can_driver.hpp"
 #include "super_capacitor/xidi_capacitor_driver.h"
+#include "super_capacitor/pacific_spirit_capacitor_driver.h"
 
 
 SuperCapacitorController::SuperCapacitorController(const rclcpp::NodeOptions & options)
@@ -44,6 +45,9 @@ SuperCapacitorController::SuperCapacitorController(const rclcpp::NodeOptions & o
         // capacitor_->init(can_interface);
         if(capacitor_device == "xidi"){
             capacitor_ = std::make_shared<super_capacitor::XidiCapacitorDriver>();
+            capacitor_->init(can_interface);
+        }else if(capacitor_device == "pacific_spirit"){
+            capacitor_ = std::make_shared<super_capacitor::PacificSpiritCapacitorDriver>();
             capacitor_->init(can_interface);
         }else{
             RCLCPP_ERROR(node_->get_logger(), "Unknown capacitor device: %s", capacitor_device.c_str());

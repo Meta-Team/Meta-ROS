@@ -20,6 +20,7 @@ find_package(rclcpp_components)
 add_library(super_capacitor SHARED
   src/super_capacitor_controller.cpp
   src/xidi_capacitor_driver.cpp
+  src/pacific_spirit_capacitor_driver.cpp
 )
 
 target_include_directories(super_capacitor PRIVATE

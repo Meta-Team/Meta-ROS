@@ -119,3 +119,7 @@ dbus_vehicle:
       stick_sens: 5.00 # rad/s
       mouse_sens: 10.0
       deadzone: 0.15 # percentage
+
+capacitor:
+  ros__parameters:
+    can_interface: "can1"

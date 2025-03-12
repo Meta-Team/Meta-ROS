@@ -33,7 +33,7 @@ DmMotor::DmMotor(const std::unordered_map<std::string, std::string> &motor_param
     max_effort_ = std::stod(motor_param.at("max_effort"));
 
     std::string control_mode = motor_param.at("control_mode");
-    uint32_t id_offeset = 0;
+    uint32_t id_offset = 0;
 
     if (control_mode == "mit") {
         Kp_ = std::stod(motor_param.at("Kp"));
@@ -46,16 +46,16 @@ DmMotor::DmMotor(const std::unordered_map<std::string, std::string> &motor_param
 
     } else if (control_mode == "position") {
         run_mode_ = RunMode::POSITION;
-        id_offeset = 0x100;
+        id_offset = 0x100;
     } else if (control_mode == "velocity") {
         run_mode_ = RunMode::VELOCITY;
-        id_offeset = 0x200;
+        id_offset = 0x200;
     } else {
         throw std::runtime_error("Unknown motor mode: " + control_mode);
     }
 
-    if (motor_model_ == "4310") {
-        tx_can_id_ = dm_motor_id_ + id_offeset;
+    if (motor_model_ == "DaMiao") {
+        tx_can_id_ = dm_motor_id_ + id_offset;
     } else {
         throw std::runtime_error("Unknown motor model: " + motor_model_);
     }

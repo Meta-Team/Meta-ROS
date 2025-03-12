@@ -1,19 +1,10 @@
 uint8 robot_id
 uint8 robot_level
-uint16 remain_hp
-uint16 max_hp
-uint16 shooter_id1_17mm_cooling_rate
-uint16 shooter_id1_17mm_cooling_limit
-uint16 shooter_id1_17mm_speed_limit
-
-uint16 shooter_id2_17mm_cooling_rate
-uint16 shooter_id2_17mm_cooling_limit
-uint16 shooter_id2_17mm_speed_limit
-uint16 shooter_id1_42mm_cooling_rate
-uint16 shooter_id1_42mm_cooling_limit
-uint16 shooter_id1_42mm_speed_limit
-
+uint16 current_hp
+uint16 maximum_hp
+uint16 shooter_barrel_cooling_value
+uint16 shooter_barrel_heat_limit
 uint16 chassis_power_limit
-bool mains_power_gimbal_output
-bool mains_power_chassis_output
-bool mains_power_shooter_output
+bool power_management_gimbal_output
+bool power_management_chassis_output
+bool power_management_shooter_output
