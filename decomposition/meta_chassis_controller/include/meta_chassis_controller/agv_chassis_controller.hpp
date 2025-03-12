@@ -68,8 +68,8 @@ class AgvChassisController : public controller_interface::ChainableControllerInt
 
     std::shared_ptr<control_toolbox::PidROS> follow_pid_;
 
-    std::shared_ptr<control_toolbox::PidROS> steer_pos2vel_pid_;
-    std::shared_ptr<control_toolbox::PidROS> steer_vel2eff_pid_;
+    std::vector<std::shared_ptr<control_toolbox::PidROS>> steer_pos2vel_pid_;
+    std::vector<std::shared_ptr<control_toolbox::PidROS>> steer_vel2eff_pid_;
 
     rclcpp::Duration ref_timeout_ = rclcpp::Duration(0, 0);
     rclcpp::Subscription<ControllerReferenceMsgUnstamped>::SharedPtr twist_sub_;

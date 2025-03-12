@@ -61,7 +61,7 @@ agv_chassis_controller:
 
     steer_pos2vel_gains:
       # { p: 7.0, i: 0.0, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
-      { p: 0.0, i: 0.0, d: 0.0 }
+      { p: 1.0, i: 0.1, d: 0.0 }
     steer_vel2eff_gains:
       { p: 1.0e-2, i: 2.5e-1, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
     # steer_pos2vel_gains:
