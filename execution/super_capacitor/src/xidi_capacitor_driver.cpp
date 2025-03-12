@@ -51,13 +51,13 @@ void XidiCapacitorDriver::rx_loop(std::stop_token stop_token) {
             can_frame can_msg = can_driver_->read(2000);
 
             input_voltage_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[0]) |
-                            (static_cast<uint16_t>(can_msg.data[1]) << 8)) / 100.0);
+                            (static_cast<uint16_t>(can_msg.data[1]) << 8))) / 100.0;
             capacitor_voltage_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[2]) |
-                            (static_cast<uint16_t>(can_msg.data[3]) << 8)) / 100.0);
+                            (static_cast<uint16_t>(can_msg.data[3]) << 8))) / 100.0;
             input_current_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[4]) |
-                            (static_cast<uint16_t>(can_msg.data[5]) << 8)) / 100.0);
+                            (static_cast<uint16_t>(can_msg.data[5]) << 8))) / 100.0;
             target_power_fb_ = static_cast<double>(static_cast<uint16_t>(static_cast<uint16_t>(can_msg.data[6]) |
-                            (static_cast<uint16_t>(can_msg.data[7]) << 8)) / 100.0);
+                            (static_cast<uint16_t>(can_msg.data[7]) << 8))) / 100.0;
         } catch (const meta_hardware::CanIOException &e) {
             std::cerr << "Error reading super capacitor CAN message: " << e.what() << std::endl;
         }
