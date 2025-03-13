@@ -83,7 +83,7 @@
             <state_interface name="effort" />
             <param name="motor_model">GM6020</param>
             <param name="motor_id">${pos_motor_id}</param>
-            <param name="mechanical_reduction">1</param>
+            <param name="mechanical_reduction">1.0</param>
             <param name="offset">${pos_offset}</param>
         </joint>
     </xacro:macro>

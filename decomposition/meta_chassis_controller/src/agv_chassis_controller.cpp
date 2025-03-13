@@ -70,24 +70,39 @@ AgvChassisController::on_configure(const rclcpp_lifecycle::State & /*previous_st
 
     // Initialize PIDs
 
-    for(const auto &joint : params_.agv_pos_joints){
-        steer_pos2vel_pid_.push_back(std::make_shared<control_toolbox::PidROS>(
-            get_node(), "steer_pos2vel_gains", true));
+    steer_pos2vel_pid_.resize(4);
+    steer_pos2vel_pid_[0] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "left_forward_steer_pos2vel_gains", true);
+    steer_pos2vel_pid_[1] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "left_back_steer_pos2vel_gains", true);
+    steer_pos2vel_pid_[2] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "right_forward_steer_pos2vel_gains", true);
+    steer_pos2vel_pid_[3] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "right_back_steer_pos2vel_gains", true);
 
-        if (!steer_pos2vel_pid_[steer_pos2vel_pid_.size()-1]->initPid()) {
+    for (int i = 0; i < steer_pos2vel_pid_.size(); i++) {
+        if (!steer_pos2vel_pid_[i]->initPid()) {
             RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for pos2vel");
             return controller_interface::CallbackReturn::FAILURE;
         }
+    }
 
-        steer_vel2eff_pid_.push_back(std::make_shared<control_toolbox::PidROS>(
-            get_node(), "steer_vel2eff_gains", true));
+    steer_vel2eff_pid_.resize(4);
+    steer_vel2eff_pid_[0] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "left_forward_steer_vel2eff_gains", true);
+    steer_vel2eff_pid_[1] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "left_back_steer_vel2eff_gains", true);
+    steer_vel2eff_pid_[2] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "right_forward_steer_vel2eff_gains", true);
+    steer_vel2eff_pid_[3] = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "right_back_steer_vel2eff_gains", true);
 
-        if (!steer_vel2eff_pid_[steer_pos2vel_pid_.size()-1]) {
-            RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for vel2eff");
+    for (int i = 0; i < steer_vel2eff_pid_.size(); i++) {
+        if (!steer_vel2eff_pid_[i]->initPid()) {
+            RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for pos2vel");
             return controller_interface::CallbackReturn::FAILURE;
         }
     }
-    
 
     // topics QoS
     auto subscribers_qos = rclcpp::SystemDefaultsQoS();
@@ -302,7 +317,7 @@ AgvChassisController::update_and_write_commands(const rclcpp::Time &time,
             return controller_interface::return_type::ERROR;
         }
 
-        // agv_wheel_kinematics_->inverse(twist, wheels_pos_, wheels_vel_);
+        agv_wheel_kinematics_->inverse(twist, wheels_pos_, wheels_vel_);
 
         for(int i = 0; i < params_.agv_pos_joints.size(); i++){         // FIXME: Magical Number
             double steer_pos_ref = wheels_pos_[static_cast<Eigen::Index>(i)];
@@ -310,11 +325,10 @@ AgvChassisController::update_and_write_commands(const rclcpp::Time &time,
             double steer_vel_fb = state_interfaces_[1 + i + params_.agv_pos_joints.size()].get_value();
             double steer_pos_err = angles::shortest_angular_distance(steer_pos_fb, steer_pos_ref);
             double steer_vel_ref = steer_pos2vel_pid_[i]->computeCommand(steer_pos_err, period);
-            std::cout << i << " " << steer_vel_ref << std::endl;
+            steer_vel_ref = 8.0;
             double steer_vel_err = steer_vel_ref - steer_vel_fb;
             double steer_eff_cmd = steer_vel2eff_pid_[i]->computeCommand(steer_vel_err, period);
             command_interfaces_[i + params_.agv_vel_joints.size()].set_value(steer_eff_cmd);
-            // std::cout << i << ": "<< steer_eff_cmd << std::endl;
         }
         
         for (size_t i = 0; i < params_.agv_pos_joints.size(); i++) {
