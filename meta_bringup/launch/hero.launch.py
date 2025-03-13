@@ -101,7 +101,7 @@ def generate_launch_description():
         load_controller('wheels_pid_controller'),
         # load_controller('gimbal_controller'),
         load_controller('omni_chassis_controller'),
-        # load_controller('shoot_controller')
+        load_controller('shoot_controller')
     ]
 
     dbus_control_node = Node(
@@ -113,10 +113,10 @@ def generate_launch_description():
         emulate_tty=True,
     )
 
-    dbus_vehicle_node = Node(
-        package='dbus_vehicle',
-        executable='dbus_vehicle_node',
-        name='dbus_vehicle',
+    hero_vehicle_node = Node(
+        package='hero_vehicle',
+        executable='hero_vehicle_node',
+        name='hero_vehicle',
         output='both',
         parameters=[robot_config],
         emulate_tty=True
@@ -154,7 +154,7 @@ def generate_launch_description():
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
         dbus_control_node,
         # auto_sentry_node,
-        dbus_vehicle_node,
+        hero_vehicle_node,
         ahrs_launch,
         super_capacitor_node,
     ])
