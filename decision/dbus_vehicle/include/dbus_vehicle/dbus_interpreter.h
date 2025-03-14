@@ -74,7 +74,7 @@ private:
 
     void apply_deadzone(double& val);
 
-    void curb(double& val, double max_val);
+    void curb(double& val, double max_val, double min_val);
 };
 
 #endif // DBUS_INTERPRETER_H

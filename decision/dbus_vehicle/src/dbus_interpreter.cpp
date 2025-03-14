@@ -82,7 +82,7 @@ void DbusInterpreter::update()
 
     move_->vel_x = max_vel * ls_x;
     move_->vel_y = max_vel * ls_y;
-    aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_4);
+    aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, 0, -0.4);
     move_->omega = max_omega * wheel;
     aim_->yaw += aim_sens * rs_y * PERIOD / 1000;
     
@@ -95,7 +95,10 @@ void DbusInterpreter::update()
     else if (rsw == "MID")
     {
         shoot_->fric_state = true;
-        if(left_button_){   
+        if(b_){
+            shoot_->feed_state = true;
+            shoot_->feed_speed = -1.0;
+        }else if(left_button_){   
             shoot_->feed_state = true;       
             shoot_->feed_speed = 5.0;
         }else{
@@ -122,7 +125,7 @@ void DbusInterpreter::update()
     move_->vel_y += move_y;
 
     aim_->yaw -= mouse_x_ * aim_sens * PERIOD / 30;   
-    aim_->pitch -= mouse_y_ * aim_sens * PERIOD / 30;  curb(aim_->pitch, M_PI_4);
+    aim_->pitch -= mouse_y_ * aim_sens * PERIOD / 30;  curb(aim_->pitch, 0, -0.4);
     if(q_) aim_->yaw += aim_sens * 0.5 * PERIOD / 1000;
     if(e_) aim_->yaw -= aim_sens * 0.5 * PERIOD / 1000;
 
@@ -183,14 +186,14 @@ Chassis::SharedPtr DbusInterpreter::get_chassis() const
     return chassis_;
 }
 
-void DbusInterpreter::curb(double &val, double max_val)
+void DbusInterpreter::curb(double &val, double max_val, double min_val)
 {
     if (val > max_val)
     {
         val = max_val;
     }
-    else if (val < -max_val)
+    else if (val < min_val)
     {
-        val = -max_val;
+        val = min_val;
     }
 }
