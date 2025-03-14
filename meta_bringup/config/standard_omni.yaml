@@ -25,10 +25,14 @@ omni_chassis_controller:
       - wheels_pid_controller/back_wheel_joint
       - wheels_pid_controller/right_wheel_joint
 
-    omni_wheel_forward_angles: [-90.0, 0.0, 90.0, 180.0]
+    # omni_wheel_forward_angles: [-90.0, 0.0, 90.0, 180.0]
+    omni_wheel_forward_angles: [-135.0, -45.0, 45.0, 135.0]
 
-    omni_wheel_center_x: [0.255, 0.0, -0.255, 0.0]
-    omni_wheel_center_y: [0.0, 0.255, 0.0, -0.255]
+
+    # omni_wheel_center_x: [0.255, 0.0, -0.255, 0.0]
+    # omni_wheel_center_y: [0.0, 0.255, 0.0, -0.255]
+    omni_wheel_center_x: [0.18, 0.18, -0.18, -0.18]
+    omni_wheel_center_y: [-0.18, 0.18, 0.18, -0.18]
 
     omni_wheel_sliding_angles: [0.0, 0.0, 0.0, 0.0]
 
@@ -41,7 +45,7 @@ omni_chassis_controller:
     follow_pid_gains:
       { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
 
-    follow_pid_target: 0.503
+    follow_pid_target: 0.0
 
     reference_timeout: 0.2
 
