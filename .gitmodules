@@ -14,3 +14,6 @@
 [submodule "decomposition/wheel_leg_rl"]
 	path = decomposition/wheel_leg_rl
 	url = https://github.com/Yao-Xinchen/Meta-WL
+[submodule "perception/cserialport_wrapper/CSerialPort"]
+	path = perception/cserialport_wrapper/CSerialPort
+	url = https://github.com/itas109/CSerialPort.git
