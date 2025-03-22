@@ -1,6 +1,5 @@
 #include "wfly_control/wfly_sbus.hpp"
 #include "CSerialPort/SerialPort_global.h"
-#include "io_context/io_context.hpp"
 
 #include <cstdint>
 #include <fcntl.h>
@@ -13,20 +12,21 @@
 using namespace itas109;
 
 constexpr uint32_t sbus_baud_rate = 100000;
-constexpr drivers::serial_driver::FlowControl sbus_flow_control = drivers::serial_driver::FlowControl::HARDWARE;
-constexpr drivers::serial_driver::Parity sbus_parity = drivers::serial_driver::Parity::EVEN;
-constexpr drivers::serial_driver::StopBits sbus_stopbits = drivers::serial_driver::StopBits::TWO;
+constexpr Parity sbus_parity = itas109::ParityEven;
+constexpr DataBits sbus_data_bits = itas109::DataBits8;
+constexpr StopBits sbus_stopbits = itas109::StopTwo;
+constexpr FlowControl sbus_flow_control = itas109::FlowHardware;
 
 WflySbus::WflySbus(std::string dev_path) : dev_path_(dev_path)
 {
   serial_port_ = std::make_unique<CSerialPort>();
   serial_port_->init(
     dev_path_.c_str(),
-    100000,
-    itas109::ParityEven,
-    itas109::DataBits8,
-    itas109::StopTwo,
-    itas109::FlowNone
+    sbus_baud_rate,
+    sbus_parity,
+    sbus_data_bits,
+    sbus_stopbits,
+    sbus_flow_control
   );
 
   serial_port_->open();

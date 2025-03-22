@@ -14,7 +14,7 @@
   <test_depend>ament_lint_common</test_depend>
 
   <depend>rclcpp</depend>
-  <depend>serial_driver</depend>
+  <depend>rclcpp_components</depend>
   <depend>asio</depend>
   <depend>operation_interface</depend>
   <depend>cserialport_wrapper</depend>

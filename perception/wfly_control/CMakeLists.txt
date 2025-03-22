@@ -27,7 +27,6 @@ rclcpp_components_register_node(wfly_control
 ament_target_dependencies(wfly_control
   rclcpp
   rclcpp_components
-  serial_driver
   operation_interface
   cserialport_wrapper
 )
