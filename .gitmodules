@@ -14,3 +14,6 @@
 [submodule "decomposition/wheel_leg_rl"]
 	path = decomposition/wheel_leg_rl
 	url = https://github.com/Yao-Xinchen/Meta-WL
+[submodule "perception/meta_serial_driver/CSerialPort"]
+	path = perception/meta_serial_driver/CSerialPort
+	url = https://github.com/itas109/CSerialPort.git
