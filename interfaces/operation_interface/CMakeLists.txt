@@ -17,6 +17,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/GameInfo.msg"
   "msg/PowerState.msg"
   "msg/DbusControl.msg"
+  "msg/WflyControl.msg"
   "msg/CustomController.msg"
   "msg/RobotState.msg"
 )
