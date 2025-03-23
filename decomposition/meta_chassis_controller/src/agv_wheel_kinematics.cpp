@@ -15,12 +15,8 @@ AgvWheelKinematics::AgvWheelKinematics(const double agv_wheel_center_x, const do
     agv_radius_ = sqrt(agv_wheel_center_x * agv_wheel_center_x + agv_wheel_center_y * agv_wheel_center_y);
 }
 
-// void AgvWheelKinematics::init() {
-    
-// }
-
 std::pair<double,double> AgvWheelKinematics::xy2polar(double curr_pos, double curr_vel, double target_x, double target_y) {
-    double target_vel = sqrt(target_x * target_x + target_y * target_y);
+    double target_vel = sqrt(target_x * target_x + target_y * target_y) / agv_wheel_radius_;
 
     // If the target velocity is zero, atan2 is meaningless, we should preserve current position
     if (target_vel == 0.0) {
@@ -29,13 +25,10 @@ std::pair<double,double> AgvWheelKinematics::xy2polar(double curr_pos, double cu
 
     double target_angle = atan2(target_y, target_x);
     double angle_diff = angles::shortest_angular_distance(curr_pos, target_angle);
-    
-    if(curr_vel > 0 && angle_diff < M_PI / 2 && angle_diff > - M_PI / 2){       // FIXME: This is not correct here
+
+    if (angle_diff < (M_PI / 2) && angle_diff > -(M_PI / 2) ) {       // FIXME: This is not correct here
         return {target_angle, target_vel};
-    } else if(curr_vel < 0 && (angle_diff > M_PI / 2 || angle_diff < - M_PI / 2)){
-        return {target_angle, target_vel};
-    } else{
-        // return {target_angle, target_vel};
+    } else {
         return {angles::normalize_angle(M_PI + target_angle), -target_vel};
     }
 }

@@ -110,14 +110,14 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    # dbus_vehicle = Node(
-    #     package='dbus_vehicle',
-    #     executable='dbus_vehicle_node',
-    #     name='dbus_vehicle',
-    #     output='both',
-    #     parameters=[robot_config],
-    #     emulate_tty=True
-    # )
+    dbus_vehicle = Node(
+        package='dbus_vehicle',
+        executable='dbus_vehicle_node',
+        name='dbus_vehicle',
+        output='both',
+        parameters=[robot_config],
+        emulate_tty=True
+    )
 
     # ahrs_launch = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource(
@@ -142,6 +142,6 @@ def generate_launch_description():
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
         # dbus_container,
         wfly_control,
-        # dbus_vehicle,
+        dbus_vehicle,
         # ahrs_launch,
     ])

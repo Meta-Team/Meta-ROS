@@ -115,52 +115,52 @@ void WflySbus::process_packet(const uint8_t* data) {
   wfly_msg_.rs_y = (sbus_frame->ch1 - 0x400) / static_cast<double>(0x29e);
   switch (sbus_frame->ch5) {
     case 0x69e:
-      wfly_msg_.sa = "down";
+      wfly_msg_.sa = "DOWN";
       break;
     case 0x161:
-      wfly_msg_.sa = "up";
+      wfly_msg_.sa = "UP";
       break;
     default:
-      wfly_msg_.sa = "up";
+      wfly_msg_.sa = "UP";
       break;
   }
   switch (sbus_frame->ch6) {
     case 0x69e:
-      wfly_msg_.sb = "down";
+      wfly_msg_.sb = "DOWN";
       break;
     case 0x400:
-      wfly_msg_.sb = "mid";
+      wfly_msg_.sb = "MID";
       break;
     case 0x161:
-      wfly_msg_.sb = "up";
+      wfly_msg_.sb = "UP";
       break;
     default:
-      wfly_msg_.sb = "up";
+      wfly_msg_.sb = "UP";
       break;
   }
   switch (sbus_frame->ch7) {
     case 0x69e:
-      wfly_msg_.sc = "down";
+      wfly_msg_.sc = "DOWN";
       break;
     case 0x400:
-      wfly_msg_.sc = "mid";
+      wfly_msg_.sc = "MID";
       break;
     case 0x161:
-      wfly_msg_.sc = "up";
+      wfly_msg_.sc = "UP";
       break;
     default:
-      wfly_msg_.sc = "up";
+      wfly_msg_.sc = "UP";
       break;
   }
   switch (sbus_frame->ch8) {
     case 0x69e:
-      wfly_msg_.sd = "down";
+      wfly_msg_.sd = "DOWN";
       break;
     case 0x161:
-      wfly_msg_.sd = "up";
+      wfly_msg_.sd = "UP";
       break;
     default:
-      wfly_msg_.sd = "up";
+      wfly_msg_.sd = "UP";
       break;
   }
 

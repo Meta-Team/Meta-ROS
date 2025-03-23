@@ -316,7 +316,6 @@ AgvChassisController::update_and_write_commands(const rclcpp::Time &time,
         const auto [wheels_pos, wheels_vel] = agv_wheel_kinematics_->inverse(twist);
 
         for(size_t i = 0; i < 4; i++){
-            std::cout << i << wheels_pos[i] << std::endl;
             double steer_pos_ref = wheels_pos[i];
             double steer_pos_fb = state_interfaces_[1 + i].get_value();
             double steer_vel_fb = state_interfaces_[1 + i + 4].get_value();
