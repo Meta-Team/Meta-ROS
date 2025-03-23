@@ -313,7 +313,13 @@ AgvChassisController::update_and_write_commands(const rclcpp::Time &time,
             return controller_interface::return_type::ERROR;
         }
 
-        const auto [wheels_pos, wheels_vel] = agv_wheel_kinematics_->inverse(twist);
+        std::array<double, 4> curr_wheels_pos = {
+            state_interfaces_[1].get_value(),
+            state_interfaces_[2].get_value(),
+            state_interfaces_[3].get_value(),
+            state_interfaces_[4].get_value()
+        };
+        const auto [wheels_pos, wheels_vel] = agv_wheel_kinematics_->inverse(twist, curr_wheels_pos);
 
         for(size_t i = 0; i < 4; i++){
             double steer_pos_ref = wheels_pos[i];

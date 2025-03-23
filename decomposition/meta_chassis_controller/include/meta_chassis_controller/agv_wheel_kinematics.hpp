@@ -10,16 +10,12 @@ class AgvWheelKinematics {
     AgvWheelKinematics(const double agv_wheel_center_x, const double agv_wheel_center_y, const double agv_wheel_radius); 
     ~AgvWheelKinematics() = default;
 
-    std::pair<std::array<double, 4>, std::array<double, 4>> inverse(Eigen::VectorXd twist
-      // , const std::array<double, 4> & curr_pos, const std::array<double, 4> & curr_vel
-    );
+    std::pair<std::array<double, 4>, std::array<double, 4>> inverse(Eigen::VectorXd twist, const std::array<double, 4> & curr_pos);
 
   private:
     void init();
-    std::array<double, 4> curr_target_pos_ = {0.0, 0.0, 0.0, 0.0};
-    std::array<double, 4> curr_target_vel_ = {0.0, 0.0, 0.0, 0.0};
     double agv_wheel_center_x_, agv_wheel_center_y_, agv_wheel_radius_, agv_radius_;
-    std::pair<double, double> xy2polar(double curr_pos, double curr_vel, double target_x, double target_y);
+    std::pair<double, double> xy2polar(double curr_pos, double target_x, double target_y);
 };
 
 } // namespace meta_chassis_controller
