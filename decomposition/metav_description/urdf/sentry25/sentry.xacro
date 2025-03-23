@@ -39,7 +39,7 @@
         <ros2_control name="dji_motors" type="system">
             <hardware>
                 <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
-                <param name="can_network_name">can0</param>
+                <param name="can_network_name">can3</param>
             </hardware>
             <xacro:wheel_transmission prefix="left_forward" mechanical_reduction="20.0" vel_motor_id="3" pos_motor_id="3" pos_offset="-0.0609"/>
             <xacro:wheel_transmission prefix="left_back" mechanical_reduction="20.0" vel_motor_id="2" pos_motor_id = "1" pos_offset="0.1227"/>

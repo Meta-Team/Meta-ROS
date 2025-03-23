@@ -9,12 +9,12 @@
 #include "control_toolbox/pid_ros.hpp"
 #include "controller_interface/chainable_controller_interface.hpp"
 #include "meta_chassis_controller/agv_wheel_kinematics.hpp"
-#include "agv_chassis_controller_parameters.hpp"
+#include "meta_chassis_controller/agv_chassis_controller_parameters.hpp"
 #include "rclcpp/duration.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
-#include "realtime_tools/realtime_buffer.h"
-#include "realtime_tools/realtime_publisher.h"
+#include "realtime_tools/realtime_buffer.hpp"
+#include "realtime_tools/realtime_publisher.hpp"
 
 #include "control_msgs/msg/joint_controller_state.hpp"
 #include "geometry_msgs/msg/twist.hpp"
@@ -62,9 +62,6 @@ class AgvChassisController : public controller_interface::ChainableControllerInt
   private:
     std::shared_ptr<agv_chassis_controller::ParamListener> param_listener_;
     agv_chassis_controller::Params params_;
-
-    std::vector<double> wheels_vel_;
-    std::vector<double> wheels_pos_;
 
     std::shared_ptr<control_toolbox::PidROS> follow_pid_;
 

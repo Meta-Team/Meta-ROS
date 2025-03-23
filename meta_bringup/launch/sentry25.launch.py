@@ -101,10 +101,10 @@ def generate_launch_description():
         # load_controller('shoot_controller')
     ]
 
-    dbus_control = Node(
-        package='dbus_control',
-        executable='dbus_control_node',
-        name='dbus_control',
+    wfly_control = Node(
+        package='wfly_control',
+        executable='wfly_control_node',
+        name='wfly_control',
         parameters=[robot_config],
         output='both',
         emulate_tty=True
@@ -141,7 +141,7 @@ def generate_launch_description():
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
         # dbus_container,
-        # dbus_control,
+        wfly_control,
         # dbus_vehicle,
         # ahrs_launch,
     ])
