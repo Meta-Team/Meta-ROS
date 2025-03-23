@@ -42,9 +42,9 @@
                 <param name="can_network_name">can3</param>
             </hardware>
             <xacro:wheel_transmission prefix="left_forward" mechanical_reduction="20.0" vel_motor_id="3" pos_motor_id="3" pos_offset="-0.0609"/>
-            <xacro:wheel_transmission prefix="left_back" mechanical_reduction="20.0" vel_motor_id="2" pos_motor_id = "1" pos_offset="0.1227"/>
-            <xacro:wheel_transmission prefix="right_forward" mechanical_reduction="20.0" vel_motor_id="4" pos_motor_id = "2" pos_offset="-0.0356"/>
-            <xacro:wheel_transmission prefix="right_back" mechanical_reduction="20.0" vel_motor_id="1" pos_motor_id = "4" pos_offset="-0.0694"/>
+            <xacro:wheel_transmission prefix="left_back" mechanical_reduction="20.0" vel_motor_id="1" pos_motor_id = "1" pos_offset="0.1227"/>
+            <xacro:wheel_transmission prefix="right_forward" mechanical_reduction="20.0" vel_motor_id="4" pos_motor_id = "4" pos_offset="-0.0356"/>
+            <xacro:wheel_transmission prefix="right_back" mechanical_reduction="20.0" vel_motor_id="2" pos_motor_id = "2" pos_offset="-0.0694"/>
             <xacro:gimbal_transmission prefix="yaw" mechanical_reduction="1.0" offset="0.25"
                 motor_id="5" />
             <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="-1.0" offset="0.0"
