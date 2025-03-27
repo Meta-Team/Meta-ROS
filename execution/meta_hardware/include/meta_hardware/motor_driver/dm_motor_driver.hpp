@@ -63,7 +63,7 @@ class DmMotor {
 
     double Kp_;
     double Kd_;
-    uint8_t Kp_raw_;
+    uint16_t Kp_raw_;
     uint16_t Kd_raw_;
 
     // Motor feedback

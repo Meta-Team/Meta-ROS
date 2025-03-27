@@ -39,7 +39,7 @@ DmMotor::DmMotor(const std::unordered_map<std::string, std::string> &motor_param
         Kp_ = std::stod(motor_param.at("Kp"));
         Kd_ = std::stod(motor_param.at("Kd"));
 
-        Kp_raw_ = static_cast<uint8_t>((Kp_ - MIN_KP)/(MAX_KP - MIN_KP) * ( (1 << 8) - 1));
+        Kp_raw_ = static_cast<uint16_t>((Kp_ - MIN_KP)/(MAX_KP - MIN_KP) * ( (1 << 12) - 1));
         Kd_raw_ = static_cast<uint16_t>((Kd_ - MIN_KD)/(MAX_KD - MIN_KD) * ( (1 << 12) - 1));
 
         run_mode_ = RunMode::MIT;
