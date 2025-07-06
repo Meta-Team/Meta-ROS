@@ -106,9 +106,9 @@ shoot_controller:
         
 dbus_control_node:
   ros__parameters:
-    dbus_port: "dbus_control"
+    dbus_port: "tty_DBUS"
 
-dbus_vehicle:
+hero_vehicle:
   ros__parameters:
     enable_ros2_control: true
     aim_topic: "/gimbal_controller/reference"
@@ -123,4 +123,4 @@ dbus_vehicle:
 capacitor:
   ros__parameters:
     capacitor_device: "pacific_spirit"
-    can_interface: "can1"
+    can_interface: "can_1"
