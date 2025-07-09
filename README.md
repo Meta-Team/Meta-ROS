@@ -38,6 +38,11 @@ mkdir -p meta_ws/src && cd meta_ws/src
 git clone --recurse-submodules https://github.com/Meta-Team/Meta-ROS
 ```
 
+### Disable scara_moveit
+```Bash
+cd decomposition/scara_moveit
+touch COLCON_IGNORE
+```
 ### Install dependencies
 This project is fully compatible with `rosdep`, you can easily install the dependencies with this command
 
@@ -46,11 +51,6 @@ rosdep install -y --rosdistro humble --from-paths . --ignore-src
 ```
 
 > **Note:** You may need to manually install Eigen3 because it cannot be automatically resolved by `rosdep`.
-### Disable scara_moveit
-```Bash
-cd decomposition/scara_moveit
-touch COLCON_IGNORE
-```
 ### Compile the Project
 Simply run
 
