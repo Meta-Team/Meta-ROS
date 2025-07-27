@@ -103,7 +103,14 @@ def generate_launch_description():
         load_controller('omni_chassis_controller'),
         load_controller('shoot_controller')
     ]
-
+    referee_system_node = Node(
+        package='referee_serial',
+        executable='referee_serial_node',
+        name='referee_serial',
+        parameters=[robot_config],
+        output='both',
+        emulate_tty=True,
+    )
     dbus_control_node = Node(
         package='dbus_control',
         executable='dbus_control_node',
@@ -152,9 +159,10 @@ def generate_launch_description():
         load_joint_state_broadcaster,
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
-        dbus_control_node,
+        # dbus_control_node,
+        referee_system_node,
         # auto_sentry_node,
         hero_vehicle_node,
-        ahrs_launch,
+        # ahrs_launch,
         super_capacitor_node,
     ])

@@ -60,13 +60,15 @@ private:
      * Interprets the received data and publishes it to the appropriate topic.
      * @note This would call the handle_frame method, and is called by the receive_thread.
      */
-    void receive();
+    void regular_link_receive();
+    void video_link_receive();
 
     /**
      * @brief Method to reopen the serial port.
      * Called when the serial port is closed.
      */
-    void reopen_port();
+    void regular_link_reopen_port();
+    void video_link_reopen_port();
 
     /**
      * @brief Method to handle a frame of data.
@@ -77,7 +79,11 @@ private:
      * @param frame_type The type of the frame.
      */
     template<typename MSG, typename PARSE>
-    void handle_frame(const std::vector<uint8_t>& prefix,
+    void regular_link_handle_frame(const std::vector<uint8_t>& prefix,
+        typename rclcpp::Publisher<MSG>::SharedPtr pub,
+        const std::string frame_type);
+    template<typename MSG, typename PARSE>
+    void video_link_handle_frame(const std::vector<uint8_t>& prefix,
         typename rclcpp::Publisher<MSG>::SharedPtr pub,
         const std::string frame_type);
 
@@ -89,17 +95,20 @@ private:
     rclcpp::Publisher<operation_interface::msg::RobotState>::SharedPtr robot_state_pub_;
 
     // Serial port
-    std::unique_ptr<IoContext> ctx_;
-    std::unique_ptr<SerialPortConfig> config_;
-    std::unique_ptr<SerialDriver> serial_driver_;
-    static std::string dev_name; ///< The path to the serial port.
-    static constexpr const char* dev_null = "/dev/null";
-    static constexpr uint32_t baud = 115200;
+    std::unique_ptr<SerialDriver> regular_link_serial_driver_;
+    std::unique_ptr<SerialDriver> video_link_serial_driver_;
+    
+    std::unique_ptr<IoContext> regular_link_ctx_;
+    std::unique_ptr<IoContext> video_link_ctx_;
+
     static constexpr FlowControl fc = FlowControl::NONE;
     static constexpr Parity pt = Parity::NONE;
     static constexpr StopBits sb = StopBits::ONE;
 
-    std::thread receive_thread; ///< Thread to receive data from the serial port.
+    std::thread regular_link_receive_thread;
+    std::thread video_link_receive_thread;
+
+    bool isDebug = false;
 };
 
 #endif // REFEREE_SERIAL_HPP

@@ -15,6 +15,7 @@ public:
         double max_omega = this->declare_parameter("control.rot_vel", 3.0);
         double aim_sens = this->declare_parameter("control.stick_sens", 1.57);
         double deadzone = this->declare_parameter("control.deadzone", 0.05);
+        double video_link_blank_time = this->declare_parameter("control.video_link_blank_time", 0.1);
         std::string aim_topic = this->declare_parameter("aim_topic", "aim");
         std::string shoot_topic = this->declare_parameter("shoot_topic", "shoot");
         std::string chassis_topic = this->declare_parameter("chassis_topic","chassis_cmd");
@@ -23,7 +24,7 @@ public:
         enable_key_mouse_ = this->declare_parameter("enable_key_mouse_", true);
         enable_ros2_control_ = this->declare_parameter("enable_ros2_control", false);
 
-        interpreter_ = std::make_unique<DbusInterpreter>(max_vel, max_omega, aim_sens, deadzone);
+        interpreter_ = std::make_unique<DbusInterpreter>(max_vel, max_omega, aim_sens, deadzone, video_link_blank_time);
 
         // pub and sub
         if (enable_ros2_control_) {
@@ -40,7 +41,7 @@ public:
             std::bind(&HeroVehicle::dbus_callback, this, std::placeholders::_1));
         if(enable_key_mouse_){
             key_sub_ = this->create_subscription<operation_interface::msg::KeyMouse>(
-                "key_mouse", 10,
+                "video_link_key_mouse", 10,
                 std::bind(&HeroVehicle::key_callback, this, std::placeholders::_1));
         }
 
@@ -68,12 +69,12 @@ private:
 
     void dbus_callback(const operation_interface::msg::DbusControl::SharedPtr msg)
     {
-        interpreter_->input(msg);
+        interpreter_->input_dbus(msg);
     }
 
     void key_callback(const operation_interface::msg::KeyMouse::SharedPtr msg)
     {
-        interpreter_->input_key(msg);
+        interpreter_->input_video_link(msg);
     }
 
     void timer_callback()

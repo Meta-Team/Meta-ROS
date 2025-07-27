@@ -26,13 +26,13 @@ using behavior_interface::msg::Chassis;
 class DbusInterpreter
 {
 public:
-    DbusInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone);
+    DbusInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone, double video_link_blank_time);
 
     ~DbusInterpreter();
 
-    void input(const DbusControl::SharedPtr msg);
+    void input_dbus(const DbusControl::SharedPtr msg);
 
-    void input_key(const KeyMouse::SharedPtr msg);
+    void input_video_link(const KeyMouse::SharedPtr msg);
 
     Move::SharedPtr get_move() const;
     geometry_msgs::msg::Twist get_move_ros2_control() const;
@@ -47,11 +47,19 @@ public:
 
 private:
     bool active;
+    bool keyboard_active_;
+    // video link
+    double kbd_move_x = 0.0, kbd_move_y = 0.0;
+    rclcpp::Time last_video_link_recv_time;
 
+    // dbus (DR16)
     double ls_x, ls_y, rs_x, rs_y, wheel;
     std::string lsw, rsw;
     double mouse_x_ = 0.0, mouse_y_ = 0.0, mouse_z_ = 0.0;
     bool left_button_ = false, right_button_ = false;
+
+    // shared by dbus keyboard and video link keyboard.
+    // TODO (if both active, fall back to video link)
     bool w_ = false, a_ = false, s_ = false;
     bool d_ = false, shift_ = false, ctrl_ = false;
     bool q_ = false, e_ = false, r_ = false;
@@ -61,7 +69,7 @@ private:
 
     rclcpp::Time last_update_time_;
 
-    double max_vel, max_omega, max_feed, max_shoot, aim_sens, deadzone;
+    double max_vel, max_omega, max_feed, max_shoot, aim_sens, deadzone, video_link_blank_time;
 
     std::thread update_thread;
 

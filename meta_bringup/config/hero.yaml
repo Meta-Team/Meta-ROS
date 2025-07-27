@@ -119,8 +119,16 @@ hero_vehicle:
       stick_sens: 5.00 # rad/s
       mouse_sens: 10.0
       deadzone: 0.15 # percentage
+      video_link_blank_time: 0.05 # second
 
 capacitor:
   ros__parameters:
     capacitor_device: "pacific_spirit"
     can_interface: "can_1"
+referee_serial:
+  ros__parameters:
+    regular_link_port: "/dev/tty_REF"
+    regular_link_baud: 115200
+    video_link_port: "/dev/tty_VT02"
+    video_link_baud: 115200
+    isDebug: false

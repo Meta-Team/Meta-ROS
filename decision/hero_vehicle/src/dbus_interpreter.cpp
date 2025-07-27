@@ -1,11 +1,12 @@
 #include "hero_vehicle/dbus_interpreter.h"
 #include <cmath>
 
-DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone)
-    : max_vel(max_vel), max_omega(max_omega), aim_sens(aim_sens), deadzone(deadzone)
+DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone, double video_link_blank_time)
+    : max_vel(max_vel), max_omega(max_omega), aim_sens(aim_sens), deadzone(deadzone), video_link_blank_time(video_link_blank_time)
 {
     // initialize buttons and axes
     active = false;
+    keyboard_active_ = false;
     ls_x = ls_y = rs_x = rs_y = wheel = 0;
     lsw = rsw = "";
 
@@ -37,7 +38,7 @@ DbusInterpreter::~DbusInterpreter()
     if (update_thread.joinable()) update_thread.join();
 }
 
-void DbusInterpreter::input(const operation_interface::msg::DbusControl::SharedPtr msg)
+void DbusInterpreter::input_dbus(const operation_interface::msg::DbusControl::SharedPtr msg)
 {
     ls_x = msg->ls_x; apply_deadzone(ls_x); // forward is positive
     ls_y = msg->ls_y; apply_deadzone(ls_y); // left is positive
@@ -48,8 +49,9 @@ void DbusInterpreter::input(const operation_interface::msg::DbusControl::SharedP
     rsw = msg->rsw;
 }
 
-void DbusInterpreter::input_key(const operation_interface::msg::KeyMouse::SharedPtr msg)
+void DbusInterpreter::input_video_link(const operation_interface::msg::KeyMouse::SharedPtr msg)
 {
+    keyboard_active_ = msg->active;
     w_ = msg->w;
     a_ = msg->a;
     s_ = msg->s;
@@ -70,13 +72,21 @@ void DbusInterpreter::input_key(const operation_interface::msg::KeyMouse::Shared
     right_button_ = msg->right_button;
     mouse_x_ = msg->mouse_x;
     mouse_y_ = msg->mouse_y;
+    // Video link will send packets even if no keys are pressed, except option panel(p) is active
+    if(w_ || s_ || a_ || d_)
+        last_video_link_recv_time = rclcpp::Clock().now();
 }
 
 void DbusInterpreter::update()
 {
-    active = (lsw == "MID");
+    active = (lsw == "MID") || keyboard_active_;
     if (!active)
     {
+        move_->vel_x = 0.0;
+        move_->vel_y = 0.0;
+        move_->omega = 0.0;
+        // printf("Update is not active\n");
+        // TODO: aim ...
         return; // do not update if not active, this prevents yaw and pitch from accumulating in standby
     }
 
@@ -112,22 +122,30 @@ void DbusInterpreter::update()
 
 
     // TODO: Implement Keyboard Actions
-    int move_x = 0, move_y = 0;
-    if(w_) move_x += max_vel;
-    if(s_) move_x -= max_vel;
-    move_->vel_x += move_x;
-
-    if(a_) move_y += max_vel;
-    if(d_) move_y -= max_vel;
-    move_->vel_y += move_y;
-
-    aim_->yaw -= mouse_x_ * aim_sens * PERIOD / 200;   
-    aim_->pitch -= mouse_y_ * aim_sens * PERIOD / 200;  curb(aim_->pitch, M_PI_4);
-    if(q_) aim_->yaw += aim_sens * 0.5 * PERIOD / 1000;
-    if(e_) aim_->yaw -= aim_sens * 0.5 * PERIOD / 1000;
-
-    // To ensure that the change take place only once per key press
     auto current_time = rclcpp::Clock().now();
+    if (current_time.seconds() - last_video_link_recv_time.seconds() > video_link_blank_time) {
+        // Video link timeout
+        keyboard_active_ = false;
+        kbd_move_x = 0.0;
+        kbd_move_y = 0.0;
+        // printf("Inactive video link\n");
+    } else {
+        if(w_) kbd_move_x += deadzone*0.1;
+        if(s_) kbd_move_x -= deadzone*0.1;
+        apply_deadzone(kbd_move_x);
+        move_->vel_x += kbd_move_x*max_vel;
+
+        if(a_) kbd_move_y += deadzone*0.1;
+        if(d_) kbd_move_y -= deadzone*0.1;
+        apply_deadzone(kbd_move_y);
+        move_->vel_y += kbd_move_y*max_vel;
+
+        aim_->yaw -= mouse_x_ * aim_sens * PERIOD / 200;   
+        aim_->pitch -= mouse_y_ * aim_sens * PERIOD / 200;  curb(aim_->pitch, M_PI_4);
+        if(q_) aim_->yaw += aim_sens * 0.5 * PERIOD / 1000;
+        if(e_) aim_->yaw -= aim_sens * 0.5 * PERIOD / 1000;
+    }
+    // To ensure that the change take place only once per key press
 
     // if(current_time.seconds()-last_update_time_.seconds() > 0.2){
     //     if(c_ && !last_c_)  // TOGGLE CHASSIS MODE
@@ -159,9 +177,10 @@ void DbusInterpreter::update()
 
 void DbusInterpreter::apply_deadzone(double &val)
 {
-    if (val < deadzone && val > -deadzone)
-    {
-        val = 0;
+    if (val > deadzone ){
+        val = deadzone;
+    } else if (val < -deadzone){
+        val = -deadzone;
     }
 }
 
