@@ -7,6 +7,7 @@
 
 #include "operation_interface/msg/dbus_control.hpp"
 #include "operation_interface/msg/key_mouse.hpp"
+#include "operation_interface/msg/vt03.hpp"
 #include "behavior_interface/msg/move.hpp"
 #include "behavior_interface/msg/shoot.hpp"
 #include "behavior_interface/msg/aim.hpp"
@@ -18,6 +19,7 @@
 
 using operation_interface::msg::DbusControl;
 using operation_interface::msg::KeyMouse;
+using operation_interface::msg::VT03;
 using behavior_interface::msg::Move;
 using behavior_interface::msg::Shoot;
 using behavior_interface::msg::Aim;
@@ -33,6 +35,8 @@ public:
     void input_dbus(const DbusControl::SharedPtr msg);
 
     void input_video_link(const KeyMouse::SharedPtr msg);
+    
+    void input_video_link_vt03(const VT03::SharedPtr msg);
 
     Move::SharedPtr get_move() const;
     geometry_msgs::msg::Twist get_move_ros2_control() const;

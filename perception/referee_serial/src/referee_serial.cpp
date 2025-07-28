@@ -4,6 +4,7 @@
 #include "referee_serial/power_state.hpp"
 #include "referee_serial/custom_controller.hpp"
 #include "referee_serial/robot_state.hpp"
+#include "referee_serial/vt03_body.hpp"
 #include <chrono>
 #include <cstdint>
 #include <rclcpp/logging.hpp>
@@ -30,6 +31,7 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     uint32_t video_link_baud = node_->declare_parameter("video_link_baud", 115200);
     isDebug = node_->declare_parameter("isDebug", false);
     debugUnhandledShown = node_->declare_parameter("debugUnhandledShown", false);
+    warningShown = node_->declare_parameter("warningShown", false);
     regular_link_ctx_ = std::make_unique<IoContext>(2);
     video_link_ctx_ = std::make_unique<IoContext>(2);
 
@@ -42,11 +44,12 @@ RefereeSerial::RefereeSerial(const rclcpp::NodeOptions & options)
     video_link_serial_driver_ = std::make_unique<SerialDriver>(*video_link_ctx_);
     video_link_serial_driver_->init_port(video_link_dev_name, *video_link_config_);
 
-    RCLCPP_INFO(node_->get_logger(), "Regular link using serial port: %s", regular_link_dev_name.c_str());
-    RCLCPP_INFO(node_->get_logger(), "Video link using serial port: %s", video_link_dev_name.c_str());
+    RCLCPP_INFO(node_->get_logger(), "Regular link using serial port: %s with baud %d", regular_link_dev_name.c_str(), regular_link_baud);
+    RCLCPP_INFO(node_->get_logger(), "Video link using serial port: %s with baud %d", video_link_dev_name.c_str(), video_link_baud);
 
     // create publishers
     key_mouse_pub_ = node_->create_publisher<operation_interface::msg::KeyMouse>("video_link_key_mouse", 10);
+    vt03_msg_pub_ = node_->create_publisher<operation_interface::msg::VT03>("vt03_msg", 10);
     game_info_pub_ = node_->create_publisher<operation_interface::msg::GameInfo>("game_info", 10);
     power_state_pub_ = node_->create_publisher<operation_interface::msg::PowerState>("power_state", 10);
     custom_controller_pub_ = node_->create_publisher<operation_interface::msg::CustomController>("custom_controller", 10);
@@ -167,6 +170,7 @@ void RefereeSerial::video_link_receive()
     std::vector<uint8_t> sof(1);
     std::vector<uint8_t> header_left(5-1);
     std::vector<uint8_t> cmd_id(2);
+    std::vector<uint8_t> vt03_body_buffer(FRAME_VT03_LENGTH-2);
     RCLCPP_INFO(node_->get_logger(), "Video link receiving serial frames");
     while (rclcpp::ok())
     {
@@ -175,8 +179,20 @@ void RefereeSerial::video_link_receive()
                 case WAIT_STARTING_BYTE:
                     video_link_serial_driver_->port()->receive(sof);
                     if(sof[0] == REFEREE_SOF){
-                        video_link_rxstatus = WAIT_REMAINING_HEADER;
                         prefix.insert(prefix.end(), sof.begin(), sof.end());
+                        video_link_rxstatus = WAIT_REMAINING_HEADER;
+                    }else if(sof[0] == VIDEO_LINK_REMOTECONTROL_LOWER_SOF){
+                        prefix.insert(prefix.end(), sof.begin(), sof.end());
+                        video_link_serial_driver_->port()->receive(sof);
+                        if(sof[0] == VIDEO_LINK_REMOTECONTROL_UPPER_SOF){
+                            prefix.insert(prefix.end(), sof.begin(), sof.end());
+                            video_link_rxstatus = VT03_REMAINING;
+                        }else if (sof[0] == REFEREE_SOF){ // fall back to legacy(VT02)
+                            // remember to clear received 1 byte
+                            prefix.clear();
+                            prefix.insert(prefix.end(), sof.begin(), sof.end());
+                            video_link_rxstatus = WAIT_REMAINING_HEADER;
+                        }
                     }
                     break;
                 case WAIT_REMAINING_HEADER:
@@ -202,6 +218,28 @@ void RefereeSerial::video_link_receive()
                     {
                         RCLCPP_WARN(node_->get_logger(), "Video link received unhandled frame with cmd_id:       0x%.2x%.2x", cmd_id[1], cmd_id[0]);
                     }
+                    prefix.clear();
+                    video_link_rxstatus = WAIT_STARTING_BYTE;
+                    break;
+                case VT03_REMAINING:
+                    video_link_handle_frame<operation_interface::msg::VT03, VT03_MSG>(prefix, vt03_msg_pub_, "vt03_msg");
+
+                    // video_link_serial_driver_->port()->receive(vt03_body_buffer);
+                    // prefix.insert(prefix.end(), vt03_body_buffer.begin(), vt03_body_buffer.end());
+                    // if(crc::verifyCRC16CheckSum(prefix.data(), prefix.size(), NULL)){
+                    //     std::copy(prefix.begin(), prefix.end(), reinterpret_cast<uint8_t *>(&vt03_body));
+                    //     char* whole_frame_str = new char[200];
+                    //     memset(whole_frame_str, 0, 200*sizeof(char));
+                    //     for(const auto& iter: vt03_body_buffer){
+                    //         sprintf(whole_frame_str, "%s %.2x ", whole_frame_str, iter);
+                    //     }
+                    //     RCLCPP_INFO(node_->get_logger(), "Video link(VT13):w=%d,wheel=%d; %s",vt03_body.w, vt03_body.wheel, whole_frame_str);
+                    //     delete[] whole_frame_str;
+                    // }else{
+                    //     if (warningShown){
+                    //         RCLCPP_WARN(node_->get_logger(), "Video link(VT13) CRC16 check failed");
+                    //     }
+                    // }
                     prefix.clear();
                     video_link_rxstatus = WAIT_STARTING_BYTE;
                     break;
@@ -265,7 +303,8 @@ void RefereeSerial::regular_link_handle_frame(const std::vector<uint8_t>& prefix
                 RCLCPP_WARN(node_->get_logger(), "Regular link %s CRC16 check failed after compensation trials: %s with locally crc16:%.4x", frame_type.c_str(), whole_frame_str, crc16_result);
             }
         } else {
-            RCLCPP_WARN(node_->get_logger(), "Regular link %s CRC16 check failed: %s with locally crc16:%.4x", frame_type.c_str(), whole_frame_str, crc16_result);
+            if (warningShown)
+                RCLCPP_WARN(node_->get_logger(), "Regular link %s CRC16 check failed: %s with locally crc16:%.4x", frame_type.c_str(), whole_frame_str, crc16_result);
         }
         // sometimes the upper 8bit of crc16 on regular link is deferred one byte(with the intermediate byte as 0)
         // [WARN] [1753688311.240984445] [referee_serial]: Regular link game_info CRC16 check failed:  a5  0b  00  04  63  01  00  24  07  00  26  03  f8  4f  98  01  00  00  92  00  with locally crc16:2792
@@ -307,7 +346,8 @@ void RefereeSerial::video_link_handle_frame(const std::vector<uint8_t>& prefix,
             RCLCPP_INFO(node_->get_logger(), "Video link %s CRC16 check succeeded: %s with locally crc16:%.4x", frame_type.c_str(), whole_frame_str, crc16_result);
         }
     } else {
-        RCLCPP_WARN(node_->get_logger(), "Video link %s CRC16 check failed: %s with locally crc16:%.4x", frame_type.c_str(), whole_frame_str, crc16_result);
+        if (warningShown)
+            RCLCPP_WARN(node_->get_logger(), "Video link %s CRC16 check failed: %s with locally crc16:%.4x", frame_type.c_str(), whole_frame_str, crc16_result);
     }
     delete[] whole_frame_str;
 }

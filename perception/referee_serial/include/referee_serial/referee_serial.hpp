@@ -16,9 +16,11 @@
 #include "operation_interface/msg/power_state.hpp"
 #include "operation_interface/msg/custom_controller.hpp"
 #include "operation_interface/msg/robot_state.hpp"
+#include "operation_interface/msg/vt03.hpp"
 
 #define REFEREE_SOF 0xA5
-#define VIDEO_LINK_REMOTECONTROL_SOF 0xA9
+#define VIDEO_LINK_REMOTECONTROL_LOWER_SOF 0xA9
+#define VIDEO_LINK_REMOTECONTROL_UPPER_SOF 0x53
 
 using drivers::serial_driver::FlowControl;
 using drivers::serial_driver::Parity;
@@ -38,10 +40,12 @@ public:
     enum rx_status_t {
         WAIT_STARTING_BYTE,  // receive bytes one by one, waiting for 0xA5
         WAIT_REMAINING_HEADER,  // receive remaining header after SOF
-        WAIT_CMD_ID_DATA_TAIL  // receive cmd_id, data section and 2-byte CRC16 tailing
+        WAIT_CMD_ID_DATA_TAIL,  // receive cmd_id, data section and 2-byte CRC16 tailing
+        VT03_REMAINING
     };
     enum {
-        FRAME_HEADER_LENGTH=5
+        FRAME_HEADER_LENGTH=5,
+        FRAME_VT03_LENGTH=21
     };
 /**
      * @brief Constructor for the RefereeSerial class.
@@ -104,6 +108,7 @@ private:
     rclcpp::Publisher<operation_interface::msg::PowerState>::SharedPtr power_state_pub_;
     rclcpp::Publisher<operation_interface::msg::CustomController>::SharedPtr custom_controller_pub_;
     rclcpp::Publisher<operation_interface::msg::RobotState>::SharedPtr robot_state_pub_;
+    rclcpp::Publisher<operation_interface::msg::VT03>::SharedPtr vt03_msg_pub_;
 
     // Serial port
     std::unique_ptr<SerialDriver> regular_link_serial_driver_;
@@ -123,6 +128,7 @@ private:
 
     bool isDebug = false;
     bool debugUnhandledShown = false;
+    bool warningShown = false;
 };
 
 #endif // REFEREE_SERIAL_HPP

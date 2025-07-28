@@ -130,6 +130,7 @@ referee_serial:
     regular_link_port: "/dev/tty_REF"
     regular_link_baud: 115200
     video_link_port: "/dev/tty_VT02"
-    video_link_baud: 115200
+    video_link_baud: 921600
     isDebug: false
     debugUnhandledShown: false
+    warningShown: false

@@ -76,6 +76,45 @@ void DbusInterpreter::input_video_link(const operation_interface::msg::KeyMouse:
     if(w_ || s_ || a_ || d_)
         last_video_link_recv_time = rclcpp::Clock().now();
 }
+void DbusInterpreter::input_video_link_vt03(const operation_interface::msg::VT03::SharedPtr msg)
+{
+    // TODO remove keyboard_active_ since it is always true(from generator)
+    keyboard_active_ = true;
+
+    w_ = msg->w;
+    a_ = msg->a;
+    s_ = msg->s;
+    d_ = msg->d;
+    shift_ = msg->shift;
+    ctrl_ = msg->ctrl;
+    q_ = msg->q;
+    e_ = msg->e;
+    r_ = msg->r;
+    f_ = msg->f;
+    g_ = msg->g;
+    z_ = msg->z;
+    x_ = msg->x;
+    c_ = msg->c;
+    v_ = msg->v;
+    b_ = msg->b;
+    left_button_ = msg->mouse_left;
+    right_button_ = msg->mouse_right;
+    // mouse_x_ = msg->mouse_x; TODO not convert to float yet
+    // mouse_y_ = msg->mouse_y;
+    // Video link will send packets even if no keys are pressed, except option panel(p) is active
+    if(w_ || s_ || a_ || d_)
+        last_video_link_recv_time = rclcpp::Clock().now();
+
+    // remote control
+    ls_x = (msg->ch3-1024)/684.0; apply_deadzone(ls_x); // forward is positive
+    ls_y = (msg->ch2-1024)/684.0; apply_deadzone(ls_y); // left is positive
+    rs_x = (msg->ch0-1024)/684.0; apply_deadzone(rs_x); // up is positive
+    rs_y = (msg->ch1-1024)/684.0; apply_deadzone(rs_y); // left is positive
+    wheel = (msg->wheel-1024)/684.0; apply_deadzone(wheel);
+
+    if(msg->cns == 1) lsw = "MID";
+    if(msg->cns == 0) lsw = ""; //rough shit
+}
 
 void DbusInterpreter::update()
 {

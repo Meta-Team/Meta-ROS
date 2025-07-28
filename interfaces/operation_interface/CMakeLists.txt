@@ -20,6 +20,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/WflyControl.msg"
   "msg/CustomController.msg"
   "msg/RobotState.msg"
+  "msg/VT03.msg"
 )
 ament_export_dependencies(rosidl_default_runtime)
 

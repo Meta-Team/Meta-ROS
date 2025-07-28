@@ -31,6 +31,7 @@ add_library(referee_serial SHARED
   src/power_state.cpp
   src/custom_controller.cpp
   src/robot_state.cpp
+  src/vt03_body.cpp
   src/crc.cpp)
 
 target_include_directories(referee_serial PRIVATE

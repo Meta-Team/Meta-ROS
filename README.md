@@ -63,3 +63,17 @@ Simply run
 ```Bash
 colcon build --symlink-install --cmake-args '-DCMAKE_EXPORT_COMPILE_COMMANDS=On'
 ```
+
+## Deploy
+Remove brltty first
+```Bash
+sudo apt purge brltty
+```
+Then install udev rules
+```Bash
+./Meta-ROS/tools/install.sh
+```
+Then plugin the peripheral board, and press
+```
+./Meta-ROS/tools/setupcan.sh
+```

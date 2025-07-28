@@ -43,6 +43,9 @@ public:
             key_sub_ = this->create_subscription<operation_interface::msg::KeyMouse>(
                 "video_link_key_mouse", 10,
                 std::bind(&HeroVehicle::key_callback, this, std::placeholders::_1));
+            vt03_sub_ = this->create_subscription<operation_interface::msg::VT03>(
+                "vt03_msg", 10,
+                std::bind(&HeroVehicle::vt03_callback, this, std::placeholders::_1));
         }
 
         // timer
@@ -57,6 +60,8 @@ public:
 private:
     rclcpp::Subscription<operation_interface::msg::DbusControl>::SharedPtr dbus_sub_;
     rclcpp::Subscription<operation_interface::msg::KeyMouse>::SharedPtr key_sub_;
+    rclcpp::Subscription<operation_interface::msg::VT03>::SharedPtr vt03_sub_;
+    
     std::unique_ptr<DbusInterpreter> interpreter_;
     rclcpp::Publisher<behavior_interface::msg::Move>::SharedPtr move_pub_;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr move_pub_ros2_control_;
@@ -75,6 +80,10 @@ private:
     void key_callback(const operation_interface::msg::KeyMouse::SharedPtr msg)
     {
         interpreter_->input_video_link(msg);
+    }
+    void vt03_callback(const operation_interface::msg::VT03::SharedPtr msg)
+    {
+        interpreter_->input_video_link_vt03(msg);
     }
 
     void timer_callback()
