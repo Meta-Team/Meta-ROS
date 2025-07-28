@@ -132,3 +132,4 @@ referee_serial:
     video_link_port: "/dev/tty_VT02"
     video_link_baud: 115200
     isDebug: false
+    debugUnhandledShown: false

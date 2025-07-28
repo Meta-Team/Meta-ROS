@@ -17,12 +17,15 @@
 #include "operation_interface/msg/custom_controller.hpp"
 #include "operation_interface/msg/robot_state.hpp"
 
-using spb = asio::serial_port_base;
+#define REFEREE_SOF 0xA5
+#define VIDEO_LINK_REMOTECONTROL_SOF 0xA9
+
 using drivers::serial_driver::FlowControl;
 using drivers::serial_driver::Parity;
 using drivers::serial_driver::StopBits;
 using drivers::serial_driver::SerialPortConfig;
 using drivers::serial_driver::SerialDriver;
+
 
 /**
  * @class RefereeSerial
@@ -32,6 +35,14 @@ using drivers::serial_driver::SerialDriver;
 class RefereeSerial
 {
 public:
+    enum rx_status_t {
+        WAIT_STARTING_BYTE,  // receive bytes one by one, waiting for 0xA5
+        WAIT_REMAINING_HEADER,  // receive remaining header after SOF
+        WAIT_CMD_ID_DATA_TAIL  // receive cmd_id, data section and 2-byte CRC16 tailing
+    };
+    enum {
+        FRAME_HEADER_LENGTH=5
+    };
 /**
      * @brief Constructor for the RefereeSerial class.
      * @param options Node options for the ROS2 node.
@@ -107,8 +118,11 @@ private:
 
     std::thread regular_link_receive_thread;
     std::thread video_link_receive_thread;
+    
+    rx_status_t regular_link_rxstatus = WAIT_STARTING_BYTE, video_link_rxstatus = WAIT_STARTING_BYTE;
 
     bool isDebug = false;
+    bool debugUnhandledShown = false;
 };
 
 #endif // REFEREE_SERIAL_HPP

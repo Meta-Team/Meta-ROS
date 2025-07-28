@@ -108,7 +108,7 @@ uint16_t getCRC16CheckSum(uint8_t *pchMessage, uint32_t dwLength) {
     return wCRC;
 }
 
-bool verifyCRC16CheckSum(uint8_t *pchMessage, uint32_t dwLength) {
+bool verifyCRC16CheckSum(uint8_t *pchMessage, uint32_t dwLength, uint16_t* result) {
     uint16_t wExpected;
 
     if ((pchMessage == nullptr) || (dwLength <= 2)) {
@@ -116,6 +116,9 @@ bool verifyCRC16CheckSum(uint8_t *pchMessage, uint32_t dwLength) {
     }
 
     wExpected = getCRC16CheckSum(pchMessage, dwLength - 2);
+    if(result){
+        *result = wExpected;
+    }
     return ((wExpected & 0xff) == pchMessage[dwLength - 2] && ((wExpected >> 8) & 0xff) == pchMessage[dwLength - 1]);
 }
 

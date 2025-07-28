@@ -6,11 +6,11 @@
 const std::array<std::string, 6> GameInfo::game_type = 
 {
     "",
-    "RoboMaster",
-    "Single",
-    "AI",
-    "League1v1",
-    "League2v2",
+    "RMUC",
+    "RMUT",
+    "ICRA_RMUA",
+    "RMUL3v3",
+    "RMUL1v1",
 };
 
 const std::array<std::string, 6> GameInfo::game_progress = 

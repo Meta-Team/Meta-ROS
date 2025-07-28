@@ -43,7 +43,7 @@ uint16_t getCRC16CheckSum(uint8_t *pchMessage, uint32_t dwLength);
  * @param dwLength    Stream length = data + checksum
  * @return            CRC verify result
  */
-bool verifyCRC16CheckSum(uint8_t *pchMessage, uint32_t dwLength);
+bool verifyCRC16CheckSum(uint8_t *pchMessage, uint32_t dwLength, uint16_t* result);
 
 /**
  * Append CRC16 to the end of data.

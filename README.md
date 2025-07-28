@@ -40,12 +40,18 @@ git clone --recurse-submodules https://github.com/Meta-Team/Meta-ROS
 
 ### Disable scara_moveit
 ```Bash
-cd decomposition/scara_moveit
-touch COLCON_IGNORE
+touch Meta-ROS/decomposition/scara_moveit/COLCON_IGNORE
 ```
 ### Install dependencies
-This project is fully compatible with `rosdep`, you can easily install the dependencies with this command
+This project is fully compatible with `rosdep`.
 
+If you haven't installed `rosdep` and `colcon` yet, install it.\
+```
+sudo apt install python3-rosdep python3-colcon-common-extensions
+sudo rosdep init
+rosdep update
+```
+Then you can easily install the dependencies with this command.
 ```Bash
 rosdep install -y --rosdistro humble --from-paths . --ignore-src
 ```
