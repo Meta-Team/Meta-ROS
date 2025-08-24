@@ -330,7 +330,6 @@ void RefereeSerial::video_link_handle_frame(const std::vector<uint8_t>& prefix,
     frame.resize(sizeof(typename PARSE::FrameType) - prefix.size());
     video_link_serial_driver_->port()->receive(frame);
     frame.insert(frame.begin(), prefix.begin(), prefix.end());
-<<<<<<< HEAD
     uint16_t crc16_result;
     char* whole_frame_str = new char[200];
     memset(whole_frame_str, 0, 200*sizeof(char));
@@ -340,14 +339,6 @@ void RefereeSerial::video_link_handle_frame(const std::vector<uint8_t>& prefix,
      // parse the frame
     if (crc::verifyCRC16CheckSum(frame.data(), frame.size(), &crc16_result)) {
         PARSE info(frame);
-=======
-
-    PARSE info(frame); // parse the frame
-    bool crc16_check = crc::verifyCRC16CheckSum(reinterpret_cast<uint8_t*>(&info.interpreted), sizeof(typename PARSE::FrameType));
-
-    if (true)
-    {
->>>>>>> 9c2fc46 (add initial support for unitree motor hardware interface)
         MSG msg = info.msg();
         pub->publish(msg);
         if(isDebug) {
