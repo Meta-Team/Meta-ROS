@@ -1,0 +1,15 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 250 # Hz
+    forward_position_controller:
+        type: forward_command_controller/ForwardCommandController
+    joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+forward_position_controller:
+  ros__parameters:
+    joints:
+      - motor1
+    interface_name: velocity
+dbus_control_node:
+  ros__parameters:
+    dbus_port: "tty_DBUS"

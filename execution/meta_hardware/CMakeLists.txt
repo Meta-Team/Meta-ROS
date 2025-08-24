@@ -34,12 +34,18 @@ add_library(
   src/motor_driver/brt_encoder_driver.cpp
   src/im1253c_interface.cpp
   src/modbus_rtu_driver/modbus_rtu_driver.cpp
+  src/unitree_motor_interface.cpp
 )
 target_include_directories(
   meta_hardware
   PUBLIC
   include
 )
+if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "aarch64") 
+  set(EXTRA_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib/libUnitreeMotorSDK_Arm64.so)
+else()
+  set(EXTRA_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib/libUnitreeMotorSDK_Linux64.so)
+endif()
 ament_target_dependencies(
   meta_hardware
   hardware_interface
@@ -48,6 +54,10 @@ ament_target_dependencies(
   angles
   Boost
   serial_driver
+)
+target_link_libraries(
+  meta_hardware
+  ${EXTRA_LIBS}
 )
 # prevent pluginlib from using boost
 target_compile_definitions(meta_hardware PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

@@ -34,4 +34,11 @@
       IM1253C manager hardware interface.
     </description>
   </class>
+  <class name="meta_hardware/MetaRobotUnitreeMotorInterface"
+    type="meta_hardware::MetaRobotUnitreeMotorInterface"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Unitree motor hardware interface.
+    </description>
+  </class>
 </library>
