@@ -16,6 +16,11 @@ controller_manager:
 
     shoot_controller:
       type: meta_shoot_controller/ShootController
+    
+    forward_pitch_controller:
+        type: forward_command_controller/ForwardCommandController
+    forward_yaw_controller:
+        type: forward_command_controller/ForwardCommandController
 
 omni_chassis_controller:
   ros__parameters:
@@ -134,3 +139,13 @@ referee_serial:
     isDebug: false
     debugUnhandledShown: false
     warningShown: false
+forward_pitch_controller:
+  ros__parameters:
+    joints:
+      - pitch_gimbal_joint
+    interface_name: position
+forward_yaw_controller:
+  ros__parameters:
+    joints:
+      - yaw_gimbal_joint
+    interface_name: position

@@ -101,7 +101,9 @@ def generate_launch_description():
         load_controller('wheels_pid_controller'),
         # load_controller('gimbal_controller'),
         load_controller('omni_chassis_controller'),
-        load_controller('shoot_controller')
+        load_controller('shoot_controller'),
+        load_controller('forward_yaw_controller'),
+        load_controller('forward_pitch_controller')
     ]
     referee_system_node = Node(
         package='referee_serial',

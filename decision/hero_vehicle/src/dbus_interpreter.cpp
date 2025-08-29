@@ -113,7 +113,7 @@ void DbusInterpreter::input_video_link_vt03(const operation_interface::msg::VT03
     wheel = (msg->wheel-1024)/684.0; apply_deadzone(wheel);
 
     if(msg->cns == 1) lsw = "MID";
-    if(msg->cns == 0) lsw = ""; //rough shit
+    if(msg->cns == 0) lsw = ""; // TODO rough shit
 }
 
 void DbusInterpreter::update()

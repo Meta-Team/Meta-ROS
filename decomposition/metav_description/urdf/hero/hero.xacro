@@ -49,12 +49,47 @@
 
         <ros2_control name="dm_motors_yaw" type="system">
             <hardware>
-                <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
+                <plugin>meta_hardware/MetaRobotDmMotorNetwork</plugin>
                 <param name="can_network_name">can_1</param>
+                <param name="master_id">0x30</param>
             </hardware>
-            <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="20.0" motor_id="7" offset="0"/>
-            <xacro:gimbal_transmission prefix="yaw" mechanical_reduction="20.0" motor_id="8" offset="0"/>
-            
+            <joint name="yaw_gimbal_joint">
+                <command_interface name="position" />
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+                <state_interface name="effort" />
+                <param name="motor_model">DaMiao</param>
+                <param name="motor_id">9</param>
+                <param name="mechanical_reduction">1.0</param>
+                <param name="max_pos">12.5</param>
+                <param name="max_vel">45.0</param>
+                <param name="max_effort">12.0</param>
+                <param name="offset">0.0</param>
+                <param name="control_mode">mit</param>
+                <param name="Kp">30.0</param>
+                <param name="Kd">0.5</param>
+            </joint>
+        </ros2_control>
+        <ros2_control name="mi_motors_pitch" type="system">
+            <hardware>
+                <plugin>meta_hardware/MetaRobotMiMotorNetwork</plugin>
+                <param name="can_network_name">can_2</param>
+            </hardware>
+            <!-- <xacro:gimbal_transmission prefix="pitch" mechanical_reduction="20.0" motor_id="1" offset="0"/>
+             -->
+            <joint name="pitch_gimbal_joint">
+                <command_interface name="position" />
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+                <state_interface name="effort" />
+                <param name="motor_model">CyberGear</param>
+                <param name="motor_id">1</param>
+                <param name="mechanical_reduction">1.0</param>
+                <param name="offset">0.7599</param> <!-- read from (int("7842",16)-65535/2)/(65535/2)*4*pi = -0.75990, remember to negate -->
+                <param name="control_mode">dynamic</param>
+                <param name="Kp">30.0</param>
+                <param name="Kd">1.0</param>
+            </joint>
         </ros2_control>
 
         <ros2_control name="dji_motors_gimbal" type="system">

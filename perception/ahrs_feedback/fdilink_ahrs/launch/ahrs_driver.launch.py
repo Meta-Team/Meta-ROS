@@ -19,7 +19,7 @@ def generate_launch_description():
         package="fdilink_ahrs",
         executable="ahrs_driver_node",
         parameters=[{'if_debug_': False,
-            'serial_port_':'/dev/fdilink_ahrs',
+            'serial_port_':'/dev/tty_IMU',
             'serial_baud_':921600,
             'imu_topic':'/imu',
             'imu_frame_id_':'gyro_link',
