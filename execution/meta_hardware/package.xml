@@ -21,7 +21,7 @@
 
   <depend>serial_driver</depend>
   
-  <depend>forward_command_cntroller</depend>
+  <depend>forward_command_controller</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
