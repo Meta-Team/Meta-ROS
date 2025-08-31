@@ -1,4 +1,5 @@
 #include "hero_vehicle/dbus_interpreter.h"
+#include "rclcpp/rclcpp.hpp"
 #include <cmath>
 
 DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone, double video_link_blank_time)
@@ -115,6 +116,22 @@ void DbusInterpreter::input_video_link_vt03(const operation_interface::msg::VT03
 
     cns_ = msg->cns;
     trigger = msg->trigger;
+
+    auto current_time = rclcpp::Clock().now();
+    rclcpp::Logger tmp_logger = rclcpp::get_logger("test");
+    if(current_time.seconds()-last_trigger_update_time_.seconds() > 0.2){
+        if(trigger && !last_trigger)  // TOGGLE CHASSIS MODE
+        {
+	    RCLCPP_INFO(tmp_logger, "trigger pressed");
+            if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
+                chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+            }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
+                chassis_->mode = behavior_interface::msg::Chassis::GYRO;
+            }
+            last_trigger_update_time_ = rclcpp::Clock().now();
+        }
+    }
+    last_trigger = trigger;
 }
 
 void DbusInterpreter::update()
@@ -186,26 +203,6 @@ void DbusInterpreter::update()
     }
     // To ensure that the change take place only once per key press
 
-    if(current_time.seconds()-last_trigger_update_time_.seconds() > 0.2){
-        if(trigger && !last_trigger)  // TOGGLE CHASSIS MODE
-        {
-            if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
-                chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
-            }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
-                chassis_->mode = behavior_interface::msg::Chassis::GYRO;
-            }
-        }
-        last_trigger_update_time_ = rclcpp::Clock().now();
-    }
-
-    // if(c_ && !last_c_){
-    //     if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
-    //         chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
-    //     }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
-    //         chassis_->mode = behavior_interface::msg::Chassis::GYRO;
-    //     }
-    // }
-    last_trigger = trigger;
     // if(ctrl_){
     //     chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
     // }
