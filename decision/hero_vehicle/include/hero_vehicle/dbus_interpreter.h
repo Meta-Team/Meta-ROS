@@ -70,8 +70,12 @@ private:
     bool f_ = false, g_ = false, z_ = false;
     bool x_ = false, c_ = false, v_, b_ = false;
     bool last_c_;
+    bool last_trigger = false, trigger = false;
+    uint8_t cns_ = 0;
+
 
     rclcpp::Time last_update_time_;
+    rclcpp::Time last_trigger_update_time_;
 
     double max_vel, max_omega, max_feed, max_shoot, aim_sens, deadzone, video_link_blank_time;
 

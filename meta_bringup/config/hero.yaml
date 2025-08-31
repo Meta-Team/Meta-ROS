@@ -116,7 +116,7 @@ hero_vehicle:
       rot_vel: 3.0 # rad/s
       stick_sens: 5.00 # rad/s
       mouse_sens: 10.0
-      deadzone: 0.15 # percentage
+      deadzone: 0.5 # percentage
       video_link_blank_time: 0.05 # second
 
 capacitor:

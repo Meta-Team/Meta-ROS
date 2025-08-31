@@ -20,8 +20,9 @@ DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_se
     chassis_->mode = behavior_interface::msg::Chassis::CHASSIS;
 
     // Last Update Time
-    last_update_time_ = rclcpp::Clock().now();
+    last_trigger_update_time_ = last_update_time_ = rclcpp::Clock().now();
     last_c_ = false;
+    last_trigger = false;
 
     // initialize update thread
     update_thread = std::thread([this](){
@@ -79,7 +80,7 @@ void DbusInterpreter::input_video_link(const operation_interface::msg::KeyMouse:
 void DbusInterpreter::input_video_link_vt03(const operation_interface::msg::VT03::SharedPtr msg)
 {
     // TODO remove keyboard_active_ since it is always true(from generator)
-    keyboard_active_ = true;
+    // keyboard_active_ = true;
 
     w_ = msg->w;
     a_ = msg->a;
@@ -112,28 +113,27 @@ void DbusInterpreter::input_video_link_vt03(const operation_interface::msg::VT03
     rs_y = (msg->ch1-1024)/684.0; apply_deadzone(rs_y); // left is positive
     wheel = (msg->wheel-1024)/684.0; apply_deadzone(wheel);
 
-    if(msg->cns == 1) lsw = "MID";
-    if(msg->cns == 0) lsw = ""; // TODO rough shit
+    cns_ = msg->cns;
+    trigger = msg->trigger;
 }
 
 void DbusInterpreter::update()
 {
-    active = (lsw == "MID") || keyboard_active_;
+    active = (lsw == "MID") || keyboard_active_ || cns_ == 1;
     if (!active)
     {
         move_->vel_x = 0.0;
         move_->vel_y = 0.0;
         move_->omega = 0.0;
         // printf("Update is not active\n");
-        // TODO: aim ...
         return; // do not update if not active, this prevents yaw and pitch from accumulating in standby
     }
 
-    move_->vel_x = max_vel * ls_x;
-    move_->vel_y = max_vel * ls_y;
-    aim_->pitch += aim_sens * rs_x * PERIOD / 1000; curb(aim_->pitch, M_PI_4);
+    move_->vel_x = max_vel * ls_y;
+    move_->vel_y = -max_vel * ls_x; // right is positive for rc, but for chassis right is negative
+    aim_->pitch += aim_sens * rs_y * PERIOD / 1000; curb(aim_->pitch, M_PI_4);
     move_->omega = max_omega * wheel;
-    aim_->yaw += aim_sens * rs_y * PERIOD / 1000;
+    aim_->yaw += aim_sens * rs_x * PERIOD / 1000;
     
     if (rsw == "UP")
     {
@@ -186,17 +186,17 @@ void DbusInterpreter::update()
     }
     // To ensure that the change take place only once per key press
 
-    // if(current_time.seconds()-last_update_time_.seconds() > 0.2){
-    //     if(c_ && !last_c_)  // TOGGLE CHASSIS MODE
-    //     {
-    //         if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
-    //             chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
-    //         }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
-    //             chassis_->mode = behavior_interface::msg::Chassis::GYRO;
-    //         }
-    //     }
-    //     last_update_time_ = rclcpp::Clock().now();
-    // }
+    if(current_time.seconds()-last_trigger_update_time_.seconds() > 0.2){
+        if(trigger && !last_trigger)  // TOGGLE CHASSIS MODE
+        {
+            if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
+                chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
+            }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
+                chassis_->mode = behavior_interface::msg::Chassis::GYRO;
+            }
+        }
+        last_trigger_update_time_ = rclcpp::Clock().now();
+    }
 
     // if(c_ && !last_c_){
     //     if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
@@ -205,7 +205,7 @@ void DbusInterpreter::update()
     //         chassis_->mode = behavior_interface::msg::Chassis::GYRO;
     //     }
     // }
-    last_c_ = c_;
+    last_trigger = trigger;
     // if(ctrl_){
     //     chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
     // }
