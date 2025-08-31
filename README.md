@@ -45,7 +45,7 @@ touch Meta-ROS/decomposition/scara_moveit/COLCON_IGNORE
 ### Install dependencies
 This project is fully compatible with `rosdep`.
 
-If you haven't installed `rosdep` and `colcon` yet, install it.\
+If you haven't installed `rosdep` and `colcon` yet, install it.
 ```
 sudo apt install python3-rosdep python3-colcon-common-extensions
 sudo rosdep init
@@ -61,6 +61,7 @@ rosdep install -y --rosdistro humble --from-paths . --ignore-src
 Simply run
 
 ```Bash
+cd Meta-ROS
 colcon build --symlink-install --cmake-args '-DCMAKE_EXPORT_COMPILE_COMMANDS=On'
 ```
 
@@ -73,7 +74,12 @@ Then install udev rules
 ```Bash
 ./Meta-ROS/tools/install.sh
 ```
-Then plugin the peripheral board, and press
+Then plugin the peripheral board, and run the following command
 ```
 ./Meta-ROS/tools/setupcan.sh
+```
+Run `hero` as example:
+```Bash
+source install/setup.bash
+ros2 launch meta_bringup hero.launch.py
 ```
