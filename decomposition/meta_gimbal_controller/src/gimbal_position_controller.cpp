@@ -222,8 +222,8 @@ GimbalPositionController::update_and_write_commands(const rclcpp::Time &time,
     double yaw_pos_ref = NaN, pitch_pos_ref = NaN;
     double yaw_pos_err = NaN, pitch_pos_err = NaN;
     
-    double yaw_enc_pos = reference_interfaces_[0];
-    double pitch_enc_pos = reference_interfaces_[1];
+    double yaw_enc_pos = state_interfaces_[0].get_value();
+    double pitch_enc_pos = state_interfaces_[1].get_value();
     // Calculate commands
     if (!std::isnan(reference_interfaces_[0]) && !std::isnan(reference_interfaces_[1]) &&
         !std::isnan(yaw_pos_fb) && !std::isnan(pitch_pos_fb) &&
@@ -244,7 +244,8 @@ GimbalPositionController::update_and_write_commands(const rclcpp::Time &time,
             command_interfaces_[1].set_value(pitch_enc_pos + pitch_pos_err);
         }
     }
-
+    // rclcpp::Logger tmp_logger = rclcpp::get_logger("gpc");
+    // RCLCPP_INFO(tmp_logger, "pitch:(ref:%.2lf, err:%.2lf, fb:%.2lf, enc:%.2lf, cmd:%.2lf)", pitch_pos_ref, pitch_pos_err, pitch_pos_fb, pitch_enc_pos, pitch_enc_pos + pitch_pos_err);
     // Publish state
     if (state_publisher_ && state_publisher_->trylock()) {
         state_publisher_->msg_.header.stamp = time;
