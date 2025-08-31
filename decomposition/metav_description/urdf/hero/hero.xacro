@@ -51,7 +51,7 @@
             <hardware>
                 <plugin>meta_hardware/MetaRobotDmMotorNetwork</plugin>
                 <param name="can_network_name">can_1</param>
-                <param name="master_id">0x30</param>
+                <param name="master_id">48</param> <!-- 0x30-->
             </hardware>
             <joint name="yaw_gimbal_joint">
                 <command_interface name="position" />
@@ -66,7 +66,7 @@
                 <param name="max_effort">12.0</param>
                 <param name="offset">0.0</param>
                 <param name="control_mode">mit</param>
-                <param name="Kp">30.0</param>
+                <param name="Kp">5.0</param>
                 <param name="Kd">0.5</param>
             </joint>
         </ros2_control>
@@ -87,7 +87,7 @@
                 <param name="mechanical_reduction">1.0</param>
                 <param name="offset">0.7599</param> <!-- read from (int("7842",16)-65535/2)/(65535/2)*4*pi = -0.75990, remember to negate -->
                 <param name="control_mode">dynamic</param>
-                <param name="Kp">30.0</param>
+                <param name="Kp">5.0</param>
                 <param name="Kd">1.0</param>
             </joint>
         </ros2_control>

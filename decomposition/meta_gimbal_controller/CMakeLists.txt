@@ -9,19 +9,28 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-generate_parameter_library(${PROJECT_NAME}_parameters
+generate_parameter_library(
+  ${PROJECT_NAME}_parameters
   src/meta_gimbal_controller.yaml
-  include/gimbal_controller/validate_gimbal_controller_parameters.hpp
+)
+generate_parameter_library(
+  meta_gimbal_position_controller_parameters
+  src/meta_gimbal_position_controller.yaml
 )
 ament_auto_add_library(
   ${PROJECT_NAME}
   SHARED
   src/gimbal_controller.cpp
+  src/gimbal_position_controller.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_parameters)
+target_link_libraries(
+  ${PROJECT_NAME} 
+  ${PROJECT_NAME}_parameters
+  meta_gimbal_position_controller_parameters
+)
 
 pluginlib_export_plugin_description_file(
   controller_interface meta_gimbal_controller.xml)

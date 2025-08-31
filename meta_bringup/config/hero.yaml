@@ -8,8 +8,8 @@ controller_manager:
     wheels_pid_controller:
       type: pid_controller/PidController
 
-    gimbal_controller:
-      type: meta_gimbal_controller/GimbalController
+    gimbal_position_controller:
+      type: meta_gimbal_controller/GimbalPositionController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -72,7 +72,7 @@ wheels_pid_controller:
       back_right_wheel_joint:
         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
-gimbal_controller:
+gimbal_position_controller:
   ros__parameters:
     yaw_gimbal_joint:
       enable: true
@@ -84,13 +84,6 @@ gimbal_controller:
 
     imu_topic: /imu
 
-    gains:
-      yaw_gimbal_joint_pos2vel: { p: 7.0, i: 0.0, d: 0.0 }
-      pitch_gimbal_joint_pos2vel: { p: 30.0, i: 0.0, d: 0.05 }
-      yaw_gimbal_joint_vel2eff:
-        { p: 5.0e-1, i: 2.5e-1, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
-      pitch_gimbal_joint_vel2eff:
-        { p: 1.0e-1, i: 2.0e-2, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
 shoot_controller:
   ros__parameters:
@@ -116,7 +109,7 @@ dbus_control_node:
 hero_vehicle:
   ros__parameters:
     enable_ros2_control: true
-    aim_topic: "/gimbal_controller/reference"
+    aim_topic: "/gimbal_position_controller/reference"
     shoot_topic: "/shoot_controller/reference"
     control:
       trans_vel: 2.5 # m/s

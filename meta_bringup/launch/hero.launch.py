@@ -99,11 +99,11 @@ def generate_launch_description():
     # Order in this list is IMPORTANT
     load_controllers = [
         load_controller('wheels_pid_controller'),
-        # load_controller('gimbal_controller'),
+        load_controller('gimbal_position_controller'),
         load_controller('omni_chassis_controller'),
         load_controller('shoot_controller'),
-        load_controller('forward_yaw_controller'),
-        load_controller('forward_pitch_controller')
+        # load_controller('forward_yaw_controller'),
+        # load_controller('forward_pitch_controller')
     ]
     referee_system_node = Node(
         package='referee_serial',
@@ -165,6 +165,6 @@ def generate_launch_description():
         referee_system_node,
         # auto_sentry_node,
         hero_vehicle_node,
-        # ahrs_launch,
+        ahrs_launch,
         super_capacitor_node,
     ])

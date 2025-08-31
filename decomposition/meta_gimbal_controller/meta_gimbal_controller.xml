@@ -25,4 +25,10 @@ Source of this file are templates in
     GimbalController ros2_control controller.
   </description>
   </class>
+  <class name="meta_gimbal_controller/GimbalPositionController"
+         type="gimbal_controller::GimbalPositionController" base_class_type="controller_interface::ChainableControllerInterface">
+  <description>
+    GimbalController ros2_control controller.
+  </description>
+  </class>
 </library>
