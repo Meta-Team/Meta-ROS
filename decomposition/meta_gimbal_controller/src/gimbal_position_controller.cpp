@@ -23,6 +23,8 @@ using ControllerFeedbackMsg = gimbal_controller::GimbalPositionController::Contr
 
 
 using hardware_interface::HW_IF_POSITION;
+using hardware_interface::HW_IF_VELOCITY;
+using hardware_interface::HW_IF_EFFORT;
 
 namespace gimbal_controller {
 
@@ -64,7 +66,14 @@ controller_interface::CallbackReturn GimbalPositionController::on_init() {
 controller_interface::CallbackReturn
 GimbalPositionController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
     params_ = param_listener_->get_params();
+    // Initialize PIDs
+    yaw_pos2vel_pid_ = std::make_shared<control_toolbox::PidROS>(
+        get_node(), "gains." + params_.yaw_gimbal_joint.name + "_pos2vel", true);
 
+    if (!yaw_pos2vel_pid_->initPid()) {
+        RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for pos2vel");
+        return controller_interface::CallbackReturn::FAILURE;
+    }
 
     // topics QoS
     auto subscribers_qos = rclcpp::SystemDefaultsQoS();
@@ -102,8 +111,8 @@ GimbalPositionController::on_configure(const rclcpp_lifecycle::State & /*previou
 
     state_publisher_->lock();
     state_publisher_->msg_.dof_states.resize(2);
-    state_publisher_->msg_.dof_states[0].name = "gimbal_yaw_diff";
-    state_publisher_->msg_.dof_states[1].name = "gimbal_pitch_diff";
+    state_publisher_->msg_.dof_states[0].name = "yaw_pos2vel";
+    state_publisher_->msg_.dof_states[1].name = "pitch_pos2pos_enc";
     state_publisher_->unlock();
 
     RCLCPP_INFO(get_node()->get_logger(), "configure successful");
@@ -116,9 +125,13 @@ GimbalPositionController::command_interface_configuration() const {
     command_interfaces_config.type =
         controller_interface::interface_configuration_type::INDIVIDUAL;
 
-    command_interfaces_config.names.reserve(2);
+    command_interfaces_config.names.reserve(4);
     command_interfaces_config.names.push_back(params_.yaw_gimbal_joint.name + "/" +
                                               HW_IF_POSITION);
+    command_interfaces_config.names.push_back(params_.yaw_gimbal_joint.name + "/" +
+                                              HW_IF_VELOCITY);
+    command_interfaces_config.names.push_back(params_.yaw_gimbal_joint.name + "/" +
+                                              HW_IF_EFFORT);
     command_interfaces_config.names.push_back(params_.pitch_gimbal_joint.name + "/" +
                                               HW_IF_POSITION);
 
@@ -221,6 +234,7 @@ GimbalPositionController::update_and_write_commands(const rclcpp::Time &time,
 
     double yaw_pos_ref = NaN, pitch_pos_ref = NaN;
     double yaw_pos_err = NaN, pitch_pos_err = NaN;
+    double yaw_vel_ref = NaN;
     
     double yaw_enc_pos = state_interfaces_[0].get_value();
     double pitch_enc_pos = state_interfaces_[1].get_value();
@@ -233,7 +247,10 @@ GimbalPositionController::update_and_write_commands(const rclcpp::Time &time,
             // Yaw Position (IMU) to velocity (IMU) PID
             yaw_pos_ref = reference_interfaces_[0];
             yaw_pos_err = angles::shortest_angular_distance(yaw_pos_fb, yaw_pos_ref);
-            command_interfaces_[0].set_value(yaw_enc_pos + yaw_pos_err);
+            yaw_vel_ref = yaw_pos2vel_pid_->computeCommand(yaw_pos_err, period);
+            command_interfaces_[0].set_value(0.0);
+            command_interfaces_[1].set_value(yaw_vel_ref);
+            command_interfaces_[2].set_value(0.0);
         }
 
         if (params_.pitch_gimbal_joint.enable) {
@@ -241,11 +258,8 @@ GimbalPositionController::update_and_write_commands(const rclcpp::Time &time,
             // for cybergear negative up, for imu negative up, for reference it should be negative up too
             pitch_pos_ref = -reference_interfaces_[1];
             pitch_pos_err = angles::shortest_angular_distance(pitch_pos_fb, pitch_pos_ref);
-            command_interfaces_[1].set_value(pitch_enc_pos + pitch_pos_err);
         }
     }
-    // rclcpp::Logger tmp_logger = rclcpp::get_logger("gpc");
-    // RCLCPP_INFO(tmp_logger, "pitch:(ref:%.2lf, err:%.2lf, fb:%.2lf, enc:%.2lf, cmd:%.2lf)", pitch_pos_ref, pitch_pos_err, pitch_pos_fb, pitch_enc_pos, pitch_enc_pos + pitch_pos_err);
     // Publish state
     if (state_publisher_ && state_publisher_->trylock()) {
         state_publisher_->msg_.header.stamp = time;
@@ -254,7 +268,7 @@ GimbalPositionController::update_and_write_commands(const rclcpp::Time &time,
             state_publisher_->msg_.dof_states[0].feedback = yaw_pos_fb;
             state_publisher_->msg_.dof_states[0].error = yaw_pos_err;
             state_publisher_->msg_.dof_states[0].time_step = period.seconds();
-            state_publisher_->msg_.dof_states[0].output = yaw_enc_pos + yaw_pos_err;
+            state_publisher_->msg_.dof_states[0].output = yaw_vel_ref;
         }
 
         if (params_.pitch_gimbal_joint.enable) {

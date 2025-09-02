@@ -131,8 +131,8 @@ GimbalController::on_configure(const rclcpp_lifecycle::State & /*previous_state*
     state_publisher_->lock();
     state_publisher_->msg_.dof_states.resize(4);
     state_publisher_->msg_.dof_states[0].name = "yaw_pos2vel";
-    state_publisher_->msg_.dof_states[1].name = "pitch_pos2vel";
-    state_publisher_->msg_.dof_states[2].name = "yaw_vel2eff";
+    state_publisher_->msg_.dof_states[1].name = "yaw_vel2eff";
+    state_publisher_->msg_.dof_states[2].name = "pitch_pos2vel";
     state_publisher_->msg_.dof_states[3].name = "pitch_vel2eff";
     state_publisher_->unlock();
 
@@ -289,19 +289,19 @@ GimbalController::update_and_write_commands(const rclcpp::Time &time,
             state_publisher_->msg_.dof_states[0].time_step = period.seconds();
             state_publisher_->msg_.dof_states[0].output = yaw_vel_ref;
 
-            state_publisher_->msg_.dof_states[1].reference = pitch_pos_ref;
-            state_publisher_->msg_.dof_states[1].feedback = pitch_pos_fb;
-            state_publisher_->msg_.dof_states[1].error = pitch_pos_err;
+            state_publisher_->msg_.dof_states[1].reference = yaw_vel_ref;
+            state_publisher_->msg_.dof_states[1].feedback = yaw_vel_fb;
+            state_publisher_->msg_.dof_states[1].error = yaw_vel_err;
             state_publisher_->msg_.dof_states[1].time_step = period.seconds();
-            state_publisher_->msg_.dof_states[1].output = pitch_vel_ref;
+            state_publisher_->msg_.dof_states[1].output = yaw_eff_cmd;
         }
 
         if (params_.pitch_gimbal_joint.enable) {
-            state_publisher_->msg_.dof_states[2].reference = yaw_vel_ref;
-            state_publisher_->msg_.dof_states[2].feedback = yaw_vel_fb;
-            state_publisher_->msg_.dof_states[2].error = yaw_vel_err;
+            state_publisher_->msg_.dof_states[2].reference = pitch_pos_ref;
+            state_publisher_->msg_.dof_states[2].feedback = pitch_pos_fb;
+            state_publisher_->msg_.dof_states[2].error = pitch_pos_err;
             state_publisher_->msg_.dof_states[2].time_step = period.seconds();
-            state_publisher_->msg_.dof_states[2].output = yaw_eff_cmd;
+            state_publisher_->msg_.dof_states[2].output = pitch_vel_ref;
 
             state_publisher_->msg_.dof_states[3].reference = pitch_vel_ref;
             state_publisher_->msg_.dof_states[3].feedback = pitch_vel_fb;
