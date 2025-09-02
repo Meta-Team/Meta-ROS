@@ -74,9 +74,6 @@ class GimbalPositionController : public controller_interface::ChainableControlle
         input_feedback_;
 
     std::shared_ptr<control_toolbox::PidROS> yaw_pos2vel_pid_;
-    std::shared_ptr<control_toolbox::PidROS> pitch_pos2vel_pid_;
-    std::shared_ptr<control_toolbox::PidROS> yaw_vel2eff_pid_;
-    std::shared_ptr<control_toolbox::PidROS> pitch_vel2eff_pid_;
 
     using ControllerStatePublisher =
         realtime_tools::RealtimePublisher<ControllerStateMsg>;

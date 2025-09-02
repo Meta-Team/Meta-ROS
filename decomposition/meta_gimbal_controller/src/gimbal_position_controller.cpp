@@ -258,6 +258,7 @@ GimbalPositionController::update_and_write_commands(const rclcpp::Time &time,
             // for cybergear negative up, for imu negative up, for reference it should be negative up too
             pitch_pos_ref = -reference_interfaces_[1];
             pitch_pos_err = angles::shortest_angular_distance(pitch_pos_fb, pitch_pos_ref);
+            command_interfaces_[3].set_value(pitch_enc_pos + pitch_pos_err);
         }
     }
     // Publish state

@@ -83,6 +83,9 @@ gimbal_position_controller:
       name: pitch_gimbal_joint
 
     imu_topic: /imu
+    gains:
+      yaw_gimbal_joint_pos2vel:
+        { p: 7.0, i: 0.0, d: 0.1, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
 
 shoot_controller:
