@@ -165,6 +165,6 @@ def generate_launch_description():
         referee_system_node,
         # auto_sentry_node,
         hero_vehicle_node,
-        ahrs_launch,
+        # ahrs_launch,
         super_capacitor_node,
     ])

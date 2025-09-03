@@ -30,6 +30,8 @@ namespace meta_hardware
         logger_ = std::make_unique<rclcpp::Logger>(rclcpp::get_logger("dm_imu_interface"));
         tty_devpath_ = info_.hardware_parameters.at("tty_devpath");
         sensor_name_ = info_.hardware_parameters.at("sensor_name");
+        RCLCPP_INFO(*logger_, "DM IMU using serial port: %s with baud %d", tty_devpath_.c_str(), baudrate);
+        // RCLCPP_INFO(*logger_, "DM IMU sensor name: %s", sensor_name_.c_str());
         dm_imu_state_.orientation_x = NaN;
         dm_imu_state_.orientation_y = NaN;
         dm_imu_state_.orientation_z = NaN;
@@ -66,16 +68,17 @@ namespace meta_hardware
     std::vector<hardware_interface::StateInterface> DMIMUInterface::export_state_interfaces()
     {
         std::vector<hardware_interface::StateInterface> state_interfaces;
-        state_interfaces.emplace_back(sensor_name_, "orientation.x", &dm_imu_state_.orientation_x);
-        state_interfaces.emplace_back(sensor_name_, "orientation.y", &dm_imu_state_.orientation_y);
-        state_interfaces.emplace_back(sensor_name_, "orientation.z", &dm_imu_state_.orientation_z);
-        state_interfaces.emplace_back(sensor_name_, "orientation.w", &dm_imu_state_.orientation_w);
-        state_interfaces.emplace_back(sensor_name_, "angular_velocity.x", &dm_imu_state_.angular_velocity_x);
-        state_interfaces.emplace_back(sensor_name_, "angular_velocity.y", &dm_imu_state_.angular_velocity_y);
-        state_interfaces.emplace_back(sensor_name_, "angular_velocity.z", &dm_imu_state_.angular_velocity_z);
-        state_interfaces.emplace_back(sensor_name_, "linear_acceleration.x", &dm_imu_state_.linear_acceleration_x);
-        state_interfaces.emplace_back(sensor_name_, "linear_acceleration.y", &dm_imu_state_.linear_acceleration_y);
-        state_interfaces.emplace_back(sensor_name_, "linear_acceleration.z", &dm_imu_state_.linear_acceleration_z);
+        // state_interfaces.emplace_back(std::string("ccb"), "orientation.x", &dm_imu_state_.orientation_x);
+        state_interfaces.emplace_back(info_.name, "orientation.x", &dm_imu_state_.orientation_x);
+        state_interfaces.emplace_back(info_.name, "orientation.y", &dm_imu_state_.orientation_y);
+        state_interfaces.emplace_back(info_.name, "orientation.z", &dm_imu_state_.orientation_z);
+        state_interfaces.emplace_back(info_.name, "orientation.w", &dm_imu_state_.orientation_w);
+        state_interfaces.emplace_back(info_.name, "angular_velocity.x", &dm_imu_state_.angular_velocity_x);
+        state_interfaces.emplace_back(info_.name, "angular_velocity.y", &dm_imu_state_.angular_velocity_y);
+        state_interfaces.emplace_back(info_.name, "angular_velocity.z", &dm_imu_state_.angular_velocity_z);
+        state_interfaces.emplace_back(info_.name, "linear_acceleration.x", &dm_imu_state_.linear_acceleration_x);
+        state_interfaces.emplace_back(info_.name, "linear_acceleration.y", &dm_imu_state_.linear_acceleration_y);
+        state_interfaces.emplace_back(info_.name, "linear_acceleration.z", &dm_imu_state_.linear_acceleration_z);
         return state_interfaces;
     }
 
@@ -95,7 +98,20 @@ namespace meta_hardware
     hardware_interface::return_type DMIMUInterface::read(const rclcpp::Time& /*time*/,
                                                          const rclcpp::Duration& /*period*/)
     {
+        tf2::Quaternion tmp_q;
+        tmp_q.setRPY(data_.roll / 180.0 * M_PI, data_.pitch / 180.0 * M_PI, data_.yaw / 180.0 * M_PI);
 
+        dm_imu_state_.orientation_x = tmp_q.x();
+        dm_imu_state_.orientation_y = tmp_q.y();
+        dm_imu_state_.orientation_z = tmp_q.z();
+        dm_imu_state_.orientation_w = tmp_q.w();
+        dm_imu_state_.angular_velocity_x = data_.gyrox;
+        dm_imu_state_.angular_velocity_y = data_.gyroy;
+        dm_imu_state_.angular_velocity_z = data_.gyroz;
+        dm_imu_state_.linear_acceleration_x = data_.accx;
+        dm_imu_state_.linear_acceleration_y = data_.accy;
+        dm_imu_state_.linear_acceleration_z = data_.accz;
+        
         return hardware_interface::return_type::OK;
     }
     // from dm
@@ -103,8 +119,11 @@ namespace meta_hardware
     void DMIMUInterface::enter_setting_mode()
     {
         std::vector<uint8_t> txbuf = {0xAA, 0x06, 0x01, 0x0D};
-        dm_imu_serial_driver_->port()->send(txbuf);
-        rclcpp::sleep_for(std::chrono::milliseconds(10));
+        for (int i = 0; i < 5; i++)
+        {
+            dm_imu_serial_driver_->port()->send(txbuf);
+            rclcpp::sleep_for(std::chrono::milliseconds(10));
+        }
     }
 
     void DMIMUInterface::turn_on_accel()
@@ -193,6 +212,10 @@ namespace meta_hardware
             std::make_unique<SerialPortConfig>(baudrate, FlowControl::NONE, Parity::NONE, StopBits::ONE);
         dm_imu_serial_driver_ = std::make_unique<SerialDriver>(*dm_imu_ctx_);
         dm_imu_serial_driver_->init_port(dm_imu_devpath, *dm_imu_serial_config_);
+        if (!dm_imu_serial_driver_->port()->is_open())
+        {
+            dm_imu_serial_driver_->port()->open();
+        }
     }
     void DMIMUInterface::get_imu_data_thread(std::stop_token s)
     {
@@ -233,29 +256,25 @@ namespace meta_hardware
                     data_.yaw = *((float*)(&receive_data_.yaw_u32));
                 }
 
-                tf2::Quaternion tmp_q;
-                tmp_q.setRPY(data_.roll / 180.0 * M_PI, data_.pitch / 180.0 * M_PI, data_.yaw / 180.0 * M_PI);
-
-
-                dm_imu_state_.orientation_x = tmp_q.x();
-                dm_imu_state_.orientation_y = tmp_q.y();
-                dm_imu_state_.orientation_z = tmp_q.z();
-                dm_imu_state_.orientation_w = tmp_q.w();
-                dm_imu_state_.angular_velocity_x = data_.gyrox;
-                dm_imu_state_.angular_velocity_y = data_.gyroy;
-                dm_imu_state_.angular_velocity_z = data_.gyroz;
-                dm_imu_state_.linear_acceleration_x = data_.accx;
-                dm_imu_state_.linear_acceleration_y = data_.accy;
-                dm_imu_state_.linear_acceleration_z = data_.accz;
+                // RCLCPP_INFO(*logger_, "acc: %.3f, %.3f, %.3f; gyro: %.3f, %.3f, %.3f; euler: %.3f, %.3f, %.3f",
+                //             data_.accx, data_.accy, data_.accz, data_.gyrox, data_.gyroy, data_.gyroz, data_.roll,
+                //             data_.pitch, data_.yaw);
             }
             else
             {
                 error_num++;
+                RCLCPP_WARN(*logger_, "%.2x %.2x %.2x %.2x", frame_header[0], frame_header[1], frame_header[2],
+                            frame_header[3]);
                 if (error_num > 1200)
                 {
                     std::cerr << "fail to get the correct imu data,finding header 0x55" << std::endl;
                 }
             }
+        }
+        RCLCPP_INFO(*logger_, "stop get_imu_data_thread");
+        if (dm_imu_serial_driver_->port()->is_open())
+        {
+            dm_imu_serial_driver_->port()->close();
         }
     }
 } // namespace meta_hardware

@@ -15,6 +15,7 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "realtime_tools/realtime_buffer.h"
 #include "realtime_tools/realtime_publisher.h"
+#include "semantic_components/imu_sensor.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 
 #include "behavior_interface/msg/aim.hpp"
@@ -96,6 +97,7 @@ class GimbalPositionController : public controller_interface::ChainableControlle
     void reset_controller_feedback_msg(
     const std::shared_ptr<ControllerFeedbackMsg> &msg,
     const std::shared_ptr<rclcpp_lifecycle::LifecycleNode> &node);
+    std::unique_ptr<semantic_components::IMUSensor> imu_sensor_;
 };
 
 } // namespace gimbal_controller

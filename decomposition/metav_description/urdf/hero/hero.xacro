@@ -107,6 +107,13 @@
             <xacro:shooter_transmission prefix="fric2" mechanical_reduction="1.0" offset="0.0" motor_model="M3508"
                 motor_id="3" />
         </ros2_control>
+        <ros2_control name="dm_imu" type="sensor">
+            <hardware>
+                <plugin>meta_hardware/DMIMUInterface</plugin>
+                <param name="tty_devpath">/dev/tty_IMU</param>
+                <param name="sensor_name">dm_imu</param>
+            </hardware>
+        </ros2_control>
 
 
     </xacro:unless>
