@@ -41,4 +41,12 @@
       Unitree motor hardware interface.
     </description>
   </class>
+  <!-- sensors(IMU)-->
+  <class name="meta_hardware/DMIMUInterface"
+    type="meta_hardware::DMIMUInterface"
+    base_class_type="hardware_interface::SensorInterface">
+    <description>
+      DaMiao IMU hardware interface
+    </description>
+  </class>
 </library>

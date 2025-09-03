@@ -16,6 +16,9 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(angles REQUIRED)
 find_package(Boost REQUIRED)
 find_package(serial_driver REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 add_library(
   meta_hardware
@@ -35,6 +38,7 @@ add_library(
   src/im1253c_interface.cpp
   src/modbus_rtu_driver/modbus_rtu_driver.cpp
   src/unitree_motor_interface.cpp
+  src/dm_imu_interface.cpp
 )
 target_include_directories(
   meta_hardware
@@ -51,6 +55,9 @@ ament_target_dependencies(
   hardware_interface
   rclcpp
   rclcpp_lifecycle
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
   angles
   Boost
   serial_driver
