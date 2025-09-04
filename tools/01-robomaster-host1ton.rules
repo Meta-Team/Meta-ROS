@@ -8,4 +8,5 @@ DEVPATH=="/devices/*.3.1:1.0/tty*", SYMLINK+="tty_REF", MODE="0666"
 DEVPATH=="/devices/*.4.1:1.0/tty*", SYMLINK+="tty_VT02", MODE="0666"
 DEVPATH=="/devices/*.4.2:1.0/tty*", SYMLINK+="tty_DBUS", MODE="0666"
 DEVPATH=="/devices/*.4.4:1.0/tty*", SYMLINK+="tty_IMU", MODE="0666"
-
+# 0666 for ch341
+ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE="0666"
