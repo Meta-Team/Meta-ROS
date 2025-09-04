@@ -153,12 +153,8 @@ namespace gimbal_controller
         if (imu_sensor_)
         {
             auto imu_interfaces = imu_sensor_->get_state_interface_names();
-            rclcpp::Logger tmp_logger = rclcpp::get_logger("gimbal_position_controller");
-            RCLCPP_INFO(tmp_logger, "IMU interfaces size: %d", imu_interfaces.size());
             state_interfaces_config.names.insert(state_interfaces_config.names.end(), imu_interfaces.begin(),
                                                  imu_interfaces.end());
-
-            RCLCPP_INFO(tmp_logger, "total state interfaces size: %d", state_interfaces_config.names.size());
         }
         // IMU feedback comes from ROS2 topic
 
@@ -237,22 +233,10 @@ namespace gimbal_controller
     controller_interface::return_type
     GimbalPositionController::update_and_write_commands(const rclcpp::Time& time, const rclcpp::Duration& period)
     {
-        rclcpp::Logger tmp_logger = rclcpp::get_logger("gimbal_position_controller");
-        // Collect IMU feedback from state interfaces
-
-
+        // Collect IMU feedback from sensor state interfaces
         double yaw_pos_fb = NaN, pitch_pos_fb = NaN, roll_pos_fb = NaN;
         double yaw_vel_fb = NaN, pitch_vel_fb = NaN;
 
-        // Old feedback from imu topic
-        // auto current_feedback = *(input_feedback_.readFromRT());
-        // tf2::Quaternion q_imu;
-        // fromMsg(current_feedback->orientation, q_imu);
-        // double yaw_vel_fb = current_feedback->angular_velocity.z;
-        // double pitch_vel_fb = current_feedback->angular_velocity.y;
-
-        // update imu values from state interfaces
-        // if (is_imu_valid && imu_sensor_->get_values(imu_values))
         std::array<double, 4> tmp_q = imu_sensor_->get_orientation();
         tf2::Quaternion q_imu(tmp_q[0], tmp_q[1], tmp_q[2], tmp_q[3]);
         tf2::Matrix3x3(q_imu).getRPY(roll_pos_fb, pitch_pos_fb, yaw_pos_fb);
@@ -267,8 +251,6 @@ namespace gimbal_controller
 
         double yaw_enc_pos = state_interfaces_[0].get_value();
         double pitch_enc_pos = state_interfaces_[1].get_value();
-        RCLCPP_INFO(tmp_logger, "yaw_pos_fb: %.2f, pitch_pos_fb: %.2f, roll_pos_fb: %.2f", yaw_pos_fb,
-                    pitch_pos_fb, roll_pos_fb);
         // Calculate commands
         if (!std::isnan(reference_interfaces_[0]) && !std::isnan(reference_interfaces_[1]) && !std::isnan(yaw_pos_fb) &&
             !std::isnan(pitch_pos_fb) && !std::isnan(roll_pos_fb) && !std::isnan(yaw_vel_fb) &&
