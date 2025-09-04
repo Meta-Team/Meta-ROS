@@ -68,7 +68,6 @@ namespace meta_hardware
     std::vector<hardware_interface::StateInterface> DMIMUInterface::export_state_interfaces()
     {
         std::vector<hardware_interface::StateInterface> state_interfaces;
-        // state_interfaces.emplace_back(std::string("ccb"), "orientation.x", &dm_imu_state_.orientation_x);
         state_interfaces.emplace_back(info_.name, "orientation.x", &dm_imu_state_.orientation_x);
         state_interfaces.emplace_back(info_.name, "orientation.y", &dm_imu_state_.orientation_y);
         state_interfaces.emplace_back(info_.name, "orientation.z", &dm_imu_state_.orientation_z);
@@ -111,11 +110,9 @@ namespace meta_hardware
         dm_imu_state_.linear_acceleration_x = data_.accx;
         dm_imu_state_.linear_acceleration_y = data_.accy;
         dm_imu_state_.linear_acceleration_z = data_.accz;
-        
+
         return hardware_interface::return_type::OK;
     }
-    // from dm
-    // https://gitee.com/kit-miao/dm-imu/blob/master/02.例程/ROS1-noetic例程/src/dm_imu/src/imu_driver.cpp
     void DMIMUInterface::enter_setting_mode()
     {
         std::vector<uint8_t> txbuf = {0xAA, 0x06, 0x01, 0x0D};
@@ -255,10 +252,6 @@ namespace meta_hardware
                     data_.pitch = *((float*)(&receive_data_.pitch_u32));
                     data_.yaw = *((float*)(&receive_data_.yaw_u32));
                 }
-
-                // RCLCPP_INFO(*logger_, "acc: %.3f, %.3f, %.3f; gyro: %.3f, %.3f, %.3f; euler: %.3f, %.3f, %.3f",
-                //             data_.accx, data_.accy, data_.accz, data_.gyrox, data_.gyroy, data_.gyroz, data_.roll,
-                //             data_.pitch, data_.yaw);
             }
             else
             {

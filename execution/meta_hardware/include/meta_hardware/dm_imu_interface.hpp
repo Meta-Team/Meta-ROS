@@ -1,5 +1,9 @@
 #ifndef META_HARDWARE__DM_IMU_INTERFACE__
 #define META_HARDWARE__DM_IMU_INTERFACE__
+
+// port from dm ros1 example
+// https://gitee.com/kit-miao/dm-imu/blob/master/02.例程/ROS1-noetic例程/src/dm_imu/src/imu_driver.cpp
+
 #include <map>
 #include <string>
 #include <thread>
