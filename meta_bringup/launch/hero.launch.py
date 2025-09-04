@@ -102,6 +102,7 @@ def generate_launch_description():
         load_controller('gimbal_position_controller'),
         load_controller('omni_chassis_controller'),
         load_controller('shoot_controller'),
+        load_controller('dm_imu_sensor_broadcaster'),
         # load_controller('forward_yaw_controller'),
         # load_controller('forward_pitch_controller')
     ]

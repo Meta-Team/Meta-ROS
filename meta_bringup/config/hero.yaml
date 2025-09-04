@@ -21,7 +21,12 @@ controller_manager:
         type: forward_command_controller/ForwardCommandController
     forward_yaw_controller:
         type: forward_command_controller/ForwardCommandController
-
+    dm_imu_sensor_broadcaster:
+      type: imu_sensor_broadcaster/IMUSensorBroadcaster
+dm_imu_sensor_broadcaster:
+  ros__parameters:
+    sensor_name: "dm_imu"
+    frame_id:  "dm_imu_frame"
 omni_chassis_controller:
   ros__parameters:
     omni_wheel_joints:
@@ -86,7 +91,7 @@ gimbal_position_controller:
     imu_sensor: dm_imu
     gains:
       yaw_gimbal_joint_pos2vel:
-        { p: 7.0, i: 0.0, d: 0.1, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+        { p: 20.0, i: 0.0, d: 0.2, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
 
 
 shoot_controller:
