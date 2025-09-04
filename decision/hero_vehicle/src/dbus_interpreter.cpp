@@ -1,9 +1,11 @@
 #include "hero_vehicle/dbus_interpreter.h"
-#include "rclcpp/rclcpp.hpp"
 #include <cmath>
+#include "rclcpp/rclcpp.hpp"
 
-DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone, double video_link_blank_time)
-    : max_vel(max_vel), max_omega(max_omega), aim_sens(aim_sens), deadzone(deadzone), video_link_blank_time(video_link_blank_time)
+DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_sens, double deadzone,
+                                 double video_link_blank_time) :
+    max_vel(max_vel),
+    max_omega(max_omega), aim_sens(aim_sens), deadzone(deadzone), video_link_blank_time(video_link_blank_time)
 {
     // initialize buttons and axes
     active = false;
@@ -26,27 +28,35 @@ DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_se
     last_trigger = false;
 
     // initialize update thread
-    update_thread = std::thread([this](){
-        while (rclcpp::ok())
+    update_thread = std::thread(
+        [this]()
         {
-            update();
-            std::this_thread::sleep_for(std::chrono::milliseconds(PERIOD));
-        }
-    });
+            while (rclcpp::ok())
+            {
+                update();
+                std::this_thread::sleep_for(std::chrono::milliseconds(PERIOD));
+            }
+        });
 }
 
 DbusInterpreter::~DbusInterpreter()
 {
-    if (update_thread.joinable()) update_thread.join();
+    if (update_thread.joinable())
+        update_thread.join();
 }
 
 void DbusInterpreter::input_dbus(const operation_interface::msg::DbusControl::SharedPtr msg)
 {
-    ls_x = msg->ls_x; apply_deadzone(ls_x); // forward is positive
-    ls_y = msg->ls_y; apply_deadzone(ls_y); // left is positive
-    rs_x = msg->rs_x; apply_deadzone(rs_x); // up is positive
-    rs_y = msg->rs_y; apply_deadzone(rs_y); // left is positive
-    wheel = msg->wheel; apply_deadzone(wheel);
+    ls_x = msg->ls_x;
+    apply_deadzone(ls_x); // forward is positive
+    ls_y = msg->ls_y;
+    apply_deadzone(ls_y); // left is positive
+    rs_x = msg->rs_x;
+    apply_deadzone(rs_x); // up is positive
+    rs_y = msg->rs_y;
+    apply_deadzone(rs_y); // left is positive
+    wheel = msg->wheel;
+    apply_deadzone(wheel);
     lsw = msg->lsw;
     rsw = msg->rsw;
 }
@@ -75,7 +85,7 @@ void DbusInterpreter::input_video_link(const operation_interface::msg::KeyMouse:
     mouse_x_ = msg->mouse_x;
     mouse_y_ = msg->mouse_y;
     // Video link will send packets even if no keys are pressed, except option panel(p) is active
-    if(w_ || s_ || a_ || d_)
+    if (w_ || s_ || a_ || d_)
         last_video_link_recv_time = rclcpp::Clock().now();
 }
 void DbusInterpreter::input_video_link_vt03(const operation_interface::msg::VT03::SharedPtr msg)
@@ -104,30 +114,32 @@ void DbusInterpreter::input_video_link_vt03(const operation_interface::msg::VT03
     // mouse_x_ = msg->mouse_x; TODO not convert to float yet
     // mouse_y_ = msg->mouse_y;
     // Video link will send packets even if no keys are pressed, except option panel(p) is active
-    if(w_ || s_ || a_ || d_)
+    if (w_ || s_ || a_ || d_)
         last_video_link_recv_time = rclcpp::Clock().now();
 
     // remote control
-    ls_x = (msg->ch3-1024)/684.0; apply_deadzone(ls_x); // forward is positive
-    ls_y = (msg->ch2-1024)/684.0; apply_deadzone(ls_y); // left is positive
-    rs_x = (msg->ch0-1024)/684.0; apply_deadzone(rs_x); // up is positive
-    rs_y = (msg->ch1-1024)/684.0; apply_deadzone(rs_y); // left is positive
-    wheel = (msg->wheel-1024)/684.0; apply_deadzone(wheel);
+    ls_x = (msg->ch3 - 1024) / 684.0;
+    apply_deadzone(ls_x); // forward is positive
+    ls_y = (msg->ch2 - 1024) / 684.0;
+    apply_deadzone(ls_y); // left is positive
+    rs_x = (msg->ch0 - 1024) / 684.0;
+    apply_deadzone(rs_x); // up is positive
+    rs_y = (msg->ch1 - 1024) / 684.0;
+    apply_deadzone(rs_y); // left is positive
+    wheel = (msg->wheel - 1024) / 684.0;
+    apply_deadzone(wheel);
 
     cns_ = msg->cns;
     trigger = msg->trigger;
 
     auto current_time = rclcpp::Clock().now();
     rclcpp::Logger tmp_logger = rclcpp::get_logger("test");
-    if(current_time.seconds()-last_trigger_update_time_.seconds() > 0.2){
-        if(trigger && !last_trigger)  // TOGGLE CHASSIS MODE
+    if (current_time.seconds() - last_trigger_update_time_.seconds() > 0.2)
+    {
+        if (trigger && !last_trigger) // TOGGLE CHASSIS MODE
         {
-	    RCLCPP_INFO(tmp_logger, "trigger pressed");
-            if(chassis_->mode == behavior_interface::msg::Chassis::GYRO){
-                chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
-            }else if(chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW){
-                chassis_->mode = behavior_interface::msg::Chassis::GYRO;
-            }
+            RCLCPP_INFO(tmp_logger, "trigger pressed");
+            chassis_->mode = (chassis_->mode + 1) % (behavior_interface::msg::Chassis::GYRO + 1);
             last_trigger_update_time_ = rclcpp::Clock().now();
         }
     }
@@ -148,10 +160,11 @@ void DbusInterpreter::update()
 
     move_->vel_x = max_vel * ls_y;
     move_->vel_y = -max_vel * ls_x; // right is positive for rc, but for chassis right is negative
-    aim_->pitch += aim_sens * rs_y * PERIOD / 1000; curb(aim_->pitch, M_PI_4);
+    aim_->pitch += aim_sens * rs_y * PERIOD / 1000;
+    curb(aim_->pitch, M_PI_4);
     move_->omega = max_omega * wheel;
-    aim_->yaw += aim_sens * rs_x * PERIOD / 1000;
-    
+    aim_->yaw += aim_sens * -rs_x * PERIOD / 400; // positive is left
+
     if (rsw == "UP")
     {
         shoot_->fric_state = false;
@@ -161,11 +174,14 @@ void DbusInterpreter::update()
     else if (rsw == "MID")
     {
         shoot_->fric_state = true;
-        if(left_button_){   
-            shoot_->feed_state = true;       
+        if (left_button_)
+        {
+            shoot_->feed_state = true;
             shoot_->feed_speed = 5.0;
-        }else{
-            shoot_->feed_state = false; 
+        }
+        else
+        {
+            shoot_->feed_state = false;
             shoot_->feed_speed = 0.0;
         }
     }
@@ -179,51 +195,58 @@ void DbusInterpreter::update()
 
     // TODO: Implement Keyboard Actions
     auto current_time = rclcpp::Clock().now();
-    if (current_time.seconds() - last_video_link_recv_time.seconds() > video_link_blank_time) {
+    if (current_time.seconds() - last_video_link_recv_time.seconds() > video_link_blank_time)
+    {
         // Video link timeout
         keyboard_active_ = false;
         kbd_move_x = 0.0;
         kbd_move_y = 0.0;
         // printf("Inactive video link\n");
-    } else {
-        if(w_) kbd_move_x += deadzone*0.1;
-        if(s_) kbd_move_x -= deadzone*0.1;
+    }
+    else
+    {
+        if (w_)
+            kbd_move_x += deadzone * 0.1;
+        if (s_)
+            kbd_move_x -= deadzone * 0.1;
         apply_deadzone(kbd_move_x);
-        move_->vel_x += kbd_move_x*max_vel;
+        move_->vel_x += kbd_move_x * max_vel;
 
-        if(a_) kbd_move_y += deadzone*0.1;
-        if(d_) kbd_move_y -= deadzone*0.1;
+        if (a_)
+            kbd_move_y += deadzone * 0.1;
+        if (d_)
+            kbd_move_y -= deadzone * 0.1;
         apply_deadzone(kbd_move_y);
-        move_->vel_y += kbd_move_y*max_vel;
+        move_->vel_y += kbd_move_y * max_vel;
 
-        aim_->yaw -= mouse_x_ * aim_sens * PERIOD / 200;   
-        aim_->pitch -= mouse_y_ * aim_sens * PERIOD / 200;  curb(aim_->pitch, M_PI_4);
-        if(q_) aim_->yaw += aim_sens * 0.5 * PERIOD / 1000;
-        if(e_) aim_->yaw -= aim_sens * 0.5 * PERIOD / 1000;
+        aim_->yaw -= mouse_x_ * aim_sens * PERIOD / 200;
+        aim_->pitch -= mouse_y_ * aim_sens * PERIOD / 200;
+        curb(aim_->pitch, M_PI_4);
+        if (q_)
+            aim_->yaw += aim_sens * 0.5 * PERIOD / 1000;
+        if (e_)
+            aim_->yaw -= aim_sens * 0.5 * PERIOD / 1000;
     }
     // To ensure that the change take place only once per key press
 
     // if(ctrl_){
     //     chassis_->mode = behavior_interface::msg::Chassis::CHASSIS_FOLLOW;
     // }
-
-    
-    
 }
 
-void DbusInterpreter::apply_deadzone(double &val)
+void DbusInterpreter::apply_deadzone(double& val)
 {
-    if (val > deadzone ){
+    if (val > deadzone)
+    {
         val = deadzone;
-    } else if (val < -deadzone){
+    }
+    else if (val < -deadzone)
+    {
         val = -deadzone;
     }
 }
 
-Move::SharedPtr DbusInterpreter::get_move() const
-{
-    return move_;
-}
+Move::SharedPtr DbusInterpreter::get_move() const { return move_; }
 
 geometry_msgs::msg::Twist DbusInterpreter::get_move_ros2_control() const
 {
@@ -234,22 +257,13 @@ geometry_msgs::msg::Twist DbusInterpreter::get_move_ros2_control() const
     return move_msg_ros2_control;
 }
 
-Shoot::SharedPtr DbusInterpreter::get_shoot() const
-{
-    return shoot_;
-}
+Shoot::SharedPtr DbusInterpreter::get_shoot() const { return shoot_; }
 
-Aim::SharedPtr DbusInterpreter::get_aim() const
-{
-    return aim_;
-}
+Aim::SharedPtr DbusInterpreter::get_aim() const { return aim_; }
 
-Chassis::SharedPtr DbusInterpreter::get_chassis() const
-{
-    return chassis_;
-}
+Chassis::SharedPtr DbusInterpreter::get_chassis() const { return chassis_; }
 
-void DbusInterpreter::curb(double &val, double max_val)
+void DbusInterpreter::curb(double& val, double max_val)
 {
     if (val > max_val)
     {
