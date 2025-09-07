@@ -6,7 +6,7 @@
 #include <string>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <vector>
 
 #include "angles/angles.h"
@@ -214,8 +214,11 @@ controller_interface::CallbackReturn
 GimbalController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
     return controller_interface::CallbackReturn::SUCCESS;
 }
-
-controller_interface::return_type GimbalController::update_reference_from_subscribers() {
+#if RCLCPP_VERSION_MAJOR >= 28 // ROS 2 Jazzy or later
+    controller_interface::return_type GimbalController::update_reference_from_subscribers(const rclcpp::Time &time,const rclcpp::Duration &period){
+#else
+    controller_interface::return_type GimbalController::update_reference_from_subscribers(){
+#endif
     auto current_ref = *(input_ref_.readFromRT()); // A shared_ptr must be allocated
                                                    // immediately to prevent dangling
 

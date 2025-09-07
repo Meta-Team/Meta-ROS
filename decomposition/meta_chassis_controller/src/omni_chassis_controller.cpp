@@ -206,8 +206,11 @@ OmniChassisController::on_deactivate(const rclcpp_lifecycle::State & /*previous_
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::return_type
-OmniChassisController::update_reference_from_subscribers() {
+#if RCLCPP_VERSION_MAJOR >= 28 // ROS 2 Jazzy or later
+    controller_interface::return_type OmniChassisController::update_reference_from_subscribers(const rclcpp::Time &time,const rclcpp::Duration &period){
+#else
+    controller_interface::return_type OmniChassisController::update_reference_from_subscribers(){
+#endif
     auto cur_ref = *(ref_buf_.readFromRT());
 
     if (const auto command_age = get_node()->now() - cur_ref->header.stamp;

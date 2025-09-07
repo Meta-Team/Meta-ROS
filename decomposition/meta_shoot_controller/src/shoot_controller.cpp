@@ -143,8 +143,11 @@ namespace shoot_controller {
         msg->fric_state = false;
         msg->feed_speed = NaN;
     }
-
+#if RCLCPP_VERSION_MAJOR >= 28 // ROS 2 Jazzy or later
+    controller_interface::return_type ShootController::update_reference_from_subscribers(const rclcpp::Time &time,const rclcpp::Duration &period){
+#else
     controller_interface::return_type ShootController::update_reference_from_subscribers(){
+#endif
         auto current_ref = *(input_ref_.readFromRT()); // A shared_ptr must be allocated
                                                    // immediately to prevent dangling
         if (!std::isnan(current_ref->feed_speed)) {

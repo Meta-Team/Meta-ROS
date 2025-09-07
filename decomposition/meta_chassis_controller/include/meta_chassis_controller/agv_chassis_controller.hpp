@@ -49,7 +49,11 @@ class AgvChassisController : public controller_interface::ChainableControllerInt
     controller_interface::CallbackReturn
     on_deactivate(const rclcpp_lifecycle::State &previous_state) override;
 
+#if RCLCPP_VERSION_MAJOR >= 28 // ROS 2 Jazzy or later
+    controller_interface::return_type update_reference_from_subscribers(const rclcpp::Time & time, const rclcpp::Duration & period) override;
+#else
     controller_interface::return_type update_reference_from_subscribers() override;
+#endif
 
     controller_interface::return_type
     update_and_write_commands(const rclcpp::Time &time,

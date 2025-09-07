@@ -1,0 +1,32 @@
+name: jazzy
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container:
+      image: ros:jazzy
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Ignore scara_moveit
+      run: touch decomposition/scara_moveit/AMENT_IGNORE
+    - name: Install dependencies
+      shell: bash
+      run: |
+        sudo apt update
+        rosdep update
+        rosdep install -y --rosdistro jazzy --from-paths . --ignore-src
+        source /opt/ros/jazzy/local_setup.bash
+        colcon build --packages-skip-regex '.*'
+    - name: Install Eigen3
+      run: |
+        sudo apt install -y libeigen3-dev
+    - name: Build workspace
+      uses: ichiro-its/ros2-ws-action/build@v1.0.1
