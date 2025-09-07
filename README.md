@@ -1,12 +1,13 @@
 # Meta-ROS
 
+![jazzy](https://github.com/Meta-Team/Meta-ROS/actions/workflows/ros-jazzy.yml/badge.svg)
 ![humble](https://github.com/Meta-Team/Meta-ROS/actions/workflows/ros-humble.yml/badge.svg)
 
 ## Basic Info
 
 Created by Yao Xinchen, 2023/7/13. \
-Based on ROS2 Humble. \
-Tested on Ubuntu 22.04. \
+Based on ROS2 Jazzy/Humble. \
+Tested on Ubuntu 24.04/Ubuntu 22.04. \
 Used for RoboMaster Team Meta to control robots.
 
 This project is hoped to be modular, readable and easy to maintain.
@@ -18,7 +19,7 @@ This is a documentation describing how this project is designed ->
 
 ## Dependencies
 
-1. ros-humble
+1. ros-humble/ros-jazzy
 2. serial-driver
 3. moveit
 4. moveit-servo
@@ -52,6 +53,12 @@ sudo rosdep init
 rosdep update
 ```
 Then you can easily install the dependencies with this command.
+
+If you are on Ubuntu 24.04 with ROS2 jazzy and then run:
+```Bash
+rosdep install -y --rosdistro jazzy --from-paths . --ignore-src
+```
+If you are on Ubuntu 22.04 with ROS2 humble and then run:
 ```Bash
 rosdep install -y --rosdistro humble --from-paths . --ignore-src
 ```
