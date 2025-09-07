@@ -3,15 +3,42 @@
 
     <xacro:arg name="is_simulation" default="true" />
 
-    <link name="base_footprint">
-    </link>
 
     <!-- raise the robot a bit higher to prevent it from stucking in the ground -->
     <joint name="joint_base_to_footprint" type="fixed">
         <origin rpy="0 0 0" xyz="0 0 1" />
-        <parent link="base_footprint" />
+        <parent link="l0" />
         <child link="base_link" />
     </joint>
+    <!-- dummy joints&links to suppress not found in URDF error-->
+    <link name="l0"/>
+    <link name="l1"/>
+    <link name="l2"/>
+    <link name="l3"/>
+    <link name="l4"/>
+    <link name="l5"/>
+    <!-- Fixed joints do not make sense in ros2_control-->
+    <joint name="loader_shooter_joint" type="continuous"> 
+        <parent link="l0" />
+        <child link="l1" />
+    </joint>
+    <joint name="yaw_gimbal_joint" type="continuous">
+        <parent link="l0" />
+        <child link="l2" />
+    </joint>
+    <joint name="pitch_gimbal_joint" type="continuous">
+        <parent link="l0" />
+        <child link="l3" />
+    </joint>
+    <joint name="fric1_shooter_joint" type="continuous">
+        <parent link="l0" />
+        <child link="l4" />
+    </joint>
+    <joint name="fric2_shooter_joint" type="continuous">
+        <parent link="l0" />
+        <child link="l5" />
+    </joint>
+    
 
     <xacro:include filename="$(find metav_description)/urdf/standard/standard.chassis.xacro" />
     <xacro:if value="$(arg is_simulation)">

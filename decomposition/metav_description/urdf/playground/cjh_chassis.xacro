@@ -2,23 +2,40 @@
 <robot name="standard" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:arg name="is_simulation" default="true" />
-
-    <link name="base_footprint">
-    </link>
-
-    <!-- raise the robot a bit higher to prevent it from stucking in the ground -->
-    <joint name="joint_base_to_footprint" type="fixed">
-        <origin rpy="0 0 0" xyz="0 0 1" />
-        <parent link="base_footprint" />
-        <child link="base_link" />
+    <!-- dummy joints&links to suppress not found in URDF error-->
+    <link name="l0"/>
+    <link name="l1"/>
+    <link name="l2"/>
+    <link name="l3"/>
+    <link name="l4"/>
+    <link name="l5"/>
+    <!-- Fixed joints do not make sense in ros2_control-->
+    <joint name="dummy_yaw_wheel_joint" type="continuous"> 
+        <parent link="l0" />
+        <child link="l1" />
+    </joint>
+    <joint name="front_left_wheel_joint" type="continuous">
+        <parent link="l0" />
+        <child link="l2" />
+    </joint>
+    <joint name="front_right_wheel_joint" type="continuous">
+        <parent link="l0" />
+        <child link="l3" />
+    </joint>
+    <joint name="back_left_wheel_joint" type="continuous">
+        <parent link="l0" />
+        <child link="l4" />
+    </joint>
+    <joint name="back_right_wheel_joint" type="continuous">
+        <parent link="l0" />
+        <child link="l5" />
     </joint>
     <xacro:include filename="$(find metav_description)/urdf/standard/standard.chassis.xacro" />
         
-    <xacro:chassis roller_type="none" />
     <ros2_control name="dji_motors_chassis" type="system">
         <hardware>
             <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
-            <param name="can_network_name">can0</param>
+            <param name="can_network_name">can_1</param>
         </hardware>
         <xacro:wheel_transmission prefix="front_left" mechanical_reduction="20.0" motor_id="2" />
         <xacro:wheel_transmission prefix="front_right" mechanical_reduction="20.0" motor_id="1" />
