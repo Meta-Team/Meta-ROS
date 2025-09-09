@@ -223,8 +223,8 @@ namespace gimbal_controller
         double yaw_pos_err = NaN, pitch_pos_err = NaN;
         double yaw_vel_ref = NaN;
 
-        // std::optional<double> yaw_enc_pos = state_interfaces_[0].get_optional();
-        std::optional<double> pitch_enc_pos = state_interfaces_[1].get_optional();
+        // double yaw_enc_pos = state_interfaces_[0].get_value();
+        double pitch_enc_pos = state_interfaces_[1].get_value();
         // Calculate commands
         if (!std::isnan(reference_interfaces_[0]) && !std::isnan(reference_interfaces_[1]) && !std::isnan(yaw_pos_fb) &&
             !std::isnan(pitch_pos_fb) && !std::isnan(roll_pos_fb) && !std::isnan(yaw_vel_fb) &&
@@ -250,7 +250,7 @@ namespace gimbal_controller
                 // dm imu is positive up
                 pitch_pos_ref = -reference_interfaces_[1];
                 pitch_pos_err = angles::shortest_angular_distance(-pitch_pos_fb, pitch_pos_ref);
-                ret_ |= command_interfaces_[3].set_value(*pitch_enc_pos + pitch_pos_err);
+                ret_ |= command_interfaces_[3].set_value(pitch_enc_pos + pitch_pos_err);
             }
             if (!ret_)
             {
@@ -276,7 +276,7 @@ namespace gimbal_controller
                 state_publisher_->msg_.dof_states[1].feedback = pitch_pos_fb;
                 state_publisher_->msg_.dof_states[1].error = pitch_pos_err;
                 state_publisher_->msg_.dof_states[1].time_step = period.seconds();
-                state_publisher_->msg_.dof_states[1].output = *pitch_enc_pos + pitch_pos_err;
+                state_publisher_->msg_.dof_states[1].output = pitch_enc_pos + pitch_pos_err;
             }
 
             state_publisher_->unlockAndPublish();
