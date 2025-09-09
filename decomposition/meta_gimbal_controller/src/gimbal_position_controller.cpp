@@ -235,7 +235,7 @@ namespace gimbal_controller
                 // Yaw Position (IMU) to velocity (IMU) PID
                 yaw_pos_ref = reference_interfaces_[0];
                 yaw_pos_err = angles::shortest_angular_distance(yaw_pos_fb, yaw_pos_ref);
-                yaw_vel_ref = yaw_pos2vel_pid_->compute_command(yaw_pos_err, period);
+                yaw_vel_ref = yaw_pos2vel_pid_->computeCommand(yaw_pos_err, period);
                 
                 command_interfaces_[0].set_value(0.0);
                 command_interfaces_[1].set_value(yaw_vel_ref);
