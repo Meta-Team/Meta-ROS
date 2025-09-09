@@ -230,7 +230,6 @@ namespace gimbal_controller
             !std::isnan(pitch_pos_fb) && !std::isnan(roll_pos_fb) && !std::isnan(yaw_vel_fb) &&
             !std::isnan(pitch_vel_fb))
         {
-            bool ret_ = true;
             if (params_.yaw_gimbal_joint.enable)
             {
                 // Yaw Position (IMU) to velocity (IMU) PID
@@ -238,9 +237,9 @@ namespace gimbal_controller
                 yaw_pos_err = angles::shortest_angular_distance(yaw_pos_fb, yaw_pos_ref);
                 yaw_vel_ref = yaw_pos2vel_pid_->compute_command(yaw_pos_err, period);
                 
-                ret_ |= command_interfaces_[0].set_value(0.0);
-                ret_ |= command_interfaces_[1].set_value(yaw_vel_ref);
-                ret_ |= command_interfaces_[2].set_value(0.0);
+                command_interfaces_[0].set_value(0.0);
+                command_interfaces_[1].set_value(yaw_vel_ref);
+                command_interfaces_[2].set_value(0.0);
             }
 
             if (params_.pitch_gimbal_joint.enable)
@@ -250,11 +249,7 @@ namespace gimbal_controller
                 // dm imu is positive up
                 pitch_pos_ref = -reference_interfaces_[1];
                 pitch_pos_err = angles::shortest_angular_distance(-pitch_pos_fb, pitch_pos_ref);
-                ret_ |= command_interfaces_[3].set_value(pitch_enc_pos + pitch_pos_err);
-            }
-            if (!ret_)
-            {
-                RCLCPP_ERROR(get_node()->get_logger(), "Failed to set command interfaces");
+                command_interfaces_[3].set_value(pitch_enc_pos + pitch_pos_err);
             }
         }
         // Publish state
