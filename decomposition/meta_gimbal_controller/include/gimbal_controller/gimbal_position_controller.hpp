@@ -60,7 +60,6 @@ class GimbalPositionController : public controller_interface::ChainableControlle
     update_and_write_commands(const rclcpp::Time &time,
                               const rclcpp::Duration &period) override;
 
-    using ControllerFeedbackMsg = sensor_msgs::msg::Imu;
     using ControllerReferenceMsg = behavior_interface::msg::Aim;
     using ControllerModeSrvType = std_srvs::srv::SetBool;
     using ControllerStateMsg = control_msgs::msg::MultiDOFStateStamped;
@@ -73,10 +72,6 @@ class GimbalPositionController : public controller_interface::ChainableControlle
     rclcpp::Subscription<ControllerReferenceMsg>::SharedPtr ref_subscriber_ = nullptr;
     realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerReferenceMsg>> input_ref_;
 
-    // Feedback subscribers
-    rclcpp::Subscription<ControllerFeedbackMsg>::SharedPtr feedback_subscriber_ = nullptr;
-    realtime_tools::RealtimeBuffer<std::shared_ptr<ControllerFeedbackMsg>>
-        input_feedback_;
 
     std::shared_ptr<control_toolbox::PidROS> yaw_pos2vel_pid_;
 
@@ -94,13 +89,9 @@ class GimbalPositionController : public controller_interface::ChainableControlle
 
   private:
     void reference_callback(const std::shared_ptr<ControllerReferenceMsg> msg);
-    void feedback_callback(const std::shared_ptr<ControllerFeedbackMsg> msg);
     void reset_controller_reference_msg(
     const std::shared_ptr<ControllerReferenceMsg> &msg,
     const std::shared_ptr<rclcpp_lifecycle::LifecycleNode> &);
-    void reset_controller_feedback_msg(
-    const std::shared_ptr<ControllerFeedbackMsg> &msg,
-    const std::shared_ptr<rclcpp_lifecycle::LifecycleNode> &node);
     std::unique_ptr<semantic_components::IMUSensor> imu_sensor_;
 };
 

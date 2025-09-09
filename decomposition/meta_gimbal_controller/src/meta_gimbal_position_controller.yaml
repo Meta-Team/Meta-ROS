@@ -25,12 +25,6 @@ gimbal_position_controller:
         default_value: "pitch_gimbal_joint",
         description: "Specifies joint of the pitch gimbal.",
       }
-  imu_topic:
-    {
-      type: string,
-      default_value: "/gimbal_imu",
-      description: "Specifies topic of the IMU.",
-    }
   imu_sensor:
     {
       type: string,

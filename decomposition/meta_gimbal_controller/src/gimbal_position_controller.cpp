@@ -17,7 +17,6 @@
 constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
 
 using ControllerReferenceMsg = gimbal_controller::GimbalPositionController::ControllerReferenceMsg;
-using ControllerFeedbackMsg = gimbal_controller::GimbalPositionController::ControllerFeedbackMsg;
 
 
 using hardware_interface::HW_IF_EFFORT;
@@ -26,7 +25,6 @@ using hardware_interface::HW_IF_VELOCITY;
 
 namespace gimbal_controller
 {
-
     void GimbalPositionController::reset_controller_reference_msg(
         const std::shared_ptr<ControllerReferenceMsg>& msg,
         const std::shared_ptr<rclcpp_lifecycle::LifecycleNode>& /*node*/)
@@ -35,21 +33,6 @@ namespace gimbal_controller
         msg->pitch = NaN;
     }
 
-    void GimbalPositionController::reset_controller_feedback_msg(
-        const std::shared_ptr<ControllerFeedbackMsg>& msg, const std::shared_ptr<rclcpp_lifecycle::LifecycleNode>& node)
-    {
-        msg->header.stamp = node->now();
-        msg->orientation.x = NaN;
-        msg->orientation.y = NaN;
-        msg->orientation.z = NaN;
-        msg->orientation.w = NaN;
-        msg->angular_velocity.x = NaN;
-        msg->angular_velocity.y = NaN;
-        msg->angular_velocity.z = NaN;
-        msg->linear_acceleration.x = NaN;
-        msg->linear_acceleration.y = NaN;
-        msg->linear_acceleration.z = NaN;
-    }
     controller_interface::CallbackReturn GimbalPositionController::on_init()
     {
 
@@ -95,14 +78,6 @@ namespace gimbal_controller
         reset_controller_reference_msg(msg, get_node());
         input_ref_.writeFromNonRT(msg);
 
-        // Feedback Subscriber
-        feedback_subscriber_ = get_node()->create_subscription<ControllerFeedbackMsg>(
-            params_.imu_topic, subscribers_qos,
-            std::bind(&GimbalPositionController::feedback_callback, this, std::placeholders::_1));
-
-        auto feedback_msg = std::make_shared<ControllerFeedbackMsg>();
-        reset_controller_feedback_msg(feedback_msg, get_node());
-        input_feedback_.writeFromNonRT(feedback_msg);
         try
         {
             // State publisher
@@ -150,13 +125,11 @@ namespace gimbal_controller
         state_interfaces_config.names.reserve(2);
         state_interfaces_config.names.push_back(params_.yaw_gimbal_joint.name + "/" + HW_IF_POSITION);
         state_interfaces_config.names.push_back(params_.pitch_gimbal_joint.name + "/" + HW_IF_POSITION);
-        if (imu_sensor_)
-        {
-            auto imu_interfaces = imu_sensor_->get_state_interface_names();
-            state_interfaces_config.names.insert(state_interfaces_config.names.end(), imu_interfaces.begin(),
-                                                 imu_interfaces.end());
-        }
-        // IMU feedback comes from ROS2 topic
+
+        // IMU feedback comes from state interfaces
+        auto imu_interfaces = imu_sensor_->get_state_interface_names();
+        state_interfaces_config.names.insert(state_interfaces_config.names.end(), imu_interfaces.begin(),
+                                             imu_interfaces.end());
 
         return state_interfaces_config;
     }
@@ -164,11 +137,6 @@ namespace gimbal_controller
     void GimbalPositionController::reference_callback(const std::shared_ptr<ControllerReferenceMsg> msg)
     {
         input_ref_.writeFromNonRT(msg);
-    }
-
-    void GimbalPositionController::feedback_callback(const std::shared_ptr<ControllerFeedbackMsg> msg)
-    {
-        input_feedback_.writeFromNonRT(msg);
     }
 
     std::vector<hardware_interface::CommandInterface> GimbalPositionController::on_export_reference_interfaces()
@@ -198,7 +166,6 @@ namespace gimbal_controller
     {
         // Set default value in command
         reset_controller_reference_msg(*(input_ref_.readFromRT()), get_node());
-        reset_controller_feedback_msg(*(input_feedback_.readFromRT()), get_node());
 
         reference_interfaces_.assign(reference_interfaces_.size(), NaN);
         imu_sensor_->assign_loaned_state_interfaces(state_interfaces_);
@@ -214,9 +181,13 @@ namespace gimbal_controller
     }
 
 #if RCLCPP_VERSION_MAJOR >= 28 // ROS 2 Jazzy or later
-    controller_interface::return_type GimbalPositionController::update_reference_from_subscribers(const rclcpp::Time &time,const rclcpp::Duration &period){
+    controller_interface::return_type
+    GimbalPositionController::update_reference_from_subscribers(const rclcpp::Time& time,
+                                                                const rclcpp::Duration& period)
+    {
 #else
-    controller_interface::return_type GimbalPositionController::update_reference_from_subscribers(){
+    controller_interface::return_type GimbalPositionController::update_reference_from_subscribers()
+    {
 #endif
         auto current_ref = *(input_ref_.readFromRT()); // A shared_ptr must be allocated
                                                        // immediately to prevent dangling
@@ -252,22 +223,24 @@ namespace gimbal_controller
         double yaw_pos_err = NaN, pitch_pos_err = NaN;
         double yaw_vel_ref = NaN;
 
-        double yaw_enc_pos = state_interfaces_[0].get_value();
-        double pitch_enc_pos = state_interfaces_[1].get_value();
+        // std::optional<double> yaw_enc_pos = state_interfaces_[0].get_optional();
+        std::optional<double> pitch_enc_pos = state_interfaces_[1].get_optional();
         // Calculate commands
         if (!std::isnan(reference_interfaces_[0]) && !std::isnan(reference_interfaces_[1]) && !std::isnan(yaw_pos_fb) &&
             !std::isnan(pitch_pos_fb) && !std::isnan(roll_pos_fb) && !std::isnan(yaw_vel_fb) &&
             !std::isnan(pitch_vel_fb))
         {
+            bool ret_ = true;
             if (params_.yaw_gimbal_joint.enable)
             {
                 // Yaw Position (IMU) to velocity (IMU) PID
                 yaw_pos_ref = reference_interfaces_[0];
                 yaw_pos_err = angles::shortest_angular_distance(yaw_pos_fb, yaw_pos_ref);
-                yaw_vel_ref = yaw_pos2vel_pid_->computeCommand(yaw_pos_err, period);
-                command_interfaces_[0].set_value(0.0);
-                command_interfaces_[1].set_value(yaw_vel_ref);
-                command_interfaces_[2].set_value(0.0);
+                yaw_vel_ref = yaw_pos2vel_pid_->compute_command(yaw_pos_err, period);
+                
+                ret_ |= command_interfaces_[0].set_value(0.0);
+                ret_ |= command_interfaces_[1].set_value(yaw_vel_ref);
+                ret_ |= command_interfaces_[2].set_value(0.0);
             }
 
             if (params_.pitch_gimbal_joint.enable)
@@ -277,7 +250,11 @@ namespace gimbal_controller
                 // dm imu is positive up
                 pitch_pos_ref = -reference_interfaces_[1];
                 pitch_pos_err = angles::shortest_angular_distance(-pitch_pos_fb, pitch_pos_ref);
-                command_interfaces_[3].set_value(pitch_enc_pos + pitch_pos_err);
+                ret_ |= command_interfaces_[3].set_value(*pitch_enc_pos + pitch_pos_err);
+            }
+            if (!ret_)
+            {
+                RCLCPP_ERROR(get_node()->get_logger(), "Failed to set command interfaces");
             }
         }
         // Publish state
@@ -299,7 +276,7 @@ namespace gimbal_controller
                 state_publisher_->msg_.dof_states[1].feedback = pitch_pos_fb;
                 state_publisher_->msg_.dof_states[1].error = pitch_pos_err;
                 state_publisher_->msg_.dof_states[1].time_step = period.seconds();
-                state_publisher_->msg_.dof_states[1].output = pitch_enc_pos + pitch_pos_err;
+                state_publisher_->msg_.dof_states[1].output = *pitch_enc_pos + pitch_pos_err;
             }
 
             state_publisher_->unlockAndPublish();
