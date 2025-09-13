@@ -1,10 +1,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include <geometry_msgs/msg/twist.hpp>
 #include <operation_interface/msg/dbus_control.hpp>
+#include "behavior_interface/msg/armor.hpp"
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <memory>
 
 #define PUB_RATE 15 // ms
+#define PI 3.1415926
 
 class ArmorTester : public rclcpp::Node
 {
@@ -14,7 +16,8 @@ public:
         // reset
         ls_x = ls_y = rs_x = rs_y = wheel = 0;
         lsw = rsw = "";
-        motor_pub_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/forward_position_controller/commands", 10);
+        velocity_pub_ = this->create_publisher<behavior_interface::msg::Armor>(
+            "~/armor_tester_velocity", 10);
 
         dbus_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
             "dbus_control", 10,
@@ -31,7 +34,7 @@ public:
 
 private:
     rclcpp::Subscription<operation_interface::msg::DbusControl>::SharedPtr dbus_sub_;
-    rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr motor_pub_;
+    rclcpp::Publisher<behavior_interface::msg::Armor>::SharedPtr velocity_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
     double ls_x, ls_y, rs_x, rs_y, wheel;
     std::string lsw, rsw;
@@ -52,13 +55,13 @@ private:
     {
         if (lsw != "MID") return;
 
-        std_msgs::msg::Float64MultiArray tmp_motor_velocity;
-        std::vector<double> motor_velocity;
-        motor_velocity.push_back(ls_x*6.28*2);
-        RCLCPP_INFO(this->get_logger(), "speed:%lf", ls_x*6.28*2);
-        tmp_motor_velocity.data = motor_velocity;
+        behavior_interface::msg::Armor armor_tester_velocity;
+        armor_tester_velocity.unitree_vel = ls_x * 2 * PI;
+        armor_tester_velocity.dji_vel = rs_x * 2 * PI;
 
-        motor_pub_->publish(tmp_motor_velocity);
+        RCLCPP_INFO(this->get_logger(), "unitree_vel:%lf, dji_vel: %lf",
+                    ls_x * 2 * PI, rs_x * 2 * PI);
+        velocity_pub_->publish(armor_tester_velocity);
     }
 };
 #include <rclcpp_components/register_node_macro.hpp>
