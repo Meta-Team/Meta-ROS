@@ -1,0 +1,21 @@
+controller_manager:
+    ros__parameters:
+        update_rate: 250 # Hz
+        armor_tester_controller:
+            type: armor_tester_controller/ArmorTesterController
+        joint_state_broadcaster:
+            type: joint_state_broadcaster/JointStateBroadcaster
+
+armor_tester_controller:
+    ros__parameters:
+        unitree_joint:
+            name: "motor1"
+        dji_joint:
+            name: "motor2"
+        gains:
+            motor2_vel2eff:
+                { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+
+dbus_control_node:
+    ros__parameters:
+        dbus_port: "tty_DBUS"
