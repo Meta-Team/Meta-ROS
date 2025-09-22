@@ -17,7 +17,7 @@ public:
         ls_x = ls_y = rs_x = rs_y = wheel = 0;
         lsw = rsw = "";
         velocity_pub_ = this->create_publisher<behavior_interface::msg::Armor>(
-            "~/armor_tester_velocity", 10);
+            "/armor_tester_controller/reference", 10);
 
         dbus_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
             "dbus_control", 10,

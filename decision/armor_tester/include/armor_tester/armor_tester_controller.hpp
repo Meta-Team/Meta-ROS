@@ -8,12 +8,15 @@
 #include <rclcpp/subscription.hpp>
 
 #include "controller_interface/controller_interface.hpp"
-#include "rclcpp_lifecycle/node_interfaces/life_cycle_node_interface.hpp"
+#include "controller_interface/chainable_controller_interface.hpp"
+#include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
+#include "rclcpp/duration.hpp"
 #include "rclcpp_lifecycle/state.hpp"
-#include "realtime_tools/realtime_buffer.h"
-#include "armor_tester_controller/armor_tester_controller_parameters.hpp"
-#include "behavior_interface/msg/armor.hpp" // dji_vel, unitree_vel
+#include "realtime_tools/realtime_buffer.hpp"
+#include "realtime_tools/realtime_publisher.hpp"
 
+#include <armor_tester/armor_tester_controller_parameters.hpp>
+#include "behavior_interface/msg/armor.hpp" // dji_vel, unitree_vel
 
 namespace armor_tester_controller // namespace begin here
 {
@@ -72,7 +75,7 @@ class ArmorTesterController : public controller_interface::ChainableControllerIn
     private:
         // callback function for subscriber (done)
         void velocity_callback(const std::shared_ptr<behavior_interface::msg::Armor> msg);
-} // class definition ends here
+}; // class definition ends here
 
 } // namespace ends here
 

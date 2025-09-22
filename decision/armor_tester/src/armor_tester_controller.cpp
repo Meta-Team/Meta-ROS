@@ -6,8 +6,10 @@
 #include <string>
 #include <vector>
 #include "behavior_interface/msg/armor.hpp" // unitree_vel, dji_vel
+#include "hardware_interface/types/hardware_interface_type_values.hpp"
 
-
+using hardware_interface::HW_IF_EFFORT;
+using hardware_interface::HW_IF_VELOCITY;
 constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
 
 namespace armor_tester_controller {
@@ -17,10 +19,10 @@ namespace armor_tester_controller {
         // and declare node parameters used by the controller
 
         // call father on_init() method
-        auto ret = ChainableControllerInterface::on_init();
-        if (ret != controller_interface::CallbackReturn::SUCCESS) {
-            return ret;
-        }
+        // auto ret = ChainableControllerInterface::on_init();
+        // if (ret != controller_interface::CallbackReturn::SUCCESS) {
+        //     return ret;
+        // }
 
         // declare and set node parameters
         try {
@@ -43,20 +45,21 @@ namespace armor_tester_controller {
         params_ = param_listener_->get_params();
 
         // initialize dji pid
+        RCLCPP_INFO(get_node()->get_logger(), "The params_.dji_joint.name is: %s", params_.dji_joint.name.c_str());
         dji_pid_ = std::make_shared<control_toolbox::PidROS> (
             get_node(), "gains." + params_.dji_joint.name + "_vel2eff", true);
-        if (!dji_pid_->initPID()) {
+        if (!dji_pid_->initPid()) {
             RCLCPP_ERROR(get_node()->get_logger(), "Failed to initialize PID for DJI Motor");
             return controller_interface::CallbackReturn::FAILURE;
         }
 
         // topic QoS (Quality of Service)
-        auto vel_sub_qos = rclcpp::SystemDefaultQoS();
+        auto vel_sub_qos = rclcpp::SystemDefaultsQoS();
         vel_sub_qos.keep_last(1);
         vel_sub_qos.best_effort();
         // create subscriber
         vel_subscriber_ = get_node()->create_subscription<behavior_interface::msg::Armor>(
-            "~/armor_tester_velocity", vel_sub_qos,
+            "~/reference", vel_sub_qos,
             std::bind(& ArmorTesterController::velocity_callback, this, std::placeholders::_1));
         // create, initialize the message, and write it the real time buffer
         auto vel_msg = std::make_shared<behavior_interface::msg::Armor>();
@@ -160,7 +163,7 @@ namespace armor_tester_controller {
     }
 
     controller_interface::return_type
-    ArmorTesterController::update_and_write_commands(const rclcpp::Time & time,
+    ArmorTesterController::update_and_write_commands(const rclcpp::Time & /*time*/,
                                                      const rclcpp::Duration & period) {
         if (command_interfaces_.size() != 2 || reference_interfaces_.size() != 2) {
             RCLCPP_WARN(get_node()->get_logger(), "ref_itf or cmd_itf has wrong size");
@@ -169,7 +172,8 @@ namespace armor_tester_controller {
 
         auto ref_unitree_vel = reference_interfaces_[0];
         auto ref_dji_vel = reference_interfaces_[1];
-
+        RCLCPP_INFO(get_node()->get_logger(), "REF:unitree_vel:%.2lf, dji_vel: %.2lf",
+                    ref_unitree_vel, ref_dji_vel);
         // write to the command interface for unitree
         if (!std::isnan(ref_unitree_vel)) {
             command_interfaces_[0].set_value(ref_unitree_vel);
@@ -183,16 +187,19 @@ namespace armor_tester_controller {
             double current_dji_vel = std::numeric_limits<double>::quiet_NaN();
 
             for (auto & state_itf : state_interfaces_) {
-                if (state_itf.get_name() == params_.dji_joint.name() &&
-                    state_itf.get_interface_name() == HW_IF_VELOCITY) {
+                // write to the command interface for unitree
+                if (state_itf.get_name() == params_.dji_joint.name + "/" + HW_IF_VELOCITY) {
                     current_dji_vel = state_itf.get_value();
+                    RCLCPP_INFO(get_node()->get_logger(), "STATE: dji_vel: %lf", current_dji_vel);
                     break;
                 }
             }
 
             if (!std::isnan(current_dji_vel)) {
                 double dji_vel_err = ref_dji_vel - current_dji_vel;
-                double dji_vel_eff = dji_pid_.computeCommand(dji_vel_err, period);
+                double dji_vel_eff = dji_pid_->computeCommand(dji_vel_err, period);
+                RCLCPP_INFO(get_node()->get_logger(), "PID: current_dji_vel: %.2lf, ref_dji_vel: %.2lf, dji_vel_err: %.2lf, dji_vel_eff: %.2lf",
+                            current_dji_vel, ref_dji_vel, dji_vel_err, dji_vel_eff);
                 command_interfaces_[1].set_value(dji_vel_eff);
             } else {
                 RCLCPP_WARN(get_node()->get_logger(), "the current dji velocity is nan");
