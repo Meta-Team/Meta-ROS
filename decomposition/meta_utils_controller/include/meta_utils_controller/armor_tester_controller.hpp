@@ -56,7 +56,12 @@ class ArmorTesterController : public controller_interface::ChainableControllerIn
 
     protected:
         // override method from ChainableControllerInterface
-        controller_interface::return_type update_reference_from_subscribers() override;
+        #if RCLCPP_VERSION_MAJOR >= 28 // Ros2 Jazzy or latter
+                controller_interface::return_type update_reference_from_subscribers(
+                        const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
+        #else
+                controller_interface::return_type update_reference_from_subscribers() override;
+        #endif
 
         // parameters
         armor_tester_controller::Params params_;
