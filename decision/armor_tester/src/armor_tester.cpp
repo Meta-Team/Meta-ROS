@@ -56,11 +56,11 @@ private:
         if (lsw != "MID") return;
 
         behavior_interface::msg::Armor armor_tester_velocity;
-        armor_tester_velocity.unitree_vel = ls_x * 2 * PI;
-        armor_tester_velocity.dji_vel = rs_x * 2 * PI;
+        armor_tester_velocity.unitree_vel = ls_y * 4 * PI;
+        armor_tester_velocity.dji_vel = rs_y * 4 * PI;
 
         RCLCPP_INFO(this->get_logger(), "unitree_vel:%lf, dji_vel: %lf",
-                    ls_x * 2 * PI, rs_x * 2 * PI);
+                    ls_y * 4 * PI, rs_y * 4 * PI);
         velocity_pub_->publish(armor_tester_velocity);
     }
 };
