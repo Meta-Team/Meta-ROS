@@ -12,6 +12,7 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/Armor.msg"
   "msg/Aim.msg"
   "msg/Chassis.msg"
   "msg/Move.msg"
