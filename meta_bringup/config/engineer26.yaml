@@ -1,0 +1,149 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 200 # Hz
+
+    omni_chassis_controller:
+      type: meta_chassis_controller/OmniChassisController
+
+    wheels_pid_controller:
+      type: pid_controller/PidController
+
+    # for Manipulator MoveIt MoveGroup API to control arm
+    meta_manipulator_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    forward_debug1_controller: # for debug use
+        type: forward_command_controller/ForwardCommandController
+    forward_debug2_controller: # for debug use
+        type: forward_command_controller/ForwardCommandController
+    forward_debug3_controller: # for debug use
+        type: forward_command_controller/ForwardCommandController
+    forward_debug4_controller: # for debug use
+        type: forward_command_controller/ForwardCommandController
+    forward_debug5_controller: # for debug use
+        type: forward_command_controller/ForwardCommandController
+    forward_debug6_controller: # for debug use
+        type: forward_command_controller/ForwardCommandController
+    forward_debug7_controller: # for debug use
+        type: forward_command_controller/ForwardCommandController
+omni_chassis_controller:
+  ros__parameters:
+    omni_wheel_joints:
+      - wheels_pid_controller/front_left_wheel_joint
+      - wheels_pid_controller/front_right_wheel_joint
+      - wheels_pid_controller/back_left_wheel_joint
+      - wheels_pid_controller/back_right_wheel_joint
+
+    omni_wheel_forward_angles: [0.0, 180.0, 0.0, 180.0]
+
+    omni_wheel_center_x: [0.2, 0.2, -0.2, -0.2]
+    omni_wheel_center_y: [0.2, -0.2, 0.2, -0.2]
+
+    omni_wheel_sliding_angles: [-45.0, 45.0, 45.0, -45.0]
+
+    omni_wheel_radius: 0.076
+
+    control_mode: 0
+
+    yaw_gimbal_joint: yaw_gimbal_joint
+
+    follow_pid_gains:
+      { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
+
+    follow_pid_target: 0.0
+
+    reference_timeout: 0.2
+
+wheels_pid_controller:
+  ros__parameters:
+    dof_names:
+      - front_left_wheel_joint
+      - front_right_wheel_joint
+      - back_left_wheel_joint
+      - back_right_wheel_joint
+
+    command_interface: effort
+
+    reference_and_state_interfaces: ["velocity"]
+
+    gains:
+      front_left_wheel_joint:
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+      front_right_wheel_joint:
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+      back_left_wheel_joint:
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+      back_right_wheel_joint:
+        { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+
+# Manipulator
+meta_manipulator_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+      - joint7
+    command_interfaces:
+      - position
+      - velocity
+    state_interfaces:
+      - position
+      - velocity
+# node paramters start below
+dbus_control_node:
+  ros__parameters:
+    dbus_port: "tty_DBUS"
+
+engineer26:
+  ros__parameters:
+    enable_ros2_control: true
+    aim_topic: "/gimbal_position_controller/reference"
+    shoot_topic: "/shoot_controller/reference"
+    control:
+      trans_vel: 2.5 # m/s
+      rot_vel: 3.0 # rad/s
+      stick_sens: 5.00 # rad/s
+      mouse_sens: 10.0
+      deadzone: 0.5 # percentage
+      video_link_blank_time: 0.05 # second
+forward_debug1_controller:
+  ros__parameters:
+    joints:
+      - joint1
+    interface_name: position
+forward_debug2_controller:
+  ros__parameters:
+    joints:
+      - joint2
+    interface_name: position
+forward_debug3_controller:
+  ros__parameters:
+    joints:
+      - joint3
+    interface_name: position
+forward_debug4_controller:
+  ros__parameters:
+    joints:
+      - joint4
+    interface_name: position
+forward_debug5_controller:
+  ros__parameters:
+    joints:
+      - joint5
+    interface_name: position
+forward_debug6_controller:
+  ros__parameters:
+    joints:
+      - joint6
+    interface_name: position
+forward_debug7_controller:
+  ros__parameters:
+    joints:
+      - joint7
+    interface_name: position

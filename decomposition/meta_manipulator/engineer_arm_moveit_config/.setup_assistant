@@ -1,0 +1,27 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: meta_arm_urdf
+    relative_path: urdf/meta_arm.urdf
+  srdf:
+    relative_path: config/meta_arm.srdf
+  package_settings:
+    author_name: Shengrui Wang
+    author_email: sw94@illinois.edu
+    generated_timestamp: 1768352805
+  control_xacro:
+    command:
+      - position
+      - velocity
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+      - velocity
+    state:
+      - position
+      - velocity

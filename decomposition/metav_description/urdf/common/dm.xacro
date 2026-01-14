@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot name="dm_motor_macro" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- motor_id should be in dec not hex otherwise it will not work -->
+    <!-- mode: mit or posvelo(position-velocity mode) -->
+    <xacro:macro name="dm_motor" params="joint_name motor_id mode max_pos:=12.5 max_vel:=45.0 max_effort:=12.0 mechanical_reduction:=1.0 kp:=0.0 kd:=0.5">
+        <joint name="${joint_name}">
+                <param name="control_mode">${mode}</param>
+                <!-- general info-->
+                <param name="motor_model">DaMiao</param>
+                <param name="motor_id">${motor_id}</param>
+                <!-- TODO, but dm are not easily adapted with external reduction gears-->
+                <param name="mechanical_reduction">${mechanical_reduction}</param>
+                <param name="offset">0.0</param>
+                
+                <!-- mode dependent info-->
+                <xacro:if value="${mode == 'mit'}">
+                    <command_interface name="position"/>
+                    <command_interface name="velocity"/>
+                    <command_interface name="effort"/>
+                    <!-- max pos/vel/effort is written to dm motors(using the dm tool)-->
+                    <!-- below are the default values for the most motors, and please double check it before use-->
+                    <param name="max_pos">${max_pos}</param>
+                    <param name="max_vel">${max_vel}</param>
+                    <param name="max_effort">${max_effort}</param>
+                    <!-- kp kd only available in mit mode-->
+                    <param name="kp">${kp}</param>
+                    <param name="kd">${kd}</param>
+                </xacro:if>
+                <xacro:if value="${mode == 'posvelo'}">
+                    <command_interface name="position"/>
+                    <command_interface name="velocity"/>
+                    <!-- if command of pos is valid and vel is nan, then use max_vel -->
+                    <param name="max_vel">${max_vel}</param>
+                </xacro:if>
+                <!-- state(feedback) are all available for all modes-->
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+                <state_interface name="effort" />
+                
+            </joint>
+    </xacro:macro>
+
+</robot>
