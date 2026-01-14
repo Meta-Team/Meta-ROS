@@ -50,8 +50,8 @@ MetaRobotDmMotorNetwork::check_motor_mode(const std::string &mode,bool command_p
         } else {
             throw std::runtime_error("Invalid dynamic mode");
         }
-    } else if (mode == "position") {
-        return POSITION;
+    } else if (mode == "posvelo") {
+        return POSVELO;
     } else if (mode == "velocity") {
         return VELOCITY;
     } else {
@@ -213,7 +213,7 @@ MetaRobotDmMotorNetwork::write(const rclcpp::Time & /*time*/,
                 continue;
             dm_motor_network_->write_mit(i, position, velocity, effort);
             break;
-
+        // remove all MIT_xxx, only MIT is allowed, since ROS2 doesn't require those command_interface combinations
         case MIT_POS:
             if (std::isnan(position))
                 continue;
@@ -240,11 +240,12 @@ MetaRobotDmMotorNetwork::write(const rclcpp::Time & /*time*/,
                 continue;
             dm_motor_network_->write_mit(i, 0.0, velocity, effort);
             break;
-        case POSITION:
+        case POSVELO:
             if (std::isnan(position)){
                 continue;
             }
-            dm_motor_network_->write_pos(i, position);
+            // will check velocity inside of dm_motor_driver, if nan then max_vel will be used
+            dm_motor_network_->write_posvelo(i, position, velocity);
             break;
         case VELOCITY:
             if (std::isnan(velocity))

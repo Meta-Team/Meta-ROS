@@ -28,24 +28,25 @@ DmMotor::DmMotor(const std::unordered_map<std::string, std::string> &motor_param
     motor_model_ = motor_param.at("motor_model");
     dm_motor_id_ = static_cast<uint8_t>(std::stoi(motor_param.at("motor_id")));
 
-    max_pos_ = std::stod(motor_param.at("max_pos"));
-    max_vel_ = std::stod(motor_param.at("max_vel"));
-    max_effort_ = std::stod(motor_param.at("max_effort"));
 
     std::string control_mode = motor_param.at("control_mode");
     uint32_t id_offset = 0;
 
     if (control_mode == "mit") {
-        Kp_ = std::stod(motor_param.at("Kp"));
-        Kd_ = std::stod(motor_param.at("Kd"));
+        Kp_ = std::stod(motor_param.at("kp"));
+        Kd_ = std::stod(motor_param.at("kd"));
+        max_pos_ = std::stod(motor_param.at("max_pos"));
+        max_vel_ = std::stod(motor_param.at("max_vel"));
+        max_effort_ = std::stod(motor_param.at("max_effort"));
 
         Kp_raw_ = static_cast<uint16_t>((Kp_ - MIN_KP)/(MAX_KP - MIN_KP) * ( (1 << 12) - 1));
         Kd_raw_ = static_cast<uint16_t>((Kd_ - MIN_KD)/(MAX_KD - MIN_KD) * ( (1 << 12) - 1));
 
         run_mode_ = RunMode::MIT;
 
-    } else if (control_mode == "position") {
-        run_mode_ = RunMode::POSITION;
+    } else if (control_mode == "posvelo") {
+        max_vel_ = std::stod(motor_param.at("max_vel"));
+        run_mode_ = RunMode::POSVELO;
         id_offset = 0x100;
     } else if (control_mode == "velocity") {
         run_mode_ = RunMode::VELOCITY;
@@ -115,9 +116,11 @@ can_frame DmMotor::motor_mit_frame(double position, double velocity, double effo
     return frame;
 }
 
-can_frame DmMotor::motor_pos_frame(double position) const{
-    double velocity = max_vel_;
-    uint32_t velocity_raw = std::bit_cast<uint32_t>(static_cast<float>(velocity));
+can_frame DmMotor::motor_posvelo_frame(double position, double velocity) const{
+    double velocity_control = max_vel_;
+    if (!std::isnan(velocity)) // if command velocity is valid
+        velocity_control = std::min(velocity, max_vel_);
+    uint32_t velocity_raw = std::bit_cast<uint32_t>(static_cast<float>(velocity_control));
     uint32_t position_raw = std::bit_cast<uint32_t>(static_cast<float>(position));
     can_frame frame = {
         .can_id = tx_can_id_,

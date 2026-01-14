@@ -59,7 +59,7 @@ class MetaRobotDmMotorNetwork : public hardware_interface::SystemInterface {
         MIT_EFF,
         MIT_POS_FF,
         MIT_VEL_FF,
-        POSITION, // Position mode
+        POSVELO, // Position-Velocity mode
         VELOCITY, // Velocity mode
     };
 
