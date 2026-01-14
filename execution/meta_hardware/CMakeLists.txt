@@ -38,6 +38,8 @@ add_library(
   src/im1253c_interface.cpp
   src/modbus_rtu_driver/modbus_rtu_driver.cpp
   src/unitree_motor_interface.cpp
+  src/motor_network/unitree_motor_network.cpp
+  src/motor_driver/unitree_motor_driver.cpp
   src/dm_imu_interface.cpp
 )
 target_include_directories(
