@@ -41,19 +41,27 @@ ARGUMENTS = [
 def generate_launch_description():
     # Launch Arguments
     enable_simulation = LaunchConfiguration('enable_simulation')
-
-    # moveit_config = (
-    #     MoveItConfigsBuilder("moveit_resources_panda")
-    #     .robot_description(file_path="config/panda.urdf.xacro")
-    #     .trajectory_execution(file_path="config/gripper_moveit_controllers.yaml")
-    #     .to_moveit_configs()
-    # )
+    moveit_config = MoveItConfigsBuilder("engineer_arm").robot_description(file_path="config/engineer26.xacro").to_moveit_configs()
+    meta_manipulator_moveit_config = (
+        MoveItConfigsBuilder("engineer_arm") # package prefix of engineer_arm_moveit_config
+        # .robot_description(file_path="config/meta_arm.urdf.xacro")
+        .robot_description(file_path="config/engineer26.xacro")
+        .trajectory_execution(file_path="config/moveit_controllers.yaml")
+        .to_moveit_configs()
+    )
+    run_move_group_node = Node(
+        package="moveit_ros_move_group",
+        executable="move_group",
+        output="screen",
+        parameters=[meta_manipulator_moveit_config.to_dict()],
+    )
     
     # Get Chassis URDF via xacro
     robot_description_content = Command([
             PathJoinSubstitution([FindExecutable(name='xacro')]),
             ' ',
-            PathJoinSubstitution([FindPackageShare('metav_description'), 'urdf', 'engineer26', 'engineer26.xacro']),
+            # PathJoinSubstitution([FindPackageShare('metav_description'), 'urdf', 'engineer26', 'engineer26.xacro']),
+            PathJoinSubstitution([FindPackageShare('engineer_arm_moveit_config'), 'config', 'engineer26.xacro']),
             ' ',
             'is_simulation:=', enable_simulation,
     ])
@@ -92,25 +100,17 @@ def generate_launch_description():
         load_controller('wheels_pid_controller'), # pid go first since bottom side
         load_controller('omni_chassis_controller'),
         load_controller('end_effector_vel2eff_pid_controller'), # pid go first since bottom side
-        load_controller('forward_end_effector_vel_controller'),
-        # load_controller('unitree_joint_trajectory_controller'),
-        load_controller('forward_debug1_controller'),
-        load_controller('forward_debug2_controller'),
-        load_controller('forward_debug3_controller'),
-        load_controller('forward_debug4_controller'),
-        load_controller('forward_debug5_controller'),
-        load_controller('forward_debug6_controller'),
-        load_controller('forward_debug7_controller'),
-        # load_controller('forward_pitch_controller')
+        load_controller('end_effector_pos2vel_pid_controller'),
+        load_controller('forward_end_effector_pos_controller'),
+        # load_controller('meta_manipulator_controller'), # actually a JTC
+        load_controller('forward_debug1_controller'), # actually a JTC
+        load_controller('forward_debug2_controller'), # actually a JTC
+        load_controller('forward_debug3_controller'), # actually a JTC
+        load_controller('forward_debug4_controller'), # actually a JTC
+        load_controller('forward_debug5_controller'), # actually a JTC
+        load_controller('forward_debug6_controller'), # actually a JTC
+        load_controller('forward_debug7_controller'), # actually a JTC
     ]
-    # referee_system_node = Node(
-    #     package='referee_serial',
-    #     executable='referee_serial_node',
-    #     name='referee_serial',
-    #     parameters=[robot_config],
-    #     output='both',
-    #     emulate_tty=True,
-    # )
     dbus_control_node = Node(
         package='dbus_control',
         executable='dbus_control_node',
@@ -125,8 +125,22 @@ def generate_launch_description():
         executable='engineer26_node',
         name='engineer26',
         output='both',
-        parameters=[robot_config],
+        parameters=[
+                moveit_config.robot_description,
+                moveit_config.robot_description_semantic,
+                moveit_config.robot_description_kinematics,
+                robot_config,
+            ],
         emulate_tty=True
+    )
+    static_tf = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="static_transform_publisher",
+        output="log",
+        # 参数格式: x y z yaw pitch roll parent_frame child_frame
+        arguments=["--frame-id", "world", "--child-frame-id", "base"],
+        # arguments=["0", "0", "0", "0", "0", "0", "world", "base"],
     )
 
 
@@ -143,6 +157,7 @@ def generate_launch_description():
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
         dbus_control_node,
         # referee_system_node,
-        # auto_sentry_node,
+        # static_tf,
+        # run_move_group_node,
         engineer26_node,
     ])

@@ -5,14 +5,14 @@ controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
 
-    meta_engineer_arm_controller:
+    meta_manipulator_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-meta_engineer_arm_controller:
+meta_manipulator_controller:
   ros__parameters:
     joints:
       - joint1

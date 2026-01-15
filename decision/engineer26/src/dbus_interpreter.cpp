@@ -11,7 +11,7 @@ DbusInterpreter::DbusInterpreter(double max_vel, double max_omega, double aim_se
     active = false;
     ls_x = ls_y = rs_x = rs_y = wheel = 0;
     lsw = rsw = "";
-
+    end_effector_pos = 0.0;
     // initialize move, shoot, aim, and chassis state
     chassis_ = std::make_shared<Chassis>();
     move_ = std::make_shared<Move>();
@@ -59,18 +59,23 @@ void DbusInterpreter::input_dbus(const operation_interface::msg::DbusControl::Sh
 
 void DbusInterpreter::update()
 {
-    active = (lsw == "MID");
-    if (!active)
+    // 1. move chassis
+    active = true;
+    if ((lsw == "MID"))
     {
+        move_->vel_x = max_vel * ls_x;
+        move_->vel_y = max_vel * ls_y;
+        move_->omega = wheel * max_omega;
+    }else{
         move_->vel_x = 0.0;
         move_->vel_y = 0.0;
         move_->omega = 0.0;
-        return;
     }
-    move_->vel_x = max_vel * ls_x;
-    move_->vel_y = max_vel * ls_y;
-    move_->omega = 0.0;
-    // move_->omega = max_omega * wheel; for end effector
+    // 2. 
+    if ((lsw == "DOWN"))
+    {
+        end_effector_pos += wheel * 0.02; // don''t need to crop
+    }
 }
 
 void DbusInterpreter::apply_deadzone(double& val)
@@ -95,7 +100,7 @@ geometry_msgs::msg::Twist DbusInterpreter::get_move_ros2_control() const
 }
 
 Chassis::SharedPtr DbusInterpreter::get_chassis() const { return chassis_; }
-double DbusInterpreter::get_end_effector_velocity() const { return wheel; }
+double DbusInterpreter::get_end_effector_position() const { return end_effector_pos; }
 
 void DbusInterpreter::curb(double& val, double max_val)
 {
@@ -108,3 +113,4 @@ void DbusInterpreter::curb(double& val, double max_val)
         val = -max_val;
     }
 }
+

@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<robot name="standard" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    
+    
+    <xacro:include filename="$(find engineer_arm_moveit_config)/config/meta_arm.urdf.xacro" />
+    <!-- TODO put that macro somewhere-->
+    <xacro:macro name="shooter_transmission"
+        params="prefix mechanical_reduction offset motor_id">
+        <joint name="${prefix}_shooter_joint">
+            <command_interface name="effort" />
+            <state_interface name="position" /> 
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <param name="motor_model">M2006</param>
+            <param name="motor_id">${motor_id}</param>
+            <param name="mechanical_reduction">${mechanical_reduction}</param>
+            <param name="offset">${offset}</param>
+        </joint>
+    </xacro:macro>
+    
+    <!-- note mecanum_wheel use dji motors-->
+    <xacro:include filename="$(find metav_description)/urdf/common/mecanum_wheel.xacro"/>
+    <xacro:include filename="$(find metav_description)/urdf/common/unitree_go1.xacro"/>
+    <xacro:include filename="$(find metav_description)/urdf/common/dm.xacro"/>
+    <xacro:include filename="$(find metav_description)/urdf/standard/standard.chassis.xacro" />
+    <xacro:chassis roller_type="none" />
+    <!-- chassis-->
+    <ros2_control name="dji_motors_chassis" type="system">
+        <hardware>
+            <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
+            <param name="can_network_name">can_2</param>
+        </hardware>
+        <xacro:wheel_transmission prefix="back_left" mechanical_reduction="20.0" motor_id="1" />
+        <xacro:wheel_transmission prefix="front_left" mechanical_reduction="20.0" motor_id="2" />
+        <xacro:wheel_transmission prefix="front_right" mechanical_reduction="20.0" motor_id="3" />
+        <xacro:wheel_transmission prefix="back_right" mechanical_reduction="20.0" motor_id="4" />
+        <xacro:wheel_transmission prefix="dummy_yaw" mechanical_reduction="36.0" motor_id="5" />
+    </ros2_control>
+    <!-- manipulator-->
+    <!-- dm-->
+    <ros2_control name="manipulator_dm_motors" type="system">
+        <hardware>
+            <plugin>meta_hardware/MetaRobotDmMotorNetwork</plugin>
+            <param name="can_network_name">can_1</param>
+            <param name="master_id">0</param>
+        </hardware>
+        <!-- 10010 for joint2, 4310x4 for etc.-->
+        <xacro:dm_motor joint_name="joint2" motor_id="1" mode="posvelo" max_posvelo_vel="0.1" max_pos="12.5" max_vel="25.0" max_effort="200.0"/>
+        <xacro:dm_motor joint_name="joint4" motor_id="2" mode="posvelo" max_posvelo_vel="0.4" max_pos="12.5" max_vel="30.0" max_effort="10.0"/>
+        <xacro:dm_motor joint_name="joint5" motor_id="3" mode="posvelo" max_posvelo_vel="0.4" max_pos="12.5" max_vel="30.0" max_effort="10.0"/>
+        <xacro:dm_motor joint_name="joint6" motor_id="4" mode="posvelo" max_posvelo_vel="0.4" max_pos="12.5" max_vel="30.0" max_effort="10.0"/>
+        <xacro:dm_motor joint_name="joint7" motor_id="5" mode="posvelo" max_posvelo_vel="0.4" max_pos="12.5" max_vel="30.0" max_effort="10.0"/>
+    </ros2_control>
+    <!-- dji m2006 as end effector-->
+    <ros2_control name="dji_motors_end_effector" type="system">
+        <hardware>
+            <plugin>meta_hardware/MetaRobotDjiMotorNetwork</plugin>
+            <param name="can_network_name">can_1</param>
+        </hardware>
+        <!-- TODO fix name-->
+        <!-- pos: open -1.6, close 0.0(if boot up with end effector closed, reset encoder to 0.0 when boot up)-->
+        <xacro:shooter_transmission prefix="joint_end_eff" mechanical_reduction="36.0" offset="0.0" motor_id="7" />
+    </ros2_control>
+    <!-- unitree-->
+    <ros2_control name="unitree_joint1" type="system">
+        <hardware>
+            <plugin>meta_hardware/MetaRobotUnitreeMotorInterface</plugin>
+            <param name="tty_devpath">/dev/ttyACM0</param>
+        </hardware>
+        <xacro:unitree_go1_motor joint_name="joint1" motor_id="0" kp="0.5" kd="0.1" offset="0.9171"/>
+    </ros2_control>
+    <ros2_control name="unitree_joint3" type="system">
+        <hardware>
+            <plugin>meta_hardware/MetaRobotUnitreeMotorInterface</plugin>
+            <param name="tty_devpath">/dev/ttyACM1</param>
+        </hardware>
+        <xacro:unitree_go1_motor joint_name="joint3" motor_id="0" kp="1" kd="0.1" offset="1.368"/>
+    </ros2_control>
+</robot>

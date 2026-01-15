@@ -211,7 +211,7 @@
       xyz="-1 0 0" />
     <limit
       lower="-1.57"
-      upper="1.57"
+      upper="2.5"
       effort="0"
       velocity="1.0" />
   </joint>
@@ -447,4 +447,71 @@
       effort="0"
       velocity="1.0" />
   </joint>
+  <!-- below is dummy shit-->
+    <link name="gunmu1"/>
+    <link name="gunmu2"/>
+    <link name="gunmu3"/>
+    <link name="gunmu4"/>
+    <link name="gunmu5"/>
+    <link name="gunmu6"/>
+    <joint name="joint_end_eff_shooter_joint" type="revolute">
+        <parent link="base" />
+        <child link="gunmu1" />
+        <axis xyz="-1 0 0" />
+        <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="0"
+      velocity="1.0" />
+    </joint>
+    <joint name="back_left_wheel_joint" type="revolute">
+        <parent link="base" />
+        <child link="gunmu2" />
+        <axis xyz="-1 0 0" />
+        <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="0"
+      velocity="1.0" />
+    </joint>
+    <joint name="front_left_wheel_joint" type="revolute">
+        <parent link="base" />
+        <child link="gunmu3" />
+        <axis xyz="-1 0 0" />
+        <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="0"
+      velocity="1.0" />
+    </joint>
+    <joint name="front_right_wheel_joint" type="revolute">
+        <parent link="base" />
+        <child link="gunmu4" />
+        <axis xyz="-1 0 0" />
+        <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="0"
+      velocity="1.0" />
+    </joint>
+    <joint name="back_right_wheel_joint" type="revolute">
+        <parent link="base" />
+        <child link="gunmu5" />
+        <axis xyz="-1 0 0" />
+        <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="0"
+      velocity="1.0" />
+    </joint>
+    <joint name="dummy_yaw_wheel_joint" type="revolute">
+        <parent link="base" />
+        <child link="gunmu6" />
+        <axis xyz="-1 0 0" />
+        <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="0"
+      velocity="1.0" />
+    </joint>
 </robot>

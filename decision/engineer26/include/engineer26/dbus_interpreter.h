@@ -38,7 +38,7 @@ public:
     geometry_msgs::msg::Twist get_move_ros2_control() const;
 
     Chassis::SharedPtr get_chassis() const;
-    double get_end_effector_velocity() const;
+    double get_end_effector_position() const;
     bool is_active() const { return active; }
 
 private:
@@ -50,6 +50,7 @@ private:
     double ls_x, ls_y, rs_x, rs_y, wheel;
     std::string lsw, rsw;
 
+    double end_effector_pos;
 
     rclcpp::Time last_update_time_;
     rclcpp::Time last_trigger_update_time_;
@@ -64,7 +65,6 @@ private:
     void update();
 
     void apply_deadzone(double& val);
-
     void curb(double& val, double max_val);
 };
 

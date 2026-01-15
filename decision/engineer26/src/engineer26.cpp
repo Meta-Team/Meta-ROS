@@ -27,7 +27,7 @@ public:
         move_pub_ros2_control_ = this->create_publisher<geometry_msgs::msg::Twist>("omni_chassis_controller/reference", 10);
         chassis_pub_ = this->create_publisher<behavior_interface::msg::Chassis>(chassis_topic, 10);
         end_effector_publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(
-            "/forward_end_effector_vel_controller/commands", 10);
+            "/forward_end_effector_pos_controller/commands", 10);
         // sub from dbus_control
         dbus_sub_ = this->create_subscription<operation_interface::msg::DbusControl>(
             "dbus_control", 10,
@@ -61,9 +61,9 @@ private:
         if (!interpreter_->is_active()) return;
         move_pub_ros2_control_->publish(interpreter_->get_move_ros2_control());
         chassis_pub_->publish(*interpreter_->get_chassis());
-        auto msg_end_effector_velocity = std_msgs::msg::Float64MultiArray();
-        msg_end_effector_velocity.data.push_back(interpreter_->get_end_effector_velocity());
-        end_effector_publisher_->publish(msg_end_effector_velocity);
+        auto msg_end_effector_pos = std_msgs::msg::Float64MultiArray();
+        msg_end_effector_pos.data.push_back(interpreter_->get_end_effector_position());
+        end_effector_publisher_->publish(msg_end_effector_pos);
     }
 };
 #include "rclcpp_components/register_node_macro.hpp"

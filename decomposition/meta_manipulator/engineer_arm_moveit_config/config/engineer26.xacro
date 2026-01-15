@@ -1,16 +1,6 @@
 <?xml version="1.0"?>
-<robot name="standard" xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-    
-    <!-- dummy joints&links to suppress not found in URDF error-->
-    <joint name="joint_base_to_footprint" type="fixed">
-        <origin rpy="0 0 0" xyz="0 0 1" />
-        <parent link="l0" />
-        <child link="base_link" />
-    </joint>
-    <!-- dummy joints&links to suppress not found in URDF error-->
-    <link name="l0"/>
-    
+<robot name="engineer26" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find engineer_arm_moveit_config)/config/meta_arm.urdf.xacro" />
     <!-- TODO put that macro somewhere-->
     <xacro:macro name="shooter_transmission"
         params="prefix mechanical_reduction offset motor_id">
@@ -25,13 +15,15 @@
             <param name="offset">${offset}</param>
         </joint>
     </xacro:macro>
+    <!-- fix it-->
+    
+
     
     <!-- note mecanum_wheel use dji motors-->
     <xacro:include filename="$(find metav_description)/urdf/common/mecanum_wheel.xacro"/>
     <xacro:include filename="$(find metav_description)/urdf/common/unitree_go1.xacro"/>
     <xacro:include filename="$(find metav_description)/urdf/common/dm.xacro"/>
     <xacro:include filename="$(find metav_description)/urdf/standard/standard.chassis.xacro" />
-    <xacro:chassis roller_type="none" />
     <!-- chassis-->
     <ros2_control name="dji_motors_chassis" type="system">
         <hardware>
@@ -82,6 +74,6 @@
             <plugin>meta_hardware/MetaRobotUnitreeMotorInterface</plugin>
             <param name="tty_devpath">/dev/ttyACM1</param>
         </hardware>
-        <xacro:unitree_go1_motor joint_name="joint3" motor_id="0" kp="1" kd="0.1" offset="1.368"/>
+        <xacro:unitree_go1_motor joint_name="joint3" motor_id="0" kp="1.5" kd="0.1" offset="-0.562"/>
     </ros2_control>
 </robot>

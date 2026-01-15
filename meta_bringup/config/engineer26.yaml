@@ -15,11 +15,11 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    unitree_joint_trajectory_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
     # end effector controllers
-    forward_end_effector_vel_controller:
+    forward_end_effector_pos_controller:
         type: forward_command_controller/ForwardCommandController
+    end_effector_pos2vel_pid_controller:
+      type: pid_controller/PidController
     end_effector_vel2eff_pid_controller:
       type: pid_controller/PidController
     
@@ -87,23 +87,7 @@ wheels_pid_controller:
         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       back_right_wheel_joint:
         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
-# Integral fix for unitree motors
-# TODO
-unitree_joint_trajectory_controller:
-  ros__parameters:
-    joints:
-      - joint1
 
-    # CRITICAL: We command 'effort', but we track 'position'
-    command_interfaces:
-      - effort
-    state_interfaces:
-      - position
-      - velocity
-
-    # Enable PID logic inside the controller
-    gains:
-      joint3: {p: 100.0, i: 5.0, d: 2.0, i_clamp: 10.0}
 # Manipulator
 meta_manipulator_controller:
   ros__parameters:
@@ -124,11 +108,27 @@ meta_manipulator_controller:
 
 # End Effector
 
-forward_end_effector_vel_controller:
+forward_end_effector_pos_controller:
   ros__parameters:
     joints:
+      - end_effector_pos2vel_pid_controller/joint_end_eff_shooter_joint
+    interface_name: position
+
+end_effector_pos2vel_pid_controller:
+  ros__parameters:
+    dof_names:
       - end_effector_vel2eff_pid_controller/joint_end_eff_shooter_joint
-    interface_name: velocity
+
+    reference_and_state_dof_names:
+      - joint_end_eff_shooter_joint
+
+    command_interface: velocity
+
+    reference_and_state_interfaces: ["position"]
+
+    gains:
+      end_effector_vel2eff_pid_controller/joint_end_eff_shooter_joint:
+        { p: 5.0, i: 0.01, d: 0.01, angle_wraparound: true }
 
 end_effector_vel2eff_pid_controller:
   ros__parameters:
@@ -149,6 +149,8 @@ end_effector_vel2eff_pid_controller:
           i_clamp_min: -1.0,
           antiwindup: true,
         }
+
+
 # node paramters start below
 dbus_control_node:
   ros__parameters:
