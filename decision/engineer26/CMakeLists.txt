@@ -7,10 +7,16 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(moveit_ros_planning_interface REQUIRED)
-find_package(operation_interface REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
+
+ament_auto_add_library(${PROJECT_NAME} SHARED
+  src/engineer26.cpp
+  src/dbus_interpreter.cpp)
+
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "Engineer26"
+  EXECUTABLE ${PROJECT_NAME}_node)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -24,9 +30,4 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-add_executable(engineer26 src/engineer26.cpp)
-ament_target_dependencies(engineer26 rclcpp geometry_msgs moveit_ros_planning_interface moveit_core operation_interface)
-install(TARGETS engineer26
-  DESTINATION lib/${PROJECT_NAME})
-
-ament_package()
+ament_auto_package()

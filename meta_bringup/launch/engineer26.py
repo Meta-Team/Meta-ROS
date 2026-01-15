@@ -89,10 +89,14 @@ def generate_launch_description():
     # List of controllers to be loaded sequentially
     # Order in this list is IMPORTANT
     load_controllers = [
-        # load_controller('wheels_pid_controller'),
-        # load_controller('omni_chassis_controller'),
+        load_controller('wheels_pid_controller'), # pid go first since bottom side
+        load_controller('omni_chassis_controller'),
+        load_controller('end_effector_vel2eff_pid_controller'), # pid go first since bottom side
+        load_controller('forward_end_effector_vel_controller'),
+        # load_controller('unitree_joint_trajectory_controller'),
         load_controller('forward_debug1_controller'),
         load_controller('forward_debug2_controller'),
+        load_controller('forward_debug3_controller'),
         load_controller('forward_debug4_controller'),
         load_controller('forward_debug5_controller'),
         load_controller('forward_debug6_controller'),
@@ -116,14 +120,14 @@ def generate_launch_description():
         emulate_tty=True,
     )
     # decision node
-    # engineer26_node = Node(
-    #     package='engineer26',
-    #     executable='engineer26_node',
-    #     name='engineer26',
-    #     output='both',
-    #     parameters=[robot_config],
-    #     emulate_tty=True
-    # )
+    engineer26_node = Node(
+        package='engineer26',
+        executable='engineer26_node',
+        name='engineer26',
+        output='both',
+        parameters=[robot_config],
+        emulate_tty=True
+    )
 
 
     return LaunchDescription([
@@ -137,8 +141,8 @@ def generate_launch_description():
         load_joint_state_broadcaster,
         # Load controllers
         *register_sequential_loading(load_joint_state_broadcaster, *load_controllers),
-        # dbus_control_node,
+        dbus_control_node,
         # referee_system_node,
         # auto_sentry_node,
-        # hero_vehicle_node,
+        engineer26_node,
     ])

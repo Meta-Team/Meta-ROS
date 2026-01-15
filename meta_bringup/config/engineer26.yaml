@@ -14,6 +14,16 @@ controller_manager:
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
+
+    unitree_joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+    # end effector controllers
+    forward_end_effector_vel_controller:
+        type: forward_command_controller/ForwardCommandController
+    end_effector_vel2eff_pid_controller:
+      type: pid_controller/PidController
+    
+    # debug controllers
     forward_debug1_controller: # for debug use
         type: forward_command_controller/ForwardCommandController
     forward_debug2_controller: # for debug use
@@ -46,8 +56,8 @@ omni_chassis_controller:
     omni_wheel_radius: 0.076
 
     control_mode: 0
-
-    yaw_gimbal_joint: yaw_gimbal_joint
+    # Fix the name
+    yaw_gimbal_joint: dummy_yaw_wheel_joint
 
     follow_pid_gains:
       { p: 4.0, i: 2.0e-1, d: 0.0, i_clamp_max: 3.0, i_clamp_min: -3.0, antiwindup: true }
@@ -77,7 +87,23 @@ wheels_pid_controller:
         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
       back_right_wheel_joint:
         { p: 2.0e-2, i: 1.0e-4, d: 0.0, i_clamp_max: 1.0, i_clamp_min: -1.0, antiwindup: true }
+# Integral fix for unitree motors
+# TODO
+unitree_joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - joint1
 
+    # CRITICAL: We command 'effort', but we track 'position'
+    command_interfaces:
+      - effort
+    state_interfaces:
+      - position
+      - velocity
+
+    # Enable PID logic inside the controller
+    gains:
+      joint3: {p: 100.0, i: 5.0, d: 2.0, i_clamp: 10.0}
 # Manipulator
 meta_manipulator_controller:
   ros__parameters:
@@ -95,6 +121,34 @@ meta_manipulator_controller:
     state_interfaces:
       - position
       - velocity
+
+# End Effector
+
+forward_end_effector_vel_controller:
+  ros__parameters:
+    joints:
+      - end_effector_vel2eff_pid_controller/joint_end_eff_shooter_joint
+    interface_name: velocity
+
+end_effector_vel2eff_pid_controller:
+  ros__parameters:
+    dof_names:
+      - joint_end_eff_shooter_joint
+
+    command_interface: effort
+
+    reference_and_state_interfaces: ["velocity"]
+
+    gains:
+      joint_end_eff_shooter_joint:
+        {
+          p: 1.0e-1,
+          i: 3.0e-1,
+          d: 0.0,
+          i_clamp_max: 1.0,
+          i_clamp_min: -1.0,
+          antiwindup: true,
+        }
 # node paramters start below
 dbus_control_node:
   ros__parameters:
@@ -102,9 +156,6 @@ dbus_control_node:
 
 engineer26:
   ros__parameters:
-    enable_ros2_control: true
-    aim_topic: "/gimbal_position_controller/reference"
-    shoot_topic: "/shoot_controller/reference"
     control:
       trans_vel: 2.5 # m/s
       rot_vel: 3.0 # rad/s
