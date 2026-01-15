@@ -153,7 +153,7 @@ MetaRobotUnitreeMotorInterface::read(const rclcpp::Time & /*time*/,
         position = position / reduction + offset;
         velocity /= reduction;
         effort *= reduction;
-        printf("q:%.2lf\n", position);
+        // printf("q:%.2lf\n", position);
         joint_interface_data_[i].state_position = position;
         joint_interface_data_[i].state_velocity = velocity;
         joint_interface_data_[i].state_effort = effort;

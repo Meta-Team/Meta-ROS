@@ -61,6 +61,8 @@ class DmMotor {
     double max_pos_;
     double max_effort_;
 
+    double max_posvelo_vel_; // used in posvelo mode
+
     double Kp_;
     double Kd_;
     uint16_t Kp_raw_;

@@ -182,7 +182,8 @@ MetaRobotDmMotorNetwork::read(const rclcpp::Time & /*time*/,
         position = position / reduction + offset;
         velocity /= reduction;
         effort *= reduction;
-
+        // if (joint_motor_info_[i].name == "joint4")
+        //     printf("[joint4]q:%.2lf\n", position);
         joint_interface_data_[i].state_position = position;
         joint_interface_data_[i].state_velocity = velocity;
         joint_interface_data_[i].state_effort = effort;
